@@ -46,6 +46,7 @@ class DummyRequestsSession(object):
     """
     def __init__(self, backend, urlPrefix):
         self._backend = backend
+        self._serialize = "application/protobuf"
         self._urlPrefix = urlPrefix
         self._getMethodMap = {
             "datasets": self._backend.runGetDataset,
@@ -91,7 +92,7 @@ class DummyRequestsSession(object):
         datatype, id_ = splits[1:]
         assert datatype in self._getMethodMap
         method = self._getMethodMap[datatype]
-        result = method(id_)
+        result = method(id_, self._serialize)
         return DummyResponse(result)
 
     def post(self, url, params=None, data=None):
@@ -103,7 +104,7 @@ class DummyRequestsSession(object):
             datatype = suffix[1:-len(searchSuffix)]
             assert datatype in self._searchMethodMap
             method = self._searchMethodMap[datatype]
-            result = method(data)
+            result = method(data, self._serialize)
         else:
             # ListReferenceBases is an oddball and needs to be treated
             # separately.
@@ -114,7 +115,7 @@ class DummyRequestsSession(object):
             args.end = int(data.get('end', 0))
             args.page_token = data.get('pageToken', "")
             result = self._backend.runListReferenceBases(
-                protocol.toJson(args))
+                protocol.toJson(args), self._serialize)
         return DummyResponse(result)
 
 

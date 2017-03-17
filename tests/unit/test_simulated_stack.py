@@ -22,6 +22,14 @@ import ga4gh.server.frontend as frontend
 import ga4gh.schemas.protocol as protocol
 
 
+def round_float32(x_double):
+    """
+    Uses the array module to retun a (truncated) 32-bit float
+    representation of a python floating point number (double)
+    """
+    return array.array(b'f', [x_double])[0]
+
+
 class TestSimulatedStack(unittest.TestCase):
     """
     Tests the full stack for the Simulated backend by using the Flask
