@@ -357,6 +357,15 @@ def configure(configFile=None, baseConfig="ProductionConfig",
             app.oidcClient.store_registration_info(response)
 
 
+def chooseReturnMimetype(request):
+    mimetype = None
+    if hasattr(request, 'accept_mimetypes'):
+        mimetype = request.accept_mimetypes.best_match(protocol.MIMETYPES)
+    if mimetype is None:
+        mimetype = protocol.MIMETYPES[0]
+    return mimetype
+
+
 def getFlaskResponse(responseString, httpStatus=200,
                      mimetype="application/json"):
     """
@@ -372,22 +381,19 @@ def handleHttpPost(request, endpoint):
     """
     if request.mimetype and request.mimetype not in protocol.MIMETYPES:
         raise exceptions.UnsupportedMediaTypeException()
-    if hasattr(request, 'accept_mimetypes'):
-        mimetype = request.accept_mimetypes.best_match(protocol.MIMETYPES)
-    else:
-        mimetype = protocol.MIMETYPES[0]
+    return_mimetype = chooseReturnMimetype(request)
     request = request.get_data()
     if request == '' or request is None:
         request = '{}'
-    responseStr = endpoint(request, return_mimetype=mimetype)
-    return getFlaskResponse(responseStr, mimetype=mimetype)
+    responseStr = endpoint(request, return_mimetype=return_mimetype)
+    return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
 def handleList(endpoint, request):
     """
     Handles the specified HTTP GET request, mapping to a list request
     """
-    return_mimetype = request.accept_mimetypes.best_match(protocol.MIMETYPES)
+    return_mimetype = chooseReturnMimetype(request)
     responseStr = endpoint(request.get_data(), return_mimetype=return_mimetype)
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
@@ -398,7 +404,7 @@ def handleHttpGet(id_, endpoint):
     protocol handler endpoint and protocol request class
     """
     request = flask.request
-    return_mimetype = request.accept_mimetypes.best_match(protocol.MIMETYPES)
+    return_mimetype = chooseReturnMimetype(request)
     responseStr = endpoint(id_, return_mimetype=return_mimetype)
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
@@ -436,8 +442,11 @@ def handleException(exception):
             message += "Please try <a href=\"/login\">logging in</a>."
         return message
     else:
-        responseStr = protocol.toJson(error)
-        return getFlaskResponse(responseStr, serverException.httpStatus)
+        # Errors aren't well defined enough to use protobuf, even if requested
+        return_mimetype = 'application/json'
+        responseStr = protocol.serialize(error, return_mimetype)
+        return getFlaskResponse(responseStr, serverException.httpStatus,
+                                mimetype=return_mimetype)
 
 
 def startLogin():

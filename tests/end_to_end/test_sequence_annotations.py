@@ -17,6 +17,7 @@ import ga4gh.schemas.protocol as protocol
 class TestSequenceAnnotations(unittest.TestCase):
     exampleUrl = 'www.example.com'
     datasetId = "YnJjYTE"
+    serialization = protocol.MIMETYPES[0]
 
     @classmethod
     def setUpClass(cls):
@@ -41,7 +42,9 @@ class TestSequenceAnnotations(unittest.TestCase):
         """
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
         self.assertEqual(200, response.status_code)
-        responseData = protocol.fromJson(response.data, responseClass)
+        responseData = protocol.deserialize(response.data,
+                                            self.serialization,
+                                            responseClass)
         self.assertTrue(
             protocol.validate(protocol.toJson(responseData), responseClass))
         return responseData

@@ -78,10 +78,6 @@ class TestCase(object):
             return
 
         if isinstance(a, float) and isinstance(b, float):
-            if is_equal_float32(a, b):
-                return
-
-        if isinstance(a, float) and isinstance(b, float):
             if compare_as_float_32s(a, b):
                 return
 

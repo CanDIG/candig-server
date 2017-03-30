@@ -21,6 +21,7 @@ class TestFrontend(unittest.TestCase):
     Tests the basic routing and HTTP handling for the Flask app.
     """
     exampleUrl = 'www.example.com'
+    serialization = protocol.MIMETYPES[0]
 
     @classmethod
     def setUpClass(cls):
@@ -87,6 +88,7 @@ class TestFrontend(unittest.TestCase):
         headers = {
             'Content-type': 'application/json',
             'Origin': self.exampleUrl,
+            'Accept': self.serialization,
         }
         return self.app.post(
             path, headers=headers, data=protocol.toJson(request))
@@ -100,9 +102,14 @@ class TestFrontend(unittest.TestCase):
         }
         return self.app.get(path, headers=headers)
 
+    def deserialize(self, responseData, responseClass):
+        return protocol.deserialize(responseData,
+                                    self.serialization,
+                                    responseClass)
+
     def sendVariantsSearch(self):
         response = self.sendVariantSetsSearch()
-        variantSets = protocol.fromJson(
+        variantSets = self.deserialize(
             response.data, protocol.SearchVariantSetsResponse).variant_sets
         request = protocol.SearchVariantsRequest()
         request.variant_set_id = variantSets[0].id
@@ -118,7 +125,7 @@ class TestFrontend(unittest.TestCase):
 
     def sendCallSetsSearch(self):
         response = self.sendVariantSetsSearch()
-        variantSets = protocol.fromJson(
+        variantSets = self.deserialize(
             response.data, protocol.SearchVariantSetsResponse).variant_sets
         request = protocol.SearchCallSetsRequest()
         request.variant_set_id = variantSets[0].id
@@ -242,7 +249,7 @@ class TestFrontend(unittest.TestCase):
         ]
         for path in paths:
             response = self.app.get(path)
-            protocol.fromJson(
+            self.deserialize(
                 response.get_data(), protocol.GAException)
             self.assertEqual(404, response.status_code)
 
@@ -279,7 +286,7 @@ class TestFrontend(unittest.TestCase):
         """
         if not getDefined:
             getResponse = self.app.get(path)
-            protocol.fromJson(
+            self.deserialize(
                 getResponse.get_data(), protocol.GAException)
             self.assertEqual(405, getResponse.status_code)
 
@@ -332,21 +339,21 @@ class TestFrontend(unittest.TestCase):
     def testVariantsSearch(self):
         response = self.sendVariantsSearch()
         self.assertEqual(200, response.status_code)
-        responseData = protocol.fromJson(
+        responseData = self.deserialize(
             response.data, protocol.SearchVariantsResponse)
         self.assertEqual(len(responseData.variants), 1)
 
     def testVariantSetsSearch(self):
         response = self.sendVariantSetsSearch()
         self.assertEqual(200, response.status_code)
-        responseData = protocol.fromJson(
+        responseData = self.deserialize(
             response.data, protocol.SearchVariantSetsResponse)
         self.assertEqual(len(responseData.variant_sets), 1)
 
     def testGetDataset(self):
         # Test OK: ID found
         response = self.sendDatasetsSearch()
-        responseData = protocol.fromJson(
+        responseData = self.deserialize(
             response.data, protocol.SearchDatasetsResponse)
         datasetId = responseData.datasets[0].id
         response = self.sendGetDataset(datasetId)
@@ -361,7 +368,7 @@ class TestFrontend(unittest.TestCase):
 
     def testGetVariantSet(self):
         response = self.sendVariantSetsSearch()
-        responseData = protocol.fromJson(
+        responseData = self.deserialize(
             response.data, protocol.SearchVariantSetsResponse)
         variantSetId = responseData.variant_sets[0].id
         response = self.sendGetVariantSet(variantSetId)
@@ -375,7 +382,7 @@ class TestFrontend(unittest.TestCase):
     def testCallSetsSearch(self):
         response = self.sendCallSetsSearch()
         self.assertEqual(200, response.status_code)
-        responseData = protocol.fromJson(
+        responseData = self.deserialize(
             response.data, protocol.SearchCallSetsResponse)
         self.assertEqual(len(responseData.call_sets), 1)
 
@@ -383,7 +390,7 @@ class TestFrontend(unittest.TestCase):
         response = self.sendReadsSearch(readGroupIds=[self.readGroupId],
                                         referenceId=self.referenceId)
         self.assertEqual(200, response.status_code)
-        responseData = protocol.fromJson(
+        responseData = self.deserialize(
             response.data, protocol.SearchReadsResponse)
         self.assertEqual(len(responseData.alignments), 2)
         self.assertEqual(
@@ -392,7 +399,7 @@ class TestFrontend(unittest.TestCase):
 
     def testPhenotypeAssociationSetsSearch(self):
         response = self.sendPhenotypeAssociationSetsSearch()
-        responseData = protocol.fromJson(
+        responseData = self.deserialize(
             response.data, protocol.SearchPhenotypeAssociationSetsResponse)
         pasets = list(responseData.phenotype_association_sets)
         foundPASet = False
@@ -419,7 +426,7 @@ class TestFrontend(unittest.TestCase):
     def getObjectTest(self, getMethod, protocolClass, objectId):
         response = getMethod()
         self.assertEqual(200, response.status_code)
-        responseData = protocol.fromJson(response.data, protocolClass)
+        responseData = self.deserialize(response.data, protocolClass)
         self.assertEqual(responseData.id, objectId)
 
     def testGetReadGroupSet(self):
@@ -468,7 +475,7 @@ class TestFrontend(unittest.TestCase):
             self, responseMethod, responseClass, attributeName, objectId):
         response = responseMethod()
         self.assertEqual(200, response.status_code)
-        responseData = protocol.fromJson(response.data, responseClass)
+        responseData = self.deserialize(response.data, responseClass)
         responseList = getattr(responseData, attributeName)
         objectList = list(responseList)
         self.assertEqual(objectId, objectList[0].id)
@@ -531,7 +538,7 @@ class TestFrontend(unittest.TestCase):
 
     def testSimplePost(self):
         path = "/datasets/search"
-        response = protocol.fromJson(self.app.post(
+        response = self.deserialize(self.app.post(
             path, headers={}).get_data(), protocol.SearchDatasetsResponse)
         self.assertIsNotNone(
             response.datasets,
