@@ -711,6 +711,37 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         variant.id = self.getVariantId(variant)
         return variant
 
+    # we can do better than this, but let's get this working first
+    def convertGenotype(self, record, callSetIds):
+        variant = self.convertVariant(record, callSetIds)
+        call_genotypes = [call.genotype for call in variant.calls]
+
+        def gtlist_to_gtenum(gtlist):
+            hemi = [protocol.Genotype.Value('HEMIZYGOUS_REF'),
+                    protocol.Genotype.Value('HEMIZYGOUS_ALT')]
+            hetero = [protocol.Genotype.Value('HOMOZYGOUS_REF'),
+                      protocol.Genotype.Value('HETEROZYGOUS_ALT'),
+                      protocol.Genotype.Value('HOMOZYGOUS_ALT')]
+
+            if '.' in gtlist:
+                return protocol.Genotype.Value('NA')
+            if len(gtlist) > 2:
+                return protocol.Genotype.Value('OTHER')
+
+            sumgt = sum([int(gt) for gt in gtlist])
+            if len(gtlist) == 1:
+                return hemi[sumgt]
+            else:
+                return hetero[sumgt]
+
+        genotype_list = [gtlist_to_gtenum(callgt) for callgt in call_genotypes]
+        # ideally, get rid of the variant calls - but even more ideally, don't go through that path at all
+        gtmatrix = protocol.GenotypeMatrix()
+        gtmatrix.nvariants = 1
+        gtmatrix.nindividuals = len(genotype_list)
+        gtmatrix.genotypes.extend(genotype_list)
+        return gtmatrix, variant, callSetIds
+
     def getVariant(self, compoundId):
         if compoundId.reference_name in self._chromFileMap:
             varFileName = self._chromFileMap[compoundId.reference_name]
@@ -762,6 +793,23 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         for record in self.getPysamVariants(
                 referenceName, startPosition, endPosition):
             yield self.convertVariant(record, callSetIds)
+
+    def getGenotypeMatrix(self, referenceName, startPosition, endPosition,
+                          callSetIds=[]):
+        """
+        Returns an iterator over the specified variants. The parameters
+        correspond to the attributes of a GASearchVariantsRequest object.
+        """
+        if callSetIds is None:
+            callSetIds = self._callSetIds
+        else:
+            for callSetId in callSetIds:
+                if callSetId not in self._callSetIds:
+                    raise exceptions.CallSetNotInVariantSetException(
+                        callSetId, self.getId())
+        for record in self.getPysamVariants(
+                referenceName, startPosition, endPosition):
+            yield self.convertGenotype(record, callSetIds)
 
     def getMetadataId(self, metadata):
         """

@@ -700,6 +700,12 @@ def searchVariants():
         flask.request, app.backend.runSearchVariants)
 
 
+@DisplayedRoute('/genotypes/search', postMethod=True)
+def searchGenotypes():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchGenotypes)
+
+
 @DisplayedRoute('/variantannotationsets/search', postMethod=True)
 def searchVariantAnnotationSets():
     return handleFlaskPostRequest(
