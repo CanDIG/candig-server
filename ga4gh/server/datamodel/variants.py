@@ -717,13 +717,13 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         name_gt_dict = {csn: record.samples[csn][b'GT']
                         for csn in callSetNames}
 
-        def gtlist_to_gtenum(gtlist):
-            hemi = [protocol.Genotype.Value('HEMIZYGOUS_REF'),
-                    protocol.Genotype.Value('HEMIZYGOUS_ALT')]
-            hetero = [protocol.Genotype.Value('HOMOZYGOUS_REF'),
-                      protocol.Genotype.Value('HETEROZYGOUS_ALT'),
-                      protocol.Genotype.Value('HOMOZYGOUS_ALT')]
+        hemi = [protocol.Genotype.Value('HEMIZYGOUS_REF'),
+                protocol.Genotype.Value('HEMIZYGOUS_ALT')]
+        hetero = [protocol.Genotype.Value('HOMOZYGOUS_REF'),
+                  protocol.Genotype.Value('HETEROZYGOUS_ALT'),
+                  protocol.Genotype.Value('HOMOZYGOUS_ALT')]
 
+        def gtlist_to_gtenum(gtlist):
             if '.' in gtlist:
                 return protocol.Genotype.Value('NA')
             if len(gtlist) > 2:
