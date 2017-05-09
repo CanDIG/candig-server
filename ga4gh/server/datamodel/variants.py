@@ -719,19 +719,18 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
 
         gt_other = protocol.Genotype.Value('OTHER')
         gt_na = protocol.Genotype.Value('NA')
-        gts = {('0', '0'): protocol.Genotype.Value('HOMOZYGOUS_REF'),
-               ('0', '1'): protocol.Genotype.Value('HEMIZYGOUS_ALT'),
-               ('1', '0'): protocol.Genotype.Value('HEMIZYGOUS_ALT'),
-               ('1', '1'): protocol.Genotype.Value('HOMOZYGOUS_ALT'),
-               ('1'): protocol.Genotype.Value('HEMIZYGOUS_ALT'),
-               ('0'): protocol.Genotype.Value('HEMIZYGOUS_REF')}
+        gts = {(0, 0): protocol.Genotype.Value('HOMOZYGOUS_REF'),
+               (0, 1): protocol.Genotype.Value('HETEROZYGOUS_ALT'),
+               (1, 0): protocol.Genotype.Value('HETEROZYGOUS_ALT'),
+               (1, 1): protocol.Genotype.Value('HOMOZYGOUS_ALT'),
+               (1): protocol.Genotype.Value('HEMIZYGOUS_ALT'),
+               (0): protocol.Genotype.Value('HEMIZYGOUS_REF')}
 
-        def gtlist_to_gtenum(gtlist):
-            if '.' in gtlist:
+        def gtlist_to_gtenum(gttuple):
+            if None in gttuple:
                 return gt_na
-            gttuple = tuple(gtlist)
             if gttuple in gts:
-                return gtlist[gttuple]
+                return gts[gttuple]
             return gt_other
 
         gts = [gtlist_to_gtenum(name_gt_dict[callSet])
