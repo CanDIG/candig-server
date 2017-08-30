@@ -142,6 +142,12 @@ class ServerStatus(object):
         """
         return app.backend.getDataRepository().getDatasets()
 
+    def getExperiments(self):
+        """
+        Returns the list of experimentIds for this backend
+        """
+        return app.backend.getDataRepository().getExperiments()
+
     def getVariantSets(self, datasetId):
         """
         Returns the list of variant sets for the dataset
@@ -703,6 +709,13 @@ def searchDatasets():
         flask.request, app.backend.runSearchDatasets)
 
 
+@DisplayedRoute('/experiments/search', postMethod=True)
+@requires_auth
+def searchExperiments():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchExperiments)
+
+
 @DisplayedRoute('/featuresets/search', postMethod=True)
 @requires_auth
 def searchFeatureSets():
@@ -964,6 +977,15 @@ def oidcCallback():
 def getDataset(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetDataset)
+
+
+@DisplayedRoute(
+    '/experiments/<no(search):id>',
+    pathDisplay='/experiments/<id>')
+@requires_auth
+def getExperiment(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetExperiment)
 
 
 @DisplayedRoute(

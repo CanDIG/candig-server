@@ -340,6 +340,14 @@ class BiosampleCompoundId(DatasetCompoundId):
     differentiator = 'b'
 
 
+class ExperimentCompoundId(CompoundId):
+    """
+    The compound id for an experiment
+    """
+    fields = ['experiment']
+    containerIds = [('experiment_id', 0)]
+
+
 class VariantAnnotationSetCompoundId(VariantSetCompoundId):
     """
     The compound id for a variant annotation set
@@ -426,14 +434,6 @@ class ReadGroupCompoundId(ReadGroupSetCompoundId):
     """
     fields = ReadGroupSetCompoundId.fields + ['read_group']
     containerIds = ReadGroupSetCompoundId.containerIds + [('read_group_id', 3)]
-
-
-class ExperimentCompoundId(ReadGroupCompoundId):
-    """
-    The compound id for an experiment
-    """
-    fields = ReadGroupCompoundId.fields + ['experiment']
-    containerIds = ReadGroupCompoundId.containerIds + [('experiment_id', 3)]
 
 
 class ReadAlignmentCompoundId(ReadGroupSetCompoundId):
@@ -534,7 +534,10 @@ class DatamodelObject(object):
         """
         Sets the attributes dictionary from a JSON string.
         """
-        self._attributes = json.loads(attributesJson)
+        if attributesJson is not None:
+            self._attributes = json.loads(attributesJson)
+        else:
+            self._attributes = {}
 
     def serializeAttributes(self, msg):
         """

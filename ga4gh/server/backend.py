@@ -138,6 +138,17 @@ class Backend(object):
             request, self.getDataRepository().getNumDatasets(),
             self.getDataRepository().getDatasetByIndex)
 
+    def experimentsGenerator(self, request):
+        """
+        Returns a generator over the (experiment, nextPageToken) pairs
+        defined by the specified request
+        TODO: This should really be under the appropriate biosamples, but
+        for now..
+        """
+        return self._topLevelObjectGenerator(
+            request, self.getDataRepository().getNumExperiments(),
+            self.getDataRepository().getExperimentByIndex)
+
     def biosamplesGenerator(self, request):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         results = []
@@ -835,6 +846,13 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(id_)
         return self.runGetRequest(dataset)
 
+    def runGetExperiment(self, id_):
+        """
+        Runs a getExperiment request for the specified ID.
+        """
+        experiment = self.getDataRepository().getExperiment(id_)
+        return self.runGetRequest(experiment)
+
     def runGetVariantAnnotationSet(self, id_):
         """
         Runs a getVariantSet request for the specified ID.
@@ -987,6 +1005,15 @@ class Backend(object):
             request, protocol.SearchDatasetsRequest,
             protocol.SearchDatasetsResponse,
             self.datasetsGenerator)
+
+    def runSearchExperiments(self, request):
+        """
+        Runs the specified SearchExperimentsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchExperimentsRequest,
+            protocol.SearchExperimentsResponse,
+            self.experimentsGenerator)
 
     def runSearchFeatureSets(self, request):
         """

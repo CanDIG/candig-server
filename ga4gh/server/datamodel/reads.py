@@ -629,8 +629,7 @@ class AbstractReadGroup(datamodel.DatamodelObject):
         """
         Returns the id of the experiment used for this read group
         """
-        return str(datamodel.ExperimentCompoundId(
-            self.getCompoundId(), 'experiment'))
+        return str(datamodel.ExperimentCompoundId(None, 'experiment'))
 
 
 class SimulatedReadGroup(AbstractReadGroup):

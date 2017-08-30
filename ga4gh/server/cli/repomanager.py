@@ -511,6 +511,27 @@ class RepoManager(object):
         individual.populateFromJson(self._args.individual)
         self._updateRepo(self._repo.insertIndividual, individual)
 
+    def addExperiment(self):
+        """
+        Adds a new individual into this repo
+        """
+        self._openRepo()
+        experiment = bio_metadata.Experiment(self._args.experimentName)
+        experiment.populateFromJson(self._args.experiment)
+        experiment.setDescription(self._args.description)
+        self._updateRepo(self._repo.insertExperiment, experiment)
+
+    def removeExperiment(self):
+        """
+        Removes an experiment from this repo
+        """
+        self._openRepo()
+        experiment = self._repo.getExperimentByName(self._args.biosampleName)
+
+        def func():
+            self._updateRepo(self._repo.removeExperiment, experiment)
+        self._confirmDelete("Experiment", experiment.getLocalId(), func)
+
     def removeIndividual(self):
         """
         Removes an individual from this repo
@@ -739,10 +760,22 @@ class RepoManager(object):
             help="the name of the biosample")
 
     @classmethod
+    def addExperimentNameArgument(cls, subparser):
+        subparser.add_argument(
+            "experimentName",
+            help="the name of the experiment")
+
+    @classmethod
     def addBiosampleArgument(cls, subparser):
         subparser.add_argument(
             "biosample",
             help="the JSON of the biosample")
+
+    @classmethod
+    def addExperimentArgument(cls, subparser):
+        subparser.add_argument(
+            "experiment",
+            help="the JSON of the experiment")
 
     @classmethod
     def addIndividualArgument(cls, subparser):
@@ -873,6 +906,22 @@ class RepoManager(object):
         cls.addRepoArgument(removeDatasetParser)
         cls.addDatasetNameArgument(removeDatasetParser)
         cls.addForceOption(removeDatasetParser)
+
+        addExperimentParser = common_cli.addSubparser(
+            subparsers, "add-experiment", "Add an experiment to the data repo")
+        addExperimentParser.set_defaults(runner="addExperiment")
+        cls.addRepoArgument(addExperimentParser)
+        cls.addExperimentNameArgument(addExperimentParser)
+        cls.addDescriptionOption(addExperimentParser, "Experiment description")
+        cls.addExperimentArgument(addExperimentParser)
+
+        removeExperimentParser = common_cli.addSubparser(
+            subparsers, "remove-experiment",
+            "Remove an experiment from the data repo")
+        removeExperimentParser.set_defaults(runner="removeExperiment")
+        cls.addRepoArgument(removeExperimentParser)
+        cls.addExperimentNameArgument(removeExperimentParser)
+        cls.addForceOption(removeExperimentParser)
 
         objectType = "reference set"
         addReferenceSetParser = common_cli.addSubparser(

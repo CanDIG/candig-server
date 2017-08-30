@@ -84,6 +84,29 @@ class Biosample(BaseModel):
         )
 
 
+class Experiment(BaseModel):
+    name = pw.TextField()
+    id = pw.TextField(primary_key=True)
+    description = pw.TextField(null=True)
+    created = pw.TextField(null=True)
+    updated = pw.TextField(null=True)
+    runTime = pw.TextField(null=True)
+    molecule = pw.TextField(null=True)
+    strategy = pw.TextField(null=True)
+    selection = pw.TextField(null=True)
+    library = pw.TextField(null=True)
+    libraryLayout = pw.TextField(null=True)
+    instrumentModel = pw.TextField(null=True)
+    instrumentDataFile = pw.TextField(null=True)
+    sequencingCenter = pw.TextField(null=True)
+    platformUnit = pw.TextField(null=True)
+
+    class Meta:
+        indexes = (
+            (('name'), True),
+        )
+
+
 class Referenceset(BaseModel):
     assemblyid = pw.TextField(db_column='assemblyId', null=True)
     dataurl = pw.TextField(db_column='dataUrl')
@@ -226,7 +249,7 @@ class Readgroup(BaseModel):
     biosampleid = pw.TextField(db_column='biosampleId', null=True)
     created = pw.TextField(null=True)
     description = pw.TextField(null=True)
-    experiment = pw.TextField()
+    experiment = pw.TextField(null=True)
     id = pw.TextField(primary_key=True)
     name = pw.TextField()
     predictedinsertsize = pw.IntegerField(

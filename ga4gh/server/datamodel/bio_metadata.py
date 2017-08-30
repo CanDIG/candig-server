@@ -117,6 +117,153 @@ class Biosample(datamodel.DatamodelObject):
             return None
 
 
+class Experiment(datamodel.DatamodelObject):
+    """
+    This class represents an abstract Experiment object.
+    It sets default values and getters, as well as the
+    toProtocolElement function.
+    """
+    compoundIdClass = datamodel.ExperimentCompoundId
+
+    def __init__(self, localId):
+        super(Experiment, self).__init__(None, localId)
+        self._created = datetime.datetime.now().isoformat()
+        self._updated = datetime.datetime.now().isoformat()
+        self._run_time = datetime.datetime.now().isoformat()
+        self._molecule = None
+        self._strategy = None
+        self._selection = None
+        self._library = None
+        self._library_layout = None
+        self._description = None
+        self._instrument_model = None
+        self._instrument_data_file = None
+        self._sequencing_center = None
+        self._platform_unit = None
+        self._name = localId
+        self._attributes = {}
+
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__, self.__dict__)
+
+    def toProtocolElement(self):
+        experiment = protocol.Experiment(
+            id=self.getId(),
+            name=self.getName(),
+            description=self.getDescription(),
+            message_create_time=self.getCreated(),
+            message_update_time=self.getUpdated(),
+            run_time=self.getRunTime(),
+            molecule=self.getMolecule(),
+            strategy=self.getStrategy(),
+            selection=self.getSelection(),
+            library=self.getLibrary(),
+            library_layout=self.getLibraryLayout(),
+            instrument_model=self.getInstrumentModel(),
+            instrument_data_file=self.getInstrumentDataFile(),
+            sequencing_center=self.getSequencingCenter(),
+            platform_unit=self.getPlatformUnit(),
+            )
+        self.serializeAttributes(experiment)
+        return experiment
+
+    def populateFromJson(self, jsonString):
+        try:
+            parsed = protocol.fromJson(jsonString, protocol.Experiment)
+        except:
+            raise exceptions.InvalidJsonException(jsonString)
+        if parsed.message_create_time != "":
+            self._created = parsed.message_create_time
+        if parsed.message_update_time != "":
+            self._updated = parsed.message_update_time
+        self._run_time = parsed.run_time
+        self._description = parsed.description
+        self._molecule = parsed.molecule
+        self._strategy = parsed.strategy
+        self._selection = parsed.selection
+        self._library = parsed.library
+        self._library_layout = parsed.library_layout
+        self._instrument_model = parsed.instrument_model
+        self._instrument_data_file = parsed.instrument_data_file
+        self._sequencing_center = parsed.sequencing_center
+        self._platform_unit = parsed.platform_unit
+        attributes = {}
+        for key in parsed.attributes.attr:
+            attributes[key] = {
+                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+        self.setAttributes(attributes)
+        return self
+
+    def populateFromRow(self, experimentRecord):
+        # TODO coerce to types
+        self._created = experimentRecord.created
+        self._updated = experimentRecord.updated
+        self._run_time = experimentRecord.runTime
+        self._description = experimentRecord.description
+        self._molecule = experimentRecord.molecule
+        self._strategy = experimentRecord.strategy
+        self._selection = experimentRecord.selection
+        self._library = experimentRecord.library
+        self._library_layout = experimentRecord.libraryLayout
+        self._instrument_model = experimentRecord.instrumentModel
+        self._instrument_data_file = experimentRecord.instrumentDataFile
+        self._sequencing_center = experimentRecord.sequencingCenter
+        self._platform_unit = experimentRecord.platformUnit
+        self.setAttributesJson(experimentRecord.attributes)
+        return self
+
+    def getCreated(self):
+        return self._created
+
+    def getUpdated(self):
+        return self._updated
+
+    def getRunTime(self):
+        return self._run_time
+
+    def getDescription(self):
+        return self._description
+
+    def setDescription(self, description):
+        self._description = description
+
+    def getName(self):
+        return self._name
+
+    def getMolecule(self):
+        return self._molecule
+
+    def setMolecule(self, molecule):
+        self._molecule = molecule
+
+    def getStrategy(self):
+        return self._strategy
+
+    def getSelection(self):
+        return self._selection
+
+    def getLibrary(self):
+        return self._library
+
+    def getLibraryLayout(self):
+        return self._library_layout
+
+    def getInstrumentModel(self):
+        return self._instrument_model
+
+    def getInstrumentDataFile(self):
+        return self._instrument_data_file
+
+    def getSequencingCenter(self):
+        return self._sequencing_center
+
+    def setSequencingCenter(self, centre):
+        self._sequencing_center = centre
+
+    def getPlatformUnit(self):
+        return self._platform_unit
+
+
 class Individual(datamodel.DatamodelObject):
     """
     This class represents an abstract Individual object.
