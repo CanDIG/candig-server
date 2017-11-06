@@ -1338,7 +1338,8 @@ class SqlDataRepository(AbstractDataRepository):
                 instrumentModel=experiment.getInstrumentModel(),
                 instrumentData_file=experiment.getInstrumentDataFile(),
                 sequencingCenter=experiment.getSequencingCenter(),
-                platformUnit=experiment.getPlatformUnit())
+                platformUnit=experiment.getPlatformUnit(),
+                attributes=json.dumps(experiment.getAttributes()))
         except Exception:
             raise exceptions.DuplicateNameException(
                 experiment.getLocalId(), None)

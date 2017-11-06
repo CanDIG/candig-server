@@ -15,7 +15,7 @@ dependencies:
 - zlib=1.2.8=3
 - pip:
     - ga4gh-common==0.0.7
-    - ga4gh-schemas==0.6.0a10.post1
+    - ga4gh-schemas
     - ga4gh-client==0.6.0a10
     - sphinx-argparse==0.1.15
     - sphinx==1.5.1
