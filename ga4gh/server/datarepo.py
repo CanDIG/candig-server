@@ -21,7 +21,6 @@ import ga4gh.server.datamodel.bio_metadata as biodata
 import ga4gh.server.datamodel.genotype_phenotype as genotype_phenotype
 import ga4gh.server.datamodel.genotype_phenotype_featureset as g2pFeatureset
 import ga4gh.server.datamodel.rna_quantification as rna_quantification
-import ga4gh.server.datamodel.peers as peers
 import ga4gh.server.exceptions as exceptions
 import ga4gh.server.repo.models as models
 
@@ -46,7 +45,6 @@ class AbstractDataRepository(object):
         self._ontologyNameMap = {}
         self._ontologyIdMap = {}
         self._ontologyIds = []
-        self._peers = []
         # these should eventually be "in" datasets, if not biosamples
         # but will have to change the schema first
         self._experimentIds = []
@@ -99,37 +97,6 @@ class AbstractDataRepository(object):
         Returns a list of datasets in this data repository
         """
         return [self._experimentIdMap[id_] for id_ in self._experimentIds]
-
-    def insertPeer(self, peer):
-        """
-        Adds a peer to the list of peers in the repository. Used only in
-        testing.
-        """
-        self._peers.append(peer)
-
-    def getPeer(self, url):
-        """
-        Select the first peer in the datarepo with the given url simulating
-        the behavior of selecting by URL. This is only used during testing.
-        """
-        peers = filter(lambda x: x.getUrl() == url, self.getPeers())
-        if len(peers) == 0:
-            raise exceptions.PeerNotFoundException(url)
-        return peers[0]
-
-    def getPeers(self, offset=0, limit=100):
-        """
-        Returns the list of peers with an optional offset and limit
-        simulating the SQL registry for testing.
-        """
-        return self._peers[offset:offset + limit]
-
-    def insertAnnouncement(self, announcement):
-        """
-        A placeholder function to simulate receiving an announcement used
-        in testing. It will throw an exception if the URL is invalid.
-        """
-        peers.Peer(announcement.get('url'))
 
     def getNumDatasets(self):
         """
@@ -506,13 +473,8 @@ class SimulatedDataRepository(AbstractDataRepository):
             numReadGroupSets=1, numReadGroupsPerReadGroupSet=1,
             numPhenotypeAssociations=2,
             numPhenotypeAssociationSets=1,
-            numAlignments=2, numRnaQuantSets=2, numExpressionLevels=2,
-            numPeers=200):
+            numAlignments=2, numRnaQuantSets=2, numExpressionLevels=2):
         super(SimulatedDataRepository, self).__init__()
-
-        for i in xrange(numPeers):
-            peer = peers.Peer("http://test{}.org".format(i))
-            self.insertPeer(peer)
 
         # References
         for i in range(numReferenceSets):
@@ -580,24 +542,6 @@ class SqlDataRepository(AbstractDataRepository):
         if self._openMode != MODE_WRITE:
             raise ValueError("Repo must be opened in write mode")
 
-    def getPeer(self, url):
-        """
-        Finds a peer by URL and return the first peer record with that URL.
-        """
-        peers = list(models.Peer.select().where(models.Peer.url == url))
-        if len(peers) == 0:
-            raise exceptions.PeerNotFoundException(url)
-        return peers[0]
-
-    def getPeers(self, offset=0, limit=1000):
-        """
-        Get the list of peers using an SQL offset and limit. Returns a list
-        of peer datamodel objects in a list.
-        """
-        select = models.Peer.select().order_by(
-            models.Peer.url).limit(limit).offset(offset)
-        return [peers.Peer(p.url, record=p) for p in select]
-
     def tableToTsv(self, model):
         """
         Takes a model class and attempts to create a table in TSV format
@@ -614,42 +558,6 @@ class SqlDataRepository(AbstractDataRepository):
                 ["{}\t".format(
                     getattr(item, key)) for key in model._meta.fields.keys()])
             print(row)
-
-    def printAnnouncements(self):
-        """
-        Prints the announcement table to the log in tsv format.
-        """
-        self.tableToTsv(models.Announcement)
-
-    def clearAnnouncements(self):
-        """
-        Flushes the announcement table.
-        """
-        try:
-            q = models.Announcement.delete().where(
-                models.Announcement.id > 0)
-            q.execute()
-        except Exception as e:
-            raise exceptions.RepoManagerException(e)
-
-    def insertAnnouncement(self, announcement):
-        """
-        Adds an announcement to the registry for later analysis.
-        """
-        url = announcement.get('url', None)
-        try:
-            peers.Peer(url)
-        except:
-            raise exceptions.BadUrlException(url)
-        try:
-            # TODO get more details about the user agent
-            models.Announcement.create(
-                url=announcement.get('url'),
-                attributes=json.dumps(announcement.get('attributes', {})),
-                remote_addr=announcement.get('remote_addr', None),
-                user_agent=announcement.get('user_agent', None))
-        except Exception as e:
-            raise exceptions.RepoManagerException(e)
 
     def open(self, mode=MODE_READ):
         """
@@ -1456,30 +1364,6 @@ class SqlDataRepository(AbstractDataRepository):
             models.Rnaquantificationset.id == rnaQuantificationSet.getId())
         q.execute()
 
-    def insertPeer(self, peer):
-        """
-        Accepts a peer datamodel object and adds it to the registry.
-        """
-        try:
-            models.Peer.create(
-                url=peer.getUrl(),
-                attributes=json.dumps(peer.getAttributes()))
-        except Exception as e:
-            raise exceptions.RepoManagerException(e)
-
-    def removePeer(self, url):
-        """
-        Remove peers by URL.
-        """
-        q = models.Peer.delete().where(
-            models.Peer.url == url)
-        q.execute()
-
-    def _createNetworkTables(self):
-        """"""
-        self.database.create_table(models.Peer)
-        self.database.create_table(models.Announcement)
-
     def initialise(self):
         """
         Initialise this data repository, creating any necessary directories
@@ -1487,7 +1371,6 @@ class SqlDataRepository(AbstractDataRepository):
         """
         self._checkWriteMode()
         self._createSystemTable()
-        self._createNetworkTables()
         self._createOntologyTable()
         self._createReferenceSetTable()
         self._createReferenceTable()
