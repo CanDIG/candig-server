@@ -11,6 +11,7 @@ import contextlib
 import fnmatch
 import os
 import inspect
+import array
 
 import google.protobuf.json_format as json_format
 
@@ -68,8 +69,17 @@ class TestCase(object):
         Tests if a an b are equal. If not, output an error and raise
         an assertion error.
         """
+        def compare_as_float_32s(a_dbl, b_dbl):
+            a_flt = array.array(b"f", [a_dbl])[0]
+            b_flt = array.array(b"f", [b_dbl])[0]
+            return a_flt == b_flt
+
         if a == b:
             return
+
+        if isinstance(a, float) and isinstance(b, float):
+            if compare_as_float_32s(a, b):
+                return
 
         # Protocol Buffers has default string as "", not None
         if a in TestCase.consideredNone and b in TestCase.consideredNone:

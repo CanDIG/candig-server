@@ -11,6 +11,7 @@ import unittest
 import logging
 import random
 import json
+import array
 import ga4gh.server.datamodel.reads as reads
 import ga4gh.server.datamodel.references as references
 import ga4gh.server.datamodel.variants as variants
@@ -51,6 +52,12 @@ class TestSimulatedStack(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.app = None
+
+    @classmethod
+    def as_float32(cls, x):
+        x_dbl = float(x)
+        x_flt = array.array(b"f", [x_dbl])[0]
+        return x_flt
 
     def setUp(self):
         self.backend = frontend.app.backend
@@ -217,7 +224,8 @@ class TestSimulatedStack(unittest.TestCase):
             gaReference.source_accessions, reference.getSourceAccessions())
         self.assertEqual(gaReference.is_derived, reference.getIsDerived())
         self.assertEqual(
-            gaReference.source_divergence, reference.getSourceDivergence())
+            TestSimulatedStack.as_float32(gaReference.source_divergence),
+            TestSimulatedStack.as_float32(reference.getSourceDivergence()))
 
     def verifySearchMethod(
             self, request, path, responseClass, objects, objectVerifier):
@@ -683,6 +691,7 @@ class TestSimulatedStack(unittest.TestCase):
         request.effects.add().term_id = "SO:0001627"
         request.effects.add().term_id = "B4DID"
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
+        print(response.data)
         responseData = protocol.fromJson(response.data, protocol.
                                          SearchVariantAnnotationsResponse)
         responseLength = len(responseData.variant_annotations)

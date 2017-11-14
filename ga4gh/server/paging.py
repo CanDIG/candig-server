@@ -297,7 +297,7 @@ class VariantAnnotationsIntervalIterator(IntervalIterator):
                     add = True
             if add:
                 newTxE.append(txe)
-        ann.ClearField('transcript_effects')
+        ann.ClearField(b'transcript_effects')
         ann.transcript_effects.extend(newTxE)
         return ann
 

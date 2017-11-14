@@ -216,7 +216,7 @@ class Backend(object):
             if request.name and request.name != obj.getLocalId():
                 include = False
             if request.biosample_id and include:
-                rgsp.ClearField("read_groups")
+                rgsp.ClearField(b"read_groups")
                 for readGroup in obj.getReadGroups():
                     if request.biosample_id == readGroup.getBiosampleId():
                         rgsp.read_groups.extend(
