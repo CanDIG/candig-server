@@ -264,6 +264,103 @@ class Experiment(datamodel.DatamodelObject):
         return self._platform_unit
 
 
+class Analysis(datamodel.DatamodelObject):
+    """
+    This class represents an abstract Analysis object.
+    It sets default values and getters, as well as the
+    toProtocolElement function.
+    """
+    compoundIdClass = datamodel.AnalysisCompoundId
+
+    def __init__(self, localId):
+        super(Analysis, self).__init__(None, localId)
+        self._created = datetime.datetime.now().isoformat()
+        self._updated = datetime.datetime.now().isoformat()
+        self._name = localId
+        self._description = None
+        self._type = None
+        self._software = []
+        self._attributes = {}
+
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__, self.__dict__)
+
+    def toProtocolElement(self):
+        analysis = protocol.Analysis(
+            id=self.getId(),
+            name=self.getName(),
+            description=self.getDescription(),
+            message_create_time=self.getCreated(),
+            message_update_time=self.getUpdated(),
+            type=self.getAnalysisType())
+        analysis.software.extend(self.getSoftware())
+        self.serializeAttributes(analysis)
+        return analysis
+
+    def populateFromJson(self, jsonString):
+        try:
+            parsed = protocol.fromJson(jsonString, protocol.Analysis)
+        except:
+            raise exceptions.InvalidJsonException(jsonString)
+        if parsed.message_create_time != "":
+            self._created = parsed.message_create_time
+        if parsed.message_update_time != "":
+            self._updated = parsed.message_update_time
+        self._description = parsed.description
+        self._name = parsed.description
+        self._type = parsed.type
+        self._software = parsed.software
+        attributes = {}
+        for key in parsed.attributes.attr:
+            attributes[key] = {
+                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+        self.setAttributes(attributes)
+        return self
+
+    def populateFromRow(self, analysisRecord):
+        # TODO coerce to types
+        self._created = analysisRecord.created
+        self._updated = analysisRecord.updated
+        self._description = analysisRecord.description
+        self._name = analysisRecord.name
+        self._type = analysisRecord.analysistype
+        self.setAttributesJson(analysisRecord.attributes)
+        return self
+
+    def getCreated(self):
+        return self._created
+
+    def getUpdated(self):
+        return self._updated
+
+    def getDescription(self):
+        return self._description
+
+    def setDescription(self, description):
+        self._description = description
+
+    def getName(self):
+        return self._name
+
+    def setName(self, name):
+        self._name = name
+
+    def getAnalysisType(self):
+        return self._type
+
+    def setAnalysisType(self, analysistype):
+        self._type = analysistype
+
+    def getSoftware(self):
+        return self._software
+
+    def setSoftware(self, software):
+        self._type = software[:]
+
+    def getPlatformUnit(self):
+        return self._platform_unit
+
+
 class Individual(datamodel.DatamodelObject):
     """
     This class represents an abstract Individual object.

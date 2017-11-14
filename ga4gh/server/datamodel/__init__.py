@@ -348,6 +348,14 @@ class ExperimentCompoundId(CompoundId):
     containerIds = [('experiment_id', 0)]
 
 
+class AnalysisCompoundId(CompoundId):
+    """
+    The compound id for an experiment
+    """
+    fields = ['analysis']
+    containerIds = [('analysis_id', 0)]
+
+
 class VariantAnnotationSetCompoundId(VariantSetCompoundId):
     """
     The compound id for a variant annotation set

@@ -85,6 +85,21 @@ class Experiment(BaseModel):
         )
 
 
+class Analysis(BaseModel):
+    name = pw.TextField()
+    id = pw.TextField(primary_key=True)
+    description = pw.TextField(null=True)
+    created = pw.TextField(null=True)
+    updated = pw.TextField(null=True)
+    analysistype = pw.TextField(null=True)
+    software = pw.TextField(null=True)
+
+    class Meta:
+        indexes = (
+            (('name'), True),
+        )
+
+
 class Referenceset(BaseModel):
     assemblyid = pw.TextField(db_column='assemblyId', null=True)
     dataurl = pw.TextField(db_column='dataUrl')
