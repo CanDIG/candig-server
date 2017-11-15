@@ -1510,6 +1510,7 @@ class SqlDataRepository(AbstractDataRepository):
         self._readReferenceTable()
         self._readDatasetTable()
         self._readExperimentTable()
+        self._readAnalysisTable()
         self._readReadGroupSetTable()
         self._readReadGroupTable()
         self._readVariantSetTable()
