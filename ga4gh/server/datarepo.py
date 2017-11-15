@@ -50,6 +50,9 @@ class AbstractDataRepository(object):
         self._experimentIds = []
         self._experimentNameMap = {}
         self._experimentIdMap = {}
+        self._analysisIds = []
+        self._analysisNameMap = {}
+        self._analysisIdMap = {}
 
     def addDataset(self, dataset):
         """
@@ -68,6 +71,15 @@ class AbstractDataRepository(object):
         self._experimentIdMap[id_] = experiment
         self._experimentNameMap[experiment.getLocalId()] = experiment
         self._experimentIds.append(id_)
+
+    def addAnalysis(self, analysis):
+        """
+        Adds the specified analysis to this data repository.
+        """
+        id_ = analysis.getId()
+        self._analysisIdMap[id_] = analysis
+        self._analysisNameMap[analysis.getLocalId()] = analysis
+        self._analysisIds.append(id_)
 
     def addReferenceSet(self, referenceSet):
         """
@@ -97,6 +109,12 @@ class AbstractDataRepository(object):
         Returns a list of datasets in this data repository
         """
         return [self._experimentIdMap[id_] for id_ in self._experimentIds]
+
+    def getAnalyses(self):
+        """
+        Returns a list of datasets in this data repository
+        """
+        return [self._analysisIdMap[id_] for id_ in self._analysisIds]
 
     def getNumDatasets(self):
         """
@@ -155,6 +173,35 @@ class AbstractDataRepository(object):
         if name not in self._experimentNameMap:
             raise exceptions.ExperimentNameNotFoundException(name)
         return self._experimentNameMap[name]
+
+    def getAnalysis(self, id_):
+        """
+        Returns a analysis with the specified ID, or raises a
+        AnalysisNotFoundException if it does not exist.
+        """
+        if id_ not in self._analysisIdMap:
+            raise exceptions.AnalysisNotFoundException(id_)
+        return self._analysisIdMap[id_]
+
+    def getNumAnalyses(self):
+        """
+        Returns the number of analyses in this data repository.
+        """
+        return len(self._analysisIds)
+
+    def getAnalysisByIndex(self, index):
+        """
+        Returns the analysis at the specified index.
+        """
+        return self._analysisIdMap[self._analysisIds[index]]
+
+    def getAnalysisByName(self, name):
+        """
+        Returns the analysis with the specified name.
+        """
+        if name not in self._analysisNameMap:
+            raise exceptions.AnalysisNameNotFoundException(name)
+        return self._analysisNameMap[name]
 
     def getReferenceSets(self):
         """
@@ -320,6 +367,12 @@ class AbstractDataRepository(object):
             print(
                 "", experiment.getLocalId(), experiment.getId(),
                 experiment.getName(), experiment.getDescription(), sep="\t")
+
+        print("Analyses:")
+        for analysis in self.getAnalyses():
+            print(
+                "", analysis.getLocalId(), analysis.getId(),
+                analysis.getName(), analysis.getDescription(), sep="\t")
 
     def allReferences(self):
         """
@@ -614,7 +667,9 @@ class SqlDataRepository(AbstractDataRepository):
             # TODO how do we verify this? Check some well-know SO terms?
         # TODO: how do we verify the experiments
         for experiment in self.getExperiments():
-            print("Verifying Expt", experiment.getName())
+            print("Not really verifying Expt", experiment.getName())
+        for analysis in self.getAnalyses():
+            print("Not really verifying Analysis", analysis.getName())
         for referenceSet in self.getReferenceSets():
             print(
                 "Verifying ReferenceSet", referenceSet.getLocalId(),
@@ -928,6 +983,14 @@ class SqlDataRepository(AbstractDataRepository):
         """
         q = models.Experiment.delete().where(
             models.Experiment.id == experiment.getId())
+        q.execute()
+
+    def removeAnalysis(self, analysis):
+        """
+        Removes the specified analysis from this repository.
+        """
+        q = models.Analysis.delete().where(
+            models.Analysis.id == analysis.getId())
         q.execute()
 
     def removeIndividual(self, individual):
@@ -1259,6 +1322,34 @@ class SqlDataRepository(AbstractDataRepository):
             assert experiment.getId() == experimentRecord.id
             self.addExperiment(experiment)
 
+    def _createAnalysisTable(self):
+        self.database.create_table(models.Analysis)
+
+    def insertAnalysis(self, analysis):
+        """
+        Inserts the specified Analysis into this repository.
+        """
+        try:
+            models.Analysis.create(
+                id=analysis.getId(),
+                name=analysis.getName(),
+                description=analysis.getDescription(),
+                created=analysis.getCreated(),
+                updated=analysis.getUpdated(),
+                type=analysis.getAnalysisType(),
+                software=analysis.getSoftware(),
+                attributes=json.dumps(analysis.getAttributes()))
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                analysis.getLocalId(), None)
+
+    def _readAnalysisTable(self):
+        for analysisRecord in models.Analysis.select():
+            analysis = biodata.Analysis(analysisRecord.name)
+            analysis.populateFromRow(analysisRecord)
+            assert analysis.getId() == analysisRecord.id
+            self.addAnalysis(analysis)
+
     def _createIndividualTable(self):
         self.database.create_table(models.Individual)
 
@@ -1384,6 +1475,7 @@ class SqlDataRepository(AbstractDataRepository):
         self._createContinuousSetTable()
         self._createBiosampleTable()
         self._createExperimentTable()
+        self._createAnalysisTable()
         self._createIndividualTable()
         self._createPhenotypeAssociationSetTable()
         self._createRnaQuantificationSetTable()
