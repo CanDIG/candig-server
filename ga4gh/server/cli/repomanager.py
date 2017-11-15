@@ -496,9 +496,21 @@ class RepoManager(object):
         individual.populateFromJson(self._args.individual)
         self._updateRepo(self._repo.insertIndividual, individual)
 
+    def removeIndividual(self):
+        """
+        Removes an individual from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        individual = dataset.getIndividualByName(self._args.individualName)
+
+        def func():
+            self._updateRepo(self._repo.removeIndividual, individual)
+        self._confirmDelete("Individual", individual.getLocalId(), func)
+
     def addExperiment(self):
         """
-        Adds a new individual into this repo
+        Adds a new experiment into this repo
         """
         self._openRepo()
         experiment = bio_metadata.Experiment(self._args.experimentName)
@@ -511,23 +523,33 @@ class RepoManager(object):
         Removes an experiment from this repo
         """
         self._openRepo()
-        experiment = self._repo.getExperimentByName(self._args.biosampleName)
+        experiment = self._repo.getExperimentByName(self._args.experimentName)
 
         def func():
             self._updateRepo(self._repo.removeExperiment, experiment)
         self._confirmDelete("Experiment", experiment.getLocalId(), func)
 
-    def removeIndividual(self):
+    def addAnalysis(self):
         """
-        Removes an individual from this repo
+        Adds a new analysis into this repo
         """
         self._openRepo()
-        dataset = self._repo.getDatasetByName(self._args.datasetName)
-        individual = dataset.getIndividualByName(self._args.individualName)
+        analysis = bio_metadata.Analysis(self._args.analysisName)
+        analysis.populateFromJson(self._args.analysis)
+        analysis.setName(self._args.analysisName)
+        analysis.setDescription(self._args.description)
+        self._updateRepo(self._repo.insertAnalysis, analysis)
+
+    def removeAnalysis(self):
+        """
+        Removes an analysis from this repo
+        """
+        self._openRepo()
+        analysis = self._repo.getAnalysisByName(self._args.analysisName)
 
         def func():
-            self._updateRepo(self._repo.removeIndividual, individual)
-        self._confirmDelete("Individual", individual.getLocalId(), func)
+            self._updateRepo(self._repo.removeAnalysis, analysis)
+        self._confirmDelete("Analysis", analysis.getLocalId(), func)
 
     def removeOntology(self):
         """
@@ -718,22 +740,34 @@ class RepoManager(object):
             help="the name of the biosample")
 
     @classmethod
-    def addExperimentNameArgument(cls, subparser):
-        subparser.add_argument(
-            "experimentName",
-            help="the name of the experiment")
-
-    @classmethod
     def addBiosampleArgument(cls, subparser):
         subparser.add_argument(
             "biosample",
             help="the JSON of the biosample")
 
     @classmethod
+    def addExperimentNameArgument(cls, subparser):
+        subparser.add_argument(
+            "experimentName",
+            help="the name of the experiment")
+
+    @classmethod
     def addExperimentArgument(cls, subparser):
         subparser.add_argument(
             "experiment",
             help="the JSON of the experiment")
+
+    @classmethod
+    def addAnalysisNameArgument(cls, subparser):
+        subparser.add_argument(
+            "analysisName",
+            help="the name of the analysis")
+
+    @classmethod
+    def addAnalysisArgument(cls, subparser):
+        subparser.add_argument(
+            "analysis",
+            help="the JSON of the analysis")
 
     @classmethod
     def addIndividualArgument(cls, subparser):
@@ -853,6 +887,22 @@ class RepoManager(object):
         cls.addRepoArgument(removeExperimentParser)
         cls.addExperimentNameArgument(removeExperimentParser)
         cls.addForceOption(removeExperimentParser)
+
+        addAnalysisParser = common_cli.addSubparser(
+            subparsers, "add-analysis", "Add an analysis to the data repo")
+        addAnalysisParser.set_defaults(runner="addAnalysis")
+        cls.addRepoArgument(addAnalysisParser)
+        cls.addAnalysisNameArgument(addAnalysisParser)
+        cls.addDescriptionOption(addAnalysisParser, "Analysis description")
+        cls.addAnalysisArgument(addAnalysisParser)
+
+        removeAnalysisParser = common_cli.addSubparser(
+            subparsers, "remove-analysis",
+            "Remove an analysis from the data repo")
+        removeAnalysisParser.set_defaults(runner="removeAnalysis")
+        cls.addRepoArgument(removeAnalysisParser)
+        cls.addAnalysisNameArgument(removeAnalysisParser)
+        cls.addForceOption(removeAnalysisParser)
 
         objectType = "reference set"
         addReferenceSetParser = common_cli.addSubparser(

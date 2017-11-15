@@ -290,8 +290,8 @@ class Analysis(datamodel.DatamodelObject):
             id=self.getId(),
             name=self.getName(),
             description=self.getDescription(),
-            message_create_time=self.getCreated(),
-            message_update_time=self.getUpdated(),
+            created=self.getCreated(),
+            updated=self.getUpdated(),
             type=self.getAnalysisType())
         analysis.software.extend(self.getSoftware())
         self.serializeAttributes(analysis)
@@ -302,12 +302,12 @@ class Analysis(datamodel.DatamodelObject):
             parsed = protocol.fromJson(jsonString, protocol.Analysis)
         except:
             raise exceptions.InvalidJsonException(jsonString)
-        if parsed.message_create_time != "":
-            self._created = parsed.message_create_time
-        if parsed.message_update_time != "":
-            self._updated = parsed.message_update_time
+        if parsed.created != "":
+            self._created = parsed.created
+        if parsed.updated != "":
+            self._updated = parsed.updated
         self._description = parsed.description
-        self._name = parsed.description
+        self._name = parsed.name
         self._type = parsed.type
         self._software = parsed.software
         attributes = {}

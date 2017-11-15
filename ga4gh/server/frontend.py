@@ -146,6 +146,12 @@ class ServerStatus(object):
         """
         return app.backend.getDataRepository().getExperiments()
 
+    def getAnalyses(self):
+        """
+        Returns the list of analysisIds for this backend
+        """
+        return app.backend.getDataRepository().getAnalyses()
+
     def getVariantSets(self, datasetId):
         """
         Returns the list of variant sets for the dataset
@@ -732,6 +738,13 @@ def searchExperiments():
         flask.request, app.backend.runSearchExperiments)
 
 
+@DisplayedRoute('/analyses/search', postMethod=True)
+@requires_auth
+def searchAnalyses():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchAnalyses)
+
+
 @DisplayedRoute('/featuresets/search', postMethod=True)
 @requires_auth
 def searchFeatureSets():
@@ -986,6 +999,15 @@ def getDataset(id):
 def getExperiment(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetExperiment)
+
+
+@DisplayedRoute(
+    '/analyses/<no(search):id>',
+    pathDisplay='/analyses/<id>')
+@requires_auth
+def getAnalysis(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetAnalysis)
 
 
 @DisplayedRoute(

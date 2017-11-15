@@ -149,6 +149,17 @@ class Backend(object):
             request, self.getDataRepository().getNumExperiments(),
             self.getDataRepository().getExperimentByIndex)
 
+    def analysesGenerator(self, request):
+        """
+        Returns a generator over the (analysis, nextPageToken) pairs
+        defined by the specified request
+        TODO: This should really be under the appropriate biosamples, but
+        for now..
+        """
+        return self._topLevelObjectGenerator(
+            request, self.getDataRepository().getNumAnalyses(),
+            self.getDataRepository().getAnalysisByIndex)
+
     def biosamplesGenerator(self, request):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         results = []
@@ -735,65 +746,7 @@ class Backend(object):
         return protocol.serialize(protocol.GetInfoResponse(
             protocol_version=protocol.version), return_mimetype)
 
-<<<<<<< HEAD
-    def runGetVariant(self, id_):
-=======
-    def runAddAnnouncement(self, flaskrequest,
-                           return_mimetype="application/json"):
-        """
-        Takes a flask request from the frontend and attempts to parse
-        into an AnnouncePeerRequest. If successful, it will log the
-        announcement to the `announcement` table with some other metadata
-        gathered from the request.
-        """
-        announcement = {}
-        # We want to parse the request ourselves to collect a little more
-        # data about it.
-        try:
-            requestData = protocol.fromJson(
-                flaskrequest.get_data(), protocol.AnnouncePeerRequest)
-            announcement['hostname'] = flaskrequest.host_url
-            announcement['remote_addr'] = flaskrequest.remote_addr
-            announcement['user_agent'] = flaskrequest.headers.get('User-Agent')
-        except AttributeError:
-            # Sometimes in testing we will send protocol requests instead
-            # of flask requests and so the hostname and user agent won't
-            # be present.
-            try:
-                requestData = protocol.fromJson(
-                    flaskrequest, protocol.AnnouncePeerRequest)
-            except Exception as e:
-                raise exceptions.InvalidJsonException(e)
-        except Exception as e:
-            raise exceptions.InvalidJsonException(e)
-
-        # Validate the url before accepting the announcement
-        peer = datamodel.peers.Peer(requestData.peer.url)
-        peer.setAttributesJson(protocol.toJson(
-                requestData.peer.attributes))
-        announcement['url'] = peer.getUrl()
-        announcement['attributes'] = peer.getAttributes()
-        try:
-            self.getDataRepository().insertAnnouncement(announcement)
-        except:
-            raise exceptions.BadRequestException(announcement['url'])
-        return protocol.serialize(
-            protocol.AnnouncePeerResponse(success=True), return_mimetype)
-
-    def runListPeers(self, request, return_mimetype="application/json"):
-        """
-        Takes a ListPeersRequest and returns a ListPeersResponse using
-        a page_token and page_size if provided.
-        """
-        return self.runSearchRequest(
-            request,
-            protocol.ListPeersRequest,
-            protocol.ListPeersResponse,
-            self.peersGenerator,
-            return_mimetype)
-
     def runGetVariant(self, id_, return_mimetype="application/json"):
->>>>>>> 598f4a4... Support for protobuf serialization
         """
         Returns a variant with the given id
         """
@@ -907,7 +860,6 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(id_)
         return self.runGetRequest(dataset, return_mimetype)
 
-<<<<<<< HEAD
     def runGetExperiment(self, id_):
         """
         Runs a getExperiment request for the specified ID.
@@ -915,11 +867,15 @@ class Backend(object):
         experiment = self.getDataRepository().getExperiment(id_)
         return self.runGetRequest(experiment)
 
-    def runGetVariantAnnotationSet(self, id_):
-=======
+    def runGetAnalysis(self, id_):
+        """
+        Runs a getAnalysis request for the specified ID.
+        """
+        analysis = self.getDataRepository().getAnalysis(id_)
+        return self.runGetRequest(analysis)
+
     def runGetVariantAnnotationSet(self, id_,
                                    return_mimetype="application/json"):
->>>>>>> 598f4a4... Support for protobuf serialization
         """
         Runs a getVariantSet request for the specified ID.
         """
@@ -1099,6 +1055,16 @@ class Backend(object):
             request, protocol.SearchExperimentsRequest,
             protocol.SearchExperimentsResponse,
             self.experimentsGenerator,
+            return_mimetype)
+
+    def runSearchAnalyses(self, request, return_mimetype):
+        """
+        Runs the specified SearchAnalysesRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchAnalysesRequest,
+            protocol.SearchAnalysesResponse,
+            self.analysesGenerator,
             return_mimetype)
 
     def runSearchFeatureSets(self, request, return_mimetype):
