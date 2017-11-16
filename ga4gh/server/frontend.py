@@ -786,6 +786,7 @@ def searchIndividuals():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchIndividuals)
 
+
 @DisplayedRoute(
     '/biosamples/<no(search):id>',
     pathDisplay='/biosamples/<id>')
