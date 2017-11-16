@@ -865,14 +865,14 @@ class Backend(object):
         Runs a getExperiment request for the specified ID.
         """
         experiment = self.getDataRepository().getExperiment(id_)
-        return self.runGetRequest(experiment)
+        return self.runGetRequest(experiment, return_mimetype)
 
     def runGetAnalysis(self, id_, return_mimetype="application/json"):
         """
         Runs a getAnalysis request for the specified ID.
         """
         analysis = self.getDataRepository().getAnalysis(id_)
-        return self.runGetRequest(analysis)
+        return self.runGetRequest(analysis, return_mimetype)
 
     def runGetVariantAnnotationSet(self, id_,
                                    return_mimetype="application/json"):
