@@ -27,7 +27,7 @@ before_script:
     
 before_install:
     - bash tools/travis-install-protoc.sh 3.3.2
-    - export PATH=/tmp/proto3.1.0/bin:$PATH
+    - export PATH=/tmp/proto3.3.2/bin:$PATH
 
 # run_tests.py runs everything under the script: tag so only put commands
 # under it that we want to run (and want to be able to run) as local tests
