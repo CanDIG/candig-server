@@ -860,14 +860,14 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(id_)
         return self.runGetRequest(dataset, return_mimetype)
 
-    def runGetExperiment(self, id_):
+    def runGetExperiment(self, id_, return_mimetype="application/json"):
         """
         Runs a getExperiment request for the specified ID.
         """
         experiment = self.getDataRepository().getExperiment(id_)
         return self.runGetRequest(experiment)
 
-    def runGetAnalysis(self, id_):
+    def runGetAnalysis(self, id_, return_mimetype="application/json"):
         """
         Runs a getAnalysis request for the specified ID.
         """
