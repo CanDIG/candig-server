@@ -55,7 +55,7 @@ class DevelopmentConfig(BaseConfig):
     Configuration used for development.
     """
     #DATA_SOURCE = "ga4gh-example-data/registry.db"
-    DATA_SOURCE = "1000genomes_partition/registry.db"
+    DATA_SOURCE = "/srv/ga4gh-compliance-data/registry.db"
     DEBUG = True
 
 
