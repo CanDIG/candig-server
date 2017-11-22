@@ -30,6 +30,7 @@ import requests
 import logging
 from logging import StreamHandler
 from werkzeug.contrib.cache import FileSystemCache
+from yaml import load, dump
 
 import ga4gh.server
 import ga4gh.server.backend as backend
@@ -44,6 +45,17 @@ MIMETYPE = "application/json"
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
 
+def import_yaml_config(config):
+    """
+    A function that returns the frontend and server configuration
+    as a dictionary.
+    """
+    stream = file(config, 'r')
+    config = load(stream)
+    return config
+
+config = import_yaml_config(config="oidc_config.yml")
+
 app = flask.Flask(__name__)
 
 assert not hasattr(app, 'urls')
@@ -55,10 +67,10 @@ app.config.update({
     'SECRET_KEY': "key",
     'TESTING': False,
     'DEBUG': False,
-    'OIDC_CLIENT_SECRETS': '/srv/ga4gh/server/client_secrets.json',
-    'OIDC_ID_TOKEN_COOKIE_SECURE': False,
-    'OIDC_REQUIRE_VERIFIED_EMAIL': False,
-    'OIDC_OPENID_REALM': 'http://142.1.33.237:8000/oidc_callback' #Change host and port
+    #'OIDC_CLIENT_SECRETS': '/srv/ga4gh/server/client_secrets.json',
+    #'OIDC_ID_TOKEN_COOKIE_SECURE': False,
+    #'OIDC_REQUIRE_VERIFIED_EMAIL': False,
+    #'OIDC_OPENID_REALM': 'http://142.1.33.237:8000/oidc_callback' #Change host and port
 })
 
 #For configuration of Flask-Oidc
