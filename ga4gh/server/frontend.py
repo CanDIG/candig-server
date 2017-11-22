@@ -54,7 +54,6 @@ def import_yaml_config(config):
     config = load(stream)
     return config
 
-config = import_yaml_config(config="oidc_config.yml")
 
 app = flask.Flask(__name__)
 
@@ -63,15 +62,8 @@ app.urls = []
 requires_auth = auth.auth_decorator(app)
 
 #Edit this for flask-oidc, the endpoints are in the client_secrets.json file
-app.config.update({
-    'SECRET_KEY': "key",
-    'TESTING': False,
-    'DEBUG': False,
-    #'OIDC_CLIENT_SECRETS': '/srv/ga4gh/server/client_secrets.json',
-    #'OIDC_ID_TOKEN_COOKIE_SECURE': False,
-    #'OIDC_REQUIRE_VERIFIED_EMAIL': False,
-    #'OIDC_OPENID_REALM': 'http://142.1.33.237:8000/oidc_callback' #Change host and port
-})
+config = import_yaml_config(config="/srv/ga4gh-server/oidc_auth_config.yml")
+app.config.update(config["frontend"])
 
 #For configuration of Flask-Oidc
 oidc = OpenIDConnect(app)
