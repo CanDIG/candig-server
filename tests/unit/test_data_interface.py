@@ -319,7 +319,6 @@ class TestInterfacingLayer(unittest.TestCase):
                     self.assertEqual(repoAssociation.phenotype,
                                      clientPhenotype)
 
-
     @unittest.skip("Disabled")
     def testSearchPhenotypeAssociationSets(self):
         self._testSearchMethodInContainer(
