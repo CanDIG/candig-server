@@ -3,6 +3,7 @@ The Flask frontend for the GA4GH API.
 
 TODO Document properly.
 """
+
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -16,21 +17,19 @@ import json
 
 import flask
 import flask.ext.cors as cors
-from flask import request, Flask, g
+from flask import request
 from flask.ext.oidc import OpenIDConnect
 import humanize
 import werkzeug
 import oic
-from oic.oic import AuthorizationRequest, Client
 import oic.oauth2
 import oic.oic.message as message
-from oic.utils.http_util import Redirect
 from oauth2client.client import OAuth2Credentials
 import requests
 import logging
 from logging import StreamHandler
 from werkzeug.contrib.cache import FileSystemCache
-from yaml import load, dump
+from yaml import load
 
 import ga4gh.server
 import ga4gh.server.backend as backend
@@ -44,6 +43,7 @@ import ga4gh.schemas.protocol as protocol
 MIMETYPE = "application/json"
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
+
 
 def import_yaml_config(config):
     """
@@ -61,12 +61,13 @@ assert not hasattr(app, 'urls')
 app.urls = []
 requires_auth = auth.auth_decorator(app)
 
-#Edit this for flask-oidc, the endpoints are in the client_secrets.json file
+# Edit this for flask-oidc, the endpoints are in the client_secrets.json file
 config = import_yaml_config(config="/srv/ga4gh-server/oidc_auth_config.yml")
 app.config.update(config["frontend"])
 
-#For configuration of Flask-Oidc
+# For configuration of Flask-Oidc
 oidc = OpenIDConnect(app)
+
 
 class NoConverter(werkzeug.routing.BaseConverter):
     """
@@ -114,7 +115,7 @@ class ServerStatus(object):
             'DEBUG', 'REQUEST_VALIDATION',
             'DEFAULT_PAGE_SIZE', 'MAX_RESPONSE_LENGTH', 'LANDING_MESSAGE_HTML'
         ]
-        
+
         return [(k, app.config[k]) for k in keys]
 
     def getPreciseUptime(self):
@@ -293,12 +294,12 @@ def _configure_backend(app):
 def configure(configFile=None, baseConfig="ProductionConfig",
               port=8000, extraConfig={}):
     """
-    TODO Document this critical function! What does it do? What does
-    it assume?
+    TODO Document this critical function! What does it do?
+    What does it assume?
 
-    Based on the configuration the server is being hosted with, it initalizes all
-    the variables needed, and generates the redirect-url for the Auth and OIDC providers 
-    (if present).
+    Based on the configuration the server is being hosted with,
+    it initalizes all the variables needed, and generates the
+    redirect-url for the Auth and OIDC providers (if present).
 
     """
     file_handler = StreamHandler()
@@ -384,12 +385,15 @@ def configure(configFile=None, baseConfig="ProductionConfig",
                 redirect_uris=[redirectUri],
                 verify_ssl=False)
             app.oidcClient.store_registration_info(response)
-     #This is for the configuration of the Keycloak Server, added by Kevin Chan on June 12, 2017
+    # This is for the configuration of the Keycloak Server
+    # added by Kevin Chan on June 12, 2017
     """
     if "KEYCLOAK" in app.config:
-        #Configuration using the requests library. I left this here for your reference to
-        #familiarize yourself with the Authorization code flow
-        #Makes a request to get the configuration, and stores all the endpoints/id/secrets needed
+        # Configuration using the requests library.
+        # I left this here for your reference to
+        # familiarize yourself with the Authorization code flow
+        # Makes a request to get the configuration,
+        # and stores all the endpoints/id/secrets needed
 
         app.oidcClient = Client(client_authn_method=CLIENT_AUTHN_METHOD)
         endpoints = requests.get(app.config["WELL_KNOWN_CONFIG"]).json()
@@ -487,21 +491,26 @@ def handleException(exception):
         return getFlaskResponse(responseStr, serverException.httpStatus)
 
 
-#Added by Kevin Chan 
+# Added by Kevin Chan
 def requires_token(f):
-    """ 
-    Decorator function that ensures that the token is valid, if the token is invalid
-    or expired, the user will be redirected to the login page. Much of the authorization
-    code flow is done solely by the function decorater @oidc.require_login
+    """
+    Decorator function that ensures that the token is valid,
+    if the token is invalid or expired, the user will be
+    redirected to the login page. Much of the authorization
+    code flow is done solely by the function decorator
+    @oidc.require_login
     """
     @functools.wraps(f)
     def decorated(*args, **kargs):
         if app.config.get("KEYCLOAK"):
+            hostname = socket.gethostbyname(socket.gethostname())
             redirectUri = 'http://{0}:{1}{2}'.format(
-                    socket.gethostbyname(socket.gethostname()), app.myPort, request.path)
+                    hostname, app.myPort, request.path)
             try:
                 info = oidc.user_getinfo(['sub'])
-                tokenResponse = OAuth2Credentials.from_json(oidc.credentials_store[info.get('sub')]).token_response
+                subStore = oidc.credentials_store[info.get('sub')]
+                credentials = OAuth2Credentials.from_json(subStore)
+                tokenResponse = credentials.token_response
                 introspectArgs = {
                     "token": tokenResponse["access_token"],
                     "client_id": oidc.client_secrets["client_id"],
@@ -510,43 +519,47 @@ def requires_token(f):
                 }
             except:
                 return flask.redirect(redirectUri)
-            userInfo = requests.post(url=oidc.client_secrets["token_introspection_uri"],
-                data=introspectArgs)
+            introspect = oidc.client_secrets["token_introspection_uri"]
+            userInfo = requests.post(url=introspect, data=introspectArgs)
 
             if userInfo.status_code != 200:
-                raise exceptions.NotAuthenticatedException()                              
+                raise exceptions.NotAuthenticatedException()
         return f(*args, **kargs)
-    return decorated     
+    return decorated
 
-"""
+
 def startLogin():
-    
-    If user is not logged in, this generates the redirect URL to the OIDC or Auth
-    provider (depending on the configuration)
+    """
+    If user is not logged in, this generates the redirect URL
+    to the OIDC or Auth provider (depending on the configuration)
     Returns: the redirect response
-
-
+    """
     flask.session["state"] = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
     flask.session["nonce"] = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
+    provInfo = app.oidcClient.provider_info
     args = {
         "client_id": app.oidcClient.client_id,
         "response_type": "code",
         "scope": ["openid", "profile"],
         "nonce": flask.session["nonce"],
         "redirect_uri": app.oidcClient.redirect_uris[0],
-        "authorization_endpoint": app.oidcClient.provider_info["authorization_endpoint"],
+        "authorization_endpoint": provInfo["authorization_endpoint"],
         "state": flask.session["state"],
     }
 
-    #First condition is the configuration for the Keycloak Server. Redirects the user to the 
-    #Keycloak sign in page. I left this here for your reference. 
-    #Added by Kevin Chan
-    
+    # First condition is the configuration for the Keycloak Server.
+    # Redirects the user to the Keycloak sign in page.
+    # I left this here for your reference.
+    # Added by Kevin Chan
+
     if "WELL_KNOWN_CONFIG" in app.config:
-        #result = app.oidcClient.do_authorization_request(request_args=args, state=flask.session["state"])
-        result = app.oidcClient.construct_AuthorizationRequest(request_args=args)
+        # result = app.oidcClient.do_authorization_request(
+        #     request_args=args, state=flask.session["state"])
+        result = app.oidcClient.construct_AuthorizationRequest(
+            request_args=args)
         addOn = result.request(app.oidcClient.authorization_endpoint)
-        loginUrl = app.oidcClient.provider_info["authorization_endpoint"] + addOn
+        authInfo = app.oidcClient.provider_info["authorization_endpoint"]
+        loginUrl = authInfo + addOn
 
         if request.path == "/login":
             flask.session["path"] = "/"
@@ -554,13 +567,14 @@ def startLogin():
             flask.session["path"] = request.path
         return flask.redirect(loginUrl)
 
-    result = app.oidcClient.do_authorization_request(request_args=args, state=flask.session["state"])
+    result = app.oidcClient.do_authorization_request(
+        request_args=args, state=flask.session["state"])
     return flask.redirect(result.url)
 
-"""
 
-#Commented out by Kevin Chan. If Using the Keycloak Config or no authentication
-#this function is no longer needed
+# Commented out by Kevin Chan.
+# If Using the Keycloak Config or no authentication
+# this function is no longer needed
 """
 @app.before_request
 def checkAuthentication():
@@ -581,8 +595,10 @@ def checkAuthentication():
     if app.oidcClient is None:
         return
 
-    if flask.request.endpoint == 'oidcCallback' or flask.request.endpoint == "keycloakCallback":
-        return 
+    oidcCall = flask.request.endpoint == 'oidcCallback'
+    keyCall = flask.request.endpoint == "keycloakCallback"
+    if oidcCall or keyCall:
+        return
     key = flask.session.get('key') or flask.request.args.get('key')
 
     if key is None: # or not app.cache.get(key):
@@ -674,10 +690,11 @@ def index():
             return response
         else:
             exceptions.NotAuthenticatedException()
-    else: 
+    else:
         return response
 
-#New configuration added by Kevin Chan 
+
+# New configuration added by Kevin Chan
 @app.route("/login")
 def login():
 
@@ -692,9 +709,9 @@ def login():
                 domain=app.config.get('AUTH0_HOST'),
                 client_id=app.config.get('AUTH0_CLIENT_ID'))
 
-    #Configuration for KeyCloak Server
+    # Configuration for KeyCloak Server
     elif app.config.get('KEYCLOAK'):
-        app.oidClient = None 
+        app.oidClient = None
         flask.session.clear()
         return startLogin()
 
@@ -714,6 +731,7 @@ def callback_handling():
     else:
         raise exceptions.NotFoundException()
 
+
 @app.route("/logout")
 @requires_auth
 @cors.cross_origin(headers=['Content-Type', 'Authorization'])
@@ -729,15 +747,18 @@ def logout():
         return flask.redirect(url)
     else:
 
-        args = {
-            "token": app.oidcClient.token["access_token"],
-            "client_id": app.oidcClient.client_id,
-            "client_secret": app.oidcClient.client_secret,
-            "refresh_token": app.oidcClient.token["refresh_token"]
-            }
-        logout = requests.post(url=app.oidcClient.provider_info["session_endpoint"], data=args)
+        # args = {
+        #    "token": app.oidcClient.token["access_token"],
+        #    "client_id": app.oidcClient.client_id,
+        #    "client_secret": app.oidcClient.client_secret,
+        #    "refresh_token": app.oidcClient.token["refresh_token"]
+        #    }
+
+        # endpoint = app.oidcClient.provider_info["session_endpoint"]
+        # logout = requests.post(url=endpoint, data=args)
         flask.session.clear()
-        return flask.redirect("http://{0}:{1}".format(socket.gethostbyname(socket.gethostname()), app.myPort))
+        hostname = socket.gethostbyname(socket.gethostname())
+        return flask.redirect("http://{0}:{1}".format(hostname, app.myPort))
 
 
 @app.route('/favicon.ico')
@@ -751,8 +772,8 @@ def robots():
 @requires_auth
 @oidc.require_login
 def getInfo():
-    return handleFlaskGetRequest(
-        None, flask.request, app.backend.runGetInfo)
+    action = app.backend.runGetInfo
+    return handleFlaskGetRequest(None, flask.request, action)
 
 
 @DisplayedRoute('/references/<id>')
@@ -760,36 +781,35 @@ def getInfo():
 @oidc.require_login
 @requires_token
 def getReference(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetReference)
+    action = app.backend.runGetReference
+    return handleFlaskGetRequest(id, flask.request, action)
 
 
 @DisplayedRoute('/referencesets/<id>')
 @requires_auth
 @oidc.require_login
 @requires_token
-
 def getReferenceSet(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetReferenceSet)
+    action = app.backend.runGetReferenceSet
+    return handleFlaskGetRequest(id, flask.request, action)
 
 
 @DisplayedRoute('/listreferencebases', postMethod=True)
 def listReferenceBases():
-    return handleFlaskListRequest(
-        id, flask.request, app.backend.runListReferenceBases)
+    action = app.backend.runListReferenceBases
+    return handleFlaskListRequest(id, flask.request, action)
 
 
 @DisplayedRoute('/callsets/search', postMethod=True)
 def searchCallSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchCallSets)
+    action = app.backend.runSearchCallSets
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/readgroupsets/search', postMethod=True)
 def searchReadGroupSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchReadGroupSets)
+    action = app.backend.runSearchReadGroupSets
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/reads/search', postMethod=True)
@@ -800,38 +820,39 @@ def searchReads():
 
 @DisplayedRoute('/referencesets/search', postMethod=True)
 def searchReferenceSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchReferenceSets)
+    action = app.backend.runSearchReferenceSets
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/references/search', postMethod=True)
 def searchReferences():
+    action = app.backend.runSearchReferences
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchReferences)
+        flask.request, action)
 
 
 @DisplayedRoute('/variantsets/search', postMethod=True)
 def searchVariantSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchVariantSets)
+    action = app.backend.runSearchVariantSets
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/variants/search', postMethod=True)
 def searchVariants():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchVariants)
+    action = app.backend.runSearchVariant
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/variantannotationsets/search', postMethod=True)
 def searchVariantAnnotationSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchVariantAnnotationSets)
+    action = app.backend.runSearchVariantAnnotationSets
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/variantannotations/search', postMethod=True)
 def searchVariantAnnotations():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchVariantAnnotations)
+    action = app.backend.runSearchVariantAnnotations
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/datasets/search', postMethod=True)
@@ -839,8 +860,8 @@ def searchVariantAnnotations():
 @oidc.require_login
 @requires_token
 def searchDatasets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchDatasets)
+    action = app.backend.runSearchDatasets
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/featuresets/search', postMethod=True)
@@ -848,8 +869,8 @@ def searchDatasets():
 @oidc.require_login
 @requires_token
 def searchFeatureSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchFeatureSets)
+    action = app.backend.runSearchFeatureSets
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/features/search', postMethod=True)
@@ -857,8 +878,8 @@ def searchFeatureSets():
 @oidc.require_login
 @requires_token
 def searchFeatures():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchFeatures)
+    action = app.backend.runSearchFeatures
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/continuoussets/search', postMethod=True)
@@ -866,8 +887,8 @@ def searchFeatures():
 @oidc.require_login
 @requires_token
 def searchContinuousSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchContinuousSets)
+    action = app.backend.runSearchContinuousSets
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/continuous/search', postMethod=True)
@@ -875,8 +896,8 @@ def searchContinuousSets():
 @oidc.require_login
 @requires_token
 def searchContinuous():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchContinuous)
+    action = app.backend.runSearchContinuous
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/biosamples/search', postMethod=True)
@@ -884,8 +905,8 @@ def searchContinuous():
 @oidc.require_login
 @requires_token
 def searchBiosamples():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchBiosamples)
+    action = app.backend.runSearchBiosamples
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/individuals/search', postMethod=True)
@@ -893,8 +914,8 @@ def searchBiosamples():
 @oidc.require_login
 @requires_token
 def searchIndividuals():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchIndividuals)
+    action = app.backend.runSearchIndividuals
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/peers/list', postMethod=True)
@@ -902,8 +923,8 @@ def searchIndividuals():
 @oidc.require_login
 @requires_token
 def listPeers():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runListPeers)
+    action = app.backend.runListPeers
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/announce', postMethod=True)
@@ -923,8 +944,8 @@ def announce():
 @oidc.require_login
 @requires_token
 def getBiosample(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetBiosample)
+    action = app.backend.runGetBiosample
+    return handleFlaskGetRequest(id, flask.request, action)
 
 
 @DisplayedRoute(
@@ -934,8 +955,8 @@ def getBiosample(id):
 @oidc.require_login
 @requires_token
 def getIndividual(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetIndividual)
+    action = app.backend.runGetIndividual
+    return handleFlaskGetRequest(id, flask.request, action)
 
 
 @DisplayedRoute('/rnaquantificationsets/search', postMethod=True)
@@ -943,8 +964,8 @@ def getIndividual(id):
 @oidc.require_login
 @requires_token
 def searchRnaQuantificationSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchRnaQuantificationSets)
+    action = app.backend.runSearchRnaQuantificationSets
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/rnaquantifications/search', postMethod=True)
@@ -952,8 +973,8 @@ def searchRnaQuantificationSets():
 @oidc.require_login
 @requires_token
 def searchRnaQuantifications():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchRnaQuantifications)
+    action = app.backend.runSearchRnaQuantifications
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute('/expressionlevels/search', postMethod=True)
@@ -961,8 +982,8 @@ def searchRnaQuantifications():
 @oidc.require_login
 @requires_token
 def searchExpressionLevels():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchExpressionLevels)
+    action = app.backend.runSearchExpressionLevels
+    return handleFlaskPostRequest(flask.request, action)
 
 
 @DisplayedRoute(
@@ -972,8 +993,8 @@ def searchExpressionLevels():
 @oidc.require_login
 @requires_token
 def getVariantSet(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetVariantSet)
+    action = app.backend.runGetVariantSet
+    return handleFlaskGetRequest(id, flask.request, action)
 
 
 @DisplayedRoute(
@@ -983,8 +1004,8 @@ def getVariantSet(id):
 @oidc.require_login
 @requires_token
 def getVariant(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetVariant)
+    action = app.backend.runGetVariant
+    return handleFlaskGetRequest(id, flask.request, action)
 
 
 @DisplayedRoute(
@@ -994,8 +1015,8 @@ def getVariant(id):
 @oidc.require_login
 @requires_token
 def getReadGroupSet(id):
-    return duest(
-        id, flask.request, app.backend.runGetReadGroupSet)
+    action = app.backend.runGetReadGroupSet
+    return handleFlaskGetRequest(id, flask.request, action)
 
 
 @DisplayedRoute('/readgroups/<id>')
@@ -1003,8 +1024,8 @@ def getReadGroupSet(id):
 @oidc.require_login
 @requires_token
 def getReadGroup(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetReadGroup)
+    action = app.backend.runGetReadGroup
+    return handleFlaskGetRequest(id, flask.request, action)
 
 
 @DisplayedRoute(
@@ -1014,8 +1035,8 @@ def getReadGroup(id):
 @oidc.require_login
 @requires_token
 def getCallSet(did):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetCallSet)
+    action = app.backend.runGetCallSet
+    return handleFlaskGetRequest(id, flask.request, action)
 
 
 @DisplayedRoute(
@@ -1145,24 +1166,28 @@ def oidcCallback():
     response = flask.redirect(indexUrl)
     return response
 
-#Leaving this function here for reference for the Authorization Code flow
-#Added by Kevin Chan
+
+# Leaving this function here for reference for the Authorization Code flow
+# Added by Kevin Chan
 @app.route('/keycallback')
 def keycloakCallback():
     """
-    Similar to the oidcCallback function, once the authorization provider has cleared the user, 
-    browser is returned here with a code. The code is then checked with the authorization provider
-    and if valid a token is returned.
+    Similar to the oidcCallback function, once the authorization provider
+    has cleared the user, browser is returned here with a code. The code
+    is then checked with the authorization provider and if valid a token
+    is returned.
 
     The token is stored in the session, and the user is assumed to be valid.
 
-    Returns: a token and the redirect url to the new page. 
+    Returns: a token and the redirect url to the new page.
     """
     if app.oidcClient is None:
         raise exceptions.NotImplementedException()
 
     response = dict(flask.request.args.iteritems(multi=True))
-    aresp = app.oidcClient.parse_response(message.AuthorizationResponse, info=response, sformat="dict")
+    authMsg = message.AuthorizationResponse
+    aresp = app.oidcClient.parse_response(
+        authMsg, info=response, sformat="dict")
     respState = aresp["state"]
     sessState = flask.session.get('state')
 
@@ -1178,22 +1203,24 @@ def keycloakCallback():
         "grant_type": "authorization_code",
     }
 
-    tokResp = requests.post(url=app.oidcClient.provider_info["token_endpoint"], data=args)
+    endpoint = app.oidcClient.provider_info["token_endpoint"]
+    tokResp = requests.post(url=endpoint, data=args)
     tokContent = json.loads(tokResp.content)
-    token = tokContent["access_token"]
+    # token = tokContent["access_token"]
 
     if tokResp.status_code != 200:
-        raise exceptions.NotAuthorizedException()  
+        raise exceptions.NotAuthorizedException()
     app.oidcClient.token = tokContent
 
-
-    #flask.session["key"] = idGenerator(size=SECRET_KEY_LENGTH)
-    #This next line will display the access token on the server front end.
-    #If you do not want this uncomment the line above
+    # flask.session["key"] = idGenerator(size=SECRET_KEY_LENGTH)
+    # This next line will display the access token on the server front end.
+    # If you do not want this uncomment the line above
     flask.session["key"] = app.oidcClient.token["access_token"]
-    #change the url depending on where the GA4GH server is hosted 
-    redirectUri = 'http://{0}:{1}{2}'.format(
-        socket.gethostbyname(socket.gethostname()), app.myPort, flask.session["path"])
+    # change the url depending on where the GA4GH server is hosted
+    hostname = socket.gethostname()
+    path = flask.session["path"]
+    host = socket.gethostbyname(hostname, app.myPort, path)
+    redirectUri = 'http://{0}:{1}{2}'.format(host)
     return flask.redirect(redirectUri)
 
 
