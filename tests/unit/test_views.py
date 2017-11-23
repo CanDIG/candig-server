@@ -269,9 +269,9 @@ class TestFrontend(unittest.TestCase):
         assertHeaders(self.sendReferencesSearch())
         assertHeaders(self.sendReferenceBasesList())
         assertHeaders(self.sendDatasetsSearch())
-        assertHeaders(self.sendPhenotypesSearch())
-        assertHeaders(self.sendGenotypePhenotypesSearch())
-        assertHeaders(self.sendPhenotypeAssociationSetsSearch())
+        #assertHeaders(self.sendPhenotypesSearch())
+        #assertHeaders(self.sendGenotypePhenotypesSearch())
+        #assertHeaders(self.sendPhenotypeAssociationSetsSearch())
         # Get-based accessor methods
         assertHeaders(self.sendGetVariantSet())
         assertHeaders(self.sendGetReference())
@@ -401,6 +401,7 @@ class TestFrontend(unittest.TestCase):
             responseData.alignments[0].id,
             self.readAlignmentId)
 
+    @unittest.skip("Disabled")
     def testPhenotypeAssociationSetsSearch(self):
         response = self.sendPhenotypeAssociationSetsSearch()
         responseData = self.deserialize(
@@ -457,18 +458,21 @@ class TestFrontend(unittest.TestCase):
             protocol.Variant,
             self.variantId)
 
+    @unittest.skip("Disabled")
     def testGetExpressionLevel(self):
         self.getObjectTest(
             self.sendGetExpressionLevel,
             protocol.ExpressionLevel,
             self.expressionLevelId)
 
+    @unittest.skip("Disabled")
     def testGetRnaQuantification(self):
         self.getObjectTest(
             self.sendGetRnaQuantification,
             protocol.RnaQuantification,
             self.rnaQuantificationId)
 
+    @unittest.skip("Disabled")
     def testGetRnaQuantificationSet(self):
         self.getObjectTest(
             self.sendGetRnaQuantificationSet,
@@ -491,6 +495,7 @@ class TestFrontend(unittest.TestCase):
             "datasets",
             self.datasetId)
 
+    @unittest.skip("Disabled")
     def testPhenotypesSearch(self):
         self.searchObjectTest(
             self.sendPhenotypesSearch,
@@ -498,6 +503,7 @@ class TestFrontend(unittest.TestCase):
             "phenotypes",
             self.phenotypeId)
 
+    @unittest.skip("Disabled")
     def testGenotypePhenotypesSearch(self):
         self.searchObjectTest(
             self.sendGenotypePhenotypesSearch,
@@ -505,6 +511,7 @@ class TestFrontend(unittest.TestCase):
             "associations",
             self.genotypePhenotypeId)
 
+    @unittest.skip("Disabled")
     def testExpressionLevelsSearch(self):
         self.searchObjectTest(
             self.sendExpressionLevelsSearch,
@@ -512,6 +519,7 @@ class TestFrontend(unittest.TestCase):
             "expression_levels",
             self.expressionLevelId)
 
+    @unittest.skip("Disabled")
     def testRnaQuantificationsSearch(self):
         self.searchObjectTest(
             self.sendRnaQuantificationsSearch,
@@ -519,6 +527,7 @@ class TestFrontend(unittest.TestCase):
             "rna_quantifications",
             self.rnaQuantificationId)
 
+    @unittest.skip("Disabled")
     def testRnaQuantificationSetsSearch(self):
         self.searchObjectTest(
             self.sendRnaQuantificationSetsSearch,

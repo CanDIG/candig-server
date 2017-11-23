@@ -14,6 +14,7 @@ import tests.paths as paths
 import ga4gh.schemas.protocol as protocol
 
 
+@unittest.skip("Disabled")
 class TestSequenceAnnotations(unittest.TestCase):
     exampleUrl = 'www.example.com'
     datasetId = "YnJjYTE"

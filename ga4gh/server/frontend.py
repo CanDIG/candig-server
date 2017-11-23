@@ -160,20 +160,20 @@ class ServerStatus(object):
         return app.backend.getDataRepository().getDataset(
             datasetId).getVariantSets()
 
-    def getFeatureSets(self, datasetId):
-        """
-        Returns the list of feature sets for the dataset
-        """
-        return app.backend.getDataRepository().getDataset(
-            datasetId).getFeatureSets()
-
-    def getContinuousSets(self, datasetId):
-        """
-        Returns the list of continuous sets for the dataset
-        """
-        return app.backend.getDataRepository().getDataset(
-            datasetId).getContinuousSets()
-
+#    def getFeatureSets(self, datasetId):
+#        """
+#        Returns the list of feature sets for the dataset
+#        """
+#        return app.backend.getDataRepository().getDataset(
+#            datasetId).getFeatureSets()
+#
+#    def getContinuousSets(self, datasetId):
+#        """
+#        Returns the list of continuous sets for the dataset
+#        """
+#        return app.backend.getDataRepository().getDataset(
+#            datasetId).getContinuousSets()
+#
     def getReadGroupSets(self, datasetId):
         """
         Returns the list of ReadGroupSets for the dataset
@@ -187,28 +187,28 @@ class ServerStatus(object):
         """
         return app.backend.getDataRepository().getReferenceSets()
 
-    def getVariantAnnotationSets(self, datasetId):
-        """
-        Returns the list of ReferenceSets for this server.
-        """
-        # TODO this should be displayed per-variant set, not per dataset.
-        variantAnnotationSets = []
-        dataset = app.backend.getDataRepository().getDataset(datasetId)
-        for variantSet in dataset.getVariantSets():
-            variantAnnotationSets.extend(
-                variantSet.getVariantAnnotationSets())
-        return variantAnnotationSets
-
-    def getPhenotypeAssociationSets(self, datasetId):
-        return app.backend.getDataRepository().getDataset(
-            datasetId).getPhenotypeAssociationSets()
-
-    def getRnaQuantificationSets(self, datasetId):
-        """
-        Returns the list of RnaQuantificationSets for this server.
-        """
-        return app.backend.getDataRepository().getDataset(
-            datasetId).getRnaQuantificationSets()
+#    def getVariantAnnotationSets(self, datasetId):
+#        """
+#        Returns the list of ReferenceSets for this server.
+#        """
+#        # TODO this should be displayed per-variant set, not per dataset.
+#        variantAnnotationSets = []
+#        dataset = app.backend.getDataRepository().getDataset(datasetId)
+#        for variantSet in dataset.getVariantSets():
+#            variantAnnotationSets.extend(
+#                variantSet.getVariantAnnotationSets())
+#        return variantAnnotationSets
+#
+#    def getPhenotypeAssociationSets(self, datasetId):
+#        return app.backend.getDataRepository().getDataset(
+#            datasetId).getPhenotypeAssociationSets()
+#
+#    def getRnaQuantificationSets(self, datasetId):
+#        """
+#        Returns the list of RnaQuantificationSets for this server.
+#        """
+#        return app.backend.getDataRepository().getDataset(
+#            datasetId).getRnaQuantificationSets()
 
 
 def reset():
@@ -718,16 +718,16 @@ def searchGenotypes():
         flask.request, app.backend.runSearchGenotypes)
 
 
-@DisplayedRoute('/variantannotationsets/search', postMethod=True)
-def searchVariantAnnotationSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchVariantAnnotationSets)
-
-
-@DisplayedRoute('/variantannotations/search', postMethod=True)
-def searchVariantAnnotations():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchVariantAnnotations)
+# @DisplayedRoute('/variantannotationsets/search', postMethod=True)
+# def searchVariantAnnotationSets():
+#    return handleFlaskPostRequest(
+#        flask.request, app.backend.runSearchVariantAnnotationSets)
+#
+#
+# @DisplayedRoute('/variantannotations/search', postMethod=True)
+# def searchVariantAnnotations():
+#    return handleFlaskPostRequest(
+#        flask.request, app.backend.runSearchVariantAnnotations)
 
 
 @DisplayedRoute('/datasets/search', postMethod=True)
@@ -751,32 +751,32 @@ def searchAnalyses():
         flask.request, app.backend.runSearchAnalyses)
 
 
-@DisplayedRoute('/featuresets/search', postMethod=True)
-@requires_auth
-def searchFeatureSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchFeatureSets)
+# @DisplayedRoute('/featuresets/search', postMethod=True)
+# @requires_auth
+# def searchFeatureSets():
+#    return handleFlaskPostRequest(
+#        flask.request, app.backend.runSearchFeatureSets)
+#
+#
+# @DisplayedRoute('/features/search', postMethod=True)
+# @requires_auth
+# def searchFeatures():
+#    return handleFlaskPostRequest(
+#        flask.request, app.backend.runSearchFeatures)
 
 
-@DisplayedRoute('/features/search', postMethod=True)
-@requires_auth
-def searchFeatures():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchFeatures)
-
-
-@DisplayedRoute('/continuoussets/search', postMethod=True)
-@requires_auth
-def searchContinuousSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchContinuousSets)
-
-
-@DisplayedRoute('/continuous/search', postMethod=True)
-@requires_auth
-def searchContinuous():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchContinuous)
+# @DisplayedRoute('/continuoussets/search', postMethod=True)
+# @requires_auth
+# def searchContinuousSets():
+#    return handleFlaskPostRequest(
+#        flask.request, app.backend.runSearchContinuousSets)
+#
+#
+# @DisplayedRoute('/continuous/search', postMethod=True)
+# @requires_auth
+# def searchContinuous():
+#    return handleFlaskPostRequest(
+#        flask.request, app.backend.runSearchContinuous)
 
 
 @DisplayedRoute('/biosamples/search', postMethod=True)
@@ -826,25 +826,25 @@ def getIndividual(id):
         id, flask.request, app.backend.runGetIndividual)
 
 
-@DisplayedRoute('/rnaquantificationsets/search', postMethod=True)
-@requires_auth
-def searchRnaQuantificationSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchRnaQuantificationSets)
+# @DisplayedRoute('/rnaquantificationsets/search', postMethod=True)
+# @requires_auth
+# def searchRnaQuantificationSets():
+#    return handleFlaskPostRequest(
+#        flask.request, app.backend.runSearchRnaQuantificationSets)
 
 
-@DisplayedRoute('/rnaquantifications/search', postMethod=True)
-@requires_auth
-def searchRnaQuantifications():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchRnaQuantifications)
+# @DisplayedRoute('/rnaquantifications/search', postMethod=True)
+# @requires_auth
+# def searchRnaQuantifications():
+#    return handleFlaskPostRequest(
+#        flask.request, app.backend.runSearchRnaQuantifications)
 
 
-@DisplayedRoute('/expressionlevels/search', postMethod=True)
-@requires_auth
-def searchExpressionLevels():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchExpressionLevels)
+# @DisplayedRoute('/expressionlevels/search', postMethod=True)
+# @requires_auth
+# def searchExpressionLevels():
+#    return handleFlaskPostRequest(
+#        flask.request, app.backend.runSearchExpressionLevels)
 
 
 @DisplayedRoute(
@@ -890,59 +890,59 @@ def getCallSet(id):
         id, flask.request, app.backend.runGetCallSet)
 
 
-@DisplayedRoute(
-    '/featuresets/<no(search):id>',
-    pathDisplay='/featuresets/<id>')
-@requires_auth
-def getFeatureSet(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetFeatureSet)
+# @DisplayedRoute(
+#    '/featuresets/<no(search):id>',
+#    pathDisplay='/featuresets/<id>')
+# @requires_auth
+# def getFeatureSet(id):
+#    return handleFlaskGetRequest(
+#        id, flask.request, app.backend.runGetFeatureSet)
 
 
-@DisplayedRoute(
-    '/features/<no(search):id>',
-    pathDisplay='/features/<id>')
-@requires_auth
-def getFeature(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetFeature)
+# @DisplayedRoute(
+#    '/features/<no(search):id>',
+#    pathDisplay='/features/<id>')
+# @requires_auth
+# def getFeature(id):
+#    return handleFlaskGetRequest(
+#        id, flask.request, app.backend.runGetFeature)
 
 
-@DisplayedRoute(
-    '/continuoussets/<no(search):id>',
-    pathDisplay='/continuoussets/<id>')
-@requires_auth
-def getcontinuousSet(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetContinuousSet)
+# @DisplayedRoute(
+#    '/continuoussets/<no(search):id>',
+#    pathDisplay='/continuoussets/<id>')
+# @requires_auth
+# def getcontinuousSet(id):
+#    return handleFlaskGetRequest(
+#        id, flask.request, app.backend.runGetContinuousSet)
 
 
-@DisplayedRoute(
-    '/rnaquantificationsets/<no(search):id>',
-    pathDisplay='/rnaquantificationsets/<id>')
-@requires_auth
-def getRnaQuantificationSet(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetRnaQuantificationSet)
+# @DisplayedRoute(
+#    '/rnaquantificationsets/<no(search):id>',
+#    pathDisplay='/rnaquantificationsets/<id>')
+# @requires_auth
+# def getRnaQuantificationSet(id):
+#    return handleFlaskGetRequest(
+#        id, flask.request, app.backend.runGetRnaQuantificationSet)
 
 
-@DisplayedRoute(
-    '/rnaquantifications/<no(search):id>',
-    pathDisplay='/rnaquantifications/<id>')
-@requires_auth
-def getRnaQuantification(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetRnaQuantification)
+# @DisplayedRoute(
+#    '/rnaquantifications/<no(search):id>',
+#    pathDisplay='/rnaquantifications/<id>')
+# @requires_auth
+# def getRnaQuantification(id):
+#    return handleFlaskGetRequest(
+#        id, flask.request, app.backend.runGetRnaQuantification)
+#
 
-
-@DisplayedRoute(
-    '/expressionlevels/<no(search):id>',
-    pathDisplay='/expressionlevels/<id>')
-@requires_auth
-def getExpressionLevel(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetExpressionLevel)
-
+# @DisplayedRoute(
+#    '/expressionlevels/<no(search):id>',
+#    pathDisplay='/expressionlevels/<id>')
+# @requires_auth
+# def getExpressionLevel(id):
+#    return handleFlaskGetRequest(
+#        id, flask.request, app.backend.runGetExpressionLevel)
+#
 
 @app.route('/oauth2callback', methods=['GET'])
 def oidcCallback():
@@ -1032,35 +1032,35 @@ def getAnalysis(id):
         id, flask.request, app.backend.runGetAnalysis)
 
 
-@DisplayedRoute(
-    '/variantannotationsets/<no(search):id>',
-    pathDisplay='/variantannotationsets/<id>')
-@requires_auth
-def getVariantAnnotationSet(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetVariantAnnotationSet)
+# @DisplayedRoute(
+#    '/variantannotationsets/<no(search):id>',
+#    pathDisplay='/variantannotationsets/<id>')
+# @requires_auth
+# def getVariantAnnotationSet(id):
+#    return handleFlaskGetRequest(
+#        id, flask.request, app.backend.runGetVariantAnnotationSet)
+#
+#
+# @DisplayedRoute('/phenotypes/search', postMethod=True)
+# @requires_auth
+# def searchPhenotypes():
+#    return handleFlaskPostRequest(
+#        flask.request, app.backend.runSearchPhenotypes)
+#
+#
+# @DisplayedRoute('/featurephenotypeassociations/search', postMethod=True)
+# @requires_auth
+# def searchGenotypePhenotypes():
+#    return handleFlaskPostRequest(
+#        flask.request,
+#        app.backend.runSearchGenotypePhenotypes)
 
 
-@DisplayedRoute('/phenotypes/search', postMethod=True)
-@requires_auth
-def searchPhenotypes():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchPhenotypes)
-
-
-@DisplayedRoute('/featurephenotypeassociations/search', postMethod=True)
-@requires_auth
-def searchGenotypePhenotypes():
-    return handleFlaskPostRequest(
-        flask.request,
-        app.backend.runSearchGenotypePhenotypes)
-
-
-@DisplayedRoute('/phenotypeassociationsets/search', postMethod=True)
-@requires_auth
-def searchPhenotypeAssociationSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchPhenotypeAssociationSets)
+# @DisplayedRoute('/phenotypeassociationsets/search', postMethod=True)
+# @requires_auth
+# def searchPhenotypeAssociationSets():
+#    return handleFlaskPostRequest(
+#        flask.request, app.backend.runSearchPhenotypeAssociationSets)
 
 
 # The below methods ensure that JSON is returned for various errors

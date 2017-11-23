@@ -11,6 +11,7 @@ import tests.paths as paths
 import ga4gh.schemas.protocol as protocol
 
 
+@unittest.skip("Disabled")
 class TestG2P(unittest.TestCase):
     exampleUrl = 'www.example.com'
     phenotypeAssociationSetId = ""

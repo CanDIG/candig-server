@@ -13,6 +13,7 @@ import ga4gh.server.datamodel.sequence_annotations as sequence_annotations
 import ga4gh.server.datamodel.datasets as datasets
 
 
+@unittest.skip("Disabled")
 class TestAbstractFeatureSet(unittest.TestCase):
     """
     Unit tests for the abstract feature set.

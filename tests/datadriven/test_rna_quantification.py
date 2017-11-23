@@ -81,6 +81,7 @@ def testRnaQuantification():
         yield test
 
 
+@unittest.skip("Disabled")
 class RnaQuantificationTest(datadriven.DataDrivenTest):
     """
     Data driven test class for rna quantification. Builds an alternative model
