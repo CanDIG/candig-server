@@ -9,45 +9,59 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import datetime
+import yaml 
+import pkg_resources
+
+def importYamlConfig(config):
+    """
+    A function that returns the frontend and server configuration
+    as a dictionary.
+    """
+    stream = file(config, 'r')
+    config = yaml.load(stream)
+    return config
 
 
 class BaseConfig(object):
     """
     Simplest default server configuration.
     """
-    MAX_CONTENT_LENGTH = 2 * 1024 * 1024  # 2MB
-    MAX_RESPONSE_LENGTH = 1024 * 1024  # 1MB
-    REQUEST_VALIDATION = True
-    DEFAULT_PAGE_SIZE = 100
-    DATA_SOURCE = "empty://"
+    pathLocation = '/'.join(('.', 'config', 'oidc_auth_config.yml'))
+    configPath = pkg_resources.resource_filename(__name__, pathLocation)
+    config = importYamlConfig(config=configPath)
+
+    serverConfig = config["server"]
+
+    MAX_CONTENT_LENGTH = serverConfig["MAX_CONTENT_LENGTH"]
+    MAX_RESPONSE_LENGTH = serverConfig["MAX_RESPONSE_LENGTH"]
+    REQUEST_VALIDATION = serverConfig["REQUEST_VALIDATION"]
+    DEFAULT_PAGE_SIZE = serverConfig["DEFAULT_PAGE_SIZE"]
+    DATA_SOURCE = serverConfig["DATA_SOURCE"]
+    DEBUG = serverConfig["DEBUG"]
+    INITIAL_PEERS = serverConfig["INITIAL_PEERS"]
+    LANDING_MESSAGE_HTML = serverConfig["LANDING_MESSAGE_HTML"]
+    FILE_HANDLE_CACHE_MAX_SIZE = serverConfig["FILE_HANDLE_CACHE_MAX_SIZE"]
 
     # Options for the simulated backend.
-    SIMULATED_BACKEND_RANDOM_SEED = 0
-    SIMULATED_BACKEND_NUM_CALLS = 1
-    SIMULATED_BACKEND_VARIANT_DENSITY = 0.5
-    SIMULATED_BACKEND_NUM_VARIANT_SETS = 1
-    SIMULATED_BACKEND_NUM_REFERENCE_SETS = 1
-    SIMULATED_BACKEND_NUM_REFERENCES_PER_REFERENCE_SET = 1
-    SIMULATED_BACKEND_NUM_ALIGNMENTS_PER_READ_GROUP = 2
-    SIMULATED_BACKEND_NUM_READ_GROUPS_PER_READ_GROUP_SET = 2
-    SIMULATED_BACKEND_NUM_PHENOTYPE_ASSOCIATIONS = 2
-    SIMULATED_BACKEND_NUM_PHENOTYPE_ASSOCIATION_SETS = 2
-    SIMULATED_BACKEND_NUM_RNA_QUANTIFICATION_SETS = 2
-    SIMULATED_BACKEND_NUM_EXPRESSION_LEVELS_PER_RNA_QUANT_SET = 2
-
-    FILE_HANDLE_CACHE_MAX_SIZE = 50
-
-    LANDING_MESSAGE_HTML = "landing_message.html"
-    INITIAL_PEERS = "/srv/ga4gh-server/ga4gh/server/" \
-    "templates/initial_peers.txt"
+    SIMULATED_BACKEND_RANDOM_SEED = serverConfig["SIMULATED_BACKEND_RANDOM_SEED"]
+    SIMULATED_BACKEND_NUM_CALLS = serverConfig["SIMULATED_BACKEND_NUM_CALLS"]
+    SIMULATED_BACKEND_VARIANT_DENSITY = serverConfig["SIMULATED_BACKEND_VARIANT_DENSITY"]
+    SIMULATED_BACKEND_NUM_VARIANT_SETS = serverConfig["SIMULATED_BACKEND_NUM_VARIANT_SETS"]
+    SIMULATED_BACKEND_NUM_REFERENCE_SETS = serverConfig["SIMULATED_BACKEND_NUM_REFERENCE_SETS"]
+    SIMULATED_BACKEND_NUM_REFERENCES_PER_REFERENCE_SET = serverConfig["SIMULATED_BACKEND_NUM_REFERENCES_PER_REFERENCE_SET"]
+    SIMULATED_BACKEND_NUM_ALIGNMENTS_PER_READ_GROUP = serverConfig["SIMULATED_BACKEND_NUM_ALIGNMENTS_PER_READ_GROUP"]
+    SIMULATED_BACKEND_NUM_READ_GROUPS_PER_READ_GROUP_SET = serverConfig["SIMULATED_BACKEND_NUM_READ_GROUPS_PER_READ_GROUP_SET"]
+    SIMULATED_BACKEND_NUM_PHENOTYPE_ASSOCIATIONS = serverConfig["SIMULATED_BACKEND_NUM_PHENOTYPE_ASSOCIATIONS"]
+    SIMULATED_BACKEND_NUM_PHENOTYPE_ASSOCIATION_SETS = serverConfig["SIMULATED_BACKEND_NUM_PHENOTYPE_ASSOCIATION_SETS"]
+    SIMULATED_BACKEND_NUM_RNA_QUANTIFICATION_SETS = serverConfig["SIMULATED_BACKEND_NUM_RNA_QUANTIFICATION_SETS"]
+    SIMULATED_BACKEND_NUM_EXPRESSION_LEVELS_PER_RNA_QUANT_SET = serverConfig["SIMULATED_BACKEND_NUM_EXPRESSION_LEVELS_PER_RNA_QUANT_SET"]
 
 
 class ComplianceConfig(BaseConfig):
     """
     Configuration used for compliance testing.
     """
-    DATA_SOURCE = "ga4gh-compliance-data/registry.db"
-    DEBUG = True
+    pass
 
 
 class DevelopmentConfig(BaseConfig):

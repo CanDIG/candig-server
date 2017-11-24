@@ -40,6 +40,8 @@ import ga4gh.server.auth as auth
 import ga4gh.server.network as network
 import ga4gh.schemas.protocol as protocol
 
+import pkg_resources
+
 MIMETYPE = "application/json"
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
@@ -62,7 +64,9 @@ app.urls = []
 requires_auth = auth.auth_decorator(app)
 
 # Edit this for flask-oidc, the endpoints are in the client_secrets.json file
-config = import_yaml_config(config="/srv/ga4gh-server/oidc_auth_config.yml")
+pathLocation = '/'.join(('.', 'config', 'oidc_auth_config.yml'))
+configPath = pkg_resources.resource_filename(__name__, pathLocation)
+config = import_yaml_config(config=configPath)
 app.config.update(config["frontend"])
 
 # For configuration of Flask-Oidc
