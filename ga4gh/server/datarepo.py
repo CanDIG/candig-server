@@ -1274,7 +1274,20 @@ class SqlDataRepository(AbstractDataRepository):
                 individualid=biosample.getIndividualId(),
                 attributes=json.dumps(biosample.getAttributes()),
                 individualAgeAtCollection=json.dumps(
-                        biosample.getIndividualAgeAtCollection()))
+                        biosample.getIndividualAgeAtCollection()),
+### ======================================================================= ###
+# PROFYLE MODIFICATION BEGIN
+### ======================================================================= ###
+                estimated_tumor_content = biosample.getEstimatedTumorContent(),
+                normal_sample_source = biosample.getNormalSampleSource(),
+                biopsy_data = biosample.getBiopsyData(),
+                tumor_biopsy_anatomical_site = biosample.getTumorBiopsyAnatomicalSite(),
+                biopsy_type = biosample.getBiopsyType(),
+                sample_shipment_date = biosample.getSampleShipmentDate(),
+### ======================================================================= ###
+# PROFYLE MODIFICATION END
+### ======================================================================= ###
+                )
         except Exception:
             raise exceptions.DuplicateNameException(
                 biosample.getLocalId(),
@@ -1310,7 +1323,20 @@ class SqlDataRepository(AbstractDataRepository):
                 instrumentData_file=experiment.getInstrumentDataFile(),
                 sequencingCenter=experiment.getSequencingCenter(),
                 platformUnit=experiment.getPlatformUnit(),
-                attributes=json.dumps(experiment.getAttributes()))
+                attributes=json.dumps(experiment.getAttributes()),
+### ======================================================================= ###
+# PROFYLE MODIFICATION BEGIN
+### ======================================================================= ###
+                biosample_id = experiment.getBiosampleId(),
+                dna_library_construction_method = experiment.getDnaLibraryConstructionMethod(),
+                wgs_sequencing_completion_date = experiment.getWgsSequencingCompletionDate(),
+                rna_library_construction_method = experiment.getRnaLibraryConstructionMethod(),
+                rna_sequencing_completion_date = experiment.getRnaSequencingCompletionDate(),
+                panel_completion_date = experiment.getPanelCompletionDate(),
+### ======================================================================= ###
+# PROFYLE MODIFICATION END
+### ======================================================================= ###
+                )
         except Exception:
             raise exceptions.DuplicateNameException(
                 experiment.getLocalId(), None)
@@ -1338,7 +1364,17 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=analysis.getUpdated(),
                 type=analysis.getAnalysisType(),
                 software=analysis.getSoftware(),
-                attributes=json.dumps(analysis.getAttributes()))
+                attributes=json.dumps(analysis.getAttributes()),
+### ======================================================================= ###
+# PROFYLE MODIFICATION BEGIN
+### ======================================================================= ###
+                experiment_id = analysis.getExperimentId(),
+                other_analysis_descriptor = analysis.getOtherAnalysisDescriptor(),
+                other_analysis_completition_date = analysis.getOtherAnalysisCompletitionDate(),
+### ======================================================================= ###
+# PROFYLE MODIFICATION END
+### ======================================================================= ###
+                )
         except Exception:
             raise exceptions.DuplicateNameException(
                 analysis.getLocalId(), None)
@@ -1367,7 +1403,23 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=individual.getUpdated(),
                 species=json.dumps(individual.getSpecies()),
                 sex=json.dumps(individual.getSex()),
-                attributes=json.dumps(individual.getAttributes()))
+                attributes=json.dumps(individual.getAttributes()),
+### ======================================================================= ###
+# PROFYLE MODIFICATION BEGIN
+### ======================================================================= ###
+                patient_id = individual.getPatientId(),
+                regional_profiling_centre = individual.getRegionalProfilingCentre(),
+                diagnosis = individual.getDiagnosis(),
+                pathology_type = individual.getPathologyType(),
+                enrollment_approval_date = individual.getEnrollmentApprovalDate(),
+                enrollment_approval_initials = individual.getEnrollmentApprovalInitials(),
+                date_of_upload_to_sFTP = individual.getDateOfUploadToSftp(),
+                tumor_board_presentation_date_and_analyses = individual.getTumorBoardPresentationDateAndAnalyses(),
+                comments = individual.getComments(),
+### ======================================================================= ###
+# PROFYLE MODIFICATION END
+### ======================================================================= ###
+                )
         except Exception:
             raise exceptions.DuplicateNameException(
                 individual.getLocalId(),
