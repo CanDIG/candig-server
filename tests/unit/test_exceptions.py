@@ -10,7 +10,7 @@ import unittest
 import inspect
 
 import ga4gh.server.exceptions as exceptions
-import ga4gh.server.frontend as frontend
+import ga4gh.server.frontend.frontend as frontend
 
 import ga4gh.schemas.protocol as protocol
 

@@ -162,7 +162,7 @@ class ImportGraphLayerChecker(object):
             'ga4gh/server/client.py',
         ],
         'frontend': [
-            'ga4gh/server/frontend.py',
+            'ga4gh/server/frontend/rontend.py',
             'ga4gh/server/repo_manager.py',
         ],
         'backend': [

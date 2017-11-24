@@ -16,7 +16,7 @@ import shutil
 import oic
 import oic.oic.message as message
 
-import ga4gh.server.frontend as frontend
+import ga4gh.server.frontend.frontend as frontend
 import ga4gh.common.utils as utils
 
 

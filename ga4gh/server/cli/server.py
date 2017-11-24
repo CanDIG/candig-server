@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 import requests
 
 import ga4gh.server.cli as cli
-import ga4gh.server.frontend as frontend
+import ga4gh.server.frontend.frontend as frontend
 
 import ga4gh.common.cli as common_cli
 
