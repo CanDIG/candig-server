@@ -55,15 +55,28 @@ class Biosample(datamodel.DatamodelObject):
             individualAgeAtCollection = protocol.fromJson(
                 json.dumps(self.getIndividualAgeAtCollection()), protocol.Age)
         biosample = protocol.Biosample(
-            dataset_id=self._datasetId,
-            created=self.getCreated(),
-            updated=self.getUpdated(),
-            description=self.getDescription(),
-            id=self.getId(),
-            individual_id=self.getIndividualId(),
-            name=self.getName(),
-            disease=disease,
-            individual_age_at_collection=individualAgeAtCollection)
+            dataset_id = self._datasetId,
+            created = self.getCreated(),
+            updated = self.getUpdated(),
+            description = self.getDescription(),
+            id = self.getId(),
+            individual_id = self.getIndividualId(),
+            name = self.getName(),
+            disease = disease,
+            individual_age_at_collection = individualAgeAtCollection,
+### ======================================================================= ###
+# PROFYLE MODIFICATION BEGIN
+### ======================================================================= ###
+            estimated_tumor_content = self.getEstimatedTumorContent(),
+            normal_sample_source = self.getNormalSampleSource(),
+            biopsy_data = self.getBiopsyData(),
+            tumor_biopsy_anatomical_site = self.getTumorBiopsyAnatomicalSite(),
+            biopsy_type = self.getBiopsyType(),
+            sample_shipment_date = self.getSampleShipmentDate(),
+### ======================================================================= ###
+# PROFYLE MODIFICATION END
+### ======================================================================= ###
+            )
         self.serializeAttributes(biosample)
         return biosample
 
@@ -87,7 +100,7 @@ class Biosample(datamodel.DatamodelObject):
         self._biopsy_type = biosampleRecord.biopsy_type
         self._sample_shipment_date = biosampleRecord.sample_shipment_date
 ### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
+# PROFYLE MODIFICATION END
 ### ======================================================================= ###
         return self
 
@@ -184,8 +197,8 @@ class Experiment(datamodel.DatamodelObject):
     """
     compoundIdClass = datamodel.ExperimentCompoundId
 
-    def __init__(self, localId):
-        super(Experiment, self).__init__(None, localId)
+    def __init__(self, parentContainer, localId):
+        super(Experiment, self).__init__(parentContainer, localId)
         self._created = datetime.datetime.now().isoformat()
         self._updated = datetime.datetime.now().isoformat()
         self._run_time = datetime.datetime.now().isoformat()
@@ -204,6 +217,7 @@ class Experiment(datamodel.DatamodelObject):
 ### ======================================================================= ###
 # PROFYLE MODIFICATION BEGIN
 ### ======================================================================= ###
+        self._datasetId = parentContainer.getId()
         self._biosample_id = None
         self._dna_library_construction_method = None
         self._wgs_sequencing_completion_date = None
@@ -219,21 +233,34 @@ class Experiment(datamodel.DatamodelObject):
 
     def toProtocolElement(self):
         experiment = protocol.Experiment(
-            id=self.getId(),
-            name=self.getName(),
-            description=self.getDescription(),
-            message_create_time=self.getCreated(),
-            message_update_time=self.getUpdated(),
-            run_time=self.getRunTime(),
-            molecule=self.getMolecule(),
-            strategy=self.getStrategy(),
-            selection=self.getSelection(),
-            library=self.getLibrary(),
-            library_layout=self.getLibraryLayout(),
-            instrument_model=self.getInstrumentModel(),
-            instrument_data_file=self.getInstrumentDataFile(),
-            sequencing_center=self.getSequencingCenter(),
-            platform_unit=self.getPlatformUnit(),
+            id = self.getId(),
+            name = self.getName(),
+            description = self.getDescription(),
+            message_create_time = self.getCreated(),
+            message_update_time = self.getUpdated(),
+            run_time = self.getRunTime(),
+            molecule = self.getMolecule(),
+            strategy = self.getStrategy(),
+            selection = self.getSelection(),
+            library = self.getLibrary(),
+            library_layout = self.getLibraryLayout(),
+            instrument_model = self.getInstrumentModel(),
+            instrument_data_file = self.getInstrumentDataFile(),
+            sequencing_center = self.getSequencingCenter(),
+            platform_unit = self.getPlatformUnit(),
+### ======================================================================= ###
+# PROFYLE MODIFICATION BEGIN
+### ======================================================================= ###
+            dataset_id = self._datasetId,
+            biosample_id = self.getBiosampleId(),
+            dna_library_construction_method = self.getDnaLibraryConstructionMethod(),
+            wgs_sequencing_completion_date = self.getWgsSequencingCompletionDate(),
+            rna_library_construction_method = self.getRnaLibraryConstructionMethod(),
+            rna_sequencing_completion_date = self.getRnaSequencingCompletionDate(),
+            panel_completion_date = self.getPanelCompletionDate(),
+### ======================================================================= ###
+# PROFYLE MODIFICATION END
+### ======================================================================= ###
             )
         self.serializeAttributes(experiment)
         return experiment
@@ -391,8 +418,8 @@ class Analysis(datamodel.DatamodelObject):
     """
     compoundIdClass = datamodel.AnalysisCompoundId
 
-    def __init__(self, localId):
-        super(Analysis, self).__init__(None, localId)
+    def __init__(self, parentContainer, localId):
+        super(Analysis, self).__init__(parentContainer, localId)
         self._created = datetime.datetime.now().isoformat()
         self._updated = datetime.datetime.now().isoformat()
         self._name = localId
@@ -403,6 +430,7 @@ class Analysis(datamodel.DatamodelObject):
 ### ======================================================================= ###
 # PROFYLE MODIFICATION BEGIN
 ### ======================================================================= ###
+        self._datasetId = parentContainer.getId()
         self._experiment_id = None
         self._other_analysis_descriptor = None
         self._other_analysis_completition_date = None
@@ -420,7 +448,18 @@ class Analysis(datamodel.DatamodelObject):
             description=self.getDescription(),
             created=self.getCreated(),
             updated=self.getUpdated(),
-            type=self.getAnalysisType())
+            type=self.getAnalysisType(),
+### ======================================================================= ###
+# PROFYLE MODIFICATION BEGIN
+### ======================================================================= ###
+            dataset_id = self._datasetId,
+            experiment_id = self.getExperimentId(),
+            other_analysis_descriptor = self.getOtherAnalysisDescriptor(),
+            other_analysis_completition_date = self.getOtherAnalysisCompletitionDate(),
+### ======================================================================= ###
+# PROFYLE MODIFICATION END
+### ======================================================================= ###
+            )
         analysis.software.extend(self.getSoftware())
         self.serializeAttributes(analysis)
         return analysis
@@ -449,12 +488,13 @@ class Analysis(datamodel.DatamodelObject):
             parsed = protocol.fromJson(jsonString, protocol.Analysis)
         except:
             raise exceptions.InvalidJsonException(jsonString)
-        if parsed.created != "":
+        if parsed.created:
             self._created = parsed.created
-        if parsed.updated != "":
+        if parsed.updated:
             self._updated = parsed.updated
         self._description = parsed.description
-        self._name = parsed.name
+#        if parsed.name:
+#            self._name = parsed.name
         self._type = parsed.type
         self._software = parsed.software
         attributes = {}
@@ -588,21 +628,8 @@ class Individual(datamodel.DatamodelObject):
             regional_profiling_centre = self.getRegionalProfilingCentre(),
             diagnosis = diagnosis,
             pathology_type = self.getPathologyType(),
-            estimated_tumor_content = self.getEstimatedTumorContent(),
-            normal_sample_source = self.getNormalSampleSource(),
-            biopsy_data = self.getBiopsyData(),
-            tumor_biopsy_anatomical_site = self.getTumorBiopsyAnatomicalSite(),
-            biopsy_type = self.getBiopsyType(),
             enrollment_approval_date = self.getEnrollmentApprovalDate(),
             enrollment_approval_initials = self.getEnrollmentApprovalInitials(),
-            sample_shipment_date = self.getSampleShipmentDate(),
-            dna_library_construction_method = self.getDnaLibraryConstructionMethod(),
-            wgs_sequencing_completion_date = self.getWgsSequencingCompletionDate(),
-            rna_library_construction_method = self.getRnaLibraryConstructionMethod(),
-            rna_sequencing_completion_date = self.getRnaSequencingCompletionDate(),
-            panel_completion_date = self.getPanelCompletionDate(),
-            other_analysis_descriptor = self.getOtherAnalysisDescriptor(),
-            other_analysis_completition_date = self.getOtherAnalysisCompletitionDate(),
             date_of_upload_to_sFTP = self.getDateOfUploadToSftp(),
             tumor_board_presentation_date_and_analyses = self.getTumorBoardPresentationDateAndAnalyses(),
             comments = self.getComments(),

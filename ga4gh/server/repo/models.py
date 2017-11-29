@@ -93,6 +93,8 @@ class Experiment(BaseModel):
 ### ======================================================================= ###
 # PROFYLE MODIFICATION BEGIN
 ### ======================================================================= ###
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
     biosample_id = pw.TextField(db_column='biosampleId', null=True)
     dna_library_construction_method = pw.TextField(null=True)
     wgs_sequencing_completion_date = pw.TextField(null=True)
@@ -102,7 +104,6 @@ class Experiment(BaseModel):
 ### ======================================================================= ###
 # PROFYLE MODIFICATION END
 ### ======================================================================= ###
-
     class Meta:
         indexes = (
             (('name'), True),
@@ -120,13 +121,14 @@ class Analysis(BaseModel):
 ### ======================================================================= ###
 # PROFYLE MODIFICATION BEGIN
 ### ======================================================================= ###
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
     experiment_id = pw.TextField(db_column='experimentId', null=True)
     other_analysis_descriptor = pw.TextField(null=True)
     other_analysis_completition_date = pw.TextField(null=True)
 ### ======================================================================= ###
 # PROFYLE MODIFICATION END
 ### ======================================================================= ###
-
     class Meta:
         indexes = (
             (('name'), True),

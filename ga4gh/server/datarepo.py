@@ -1327,6 +1327,7 @@ class SqlDataRepository(AbstractDataRepository):
 ### ======================================================================= ###
 # PROFYLE MODIFICATION BEGIN
 ### ======================================================================= ###
+                datasetId=experiment.getParentContainer().getId(),
                 biosample_id = experiment.getBiosampleId(),
                 dna_library_construction_method = experiment.getDnaLibraryConstructionMethod(),
                 wgs_sequencing_completion_date = experiment.getWgsSequencingCompletionDate(),
@@ -1343,7 +1344,14 @@ class SqlDataRepository(AbstractDataRepository):
 
     def _readExperimentTable(self):
         for experimentRecord in models.Experiment.select():
-            experiment = biodata.Experiment(experimentRecord.name)
+### ======================================================================= ###
+# PROFYLE MODIFICATION BEGIN
+### ======================================================================= ###
+            dataset = self.getDataset(experimentRecord.datasetid.id)
+            experiment = biodata.Experiment(dataset, experimentRecord.name)
+### ======================================================================= ###
+# PROFYLE MODIFICATION END
+### ======================================================================= ###
             experiment.populateFromRow(experimentRecord)
             assert experiment.getId() == experimentRecord.id
             self.addExperiment(experiment)
@@ -1368,6 +1376,7 @@ class SqlDataRepository(AbstractDataRepository):
 ### ======================================================================= ###
 # PROFYLE MODIFICATION BEGIN
 ### ======================================================================= ###
+                datasetId=analysis.getParentContainer().getId(),
                 experiment_id = analysis.getExperimentId(),
                 other_analysis_descriptor = analysis.getOtherAnalysisDescriptor(),
                 other_analysis_completition_date = analysis.getOtherAnalysisCompletitionDate(),
@@ -1381,7 +1390,14 @@ class SqlDataRepository(AbstractDataRepository):
 
     def _readAnalysisTable(self):
         for analysisRecord in models.Analysis.select():
-            analysis = biodata.Analysis(analysisRecord.name)
+### ======================================================================= ###
+# PROFYLE MODIFICATION BEGIN
+### ======================================================================= ###
+            dataset = self.getDataset(analysisRecord.datasetid.id)
+            analysis = biodata.Analysis(dataset, analysisRecord.name)
+### ======================================================================= ###
+# PROFYLE MODIFICATION END
+### ======================================================================= ###
             analysis.populateFromRow(analysisRecord)
             assert analysis.getId() == analysisRecord.id
             self.addAnalysis(analysis)
