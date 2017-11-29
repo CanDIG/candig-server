@@ -2,6 +2,6 @@ include README.txt
 include README.pypi.rst
 include ez_setup.py
 include LICENSE
-include ga4gh/server/templates/*.html
-include ga4gh/server/config/oidc_auth_config.yml
+include ga4gh/server/frontend/templates/*.html
+include ga4gh/server/frontend/config/oidc_auth_config.yml
 include ga4gh/server/frontend/*

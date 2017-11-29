@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 import requests
 
 import ga4gh.server.cli as cli
-import ga4gh.server.frontend.frontend as frontend
+import ga4gh.server.frontend.core as core
 
 import ga4gh.common.cli as common_cli
 
@@ -47,12 +47,14 @@ def server_main(args=None):
     parsedArgs = parser.parse_args(args)
     if parsedArgs.disable_urllib_warnings:
         requests.packages.urllib3.disable_warnings()
-    frontend.configure(
-        parsedArgs.config_file, parsedArgs.config, parsedArgs.port)
+    core.coreInstance.setup(parsedArgs.config_file, parsedArgs.config, parsedArgs.port)
+    #configurer.configure(
+    #    parsedArgs.config_file, parsedArgs.config, parsedArgs.port)
     sslContext = None
-    if parsedArgs.tls or ("OIDC_PROVIDER" in frontend.app.config):
+    app = core.coreInstance.getApp()
+    if parsedArgs.tls or ("OIDC_PROVIDER" in app.config):
         sslContext = "adhoc"
-    frontend.app.run(
+    app.run(
         host=parsedArgs.host, port=parsedArgs.port,
         use_reloader=not parsedArgs.dont_use_reloader,
         ssl_context=sslContext)
