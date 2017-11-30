@@ -644,6 +644,12 @@ def robots():
         app.static_folder, flask.request.path[1:])
 
 
+@DisplayedRoute('/test')
+def getTest():
+    return handleFlaskGetRequest(
+        None, flask.request, app.backend.runTest)
+
+
 @DisplayedRoute('/info')
 @requires_auth
 def getInfo():
