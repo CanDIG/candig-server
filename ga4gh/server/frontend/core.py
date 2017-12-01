@@ -13,7 +13,7 @@ import werkzeug
 import flask
 from flask.ext.oidc import OpenIDConnect
 
-import ga4gh.server.frontend.config as config
+import ga4gh.server.frontend.configurer as configurer
 import ga4gh.server.frontend.status as status
 
 import ga4gh.server.frontend.routeFactory as routeFactory
@@ -72,7 +72,7 @@ class core():
         self.app.url_map.converters['no'] = NoConverter
 
         # create the configurer
-        self.configurer = config.configurer()
+        self.configurer = configurer.configurer()
 
         # configure the flask server
         self.configurer.configure(self.app, configFile, baseConfig, port, extraConfig)
@@ -93,7 +93,7 @@ class core():
     def getOidc(self):
         return self.oidc 
 
-    def getConfigurer(self):
+    #def getConfigurer(self):
         return self.configurer
 
     def getStatus(self):

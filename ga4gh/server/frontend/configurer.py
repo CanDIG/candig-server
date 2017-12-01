@@ -46,6 +46,9 @@ import ga4gh.schemas.protocol as protocol
 
 class configurer():
 
+    def __init__(self):
+        pass
+
 
     def import_yaml_config(self, config):
         """
@@ -57,12 +60,10 @@ class configurer():
         return config
 
 
-    def loadConfig(self, app):
+    def loadConfig(self, configPath, app):
         """
         Loads the configuration file into the app
         """
-        pathLocation = '/'.join(('config', 'oidc_auth_config.yml'))
-        configPath = pkg_resources.resource_filename(__name__, pathLocation)
         configStream = self.import_yaml_config(config=configPath)
         app.config.update(configStream)
 
@@ -293,12 +294,18 @@ class configurer():
 
         Returns: None
         """
-        self.loadConfig(app)
 
-        # use the configuration file if it has 
-        # been given over the command-line
-        if configFile is not None:
-            app.config.from_pyfile(configFile)
+        if configFile is None:
+            # load the default configuration 
+            # if no configuration file has been given
+            pathLocation = '/'.join(('config', 'oidc_auth_config.yml'))
+            configPath = pkg_resources.resource_filename(__name__, pathLocation)
+            self.loadConfig(configPath, app)
+        else:
+            # load the specificied configuration file
+            # the configFile is given as a command-line
+            # argument
+            self.loadConfig(configFile, app)
 
         # update the configuration with the 
         # configuration dictionary parameter
