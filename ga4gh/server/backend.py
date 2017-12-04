@@ -755,7 +755,7 @@ class Backend(object):
         return protocol.serialize(protocol.GetInfoResponse(
             protocol_version=protocol.version), return_mimetype)
 
-    def runAddAnnouncement(self, flaskrequest):
+    def runAddAnnouncement(self, flaskrequest, return_mimetype="application/json"):
         """
         Takes a flask request from the frontend and attempts to parse
         into an AnnouncePeerRequest. If successful, it will log the
@@ -796,7 +796,7 @@ class Backend(object):
         return protocol.toJson(
             protocol.AnnouncePeerResponse(success=True))
 
-    def runListPeers(self, request):
+    def runListPeers(self, request, return_mimetype="application/json"):
         """
         Takes a ListPeersRequest and returns a ListPeersResponse using
         a page_token and page_size if provided.
@@ -805,7 +805,8 @@ class Backend(object):
             request,
             protocol.ListPeersRequest,
             protocol.ListPeersResponse,
-            self.peersGenerator)
+            self.peersGenerator,
+            return_mimemtype)
 
     def runGetVariant(self, id_, return_mimetype="application/json"):
         """
