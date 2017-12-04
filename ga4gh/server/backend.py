@@ -755,7 +755,8 @@ class Backend(object):
         return protocol.serialize(protocol.GetInfoResponse(
             protocol_version=protocol.version), return_mimetype)
 
-    def runAddAnnouncement(self, flaskrequest, return_mimetype="application/json"):
+    def runAddAnnouncement(self, flaskrequest,
+                           return_mimetype="application/json"):
         """
         Takes a flask request from the frontend and attempts to parse
         into an AnnouncePeerRequest. If successful, it will log the
@@ -806,7 +807,7 @@ class Backend(object):
             protocol.ListPeersRequest,
             protocol.ListPeersResponse,
             self.peersGenerator,
-            return_mimemtype)
+            return_mimetype)
 
     def runGetVariant(self, id_, return_mimetype="application/json"):
         """
