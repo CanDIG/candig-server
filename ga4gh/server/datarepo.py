@@ -112,7 +112,6 @@ class AbstractDataRepository(object):
         """
         return [self._experimentIdMap[id_] for id_ in self._experimentIds]
 
-
     def getAnalyses(self):
         """
         Returns a list of datasets in this data repository
@@ -149,7 +148,6 @@ class AbstractDataRepository(object):
         in testing. It will throw an exception if the URL is invalid.
         """
         peers.Peer(announcement.get('url'))
-
 
     def getNumDatasets(self):
         """

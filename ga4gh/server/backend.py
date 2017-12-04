@@ -807,7 +807,7 @@ class Backend(object):
             protocol.ListPeersResponse,
             self.peersGenerator)
 
-    def runGetVariant(self, id_):
+    def runGetVariant(self, id_, return_mimetype="application/json"):
         """
         Returns a variant with the given id
         """
