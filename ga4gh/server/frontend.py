@@ -31,6 +31,7 @@ import ga4gh.server.datamodel as datamodel
 import ga4gh.server.exceptions as exceptions
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.auth as auth
+import ga4gh.server.network as network
 
 import ga4gh.schemas.protocol as protocol
 
@@ -315,6 +316,11 @@ def configure(configFile=None, baseConfig="ProductionConfig",
         app.cache_dir = '/tmp/ga4gh'
     app.cache = FileSystemCache(
         app.cache_dir, threshold=5000, default_timeout=600, mode=384)
+    # Peer service initialization
+    network.initialize(
+        app.config.get('INITIAL_PEERS'),
+        app.backend.getDataRepository(),
+        app.logger)
     app.oidcClient = None
     app.myPort = port
     if app.config.get('AUTH0_ENABLED'):
@@ -785,6 +791,21 @@ def searchBiosamples():
 def searchIndividuals():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchIndividuals)
+
+
+@DisplayedRoute('/peers/list', postMethod=True)
+@requires_auth
+def listPeers():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runListPeers)
+
+
+@DisplayedRoute('/announce', postMethod=True)
+@requires_auth
+def announce():
+    # We can't use the post handler here because we want detailed request
+    # data.
+    return app.backend.runAddAnnouncement(flask.request)
 
 
 @DisplayedRoute(
