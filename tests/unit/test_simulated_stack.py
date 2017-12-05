@@ -1296,8 +1296,8 @@ class TestSimulatedStack(unittest.TestCase):
     def testInfo(self):
         path = "/info"
         response = self.app.get(path)
-        responseData = protocol.fromJson(response.data,
-                                         protocol.GetInfoResponse)
+        responseData = self.deserialize(response.data,
+                                        protocol.GetInfoResponse)
         self.assertIsNotNone(responseData)
         self.assertEqual(responseData.protocol_version, protocol.version)
 
