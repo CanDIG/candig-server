@@ -85,7 +85,7 @@ class core():
         
         #self.authenticator = auth.authenticator(self.app)
 
-        self.routeFactory = routeFactory.routeFactory(self.app, self.oidc) 
+        self.routeFactory = routeFactory.routeFactory(self.app, self.oidc)
        
     def getApp(self):
         return self.app
@@ -93,7 +93,7 @@ class core():
     def getOidc(self):
         return self.oidc 
 
-    #def getConfigurer(self):
+    def getConfigurer(self):
         return self.configurer
 
     def getStatus(self):

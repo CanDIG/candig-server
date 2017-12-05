@@ -1,5 +1,6 @@
-# This file is copied into place by the .whiskey/action_hooks/pre-build hook during Docker build
+import ga4gh.server.frontend.core as core
 
-from ga4gh.server.frontend.frontend import app as application
-import ga4gh.server.frontend.frontend as frontend
-frontend.configure("/srv/config.py")
+coreFront = core.coreInstance
+coreFront.setup()
+application = coreFront.getApp()
+application.run(host="127.0.0.1", port=8000)
