@@ -647,7 +647,7 @@ def robots():
 @DisplayedRoute('/test')
 def getTest():
     return handleFlaskGetRequest(
-        None, flask.request, app.backend.runTest)
+        None, flask.request, app.backend.runGetTest)
 
 
 @DisplayedRoute('/info')
