@@ -298,7 +298,7 @@ class configurer():
         if configFile is None:
             # load the default configuration 
             # if no configuration file has been given
-            pathLocation = '/'.join(('config', 'oidc_auth_config.yml'))
+            pathLocation = '/'.join(('config', 'oidc_config.yml'))
             configPath = pkg_resources.resource_filename(__name__, pathLocation)
             self.loadConfig(configPath, app)
         else:

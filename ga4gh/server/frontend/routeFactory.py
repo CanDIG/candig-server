@@ -14,8 +14,37 @@ import ga4gh.server.frontend.auth as frontAuth
 import flask
 
 class routeFactory:
+    """
+    Constructs and registers routes for the GA4GH server with Flask
+
+    This class serves as the intermediary between the backend and frontend
+
+    The routeFactory is intended to be contained in the Core class of
+    the frontend
+
+    Fields:
+
+    app - The flask application singleton
+    oidc - The flask-oidc extension singleton
+           This implements the authentication
+    back - The backend for the GA4GH server
+    requires_auth - OAuth2 Decorator for authentication
+    """
+
 
     def __init__(self, app, oidc):
+        """
+        Constructor for the routeFactory
+
+        This sets the fields for the routeFactory class
+
+        Parameters:
+
+        flask.app app - The flask application server singleton 
+                        for the GA4GH server
+
+        oidc - The flask oidc extension singleton 
+        """
         self.oidc = oidc
         self.app = app
         self.back = self.app.backend
@@ -24,6 +53,9 @@ class routeFactory:
 
 
     def dispRoute(self, path, func, name, postMethod=False, pathDisplay=None):
+        """
+        Method for registering POST and GET endpoints
+        """
         methods = None
         methodDisplay = None
 
@@ -49,28 +81,51 @@ class routeFactory:
         """
         Bind the application to the endpoint function
         Transforms f into a partial function
+
+        Parameters:
+
+        f - The function to pass the Flask application to
+
+        Returns: 
+
+        transFunc - A partial function that holds f but with app already given
         """
         transFunc = functools.partial(f, app=self.app)            
         return transFunc
 
 
     def registerException(self):
+        """
+        Method that registers exceptions for the Flask application
 
-        exceptList = [(Exception, router.handleException), (401, router.unauthorizedHandler), 
-                      (404, router.pathNotFoundHandler), (405, router.methodNotAllowedHandler), 
-                      (403, router.notAuthenticatedHandler)]
+        There are five types of exceptions registered:
 
+        Exception - Generic exception base class
+        401 - Unauthorized
+        403 - Not Authenticated
+        404 - Path Not Found
+        405 - Method Not Allowed
+       
+        Returns: None
+        """ 
+
+        # ExceptList is a list of pairs (E, F) such that:
+        # - E is an Exception object
+        # - F is the function to be called when E is raised
+
+        exceptList = [(Exception, router.handleException), 
+                      (401, router.unauthorizedHandler), 
+                      (403, router.notAuthenticatedHandler),
+                      (404, router.pathNotFoundHandler), 
+                      (405, router.methodNotAllowedHandler)]
+
+        # register the exceptions in the exceptList by iteration: 
         for item in exceptList:
             boundFunc = self.bindApp(item[1])
             self.app.register_error_handler(item[0], boundFunc)
 
 
-    def register(self):
-
-        back = self.back
-        app = self.app
-
-        #indexFunc = self.bindApp(router.index)
+    def subRegisterAlpha(self):
         callbackHandle = self.bindApp(router.callback_handling)
         robots = self.bindApp(router.robots)
 
@@ -82,15 +137,15 @@ class routeFactory:
                     ('/robots.txt', 'robots.txt', robots)]
 
         for item in funcList:
-            app.add_url_rule(item[0], item[1], item[2])
+            self.app.add_url_rule(item[0], item[1], item[2])
 
-    
+    def subRegisterBeta(self):
         secureList = [('/', 'index', router.index)]
 
         for item in secureList:
-            secureFunc = self.oidc.require_login(frontAuth.requires_token(item[2], app))
+            secureFunc = self.oidc.require_login(frontAuth.requires_token(item[2], self.app))
             boundFunc = self.bindApp(secureFunc)
-            app.add_url_rule(item[0], item[1], boundFunc)            
+            self.app.add_url_rule(item[0], item[1], boundFunc)            
 
         secureRouteList = [('/info', router.getInfo, 'info')]
 
@@ -99,17 +154,31 @@ class routeFactory:
             boundFunc = self.bindApp(secureFunc)
             self.dispRoute(item[0], boundFunc, item[2])
 
-        app.add_url_rule('/oauth2callback', 'oidcCallback', frontAuth.oidcCallback, methods=['GET'])
-
-        self.registerException()
+        self.app.add_url_rule('/oauth2callback', 'oidcCallback', frontAuth.oidcCallback, methods=['GET'])
 
         announceList = [('/announce', router.announce, 'announce'),
                         ('/listreferencebases', router.listReferenceBases, 'listReferenceBases')]
 
         for item in announceList:
-            secureFunc = self.requires_auth(self.oidc.require_login(frontAuth.requires_token(item[1], app)))
+            secureFunc = self.requires_auth(self.oidc.require_login(frontAuth.requires_token(item[1], self.app)))
             boundFunc = self.bindApp(secureFunc)         
             self.dispRoute(item[0], boundFunc, item[2], postMethod=True)
+
+
+
+
+    def register(self):
+        """
+        Entrypoint method for registering all endpoints to the Flask application
+
+        Returns: None
+        """
+
+        self.subRegisterAlpha()
+        self.subRegisterBeta()
+        self.registerException()
+
+        back = self.back
 
         tokenList = [('/callsets/search', back.runSearchCallSets, 'searchCallSets'),
                      ('/readgroupsets/search', back.runSearchReadGroupSets, 'searchReadGroupSets'),
@@ -161,9 +230,9 @@ class routeFactory:
         #methodList = [idMethod]
         for item in methodList:
             if item[0] == "GET":
-                self.getListProcess(item[1], app)
+                self.getListProcess(item[1])
             elif item[0] == "POST":
-                self.postListProcess(item[1], app)
+                self.postListProcess(item[1])
             else:
                 raise ValueError("Unknown method {}".format(item[0]))
 
@@ -173,17 +242,17 @@ class routeFactory:
         return transFunc
 
 
-    def postListProcess(self, iList, app):
+    def postListProcess(self, iList):
 
         for item in iList:
-            secureFunc = self.requires_auth(self.oidc.require_login(frontAuth.requires_token(item[1], app)))
+            secureFunc = self.requires_auth(self.oidc.require_login(frontAuth.requires_token(item[1], self.app)))
             boundFunc = self.bindEndpoint(secureFunc, router.handleFlaskPostRequest)         
             self.dispRoute(item[0], boundFunc, item[2], postMethod=True) 
 
-    def getListProcess(self, iList, app):
+    def getListProcess(self, iList):
 
         for item in iList:
-            secureFunc = self.requires_auth(self.oidc.require_login(frontAuth.requires_token(item[1], app)))
+            secureFunc = self.requires_auth(self.oidc.require_login(frontAuth.requires_token(item[1], self.app)))
             boundFunc = self.bindEndpoint(secureFunc, router.handleFlaskGetRequest)
             self.dispRoute(item[0], boundFunc, item[2], pathDisplay=item[3])
 
