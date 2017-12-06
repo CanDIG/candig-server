@@ -9,7 +9,7 @@ import shutil
 import unittest
 import logging
 
-import ga4gh.server.frontend as frontend
+import ga4gh.server.frontend.frontend as frontend
 import ga4gh.server.exceptions as exceptions
 import ga4gh.server.auth as auth
 

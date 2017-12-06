@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 import unittest
 
-import ga4gh.server.frontend as frontend
+import ga4gh.server.frontend.frontend as frontend
 import ga4gh.server.exceptions as exceptions
 
 import ga4gh.schemas.protocol as protocol

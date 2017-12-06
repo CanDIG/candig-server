@@ -42,7 +42,7 @@ setup(
     name="ga4gh-server",
     description="A reference implementation of the GA4GH API",
     packages=["ga4gh", "ga4gh.server", "ga4gh.server.datamodel",
-              "ga4gh.server.templates"],
+              "ga4gh.server.frontend.templates"],
     namespace_packages=["ga4gh"],
     zip_safe=False,
     url="https://github.com/ga4gh/ga4gh-server",

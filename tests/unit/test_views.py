@@ -11,7 +11,7 @@ import logging
 import tests.paths as paths
 
 import ga4gh.server.datamodel as datamodel
-import ga4gh.server.frontend as frontend
+import ga4gh.server.frontend.frontend as frontend
 import ga4gh.schemas.protocol as protocol
 import ga4gh.server.exceptions as exceptions
 
