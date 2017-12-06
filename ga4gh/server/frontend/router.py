@@ -7,10 +7,9 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import flask
-#from flask import current_app
-#from flask import request
+# from flask import current_app
+# from flask import request
 
-import ga4gh.server.backend as backend
 import ga4gh.server.exceptions as exceptions
 import ga4gh.server.auth as auth
 import ga4gh.schemas.protocol as protocol
@@ -20,33 +19,24 @@ def getFlaskResponse(responseString, httpStatus=200):
     """
     Returns a Flask response object for the specified data and HTTP status.
     """
-    MIMETYPE= "application/json"
-    print('getFlaskResponse')
-    print(responseString)
-    print(httpStatus)
-    response = flask.Response(responseString, status=httpStatus, mimetype=MIMETYPE)
-    print(response)
+    MIMETYPE = "application/json"
+    response = flask.Response(responseString, status=httpStatus,
+                              mimetype=MIMETYPE)
     return response
+
 
 def handleHttpPost(request, endpoint):
     """
     Handles the specified HTTP POST request, which maps to the specified
     protocol handler endpoint and protocol request class.
     """
-    print('handleHttpPost')
-    print(request)
-    print(endpoint)
-    MIMETYPE= "application/json"
+    MIMETYPE = "application/json"
     if request.mimetype and request.mimetype != MIMETYPE:
         raise exceptions.UnsupportedMediaTypeException()
     request = request.get_data()
-    print('Request')
-    print(request)
     if request == '' or request is None:
         request = '{}'
     responseStr = endpoint(request)
-    print('Response String')
-    print(responseStr)
     return getFlaskResponse(responseStr)
 
 
@@ -63,16 +53,11 @@ def handleHttpGet(id_, endpoint):
     Handles the specified HTTP GET request, which maps to the specified
     protocol handler endpoint and protocol request class
     """
-    print('handleHttpGet')
-    print(id_)
-    print(endpoint)
     responseStr = endpoint(id_)
-    print(responseStr)
-    #return responseStr
-    response = flask.Response(responseStr, status=200, mimetype="application/json")
-    print(response)
+    MIMETYPE = "application/json"
+    response = flask.Response(responseStr, status=200, mimetype=MIMETYPE)
     return response
-    #return getFlaskResponse(responseStr)
+    # return getFlaskResponse(responseStr)
 
 
 def handleHttpOptions(self):
@@ -112,8 +97,6 @@ def handleException(exception, app):
         return getFlaskResponse(responseStr, serverException.httpStatus)
 
 
-
-
 def handleFlaskGetRequest(id, flaskRequest, endpoint):
     """
     Handles the specified flask request for one of the GET URLs
@@ -130,7 +113,6 @@ def handleFlaskListRequest(id_, flaskRequest, endpoint):
     Handles the specified flask list request for one of the GET URLs.
     Invokes the specified endpoint to generate a response.
     """
-
     return handleList(endpoint, flaskRequest)
 
 
@@ -153,10 +135,9 @@ def handleFlaskPostRequestSimple(endpoint):
     return handleHttpPost(flaskRequest, endpoint)
 
 
-
-#@app.route('/')
-#@oidc.require_login
-#@requires_token
+# @app.route('/')
+# @oidc.require_login
+# @requires_token
 def index(app):
     response = flask.render_template('index.html',
                                      info=app.serverStatus)
@@ -175,9 +156,7 @@ def index(app):
         return response
 
 
-
-
-#@app.route('/callback')
+# @app.route('/callback')
 def callback_handling(app):
     if app.config.get('AUTH0_ENABLED'):
         return auth.callback_maker(
@@ -190,23 +169,22 @@ def callback_handling(app):
         raise exceptions.NotFoundException()
 
 
-#@app.route('/favicon.ico')
-#@app.route('/robots.txt')
+# @app.route('/favicon.ico')
+# @app.route('/robots.txt')
 def robots(app):
     return flask.send_from_directory(
         app.static_folder, flask.request.path[1:])
 
 
-#@DisplayedRoute('/info', app)
-#@requires_auth
-#@oidc.require_login
+# @DisplayedRoute('/info', app)
+# @requires_auth
+# @oidc.require_login
 def getInfo(app):
     action = app.backend.runGetInfo
     return handleFlaskGetRequest(None, flask.request, action)
 
 
-
-#@DisplayedRoute('/listreferencebases', app, postMethod=True)
+# @DisplayedRoute('/listreferencebases', app, postMethod=True)
 def listReferenceBases(app):
     action = app.backend.runListReferenceBases
     return handleFlaskListRequest(id, flask.request, action)
@@ -216,11 +194,10 @@ def searchEndpoint(app, endpoint):
     return handleFlaskPostRequest(flask.request, endpoint)
 
 
-
-#@DisplayedRoute('/announce', app, postMethod=True)
-#@requires_auth
-#@oidc.require_login
-#@requires_token
+# @DisplayedRoute('/announce', app, postMethod=True)
+# @requires_auth
+# @oidc.require_login
+# @requires_token
 def announce(app):
     # We can't use the post handler here because we want detailed request
     # data.
@@ -229,24 +206,22 @@ def announce(app):
 
 # The below methods ensure that JSON is returned for various errors
 # instead of the default, html
-
-#@app.errorhandler(401)
+# @app.errorhandler(401)
 def unauthorizedHandler(errorString, app):
     return handleException(exceptions.UnauthorizedException(errorString), app)
 
 
-#@app.errorhandler(404)
+# @app.errorhandler(404)
 def pathNotFoundHandler(errorString, app):
     return handleException(exceptions.PathNotFoundException(), app)
 
 
-#@app.errorhandler(405)
+# @app.errorhandler(405)
 def methodNotAllowedHandler(errorString, app):
     return handleException(exceptions.MethodNotAllowedException(), app)
 
 
-#@app.errorhandler(403)
+# @app.errorhandler(403)
 def notAuthenticatedHandler(errorString, app):
-    return handleException(exceptions.NotAuthenticatedException(errorString), app)
-
-
+    return handleException(exceptions.NotAuthenticatedException(errorString),
+                           app)

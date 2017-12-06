@@ -47,8 +47,9 @@ def server_main(args=None):
     parsedArgs = parser.parse_args(args)
     if parsedArgs.disable_urllib_warnings:
         requests.packages.urllib3.disable_warnings()
-    core.coreInstance.setup(parsedArgs.config_file, parsedArgs.config, parsedArgs.port)
-    #configurer.configure(
+    core.coreInstance.setup(parsedArgs.config_file, parsedArgs.config,
+                            parsedArgs.port)
+    # configurer.configure(
     #    parsedArgs.config_file, parsedArgs.config, parsedArgs.port)
     sslContext = None
     app = core.coreInstance.getApp()

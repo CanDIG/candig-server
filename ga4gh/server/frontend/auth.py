@@ -1,7 +1,7 @@
 """
 Contains the authentication decorators and functions
 
-This separates out the authentication imports 
+This separates out the authentication imports
 so that the imports occur only in this module
 """
 
@@ -23,16 +23,13 @@ import flask
 import flask.ext.cors as cors
 from flask import request
 
-from flask.ext.oidc import OpenIDConnect
-
 import ga4gh.server.exceptions as exceptions
 
 import ga4gh.server.auth as auth
 
 
-
 # Added by Kevin Chan
-def requires_token(f, app):
+def requires_token(f, app, oidc):
     """
     Decorator function that ensures that the token is valid,
     if the token is invalid or expired, the user will be
@@ -68,15 +65,13 @@ def requires_token(f, app):
     return decorated
 
 
-
-
-
 def startLogin(app):
     """
     If user is not logged in, this generates the redirect URL
     to the OIDC or Auth provider (depending on the configuration)
     Returns: the redirect response
     """
+    SECRET_KEY_LENGTH = 24
     flask.session["state"] = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
     flask.session["nonce"] = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
     provInfo = app.oidcClient.provider_info
@@ -115,48 +110,8 @@ def startLogin(app):
     return flask.redirect(result.url)
 
 
-
-
-# Commented out by Kevin Chan.
-# If Using the Keycloak Config or no authentication
-# this function is no longer needed
-"""
-@app.before_request
-def checkAuthentication():
-
-    The request will have a parameter 'key' if it came from the command line
-    client, or have a session key of 'key' if it's the browser.
-    If the token is not found, start the login process.
-
-    If there is no oidcClient, we are runnning naked and we don't check.
-    If we're being redirected to the oidcCallback we don't check.
-
-    :returns None if all is ok (and the request handler continues as usual).
-    Otherwise if the key was in the session (therefore we're in a browser)
-    then startLogin() will redirect to the OIDC provider. If the key was in
-    the request arguments, we're using the command line and just raise an
-    exception.
-
-    if app.oidcClient is None:
-        return
-
-    oidcCall = flask.request.endpoint == 'oidcCallback'
-    keyCall = flask.request.endpoint == "keycloakCallback"
-    if oidcCall or keyCall:
-        return
-    key = flask.session.get('key') or flask.request.args.get('key')
-
-    if key is None: # or not app.cache.get(key):
-        if 'key' in flask.request.args:
-            raise exceptions.NotAuthorizedException()
-        else:
-            return startLogin()
-"""
-
-
-
 # New configuration added by Kevin Chan
-#@app.route("/login")
+# @app.route("/login")
 def login(app):
 
     if app.config.get('AUTH0_ENABLED'):
@@ -180,8 +135,8 @@ def login(app):
         raise exceptions.NotFoundException()
 
 
-#@app.route("/logout")
-#@authenticator.requires_auth
+# @app.route("/logout")
+# @authenticator.requires_auth
 @cors.cross_origin(headers=['Content-Type', 'Authorization'])
 def logout(app):
     if app.config.get('AUTH0_ENABLED'):
@@ -209,9 +164,7 @@ def logout(app):
         return flask.redirect("http://{0}:{1}".format(hostname, app.myPort))
 
 
-
-
-#@app.route('/oauth2callback', methods=['GET'])
+# @app.route('/oauth2callback', methods=['GET'])
 def oidcCallback(app):
     """
     Once the authorization provider has cleared the user, the browser
@@ -226,6 +179,7 @@ def oidcCallback(app):
     :return: A display of the authentication token to use in the client. If
     OIDC is not configured, raises a NotImplementedException.
     """
+    SECRET_KEY_LENGTH = 24
     if app.oidcClient is None:
         raise exceptions.NotImplementedException()
 
@@ -273,10 +227,9 @@ def oidcCallback(app):
     return response
 
 
-
 # Leaving this function here for reference for the Authorization Code flow
 # Added by Kevin Chan
-#@app.route('/keycallback')
+# @app.route('/keycallback')
 def keycloakCallback(app):
     """
     Similar to the oidcCallback function, once the authorization provider
@@ -329,3 +282,40 @@ def keycloakCallback(app):
     host = socket.gethostbyname(hostname, app.myPort, path)
     redirectUri = 'http://{0}:{1}{2}'.format(host)
     return flask.redirect(redirectUri)
+
+
+# Commented out by Kevin Chan.
+# If Using the Keycloak Config or no authentication
+# this function is no longer needed
+"""
+@app.before_request
+def checkAuthentication():
+
+    The request will have a parameter 'key' if it came from the command line
+    client, or have a session key of 'key' if it's the browser.
+    If the token is not found, start the login process.
+
+    If there is no oidcClient, we are runnning naked and we don't check.
+    If we're being redirected to the oidcCallback we don't check.
+
+    :returns None if all is ok (and the request handler continues as usual).
+    Otherwise if the key was in the session (therefore we're in a browser)
+    then startLogin() will redirect to the OIDC provider. If the key was in
+    the request arguments, we're using the command line and just raise an
+    exception.
+
+    if app.oidcClient is None:
+        return
+
+    oidcCall = flask.request.endpoint == 'oidcCallback'
+    keyCall = flask.request.endpoint == "keycloakCallback"
+    if oidcCall or keyCall:
+        return
+    key = flask.session.get('key') or flask.request.args.get('key')
+
+    if key is None: # or not app.cache.get(key):
+        if 'key' in flask.request.args:
+            raise exceptions.NotAuthorizedException()
+        else:
+            return startLogin()
+"""

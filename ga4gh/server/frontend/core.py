@@ -17,7 +17,6 @@ import ga4gh.server.frontend.configurer as configurer
 import ga4gh.server.frontend.status as status
 
 import ga4gh.server.frontend.routeFactory as routeFactory
-import ga4gh.server.frontend.auth as auth
 
 
 class NoConverter(werkzeug.routing.BaseConverter):
@@ -46,15 +45,13 @@ class NoConverter(werkzeug.routing.BaseConverter):
 class core():
     """
     The core singleton which coordinates the frontend
-    
+
     Behaves as the entrypoint for the frontend
     Initializes and coordinates all other frontend modules
     Stores the Flask application and the authentication modules
     """
-
-    # def __init__(self):
-
-    def setup(self, configFile=None, baseConfig="ProductionConfig", port=8000, extraConfig={}):
+    def setup(self, configFile=None, baseConfig="ProductionConfig",
+              port=8000, extraConfig={}):
 
         # intialize the flask application
         self.app = flask.Flask(__name__)
@@ -63,35 +60,29 @@ class core():
         assert not hasattr(self.app, 'urls')
         self.app.urls = []
 
-        # set some configuration?
-        #self.MIMETYPE = "application/json"
-        # self.SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
-        self.SECRET_KEY_LENGTH = 24
-
         # set the converters on the application
         self.app.url_map.converters['no'] = NoConverter
 
         # create the configurer
-        self.configurer = configurer.configurer()
+        self.configurer = configurer.configurer(self.app)
 
         # configure the flask server
-        self.configurer.configure(self.app, configFile, baseConfig, port, extraConfig)
+        self.configurer.configure(configFile, baseConfig, port, extraConfig)
 
         # create the oidc authentication object
         self.oidc = OpenIDConnect(self.app)
 
-        # Create the server status singleton 
+        # Create the server status singleton
         self.status = self.app.serverStatus = status.ServerStatus(self.app)
-        
-        #self.authenticator = auth.authenticator(self.app)
 
+        # create the API endpoints
         self.routeFactory = routeFactory.routeFactory(self.app, self.oidc)
-       
+
     def getApp(self):
         return self.app
 
     def getOidc(self):
-        return self.oidc 
+        return self.oidc
 
     def getConfigurer(self):
         return self.configurer
@@ -101,5 +92,3 @@ class core():
 
 
 coreInstance = core()
-
-
