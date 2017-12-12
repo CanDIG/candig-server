@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CanDIG</title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel=stylesheet type=text/css href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+        <style>
+          .single {
+            background-color:olive;
+          }
+          .double {
+            background-color:aqua;
+          }
+        </style>
+    </head>
+    <body>
+    <div class="container">
+        <h2>CanDIG 0.07</h2>
+        <div>
+            This is an initial version of the CanDIG project! Features to be implemented:
+            <ul>
+              <li><strike>0.01 P2P</strike></li>
+              <li><strike>0.02 Federated Dashboard</strike></li>
+              <li><strike>0.03 Differential privacy</strike></li>
+              <li><strike>0.04 Disease ontology</strike></li>
+              <li><strike>0.05 G2P</strike></li>
+              <li><strike>0.06 Federated concordance analysis</strike></li>
+              <li><strike>0.07 NCIT Ontology</strike></li>
+              <li>0.08 IGV JS</li>
+              <li>0.09 Advance Search</li>
+            </ul>
+        </div>
+        <div>
+          <h3>Peer list</h3>
+          <ul>
+              {% for peer in info.getPeers() %}
+              <li>{{ peer.getUrl() }}</li>
+              {% endfor %}
+          </ul>
+        </div>
+        <div>
+          <h3>Federated dashboard</h3>
+            <div style="float:left;width:45%;"><label>Donor distribution<br /><canvas id="donors" width="600" height="400"></canvas></label></div>
+            <div style="float:right;width:45%;"><label>Disease distribution<br /><canvas id="disease" width="600" height="400"></canvas></label></div>
+            <table class="table table-bordered table-hover">
+              {% for peer, inds in individuals.items()|sort %}
+                  <tr>
+                    <td>{{ peer }}</td>
+                    {% for ind in inds %}
+                      <td><a href="{{ peer }}/individuals/{{ ind.id }}" target="_blank">{{ ind.patient_id }}</a></td>
+                    {% endfor %}
+                  </tr>
+              {% endfor %}
+            </table>
+        </div>
+        <div>
+          <h3>Differential privacy for donor distribution</h3>
+            <div style="float:left;width:45%;"><label>ε = 0.1<br /><canvas id="epsilon_1" width="600" height="400"></canvas></label></div>
+            <div style="float:right;width:45%;"><label>ε = 1<br /><canvas id="epsilon_2" width="600" height="400"></canvas></label></div>
+            <table class="table table-bordered table-hover">
+            </table>
+        </div>
+        <div>
+          <h3>Disease ontology</h3>
+          <ul>
+            {% set fed_inds = [] %}
+            {% for peer, inds in individuals.items() %}
+              {% for ind in inds %}
+                {% if fed_inds.append(ind) %} {% endif %}
+              {% endfor %}
+            {% endfor %}
+            {% for grouper, list in fed_inds|groupby('diagnosis.term_id') %}
+                  <li>{{ grouper }} -> {{ ncit.getTermName(grouper) }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div>
+          <h3>Genotype to Phenotype Association</h3>
+          <h4>Phenotypes</h4>
+          <ul>
+            {% for d, p in g2p.items() %}
+              <li>{{ d }} -> {{ p|join(', ') }}</li>
+            {% endfor %}
+          </ul>
+          <h4>Associations</h4>
+            <ul>
+              {% for a in associations %}
+                <li>{{ a.description }}</li>
+              {% endfor %}
+            </ul>
+        </div>
+        <div>
+          <h3>Federated concordance analysis</h3>
+          <script type=text/javascript>
+            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+            $(function() {
+              $('a#action').bind('click', function() {
+                $.getJSON($SCRIPT_ROOT + '/concordance', {
+                  gene: $('input[name="gene"]').val()
+                }, function(data) {
+                  $("#results").empty()
+                  $("#results").append(data.result);
+                });
+                return false;
+              });
+            });
+          </script>
+          <p>Gene symbol: <input type=text size=5 name=gene>
+          <p><a href=# id=action>Perform a concordance analysis</a>
+          <p><span id=results></span>
+        </div>
+        <canvas id="void" width="600" height="200">
+    </div>
+    </body>
+    <script>
+
+      var colors =
+            [
+              '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+              '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
+              '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+              '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
+              '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF',
+              '#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
+              '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+              '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
+              '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+              '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
+            ];
+
+      var pieDonor = [
+               {% for peer, inds in individuals.items() %}
+                   {
+                       value: {{ inds|length }},
+                       label: "{{ peer }}",
+                       color: colors[{{ loop.index }}]
+                   },
+               {% endfor %}
+            ];
+
+      // get bar chart canvas
+      var donorChart = document.getElementById("donors").getContext("2d");
+
+      // draw pie chart
+      new Chart(donorChart).Pie(pieDonor);
+
+      var pieDisease = [
+            {% for grouper, list in fed_inds|groupby('diagnosis.term_id') %}
+              {
+                  value: {{ list|count }},
+                  label: "{{ ncit.getTermName(grouper) }}",
+                  color: colors[{{ loop.index }}]
+              },
+            {% endfor %}
+          ];
+
+      // get bar chart canvas
+      var diseaseChart = document.getElementById("disease").getContext("2d");
+
+      // draw pie chart
+      new Chart(diseaseChart).Pie(pieDisease);
+
+      var pieEpsilon_1 = [
+            {% for peer, inds in epsilon_1.items() %}
+              {
+                  value: {{ inds }},
+                  label: "{{ peer }}",
+                  color: colors[{{ loop.index }}]
+              },
+            {% endfor %}
+          ];
+
+      // get bar chart canvas
+      var epsilon_1Chart = document.getElementById("epsilon_1").getContext("2d");
+
+      // draw pie chart
+      new Chart(epsilon_1Chart).Pie(pieEpsilon_1);
+
+      var pieEpsilon_2 = [
+            {% for peer, inds in epsilon_2.items() %}
+              {
+                  value: {{ inds }},
+                  label: "{{ peer }}",
+                  color: colors[{{ loop.index }}]
+              },
+            {% endfor %}
+          ];
+
+      // get bar chart canvas
+      var epsilon_2Chart = document.getElementById("epsilon_2").getContext("2d");
+
+      // draw pie chart
+      new Chart(epsilon_2Chart).Pie(pieEpsilon_2);
+
+    </script>
+</html>

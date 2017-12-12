@@ -1,0 +1,38 @@
+{% for peer, concord in concordance.items()|sort %}
+  <h4>{{ peer }}</h4>
+  <table  class="table table-bordered table-hover">
+    <tr>
+      <th>Ref / Alt</th>
+      <th>Chr</th>
+      <th>Start / End</th>
+      <th>Allele Frequency</th>
+      <th>Name</th>
+    </tr>
+    {% for c in concord  %}
+      {% if loop.index <= 10 %}
+      <tr {% if uniq[c.start]|count == 1 %}class="single"{% endif %}{% if uniq[c.start]|count == 2 %}class="double"{% endif %}>
+        <td>{{ c.reference_bases|truncate(5, True) }} / {{ c.alternate_bases[0]|truncate(5, True) }}</td>
+        <td>{{ c.reference_name  }}</td>
+        <td>{{ c.start }} / {{ c.end }}</td>
+        <td>{{ freq[peer ~ c.start][0] }}</td>
+        <td><a href="https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs={{ c.names[0] }}" target="_blank">{{ c.names[0] }}</a></td>
+      </tr>
+      {% endif %}
+    {% endfor %}
+  </table>
+{% endfor %}
+<div>
+  <h3>NCIT Ontology</h3>
+  <h4>What diseases map to the gene?</h4>
+  <ul>
+    {% for d in disease %}
+      <li>{{ d.disease_label.value }}</li>
+    {% endfor %}
+  </ul>
+  <h4>What are the genetic abnormalities in the gene?</h4>
+  <ul>
+    {% for a in abnormality %}
+      <li>{{ a.abnormality_label.value }}</li>
+    {% endfor %}
+  </ul>
+</div>
