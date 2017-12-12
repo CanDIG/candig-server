@@ -15,6 +15,7 @@ import functools
 
 import flask
 import flask.ext.cors as cors
+from flask import Flask, jsonify, render_template, request
 import humanize
 import werkzeug
 import oic
@@ -32,8 +33,12 @@ import ga4gh.server.exceptions as exceptions
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.auth as auth
 import ga4gh.server.network as network
+import ga4gh.server.DP as DP
+import ga4gh.server.NCIT as NCIT
 
 import ga4gh.schemas.protocol as protocol
+
+from ga4gh.client import client
 
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
@@ -210,6 +215,17 @@ class ServerStatus(object):
         return app.backend.getDataRepository().getDataset(
             datasetId).getRnaQuantificationSets()
 
+    def getPeers(self):
+        """
+        Returns the list of peers.
+        """
+        return app.backend.getDataRepository().getPeers()
+
+    def getOntologyByName(self, name):
+        """
+        Returns the list of ontologies.
+        """
+        return app.backend.getDataRepository().getOntologyByName(name)
 
 def reset():
     """
@@ -592,6 +608,58 @@ def index():
             exceptions.NotAuthenticatedException()
     else:
         return response
+
+
+@app.route('/candig')
+def candig():
+    individuals = client.FederatedClient(ServerStatus().getPeers()).search_individuals()
+    ncit = app.serverStatus.getOntologyByName("NCIT")
+
+    g2p = {}
+    associations = []
+    for peer, inds in individuals.items():
+        for ind in inds:
+            description = ncit.getTermName(ind.diagnosis.term_id)
+            # TODO: need to speed up to go away from hardcode
+            description="Neuroblastoma"
+
+            # TODO: remove haedcoded phenotype_association_set_id
+            phenotypes_generator = client.LocalClient(app.backend).search_phenotype(
+                phenotype_association_set_id="WyJQUk9GWUxFIiwiRG93bmxvYWRzIl0",
+                description=description  + " .*"
+                )
+            phenotypes = list(phenotypes_generator)
+            if phenotypes:
+                g2p[description] = set([p.description for p in phenotypes])
+
+                feature_phenotype_associations =  client.LocalClient(app.backend).search_genotype_phenotype(
+                    phenotype_association_set_id="WyJQUk9GWUxFIiwiRG93bmxvYWRzIl0",
+                    phenotype_ids=[p.id for p in phenotypes]
+                    )
+                associations = feature_phenotype_associations
+                break
+        break
+
+    return flask.render_template('candig.html',
+                 info=app.serverStatus,
+                 individuals=individuals,
+                 ncit=ncit,
+                 epsilon_1=DP.DP(individuals, 0.1).get_noise(),
+                 epsilon_2=DP.DP(individuals, 1).get_noise(),
+                 g2p=g2p,
+                 associations=associations
+                 )
+
+
+@app.route('/concordance')
+def concordance():
+    gene = request.args.get('gene', '', type=str)
+    if gene == '':
+        return jsonify(result = 'Gene symbol is missing')
+    concordance, freq, uniq = client.FederatedClient(ServerStatus().getPeers()).get_concordance(gene)
+    abnormality = NCIT.NCIT().get_genetic_abnormalities(gene)
+    disease = NCIT.NCIT().get_diseases(gene)
+    return jsonify(result=render_template('concordance.html', concordance=concordance, freq=freq, uniq=uniq, abnormality=abnormality, disease=disease))
 
 
 @app.route("/login")

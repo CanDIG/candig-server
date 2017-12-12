@@ -60,3 +60,6 @@ sphinx-argparse==0.1.15
 
 # G2P uses a ttl backend
 RDFLib==4.2.1
+
+# Differential privacy lib requires numpy
+numpy
