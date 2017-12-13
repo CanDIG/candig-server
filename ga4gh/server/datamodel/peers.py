@@ -106,7 +106,6 @@ class Peer(object):
         """
         This method accepts a model record and sets class variables.
         """
-        print('dateamodel/peer #109', peerRecord)
         self.setUrl(peerRecord.url) \
             .setAttributesJson(peerRecord.attributes)
         return self

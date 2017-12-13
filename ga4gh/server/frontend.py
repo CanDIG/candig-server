@@ -612,33 +612,14 @@ def index():
 
 @app.route('/candig')
 def candig():
-    individuals = client.FederatedClient(ServerStatus().getPeers()).search_individuals()
+    individuals = client.FederatedClient(
+        ServerStatus().getPeers()).search_individuals()
     ncit = app.serverStatus.getOntologyByName("NCIT")
 
     g2p = {}
     associations = []
-    for peer, inds in individuals.items():
-        for ind in inds:
-            description = ncit.getTermName(ind.diagnosis.term_id)
-            # TODO: need to speed up to go away from hardcode
-            description="Neuroblastoma"
-
-            # TODO: remove haedcoded phenotype_association_set_id
-            phenotypes_generator = client.LocalClient(app.backend).search_phenotype(
-                phenotype_association_set_id="WyJQUk9GWUxFIiwiRG93bmxvYWRzIl0",
-                description=description  + " .*"
-                )
-            phenotypes = list(phenotypes_generator)
-            if phenotypes:
-                g2p[description] = set([p.description for p in phenotypes])
-
-                feature_phenotype_associations =  client.LocalClient(app.backend).search_genotype_phenotype(
-                    phenotype_association_set_id="WyJQUk9GWUxFIiwiRG93bmxvYWRzIl0",
-                    phenotype_ids=[p.id for p in phenotypes]
-                    )
-                associations = feature_phenotype_associations
-                break
-        break
+    g2p, associations = client.LocalClient(app.backend).get_association(
+        individuals)
 
     return flask.render_template('candig.html',
                  info=app.serverStatus,
@@ -647,8 +628,7 @@ def candig():
                  epsilon_1=DP.DP(individuals, 0.1).get_noise(),
                  epsilon_2=DP.DP(individuals, 1).get_noise(),
                  g2p=g2p,
-                 associations=associations
-                 )
+                 associations=associations)
 
 
 @app.route('/concordance')
@@ -656,10 +636,16 @@ def concordance():
     gene = request.args.get('gene', '', type=str)
     if gene == '':
         return jsonify(result = 'Gene symbol is missing')
-    concordance, freq, uniq = client.FederatedClient(ServerStatus().getPeers()).get_concordance(gene)
+    concordance, freq, uniq = client.FederatedClient(
+        ServerStatus().getPeers()).get_concordance(gene)
     abnormality = NCIT.NCIT().get_genetic_abnormalities(gene)
     disease = NCIT.NCIT().get_diseases(gene)
-    return jsonify(result=render_template('concordance.html', concordance=concordance, freq=freq, uniq=uniq, abnormality=abnormality, disease=disease))
+    return jsonify(result=render_template('concordance.html',
+        concordance=concordance,
+        freq=freq,
+        uniq=uniq,
+        abnormality=abnormality,
+        disease=disease))
 
 
 @app.route("/login")
