@@ -96,6 +96,10 @@
           <h3>Federated concordance analysis</h3>
           <script type=text/javascript>
             $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+            $( document ).ajaxStart(function() {
+              $("#results").empty()
+              $("#results").append('<img src="{{ url_for('static', filename='spinner.gif') }}">');
+             });
             $(function() {
               $('a#action').bind('click', function() {
                 $.getJSON($SCRIPT_ROOT + '/concordance', {
