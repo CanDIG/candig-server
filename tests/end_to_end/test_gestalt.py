@@ -35,8 +35,8 @@ class TestGestalt(server_test.ServerTest):
         referenceSet = repo.getReferenceSets()[0]
         referenceSetId = referenceSet.getId()
         referenceId = referenceSet.getReferences()[0].getId()
-        # variantAnnotationSetId = \
-        #     variantSet.getVariantAnnotationSets()[0].getId()
+        variantAnnotationSetId = \
+            variantSet.getVariantAnnotationSets()[0].getId()
 
         self.simulatedPeerUrl = peer.getUrl()
         self.simulatedDatasetId = datasetId
@@ -44,7 +44,7 @@ class TestGestalt(server_test.ServerTest):
         self.simulatedReadGroupId = readGroupId
         self.simulatedReferenceSetId = referenceSetId
         self.simulatedReferenceId = referenceId
-        # self.simulatedVariantAnnotationSetId = variantAnnotationSetId
+        self.simulatedVariantAnnotationSetId = variantAnnotationSetId
         self.client = client.ClientForTesting(self.server.getUrl())
         self.runVariantsRequest()
         self.assertLogsWritten()
@@ -52,8 +52,8 @@ class TestGestalt(server_test.ServerTest):
         self.runReadsRequest()
         self.runReferencesRequest()
         self.runVariantSetsRequestDatasetTwo()
-        # self.runVariantAnnotationsRequest()
-        # self.runGetVariantAnnotationSetsRequest()
+        self.runVariantAnnotationsRequest()
+        self.runGetVariantAnnotationSetsRequest()
         self.client.cleanup()
 
     def assertLogsWritten(self):

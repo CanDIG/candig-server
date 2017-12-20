@@ -18,7 +18,6 @@ import tests.paths as paths
 import ga4gh.schemas.protocol as protocol
 
 
-@unittest.skip("Disabled")
 class TestHtslibVariantAnnotationSet(unittest.TestCase):
     """
     Unit tests for the abstract variant set.

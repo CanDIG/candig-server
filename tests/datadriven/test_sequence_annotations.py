@@ -94,14 +94,12 @@ def _getFeatureCompoundId(dataSetName, featureSetName, featureId):
     return obfuscated
 
 
-@unittest.skip("Disabled")
 def testFeatureSets():
     testDataDir = "tests/data/datasets/dataset1/sequenceAnnotations"
     for test in datadriven.makeTests(testDataDir, FeatureSetTests, "*.db"):
         yield test
 
 
-@unittest.skip("Disabled")
 class FeatureSetTests(datadriven.DataDrivenTest):
     """
     Re-parses source GFF3 files, compares the results with the contents

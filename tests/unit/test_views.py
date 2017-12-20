@@ -269,9 +269,9 @@ class TestFrontend(unittest.TestCase):
         assertHeaders(self.sendReferencesSearch())
         assertHeaders(self.sendReferenceBasesList())
         assertHeaders(self.sendDatasetsSearch())
-        # assertHeaders(self.sendPhenotypesSearch())
-        # assertHeaders(self.sendGenotypePhenotypesSearch())
-        # assertHeaders(self.sendPhenotypeAssociationSetsSearch())
+        assertHeaders(self.sendPhenotypesSearch())
+        assertHeaders(self.sendGenotypePhenotypesSearch())
+        assertHeaders(self.sendPhenotypeAssociationSetsSearch())
         # Get-based accessor methods
         assertHeaders(self.sendGetVariantSet())
         assertHeaders(self.sendGetReference())
@@ -401,7 +401,6 @@ class TestFrontend(unittest.TestCase):
             responseData.alignments[0].id,
             self.readAlignmentId)
 
-    @unittest.skip("Disabled")
     def testPhenotypeAssociationSetsSearch(self):
         response = self.sendPhenotypeAssociationSetsSearch()
         responseData = self.deserialize(
@@ -495,7 +494,6 @@ class TestFrontend(unittest.TestCase):
             "datasets",
             self.datasetId)
 
-    @unittest.skip("Disabled")
     def testPhenotypesSearch(self):
         self.searchObjectTest(
             self.sendPhenotypesSearch,
@@ -503,7 +501,6 @@ class TestFrontend(unittest.TestCase):
             "phenotypes",
             self.phenotypeId)
 
-    @unittest.skip("Disabled")
     def testGenotypePhenotypesSearch(self):
         self.searchObjectTest(
             self.sendGenotypePhenotypesSearch,

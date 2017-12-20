@@ -210,7 +210,6 @@ class TestClientJson(TestClientOutput):
                         [variant], "variants-get", variant.id)
         self.assertGreater(test_executed, 0)
 
-    @unittest.skip("Disabled")
     def testGetVariantAnnotationSet(self):
         # TODO this doesn't actually test get_variant_annotation_set
         test_executed = 0
@@ -361,7 +360,6 @@ class TestClientJson(TestClientOutput):
                     iterator, "individuals-search", "--name {}".format(
                         individual.name))
 
-    @unittest.skip("Disabled")
     def testSearchVariantAnnotationSets(self):
         for dataset in self._client.search_datasets():
             for variantSet in self._client.search_variant_sets(dataset.id):
@@ -371,7 +369,6 @@ class TestClientJson(TestClientOutput):
                 self.verifyParsedOutputsEqual(
                     iterator, "variantannotationsets-search", args)
 
-    @unittest.skip("Disabled")
     def testSearchVariantAnnotations(self):
         test_executed = 0
         start = 0
@@ -394,7 +391,6 @@ class TestClientJson(TestClientOutput):
                         iterator, "variantannotations-search", args)
         self.assertGreater(test_executed, 0)
 
-    @unittest.skip("Disabled")
     def testGetFeatures(self):
         for dataset in self._client.search_datasets():
             datasetId = dataset.id
@@ -405,7 +401,6 @@ class TestClientJson(TestClientOutput):
                         [feature], "features-get", feature.id)
                     break  # this test takes too long otherwise
 
-    @unittest.skip("Disabled")
     def testSearchFeatures(self):
         for dataset in self._client.search_datasets():
             datasetId = dataset.id
@@ -415,7 +410,6 @@ class TestClientJson(TestClientOutput):
                     iterator, "features-search",
                     "--featureSetId {}".format(featureSet.id))
 
-    @unittest.skip("Disabled")
     def testGetFeatureSets(self):
         for dataset in self._client.search_datasets():
             datasetId = dataset.id
@@ -423,7 +417,6 @@ class TestClientJson(TestClientOutput):
                 self.verifyParsedOutputsEqual(
                     [featureSet], "featuresets-get", featureSet.id)
 
-    @unittest.skip("Disabled")
     def testSearchFeatureSets(self):
         for dataset in self._client.search_datasets():
             iterator = self._client.search_feature_sets(dataset.id)
@@ -462,7 +455,6 @@ class TestClientJson(TestClientOutput):
                 iterator, "continuoussets-search",
                 "--datasetId {}".format(dataset.id))
 
-    @unittest.skip("Disabled")
     def testSearchGenotypePhenotype(self):
         phenotype_id = "http://ohsu.edu/cgd/87795e43"
         test_executed = 0
@@ -481,7 +473,6 @@ class TestClientJson(TestClientOutput):
                         iterator, "genotypephenotype-search", args)
         self.assertGreater(test_executed, 0)
 
-    @unittest.skip("Disabled")
     def testSearchPhenotype(self):
         phenotype_id = "http://ohsu.edu/cgd/87795e43"
         test_executed = 0
@@ -500,7 +491,6 @@ class TestClientJson(TestClientOutput):
                         iterator, "phenotype-search", args)
         self.assertGreater(test_executed, 0)
 
-    @unittest.skip("Disabled")
     def testSearchSearchPhenotypeAssociationSets(self):
         test_executed = 0
         for dataset in self._client.search_datasets():

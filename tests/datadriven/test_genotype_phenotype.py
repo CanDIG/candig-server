@@ -18,7 +18,6 @@ import ga4gh.schemas.protocol as protocol
 import unittest
 
 
-@unittest.skip("Disabled")
 def testG2P():
     testDataDir = os.path.join(
         paths.testDataDir, 'datasets/dataset1/phenotypes')
@@ -26,7 +25,6 @@ def testG2P():
         yield test
 
 
-@unittest.skip("Disabled")
 class PhenotypeAssociationSetTest(datadriven.DataDrivenTest):
     def __init__(self, localId, baseDir):
         self._dataset = datasets.Dataset("ds")

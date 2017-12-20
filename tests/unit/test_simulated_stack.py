@@ -503,7 +503,6 @@ class TestSimulatedStack(unittest.TestCase):
         for badId in self.getBadIds():
             self.verifyGetMethodFails(path, badId)
 
-    @unittest.skip("Disabled")
     def testGetVariantAnnotationSet(self):
         path = "/variantannotationsets"
         for dataset in self.dataRepo.getDatasets():
@@ -625,7 +624,6 @@ class TestSimulatedStack(unittest.TestCase):
         # TODO: Add more useful test scenarios, including some covering
         # pagination behavior.
 
-    @unittest.skip("Disabled")
     def testVariantAnnotationSetsSearch(self):
         self.assertIsNotNone(self.variantAnnotationSet)
 
@@ -654,7 +652,6 @@ class TestSimulatedStack(unittest.TestCase):
         # the values from the protocol object we get back with the values
         # in the original variantAnnotationSet.
 
-    @unittest.skip("Disabled")
     def testVariantAnnotationsSearch(self):
         self.assertIsNotNone(self.variantAnnotationSet)
 
@@ -793,7 +790,6 @@ class TestSimulatedStack(unittest.TestCase):
                                         SearchVariantAnnotationsResponse)
         self.assertGreater(len(responseData.variant_annotations), 0)
 
-    @unittest.skip("Disabled")
     def testGetFeatureSet(self):
         path = "/featuresets"
         for dataset in self.dataRepo.getDatasets():
@@ -808,7 +804,6 @@ class TestSimulatedStack(unittest.TestCase):
         for badId in self.getBadIds():
             self.verifyGetMethodFails(path, badId)
 
-    @unittest.skip("Disabled")
     def testFeatureSetsSearch(self):
         path = '/featuresets/search'
         for dataset in self.dataRepo.getDatasets():
@@ -853,7 +848,6 @@ class TestSimulatedStack(unittest.TestCase):
             request.dataset_id = badId
             self.verifySearchMethodFails(request, path)
 
-    @unittest.skip("Disabled")
     def testGetFeature(self):
         dataset = self.dataRepo.getDatasets()[0]
         featureSet = dataset.getFeatureSets()[0]
@@ -874,7 +868,6 @@ class TestSimulatedStack(unittest.TestCase):
                 path, feature.id, protocol.Feature)
             self.verifyFeaturesEquivalent(responseObject, feature)
 
-    @unittest.skip("Disabled")
     def testFeaturesSearch(self):
         dataset = self.dataRepo.getDatasets()[0]
         featureSet = dataset.getFeatureSets()[0]
@@ -1237,7 +1230,6 @@ class TestSimulatedStack(unittest.TestCase):
         for badId in self.getBadIds():
             self.verifyGetMethodFails(path, badId)
 
-    @unittest.skip("Disabled")
     def testSearchPhenotypeAssociationSets(self):
         path = "/phenotypeassociationsets/search"
         for dataset in self.dataRepo.getDatasets():
@@ -1252,7 +1244,6 @@ class TestSimulatedStack(unittest.TestCase):
             for clientPaSet in responseData.phenotype_association_sets:
                 self.assertTrue(clientPaSet.id in repoPaSetIds)
 
-    @unittest.skip("Disabled")
     def testSearchPhenotypes(self):
         path = "/phenotypes/search"
         for repoPaSet in self.dataRepo.allPhenotypeAssociationSets():
@@ -1266,7 +1257,6 @@ class TestSimulatedStack(unittest.TestCase):
                 for clientPhenotype in responseData.phenotypes:
                     self.assertEqual(clientPhenotype, repoAssoc.phenotype)
 
-    @unittest.skip("Disabled")
     def testSearchGenotypePhenotypes(self):
         path = "/featurephenotypeassociations/search"
         for repoPaSet in self.dataRepo.allPhenotypeAssociationSets():

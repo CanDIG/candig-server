@@ -160,13 +160,13 @@ class ServerStatus(object):
         return app.backend.getDataRepository().getDataset(
             datasetId).getVariantSets()
 
-#    def getFeatureSets(self, datasetId):
-#        """
-#        Returns the list of feature sets for the dataset
-#        """
-#        return app.backend.getDataRepository().getDataset(
-#            datasetId).getFeatureSets()
-#
+    def getFeatureSets(self, datasetId):
+        """
+        Returns the list of feature sets for the dataset
+        """
+        return app.backend.getDataRepository().getDataset(
+            datasetId).getFeatureSets()
+
 #    def getContinuousSets(self, datasetId):
 #        """
 #        Returns the list of continuous sets for the dataset
@@ -187,22 +187,22 @@ class ServerStatus(object):
         """
         return app.backend.getDataRepository().getReferenceSets()
 
-#    def getVariantAnnotationSets(self, datasetId):
-#        """
-#        Returns the list of ReferenceSets for this server.
-#        """
-#        # TODO this should be displayed per-variant set, not per dataset.
-#        variantAnnotationSets = []
-#        dataset = app.backend.getDataRepository().getDataset(datasetId)
-#        for variantSet in dataset.getVariantSets():
-#            variantAnnotationSets.extend(
-#                variantSet.getVariantAnnotationSets())
-#        return variantAnnotationSets
-#
-#    def getPhenotypeAssociationSets(self, datasetId):
-#        return app.backend.getDataRepository().getDataset(
-#            datasetId).getPhenotypeAssociationSets()
-#
+    def getVariantAnnotationSets(self, datasetId):
+        """
+        Returns the list of ReferenceSets for this server.
+        """
+        # TODO this should be displayed per-variant set, not per dataset.
+        variantAnnotationSets = []
+        dataset = app.backend.getDataRepository().getDataset(datasetId)
+        for variantSet in dataset.getVariantSets():
+            variantAnnotationSets.extend(
+                variantSet.getVariantAnnotationSets())
+        return variantAnnotationSets
+
+    def getPhenotypeAssociationSets(self, datasetId):
+        return app.backend.getDataRepository().getDataset(
+            datasetId).getPhenotypeAssociationSets()
+
 #    def getRnaQuantificationSets(self, datasetId):
 #        """
 #        Returns the list of RnaQuantificationSets for this server.
@@ -724,16 +724,16 @@ def searchGenotypes():
         flask.request, app.backend.runSearchGenotypes)
 
 
-# @DisplayedRoute('/variantannotationsets/search', postMethod=True)
-# def searchVariantAnnotationSets():
-#    return handleFlaskPostRequest(
-#        flask.request, app.backend.runSearchVariantAnnotationSets)
-#
-#
-# @DisplayedRoute('/variantannotations/search', postMethod=True)
-# def searchVariantAnnotations():
-#    return handleFlaskPostRequest(
-#        flask.request, app.backend.runSearchVariantAnnotations)
+@DisplayedRoute('/variantannotationsets/search', postMethod=True)
+def searchVariantAnnotationSets():
+    return handleFlaskPostRequest(
+       flask.request, app.backend.runSearchVariantAnnotationSets)
+
+
+@DisplayedRoute('/variantannotations/search', postMethod=True)
+def searchVariantAnnotations():
+    return handleFlaskPostRequest(
+       flask.request, app.backend.runSearchVariantAnnotations)
 
 
 @DisplayedRoute('/datasets/search', postMethod=True)
@@ -757,18 +757,18 @@ def searchAnalyses():
         flask.request, app.backend.runSearchAnalyses)
 
 
-# @DisplayedRoute('/featuresets/search', postMethod=True)
-# @requires_auth
-# def searchFeatureSets():
-#    return handleFlaskPostRequest(
-#        flask.request, app.backend.runSearchFeatureSets)
-#
-#
-# @DisplayedRoute('/features/search', postMethod=True)
-# @requires_auth
-# def searchFeatures():
-#    return handleFlaskPostRequest(
-#        flask.request, app.backend.runSearchFeatures)
+@DisplayedRoute('/featuresets/search', postMethod=True)
+@requires_auth
+def searchFeatureSets():
+    return handleFlaskPostRequest(
+       flask.request, app.backend.runSearchFeatureSets)
+
+
+@DisplayedRoute('/features/search', postMethod=True)
+@requires_auth
+def searchFeatures():
+    return handleFlaskPostRequest(
+       flask.request, app.backend.runSearchFeatures)
 
 
 # @DisplayedRoute('/continuoussets/search', postMethod=True)
@@ -905,13 +905,13 @@ def getCallSet(id):
 #        id, flask.request, app.backend.runGetFeatureSet)
 
 
-# @DisplayedRoute(
-#    '/features/<no(search):id>',
-#    pathDisplay='/features/<id>')
-# @requires_auth
-# def getFeature(id):
-#    return handleFlaskGetRequest(
-#        id, flask.request, app.backend.runGetFeature)
+@DisplayedRoute(
+   '/features/<no(search):id>',
+   pathDisplay='/features/<id>')
+@requires_auth
+def getFeature(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetFeature)
 
 
 # @DisplayedRoute(
@@ -1038,28 +1038,28 @@ def getAnalysis(id):
         id, flask.request, app.backend.runGetAnalysis)
 
 
-# @DisplayedRoute(
-#    '/variantannotationsets/<no(search):id>',
-#    pathDisplay='/variantannotationsets/<id>')
-# @requires_auth
-# def getVariantAnnotationSet(id):
-#    return handleFlaskGetRequest(
-#        id, flask.request, app.backend.runGetVariantAnnotationSet)
-#
-#
-# @DisplayedRoute('/phenotypes/search', postMethod=True)
-# @requires_auth
-# def searchPhenotypes():
-#    return handleFlaskPostRequest(
-#        flask.request, app.backend.runSearchPhenotypes)
-#
-#
-# @DisplayedRoute('/featurephenotypeassociations/search', postMethod=True)
-# @requires_auth
-# def searchGenotypePhenotypes():
-#    return handleFlaskPostRequest(
-#        flask.request,
-#        app.backend.runSearchGenotypePhenotypes)
+@DisplayedRoute(
+   '/variantannotationsets/<no(search):id>',
+   pathDisplay='/variantannotationsets/<id>')
+@requires_auth
+def getVariantAnnotationSet(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetVariantAnnotationSet)
+
+
+@DisplayedRoute('/phenotypes/search', postMethod=True)
+@requires_auth
+def searchPhenotypes():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchPhenotypes)
+
+
+@DisplayedRoute('/featurephenotypeassociations/search', postMethod=True)
+@requires_auth
+def searchGenotypePhenotypes():
+    return handleFlaskPostRequest(
+        flask.request,
+        app.backend.runSearchGenotypePhenotypes)
 
 
 # @DisplayedRoute('/phenotypeassociationsets/search', postMethod=True)
