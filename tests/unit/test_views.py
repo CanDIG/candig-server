@@ -72,14 +72,14 @@ class TestFrontend(unittest.TestCase):
         cls.genotypePhenotype = cls.phenotypeAssociationSet.getAssociations(
             request=None, featureSets=cls.featureSets)[0]
         cls.genotypePhenotypeId = cls.genotypePhenotype.id
-        cls.rnaQuantificationSet = cls.dataset.getRnaQuantificationSets()[0]
-        cls.rnaQuantificationSetId = cls.rnaQuantificationSet.getId()
-        cls.rnaQuantification = cls.rnaQuantificationSet.getRnaQuantifications(
-            )[0]
-        cls.rnaQuantificationId = cls.rnaQuantification.getId()
-        cls.expressionLevel = cls.rnaQuantification.getExpressionLevels(
-            1, 2)[0]
-        cls.expressionLevelId = cls.expressionLevel.getId()
+        # cls.rnaQuantificationSet = cls.dataset.getRnaQuantificationSets()[0]
+        # cls.rnaQuantificationSetId = cls.rnaQuantificationSet.getId()
+        # cls.rnaQuantification =
+        #    cls.rnaQuantificationSet.getRnaQuantifications()[0]
+        # cls.rnaQuantificationId = cls.rnaQuantification.getId()
+        # cls.expressionLevel = cls.rnaQuantification.getExpressionLevels(
+        #     1, 2)[0]
+        # cls.expressionLevelId = cls.expressionLevel.getId()
 
     def sendPostRequest(self, path, request):
         """

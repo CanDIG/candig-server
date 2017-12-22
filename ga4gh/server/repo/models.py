@@ -204,7 +204,7 @@ class Featureset(BaseModel):
 #         db_column='referenceSetId', rel_model=Referenceset, to_field='id')
 #     sourceuri = pw.TextField(
 #         db_column='sourceUri', null=True)
-# 
+#
 #    class Meta:
 #         indexes = (
 #            (('datasetid', 'name'), True),
@@ -309,7 +309,7 @@ class Reference(BaseModel):
 #     name = pw.TextField()
 #     referencesetid = pw.ForeignKeyField(
 #         db_column='referenceSetId', rel_model=Referenceset, to_field='id')
-# 
+#
 #     class Meta:
 #         indexes = (
 #             (('datasetid', 'name'), True),
