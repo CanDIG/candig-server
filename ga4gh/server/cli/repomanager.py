@@ -20,14 +20,14 @@ import ga4gh.server.datamodel.genotype_phenotype as genotype_phenotype
 import ga4gh.server.datamodel.ontologies as ontologies
 import ga4gh.server.datamodel.reads as reads
 import ga4gh.server.datamodel.references as references
-import ga4gh.server.datamodel.rna_quantification as rna_quantification
+# import ga4gh.server.datamodel.rna_quantification as rna_quantification
 import ga4gh.server.datamodel.sequence_annotations as sequence_annotations
-import ga4gh.server.datamodel.continuous as continuous
+# import ga4gh.server.datamodel.continuous as continuous
 import ga4gh.server.datamodel.variants as variants
 import ga4gh.server.datamodel.peers as peers
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.exceptions as exceptions
-import ga4gh.server.repo.rnaseq2ga as rnaseq2ga
+# import ga4gh.server.repo.rnaseq2ga as rnaseq2ga
 
 import ga4gh.common.cli as common_cli
 
@@ -449,33 +449,36 @@ class RepoManager(object):
         """
         Adds a new continuous set into this repo
         """
-        self._openRepo()
-        dataset = self._repo.getDatasetByName(self._args.datasetName)
-        filePath = self._getFilePath(self._args.filePath,
-                                     self._args.relativePath)
-        name = getNameFromPath(self._args.filePath)
-        continuousSet = continuous.FileContinuousSet(dataset, name)
-        referenceSetName = self._args.referenceSetName
-        if referenceSetName is None:
-            raise exceptions.RepoManagerException(
-                "A reference set name must be provided")
-        referenceSet = self._repo.getReferenceSetByName(referenceSetName)
-        continuousSet.setReferenceSet(referenceSet)
-        continuousSet.populateFromFile(filePath)
-        self._updateRepo(self._repo.insertContinuousSet, continuousSet)
+        pass
+        # self._openRepo()
+        # dataset = self._repo.getDatasetByName(self._args.datasetName)
+        # filePath = self._getFilePath(self._args.filePath,
+        #                              self._args.relativePath)
+        # name = getNameFromPath(self._args.filePath)
+        # continuousSet = continuous.FileContinuousSet(dataset, name)
+        # referenceSetName = self._args.referenceSetName
+        # if referenceSetName is None:
+        #     raise exceptions.RepoManagerException(
+        #         "A reference set name must be provided")
+        # referenceSet = self._repo.getReferenceSetByName(referenceSetName)
+        # continuousSet.setReferenceSet(referenceSet)
+        # continuousSet.populateFromFile(filePath)
+        # self._updateRepo(self._repo.insertContinuousSet, continuousSet)
 
     def removeContinuousSet(self):
         """
         Removes a continuous set from this repo
         """
-        self._openRepo()
-        dataset = self._repo.getDatasetByName(self._args.datasetName)
-        continuousSet = dataset.getContinuousSetByName(
-                            self._args.continuousSetName)
-
-        def func():
-            self._updateRepo(self._repo.removeContinuousSet, continuousSet)
-        self._confirmDelete("ContinuousSet", continuousSet.getLocalId(), func)
+        pass
+        # self._openRepo()
+        # dataset = self._repo.getDatasetByName(self._args.datasetName)
+        # continuousSet = dataset.getContinuousSetByName(
+        #                     self._args.continuousSetName)
+        #
+        # def func():
+        #     self._updateRepo(self._repo.removeContinuousSet, continuousSet)
+        # self._confirmDelete("ContinuousSet", continuousSet.getLocalId(),
+        #                      func)
 
     def addBiosample(self):
         """
@@ -608,73 +611,77 @@ class RepoManager(object):
         """
         Adds an rnaQuantification into this repo
         """
-        self._openRepo()
-        dataset = self._repo.getDatasetByName(self._args.datasetName)
-        biosampleId = ""
-        if self._args.biosampleName:
-            biosample = dataset.getBiosampleByName(self._args.biosampleName)
-            biosampleId = biosample.getId()
-        if self._args.name is None:
-            name = getNameFromPath(self._args.quantificationFilePath)
-        else:
-            name = self._args.name
-        # TODO: programs not fully supported by GA4GH yet
-        programs = ""
-        featureType = "gene"
-        if self._args.transcript:
-            featureType = "transcript"
-        rnaseq2ga.rnaseq2ga(
-            self._args.quantificationFilePath, self._args.filePath, name,
-            self._args.format, dataset=dataset, featureType=featureType,
-            description=self._args.description, programs=programs,
-            featureSetNames=self._args.featureSetNames,
-            readGroupSetNames=self._args.readGroupSetName,
-            biosampleId=biosampleId)
+        pass
+        # self._openRepo()
+        # dataset = self._repo.getDatasetByName(self._args.datasetName)
+        # biosampleId = ""
+        # if self._args.biosampleName:
+        #     biosample = dataset.getBiosampleByName(self._args.biosampleName)
+        #     biosampleId = biosample.getId()
+        # if self._args.name is None:
+        #     name = getNameFromPath(self._args.quantificationFilePath)
+        # else:
+        #     name = self._args.name
+        # # TODO: programs not fully supported by GA4GH yet
+        # programs = ""
+        # featureType = "gene"
+        # if self._args.transcript:
+        #     featureType = "transcript"
+        # rnaseq2ga.rnaseq2ga(
+        #     self._args.quantificationFilePath, self._args.filePath, name,
+        #     self._args.format, dataset=dataset, featureType=featureType,
+        #     description=self._args.description, programs=programs,
+        #     featureSetNames=self._args.featureSetNames,
+        #     readGroupSetNames=self._args.readGroupSetName,
+        #     biosampleId=biosampleId)
 
     def initRnaQuantificationSet(self):
         """
         Initialize an empty RNA quantification set
         """
-        store = rnaseq2ga.RnaSqliteStore(self._args.filePath)
-        store.createTables()
+        pass
+        # store = rnaseq2ga.RnaSqliteStore(self._args.filePath)
+        # store.createTables()
 
     def addRnaQuantificationSet(self):
         """
         Adds an rnaQuantificationSet into this repo
         """
-        self._openRepo()
-        dataset = self._repo.getDatasetByName(self._args.datasetName)
-        if self._args.name is None:
-            name = getNameFromPath(self._args.filePath)
-        else:
-            name = self._args.name
-        rnaQuantificationSet = rna_quantification.SqliteRnaQuantificationSet(
-            dataset, name)
-        referenceSetName = self._args.referenceSetName
-        if referenceSetName is None:
-            raise exceptions.RepoManagerException(
-                "A reference set name must be provided")
-        referenceSet = self._repo.getReferenceSetByName(referenceSetName)
-        rnaQuantificationSet.setReferenceSet(referenceSet)
-        rnaQuantificationSet.populateFromFile(self._args.filePath)
-        rnaQuantificationSet.setAttributes(json.loads(self._args.attributes))
-        self._updateRepo(
-            self._repo.insertRnaQuantificationSet, rnaQuantificationSet)
+        pass
+        # self._openRepo()
+        # dataset = self._repo.getDatasetByName(self._args.datasetName)
+        # if self._args.name is None:
+        #     name = getNameFromPath(self._args.filePath)
+        # else:
+        #     name = self._args.name
+        # rnaQuantificationSet = rna_quantification.SqliteRnaQuantificationSet(
+        #     dataset, name)
+        # referenceSetName = self._args.referenceSetName
+        # if referenceSetName is None:
+        #     raise exceptions.RepoManagerException(
+        #         "A reference set name must be provided")
+        # referenceSet = self._repo.getReferenceSetByName(referenceSetName)
+        # rnaQuantificationSet.setReferenceSet(referenceSet)
+        # rnaQuantificationSet.populateFromFile(self._args.filePath)
+        # rnaQuantificationSet.setAttributes(json.loads(self._args.attributes))
+        # self._updateRepo(
+        #     self._repo.insertRnaQuantificationSet, rnaQuantificationSet)
 
     def removeRnaQuantificationSet(self):
         """
         Removes an rnaQuantificationSet from this repo
         """
-        self._openRepo()
-        dataset = self._repo.getDatasetByName(self._args.datasetName)
-        rnaQuantSet = dataset.getRnaQuantificationSetByName(
-            self._args.rnaQuantificationSetName)
-
-        def func():
-            self._updateRepo(self._repo.removeRnaQuantificationSet,
-                             rnaQuantSet)
-        self._confirmDelete(
-            "RnaQuantificationSet", rnaQuantSet.getLocalId(), func)
+        pass
+        # self._openRepo()
+        # dataset = self._repo.getDatasetByName(self._args.datasetName)
+        # rnaQuantSet = dataset.getRnaQuantificationSetByName(
+        #     self._args.rnaQuantificationSetName)
+        #
+        # def func():
+        #     self._updateRepo(self._repo.removeRnaQuantificationSet,
+        #                      rnaQuantSet)
+        # self._confirmDelete(
+        #     "RnaQuantificationSet", rnaQuantSet.getLocalId(), func)
 
     #
     # Methods to simplify adding common arguments to the parser.
@@ -763,11 +770,11 @@ class RepoManager(object):
             "featureSetName",
             help="the name of the feature set")
 
-    @classmethod
-    def addContinuousSetNameArgument(cls, subparser):
-        subparser.add_argument(
-            "continuousSetName",
-            help="the name of the continuous set")
+    # @classmethod
+    # def addContinuousSetNameArgument(cls, subparser):
+    #     subparser.add_argument(
+    #         "continuousSetName",
+    #         help="the name of the continuous set")
 
     @classmethod
     def addIndividualNameArgument(cls, subparser):
@@ -1137,27 +1144,28 @@ class RepoManager(object):
         cls.addFeatureSetNameArgument(removeFeatureSetParser)
         cls.addForceOption(removeFeatureSetParser)
 
-        addContinuousSetParser = common_cli.addSubparser(
-            subparsers, "add-continuousset",
-            "Add a continuous set to the data repo")
-        addContinuousSetParser.set_defaults(runner="addContinuousSet")
-        cls.addRepoArgument(addContinuousSetParser)
-        cls.addDatasetNameArgument(addContinuousSetParser)
-        cls.addRelativePathOption(addContinuousSetParser)
-        cls.addFilePathArgument(
-            addContinuousSetParser,
-            "The path to the file contianing the continuous data ")
-        cls.addReferenceSetNameOption(addContinuousSetParser, "continuous set")
-        cls.addClassNameOption(addContinuousSetParser, "continuous set")
+        # addContinuousSetParser = common_cli.addSubparser(
+        #     subparsers, "add-continuousset",
+        #     "Add a continuous set to the data repo")
+        # addContinuousSetParser.set_defaults(runner="addContinuousSet")
+        # cls.addRepoArgument(addContinuousSetParser)
+        # cls.addDatasetNameArgument(addContinuousSetParser)
+        # cls.addRelativePathOption(addContinuousSetParser)
+        # cls.addFilePathArgument(
+        #     addContinuousSetParser,
+        #     "The path to the file contianing the continuous data ")
+        # cls.addReferenceSetNameOption(addContinuousSetParser,
+        #                               "continuous set")
+        # cls.addClassNameOption(addContinuousSetParser, "continuous set")
 
-        removeContinuousSetParser = common_cli.addSubparser(
-            subparsers, "remove-continuousset",
-            "Remove a continuous set from the repo")
-        removeContinuousSetParser.set_defaults(runner="removeContinuousSet")
-        cls.addRepoArgument(removeContinuousSetParser)
-        cls.addDatasetNameArgument(removeContinuousSetParser)
-        cls.addContinuousSetNameArgument(removeContinuousSetParser)
-        cls.addForceOption(removeContinuousSetParser)
+        # removeContinuousSetParser = common_cli.addSubparser(
+        #     subparsers, "remove-continuousset",
+        #     "Remove a continuous set from the repo")
+        # removeContinuousSetParser.set_defaults(runner="removeContinuousSet")
+        # cls.addRepoArgument(removeContinuousSetParser)
+        # cls.addDatasetNameArgument(removeContinuousSetParser)
+        # cls.addContinuousSetNameArgument(removeContinuousSetParser)
+        # cls.addForceOption(removeContinuousSetParser)
 
         addBiosampleParser = common_cli.addSubparser(
             subparsers, "add-biosample", "Add a Biosample to the dataset")
@@ -1193,67 +1201,67 @@ class RepoManager(object):
         cls.addIndividualNameArgument(removeIndividualParser)
         cls.addForceOption(removeIndividualParser)
 
-        objectType = "RnaQuantification"
-        addRnaQuantificationParser = common_cli.addSubparser(
-            subparsers, "add-rnaquantification",
-            "Add an RNA quantification to the data repo")
-        addRnaQuantificationParser.set_defaults(
-            runner="addRnaQuantification")
-        cls.addFilePathArgument(
-            addRnaQuantificationParser,
-            "The path to the RNA SQLite database to create or modify")
-        cls.addQuantificationFilePathArgument(
-            addRnaQuantificationParser, "The path to the expression file.")
-        cls.addRnaFormatArgument(addRnaQuantificationParser)
-        cls.addRepoArgument(addRnaQuantificationParser)
-        cls.addDatasetNameArgument(addRnaQuantificationParser)
-        addRnaQuantificationParser.add_argument(
-            "--biosampleName", default=None, help="Biosample Name")
-        addRnaQuantificationParser.add_argument(
-            "--readGroupSetName", default=None, help="Read Group Set Name")
-        addRnaQuantificationParser.add_argument(
-            "--featureSetNames", default=None, help="Comma separated list")
-        cls.addNameOption(addRnaQuantificationParser, "rna quantification")
-        cls.addDescriptionOption(addRnaQuantificationParser, objectType)
-        cls.addRnaFeatureTypeOption(addRnaQuantificationParser)
-        cls.addAttributesArgument(addRnaQuantificationParser)
+        # objectType = "RnaQuantification"
+        # addRnaQuantificationParser = common_cli.addSubparser(
+        #     subparsers, "add-rnaquantification",
+        #     "Add an RNA quantification to the data repo")
+        # addRnaQuantificationParser.set_defaults(
+        #     runner="addRnaQuantification")
+        # cls.addFilePathArgument(
+        #     addRnaQuantificationParser,
+        #     "The path to the RNA SQLite database to create or modify")
+        # cls.addQuantificationFilePathArgument(
+        #     addRnaQuantificationParser, "The path to the expression file.")
+        # cls.addRnaFormatArgument(addRnaQuantificationParser)
+        # cls.addRepoArgument(addRnaQuantificationParser)
+        # cls.addDatasetNameArgument(addRnaQuantificationParser)
+        # addRnaQuantificationParser.add_argument(
+        #     "--biosampleName", default=None, help="Biosample Name")
+        # addRnaQuantificationParser.add_argument(
+        #     "--readGroupSetName", default=None, help="Read Group Set Name")
+        # addRnaQuantificationParser.add_argument(
+        #     "--featureSetNames", default=None, help="Comma separated list")
+        # cls.addNameOption(addRnaQuantificationParser, "rna quantification")
+        # cls.addDescriptionOption(addRnaQuantificationParser, objectType)
+        # cls.addRnaFeatureTypeOption(addRnaQuantificationParser)
+        # cls.addAttributesArgument(addRnaQuantificationParser)
 
-        objectType = "RnaQuantificationSet"
-        initRnaQuantificationSetParser = common_cli.addSubparser(
-            subparsers, "init-rnaquantificationset",
-            "Initializes an RNA quantification set")
-        initRnaQuantificationSetParser.set_defaults(
-            runner="initRnaQuantificationSet")
-        cls.addRepoArgument(initRnaQuantificationSetParser)
-        cls.addFilePathArgument(
-            initRnaQuantificationSetParser,
-            "The path to the resulting Quantification Set")
+        # objectType = "RnaQuantificationSet"
+        # initRnaQuantificationSetParser = common_cli.addSubparser(
+        #     subparsers, "init-rnaquantificationset",
+        #     "Initializes an RNA quantification set")
+        # initRnaQuantificationSetParser.set_defaults(
+        #    runner="initRnaQuantificationSet")
+        # cls.addRepoArgument(initRnaQuantificationSetParser)
+        # cls.addFilePathArgument(
+        #    initRnaQuantificationSetParser,
+        #    "The path to the resulting Quantification Set")
 
-        addRnaQuantificationSetParser = common_cli.addSubparser(
-            subparsers, "add-rnaquantificationset",
-            "Add an RNA quantification set to the data repo")
-        addRnaQuantificationSetParser.set_defaults(
-            runner="addRnaQuantificationSet")
-        cls.addRepoArgument(addRnaQuantificationSetParser)
-        cls.addDatasetNameArgument(addRnaQuantificationSetParser)
-        cls.addFilePathArgument(
-            addRnaQuantificationSetParser,
-            "The path to the converted SQLite database containing RNA data")
-        cls.addReferenceSetNameOption(
-            addRnaQuantificationSetParser, objectType)
-        cls.addNameOption(addRnaQuantificationSetParser, objectType)
-        cls.addAttributesArgument(addRnaQuantificationSetParser)
+        # addRnaQuantificationSetParser = common_cli.addSubparser(
+        #     subparsers, "add-rnaquantificationset",
+        #     "Add an RNA quantification set to the data repo")
+        # addRnaQuantificationSetParser.set_defaults(
+        #     runner="addRnaQuantificationSet")
+        # cls.addRepoArgument(addRnaQuantificationSetParser)
+        # cls.addDatasetNameArgument(addRnaQuantificationSetParser)
+        # cls.addFilePathArgument(
+        #     addRnaQuantificationSetParser,
+        #     "The path to the converted SQLite database containing RNA data")
+        # cls.addReferenceSetNameOption(
+        #     addRnaQuantificationSetParser, objectType)
+        # cls.addNameOption(addRnaQuantificationSetParser, objectType)
+        # cls.addAttributesArgument(addRnaQuantificationSetParser)
 
-        removeRnaQuantificationSetParser = common_cli.addSubparser(
-            subparsers, "remove-rnaquantificationset",
-            "Remove an RNA quantification set from the repo")
-        removeRnaQuantificationSetParser.set_defaults(
-            runner="removeRnaQuantificationSet")
-        cls.addRepoArgument(removeRnaQuantificationSetParser)
-        cls.addDatasetNameArgument(removeRnaQuantificationSetParser)
-        cls.addRnaQuantificationSetNameArgument(
-            removeRnaQuantificationSetParser)
-        cls.addForceOption(removeRnaQuantificationSetParser)
+        # removeRnaQuantificationSetParser = common_cli.addSubparser(
+        #     subparsers, "remove-rnaquantificationset",
+        #     "Remove an RNA quantification set from the repo")
+        # removeRnaQuantificationSetParser.set_defaults(
+        #     runner="removeRnaQuantificationSet")
+        # cls.addRepoArgument(removeRnaQuantificationSetParser)
+        # cls.addDatasetNameArgument(removeRnaQuantificationSetParser)
+        # cls.addRnaQuantificationSetNameArgument(
+        #     removeRnaQuantificationSetParser)
+        # cls.addForceOption(removeRnaQuantificationSetParser)
 
         addPhenotypeAssociationSetParser = common_cli.addSubparser(
             subparsers, "add-phenotypeassociationset",

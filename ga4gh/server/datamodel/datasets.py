@@ -8,12 +8,12 @@ from __future__ import unicode_literals
 import ga4gh.server.datamodel as datamodel
 import ga4gh.server.datamodel.reads as reads
 import ga4gh.server.datamodel.sequence_annotations as sequence_annotations
-import ga4gh.server.datamodel.continuous as continuous
+# import ga4gh.server.datamodel.continuous as continuous
 import ga4gh.server.datamodel.variants as variants
 import ga4gh.server.exceptions as exceptions
 import ga4gh.server.datamodel.bio_metadata as biodata
 import ga4gh.server.datamodel.genotype_phenotype as g2p
-import ga4gh.server.datamodel.rna_quantification as rnaQuantification
+# import ga4gh.server.datamodel.rna_quantification as rnaQuantification
 
 import ga4gh.schemas.pb as pb
 import ga4gh.schemas.protocol as protocol
@@ -34,9 +34,9 @@ class Dataset(datamodel.DatamodelObject):
         self._featureSetIds = []
         self._featureSetIdMap = {}
         self._featureSetNameMap = {}
-        self._continuousSetIds = []
-        self._continuousSetIdMap = {}
-        self._continuousSetNameMap = {}
+        # self._continuousSetIds = []
+        # self._continuousSetIdMap = {}
+        # self._continuousSetNameMap = {}
         self._readGroupSetIds = []
         self._readGroupSetIdMap = {}
         self._readGroupSetNameMap = {}
@@ -49,9 +49,9 @@ class Dataset(datamodel.DatamodelObject):
         self._phenotypeAssociationSetIdMap = {}
         self._phenotypeAssociationSetNameMap = {}
         self._phenotypeAssociationSetIds = []
-        self._rnaQuantificationSetIds = []
-        self._rnaQuantificationSetIdMap = {}
-        self._rnaQuantificationSetNameMap = {}
+        # self._rnaQuantificationSetIds = []
+        # self._rnaQuantificationSetIdMap = {}
+        # self._rnaQuantificationSetNameMap = {}
 
     def populateFromRow(self, dataset):
         """
@@ -108,11 +108,12 @@ class Dataset(datamodel.DatamodelObject):
         """
         Adds the specified continuousSet to this dataset.
         """
-        id_ = continuousSet.getId()
-        self._continuousSetIdMap[id_] = continuousSet
-        self._continuousSetIds.append(id_)
-        name = continuousSet.getLocalId()
-        self._continuousSetNameMap[name] = continuousSet
+        pass
+        # id_ = continuousSet.getId()
+        # self._continuousSetIdMap[id_] = continuousSet
+        # self._continuousSetIds.append(id_)
+        # name = continuousSet.getLocalId()
+        # self._continuousSetNameMap[name] = continuousSet
 
     def addReadGroupSet(self, readGroupSet):
         """
@@ -127,11 +128,12 @@ class Dataset(datamodel.DatamodelObject):
         """
         Adds the specified rnaQuantification set to this dataset.
         """
-        id_ = rnaQuantSet.getId()
-        self._rnaQuantificationSetIdMap[id_] = rnaQuantSet
-        self._rnaQuantificationSetIds.append(id_)
-        name = rnaQuantSet.getLocalId()
-        self._rnaQuantificationSetNameMap[name] = rnaQuantSet
+        pass
+        # id_ = rnaQuantSet.getId()
+        # self._rnaQuantificationSetIdMap[id_] = rnaQuantSet
+        # self._rnaQuantificationSetIds.append(id_)
+        # name = rnaQuantSet.getLocalId()
+        # self._rnaQuantificationSetNameMap[name] = rnaQuantSet
 
     def toProtocolElement(self):
         dataset = protocol.Dataset()
@@ -249,38 +251,43 @@ class Dataset(datamodel.DatamodelObject):
         """
         Returns the list of ContinuousSets in this dataset
         """
-        return [self._continuousSetIdMap[id_]
-                for id_ in self._continuousSetIds]
+        pass
+        # return [self._continuousSetIdMap[id_]
+        #         for id_ in self._continuousSetIds]
 
     def getNumContinuousSets(self):
         """
         Returns the number of continuous sets in this dataset.
         """
-        return len(self._continuousSetIds)
+        pass
+        # return len(self._continuousSetIds)
 
     def getContinuousSet(self, id_):
         """
         Returns the ContinuousSet with the specified id, or raises a
         ContinuousSetNotFoundException otherwise.
         """
-        if id_ not in self._continuousSetIdMap:
-            raise exceptions.ContinuousSetNotFoundException(id_)
-        return self._continuousSetIdMap[id_]
+        pass
+        # if id_ not in self._continuousSetIdMap:
+        #     raise exceptions.ContinuousSetNotFoundException(id_)
+        # return self._continuousSetIdMap[id_]
 
     def getContinuousSetByName(self, name):
         """
         Returns the ContinuousSet with the specified name, or raises
         an exception otherwise.
         """
-        if name not in self._continuousSetNameMap:
-            raise exceptions.ContinuousSetNameNotFoundException(name)
-        return self._continuousSetNameMap[name]
+        pass
+        # if name not in self._continuousSetNameMap:
+        #     raise exceptions.ContinuousSetNameNotFoundException(name)
+        # return self._continuousSetNameMap[name]
 
     def getContinuousSetByIndex(self, index):
         """
         Returns the continuous set at the specified index in this dataset.
         """
-        return self._continuousSetIdMap[self._continuousSetIds[index]]
+        pass
+        # return self._continuousSetIdMap[self._continuousSetIds[index]]
 
     def getBiosamples(self):
         """
@@ -382,40 +389,45 @@ class Dataset(datamodel.DatamodelObject):
         """
         Returns the number of rna quantification sets in this dataset.
         """
-        return len(self._rnaQuantificationSetIds)
+        pass
+        # return len(self._rnaQuantificationSetIds)
 
     def getRnaQuantificationSets(self):
         """
         Returns the list of RnaQuantification sets in this dataset
         """
-        return [self._rnaQuantificationSetIdMap[id_] for
-                id_ in self._rnaQuantificationSetIds]
+        pass
+        # return [self._rnaQuantificationSetIdMap[id_] for
+        #         id_ in self._rnaQuantificationSetIds]
 
     def getRnaQuantificationSetByIndex(self, index):
         """
         Returns the rna quantification set at the specified index in this
         dataset.
         """
-        return self._rnaQuantificationSetIdMap[
-            self._rnaQuantificationSetIds[index]]
+        pass
+        # return self._rnaQuantificationSetIdMap[
+        #     self._rnaQuantificationSetIds[index]]
 
     def getRnaQuantificationSetByName(self, name):
         """
         Returns the RnaQuantification set with the specified name, or raises
         an exception otherwise.
         """
-        if name not in self._rnaQuantificationSetNameMap:
-            raise exceptions.RnaQuantificationSetNameNotFoundException(name)
-        return self._rnaQuantificationSetNameMap[name]
+        pass
+        # if name not in self._rnaQuantificationSetNameMap:
+        #     raise exceptions.RnaQuantificationSetNameNotFoundException(name)
+        # return self._rnaQuantificationSetNameMap[name]
 
     def getRnaQuantificationSet(self, id_):
         """
         Returns the RnaQuantification set with the specified name, or raises
         a RnaQuantificationSetNotFoundException otherwise.
         """
-        if id_ not in self._rnaQuantificationSetIdMap:
-            raise exceptions.RnaQuantificationSetNotFoundException(id_)
-        return self._rnaQuantificationSetIdMap[id_]
+        pass
+        # if id_ not in self._rnaQuantificationSetIdMap:
+        #     raise exceptions.RnaQuantificationSetNotFoundException(id_)
+        # return self._rnaQuantificationSetIdMap[id_]
 
 
 class SimulatedDataset(Dataset):
@@ -491,17 +503,17 @@ class SimulatedDataset(Dataset):
             featureSet.setReferenceSet(referenceSet)
             self.addFeatureSet(featureSet)
         # Continuous
-        for i in range(numContinuousSets):
-            localId = "simConts{}".format(i)
-            seed = randomSeed + i
-            continuousSet = continuous.SimulatedContinuousSet(
-                self, localId, seed)
-            continuousSet.setReferenceSet(referenceSet)
-            self.addContinuousSet(continuousSet)
+        # for i in range(numContinuousSets):
+        #     localId = "simConts{}".format(i)
+        #     seed = randomSeed + i
+        #     continuousSet = continuous.SimulatedContinuousSet(
+        #         self, localId, seed)
+        #     continuousSet.setReferenceSet(referenceSet)
+        #     self.addContinuousSet(continuousSet)
         # RnaQuantificationSets
-        for i in range(numRnaQuantSets):
-            localId = 'simRqs{}'.format(i)
-            rnaQuantSet = rnaQuantification.SimulatedRnaQuantificationSet(
-                self, localId)
-            rnaQuantSet.setReferenceSet(referenceSet)
-            self.addRnaQuantificationSet(rnaQuantSet)
+        # for i in range(numRnaQuantSets):
+        #     localId = 'simRqs{}'.format(i)
+        #     rnaQuantSet = rnaQuantification.SimulatedRnaQuantificationSet(
+        #         self, localId)
+        #     rnaQuantSet.setReferenceSet(referenceSet)
+        #     self.addRnaQuantificationSet(rnaQuantSet)

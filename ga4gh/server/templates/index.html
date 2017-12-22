@@ -97,44 +97,31 @@
                     </tr>
                     {% endfor %}
                 </table>
-                <h6>VariantAnnotationSets</h6>
-                <table class="table table-striped">
-                    <tr>
-                        <th>Name</th>
-                        <th>Id</th>
-                    </tr>
-                    {% for variantAnnotationSet in info.getVariantAnnotationSets(dataset.getId()) %}
-                    <tr>
-                        <td>{{ variantAnnotationSet.getLocalId() }}</td>
-                        <td>{{ variantAnnotationSet.getId() }}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-                <h6>FeatureSets</h6>
-                <table class="table table-striped">
-                    <tr>
-                        <th>Name</th>
-                        <th>Id</th>
-                    </tr>
-                    {% for featureSet in info.getFeatureSets(dataset.getId()) %}
-                    <tr>
-                        <td>{{ featureSet.getLocalId() }}</td>
-                        <td>{{ featureSet.getId() }}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-                <h6>ContinuousSets</h6>
-                <table class="table table-striped">
-                    <tr>
-                        <th>Name</th>
-                        <th>Id</th>
-                    </tr>
-                    {% for continuousSet in info.getContinuousSets(dataset.getId()) %}
-                    <tr>
-                        <td>{{ continuousSet.getLocalId() }}</td>
-                        <td>{{ continuousSet.getId() }}</td>
-                    </tr>
-                    {% endfor %}
+                <h6>VariantAnnotationSets</h6>     
+                <table class="table table-striped">       
+                    <tr>      
+                        <th>Name</th>     
+                        <th>Id</th>       
+                    </tr>     
+                    {% for variantAnnotationSet in info.getVariantAnnotationSets(dataset.getId()) %}      
+                    <tr>      
+                        <td>{{ variantAnnotationSet.getLocalId() }}</td>      
+                        <td>{{ variantAnnotationSet.getId() }}</td>       
+                    </tr>     
+                    {% endfor %}      
+                </table>      
+                <h6>FeatureSets</h6>      
+                <table class="table table-striped">       
+                    <tr>      
+                        <th>Name</th>     
+                        <th>Id</th>       
+                    </tr>     
+                    {% for featureSet in info.getFeatureSets(dataset.getId()) %}      
+                    <tr>      
+                        <td>{{ featureSet.getLocalId() }}</td>        
+                        <td>{{ featureSet.getId() }}</td>     
+                    </tr>     
+                    {% endfor %}      
                 </table>
                 <h6>ReadGroupSets</h6>
                 <table class="table table-striped">
@@ -161,29 +148,18 @@
                     {% endfor %}
                     {% endfor %}
                 </table>
-                <h6>PhenotypeAssociationSets</h6>
-                <table class="table table-striped">
-                    <tr>
-                        <th>Name</th>
-                        <th>Id</th>
-                    </tr>
-                    {% for paSet in info.getPhenotypeAssociationSets(dataset.getId()) %}
-                    <tr>
-                        <td>{{ paSet.getLocalId() }}</td>
-                        <td>{{ paSet.getId() }}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-                <h6>RnaQuantificationSets</h6>
-                <table class="table table-striped">
-                    <th>Name</th>
-                    <th>Id</th>
-                    {% for rnaQuantificationSet in info.getRnaQuantificationSets(dataset.getId()) %}
-                    <tr>
-                        <td>{{ rnaQuantificationSet.getLocalId() }}</td>
-                        <td>{{ rnaQuantificationSet.getId() }}</td>
-                    </tr>
-                    {% endfor %}
+                <h6>PhenotypeAssociationSets</h6>      
+                <table class="table table-striped">       
+                    <tr>      
+                        <th>Name</th>     
+                        <th>Id</th>       
+                    </tr>     
+                    {% for paSet in info.getPhenotypeAssociationSets(dataset.getId()) %}      
+                    <tr>      
+                        <td>{{ paSet.getLocalId() }}</td>     
+                        <td>{{ paSet.getId() }}</td>      
+                    </tr>     
+                    {% endfor %}      
                 </table>
             {% endfor %}
         </div>

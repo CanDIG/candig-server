@@ -818,6 +818,7 @@ class TestSimulatedStack(unittest.TestCase):
             request.dataset_id = badId
             self.verifySearchMethodFails(request, path)
 
+    @unittest.skip("Disabled")
     def testGetContinuousSet(self):
         path = "/continuoussets"
         for dataset in self.dataRepo.getDatasets():
@@ -832,6 +833,7 @@ class TestSimulatedStack(unittest.TestCase):
         for badId in self.getBadIds():
             self.verifyGetMethodFails(path, badId)
 
+    @unittest.skip("Disabled")
     def testContinuousSetsSearch(self):
         path = '/continuoussets/search'
         for dataset in self.dataRepo.getDatasets():

@@ -809,6 +809,13 @@ class Backend(object):
             self.peersGenerator,
             return_mimetype)
 
+    def runGetTest(self, request, return_mimetype="application/json"):
+        """
+        Returns information about the service including protocol version.
+        """
+        repo = self.getDataRepository()
+        repo.verify()
+
     def runGetVariant(self, id_, return_mimetype="application/json"):
         """
         Returns a variant with the given id

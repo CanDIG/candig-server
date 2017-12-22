@@ -424,6 +424,7 @@ class TestClientJson(TestClientOutput):
                 iterator, "featuresets-search",
                 "--datasetId {}".format(dataset.id))
 
+    @unittest.skip("Disabled")
     def testSearchContinuous(self):
         for dataset in self._client.search_datasets():
             datasetId = dataset.id
@@ -437,6 +438,7 @@ class TestClientJson(TestClientOutput):
                     " --start {} --end {}".format(
                         continuousSet.id, 'chr19', 49305897, 49306090))
 
+    @unittest.skip("Disabled")
     def testGetContinuousSets(self):
         for dataset in self._client.search_datasets():
             datasetId = dataset.id
@@ -445,6 +447,7 @@ class TestClientJson(TestClientOutput):
                 self.verifyParsedOutputsEqual(
                     [continuousSet], "continuoussets-get", continuousSet.id)
 
+    @unittest.skip("Disabled")
     def testSearchContinuousSets(self):
         for dataset in self._client.search_datasets():
             iterator = self._client.search_continuous_sets(dataset.id)
@@ -498,6 +501,7 @@ class TestClientJson(TestClientOutput):
                 iterator, "phenotypeassociationsets-search", args)
         self.assertGreater(test_executed, 0)
 
+    @unittest.skip("Disabled")
     def testSearchExpressionLevels(self):
         for dataset in self._client.search_datasets():
             for rnaQuantificationSet in \
@@ -513,6 +517,7 @@ class TestClientJson(TestClientOutput):
                             rnaQuantification.id))
                     self.verifyParsedOutputsEqual(iterator, cliString)
 
+    @unittest.skip("Disabled")
     def testSearchRnaQuantifications(self):
         for dataset in self._client.search_datasets():
             for rnaQuantificationSet in \
@@ -525,6 +530,7 @@ class TestClientJson(TestClientOutput):
                         rnaQuantificationSet.id))
                 self.verifyParsedOutputsEqual(iterator, cliString)
 
+    @unittest.skip("Disabled")
     def testSearchRnaQuantificationSets(self):
         for dataset in self._client.search_datasets():
             iterator = self._client.search_rna_quantification_sets(dataset.id)
@@ -533,6 +539,7 @@ class TestClientJson(TestClientOutput):
                     dataset.id))
             self.verifyParsedOutputsEqual(iterator, cliString)
 
+    @unittest.skip("Disabled")
     def testGetExpressionLevel(self):
         for dataset in self._client.search_datasets():
             for rnaQuantificationSet in \
@@ -548,6 +555,7 @@ class TestClientJson(TestClientOutput):
                                     "expressionlevels-get",
                                     expressionLevel.id)
 
+    @unittest.skip("Disabled")
     def testGetRnaQuantification(self):
         for dataset in self._client.search_datasets():
             for rnaQuantificationSet in \
@@ -560,6 +568,7 @@ class TestClientJson(TestClientOutput):
                         "rnaquantifications-get",
                         rnaQuantification.id)
 
+    @unittest.skip("Disabled")
     def testGetRnaQuantificationSet(self):
         for dataset in self._client.search_datasets():
             for rnaQuantificationSet in \
