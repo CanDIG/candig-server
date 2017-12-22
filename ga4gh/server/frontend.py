@@ -1062,11 +1062,11 @@ def searchGenotypePhenotypes():
         app.backend.runSearchGenotypePhenotypes)
 
 
-# @DisplayedRoute('/phenotypeassociationsets/search', postMethod=True)
-# @requires_auth
-# def searchPhenotypeAssociationSets():
-#    return handleFlaskPostRequest(
-#        flask.request, app.backend.runSearchPhenotypeAssociationSets)
+@DisplayedRoute('/phenotypeassociationsets/search', postMethod=True)
+@requires_auth
+def searchPhenotypeAssociationSets():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchPhenotypeAssociationSets)
 
 
 # The below methods ensure that JSON is returned for various errors
