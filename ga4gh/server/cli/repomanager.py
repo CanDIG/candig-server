@@ -27,7 +27,7 @@ import ga4gh.server.datamodel.variants as variants
 import ga4gh.server.datamodel.peers as peers
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.exceptions as exceptions
-import ga4gh.server.repo.rnaseq2ga as rnaseq2ga
+# import ga4gh.server.repo.rnaseq2ga as rnaseq2ga
 
 import ga4gh.common.cli as common_cli
 
@@ -477,7 +477,8 @@ class RepoManager(object):
         #
         # def func():
         #     self._updateRepo(self._repo.removeContinuousSet, continuousSet)
-        # self._confirmDelete("ContinuousSet", continuousSet.getLocalId(), func)
+        # self._confirmDelete("ContinuousSet", continuousSet.getLocalId(),
+        #                      func)
 
     def addBiosample(self):
         """
@@ -675,7 +676,7 @@ class RepoManager(object):
         # dataset = self._repo.getDatasetByName(self._args.datasetName)
         # rnaQuantSet = dataset.getRnaQuantificationSetByName(
         #     self._args.rnaQuantificationSetName)
-        # 
+        #
         # def func():
         #     self._updateRepo(self._repo.removeRnaQuantificationSet,
         #                      rnaQuantSet)
@@ -1153,7 +1154,8 @@ class RepoManager(object):
         # cls.addFilePathArgument(
         #     addContinuousSetParser,
         #     "The path to the file contianing the continuous data ")
-        # cls.addReferenceSetNameOption(addContinuousSetParser, "continuous set")
+        # cls.addReferenceSetNameOption(addContinuousSetParser,
+        #                               "continuous set")
         # cls.addClassNameOption(addContinuousSetParser, "continuous set")
 
         # removeContinuousSetParser = common_cli.addSubparser(
