@@ -1646,4 +1646,4 @@ class SqlDataRepository(AbstractDataRepository):
         self._readBiosampleTable()
         self._readIndividualTable()
         self._readPhenotypeAssociationSetTable()
-        self._readRnaQuantificationSetTable()
+        # self._readRnaQuantificationSetTable()
