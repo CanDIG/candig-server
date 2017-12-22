@@ -193,22 +193,22 @@ class Featureset(BaseModel):
         )
 
 
-class ContinuousSet(BaseModel):
-    dataurl = pw.TextField(db_column='dataUrl')
-    datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
-    id = pw.TextField(primary_key=True)
-    info = pw.TextField(null=True)
-    name = pw.TextField()
-    referencesetid = pw.ForeignKeyField(
-        db_column='referenceSetId', rel_model=Referenceset, to_field='id')
-    sourceuri = pw.TextField(
-        db_column='sourceUri', null=True)
-
-    class Meta:
-        indexes = (
-            (('datasetid', 'name'), True),
-        )
+# class ContinuousSet(BaseModel):
+#     dataurl = pw.TextField(db_column='dataUrl')
+#     datasetid = pw.ForeignKeyField(
+#         db_column='datasetId', rel_model=Dataset, to_field='id')
+#     id = pw.TextField(primary_key=True)
+#     info = pw.TextField(null=True)
+#     name = pw.TextField()
+#     referencesetid = pw.ForeignKeyField(
+#         db_column='referenceSetId', rel_model=Referenceset, to_field='id')
+#     sourceuri = pw.TextField(
+#         db_column='sourceUri', null=True)
+# 
+#    class Meta:
+#         indexes = (
+#            (('datasetid', 'name'), True),
+#        )
 
 
 class Individual(BaseModel):
@@ -300,20 +300,20 @@ class Reference(BaseModel):
         )
 
 
-class Rnaquantificationset(BaseModel):
-    dataurl = pw.TextField(db_column='dataUrl')
-    datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
-    id = pw.TextField(primary_key=True)
-    info = pw.TextField(null=True)
-    name = pw.TextField()
-    referencesetid = pw.ForeignKeyField(
-        db_column='referenceSetId', rel_model=Referenceset, to_field='id')
-
-    class Meta:
-        indexes = (
-            (('datasetid', 'name'), True),
-        )
+# class Rnaquantificationset(BaseModel):
+#     dataurl = pw.TextField(db_column='dataUrl')
+#     datasetid = pw.ForeignKeyField(
+#         db_column='datasetId', rel_model=Dataset, to_field='id')
+#     id = pw.TextField(primary_key=True)
+#     info = pw.TextField(null=True)
+#     name = pw.TextField()
+#     referencesetid = pw.ForeignKeyField(
+#         db_column='referenceSetId', rel_model=Referenceset, to_field='id')
+# 
+#     class Meta:
+#         indexes = (
+#             (('datasetid', 'name'), True),
+#         )
 
 
 class System(BaseModel):
