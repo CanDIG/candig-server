@@ -896,13 +896,13 @@ def getCallSet(id):
         id, flask.request, app.backend.runGetCallSet)
 
 
-# @DisplayedRoute(
-#    '/featuresets/<no(search):id>',
-#    pathDisplay='/featuresets/<id>')
-# @requires_auth
-# def getFeatureSet(id):
-#    return handleFlaskGetRequest(
-#        id, flask.request, app.backend.runGetFeatureSet)
+@DisplayedRoute(
+   '/featuresets/<no(search):id>',
+   pathDisplay='/featuresets/<id>')
+@requires_auth
+def getFeatureSet(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetFeatureSet)
 
 
 @DisplayedRoute(
