@@ -1603,7 +1603,7 @@ class SqlDataRepository(AbstractDataRepository):
         self._createAnalysisTable()
         self._createIndividualTable()
         self._createPhenotypeAssociationSetTable()
-        self._createRnaQuantificationSetTable()
+        # self._createRnaQuantificationSetTable()
 
     def exists(self):
         """
