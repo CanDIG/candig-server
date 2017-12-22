@@ -15,7 +15,6 @@ import tests.paths as paths
 
 import ga4gh.schemas.protocol as protocol
 
-import unittest
 
 _datasetName = "ds"
 

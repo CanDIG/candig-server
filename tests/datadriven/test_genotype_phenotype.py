@@ -15,8 +15,6 @@ import tests.paths as paths
 
 import ga4gh.schemas.protocol as protocol
 
-import unittest
-
 
 def testG2P():
     testDataDir = os.path.join(
