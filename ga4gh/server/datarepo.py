@@ -16,7 +16,7 @@ import ga4gh.server.datamodel.reads as reads
 import ga4gh.server.datamodel.references as references
 import ga4gh.server.datamodel.variants as variants
 import ga4gh.server.datamodel.sequence_annotations as sequence_annotations
-import ga4gh.server.datamodel.continuous as continuous
+# import ga4gh.server.datamodel.continuous as continuous
 import ga4gh.server.datamodel.bio_metadata as biodata
 import ga4gh.server.datamodel.genotype_phenotype as genotype_phenotype
 import ga4gh.server.datamodel.genotype_phenotype_featureset as g2pFeatureset
@@ -369,13 +369,13 @@ class AbstractDataRepository(object):
                     featureSet.getOntology().getName(),
                     featureSet.getId(),
                     sep="\t")
-            print("\tContinuousSets:")
-            for continuousSet in dataset.getContinuousSets():
-                print(
-                    "\t", continuousSet.getLocalId(),
-                    continuousSet.getReferenceSet().getLocalId(),
-                    continuousSet.getId(),
-                    sep="\t")
+#            print("\tContinuousSets:")
+#            for continuousSet in dataset.getContinuousSets():
+#                print(
+#                    "\t", continuousSet.getLocalId(),
+#                    continuousSet.getReferenceSet().getLocalId(),
+#                    continuousSet.getId(),
+#                    sep="\t")
             print("\tPhenotypeAssociationSets:")
             for phenotypeAssociationSet in \
                     dataset.getPhenotypeAssociationSets():
@@ -384,17 +384,17 @@ class AbstractDataRepository(object):
                     phenotypeAssociationSet.getParentContainer().getId(),
                     sep="\t")
                 # TODO -  please improve this listing
-            print("\tRnaQuantificationSets:")
-            for rna_quantification_set in dataset.getRnaQuantificationSets():
-                print(
-                    "\t", rna_quantification_set.getLocalId(),
-                    rna_quantification_set.getId(), sep="\t")
-                for quant in rna_quantification_set.getRnaQuantifications():
-                        print(
-                            "\t\t", quant.getLocalId(),
-                            quant._description,
-                            ",".join(quant._readGroupIds),
-                            ",".join(quant._featureSetIds), sep="\t")
+#            print("\tRnaQuantificationSets:")
+#            for rna_quantification_set in dataset.getRnaQuantificationSets():
+#                print(
+#                    "\t", rna_quantification_set.getLocalId(),
+#                    rna_quantification_set.getId(), sep="\t")
+#                for quant in rna_quantification_set.getRnaQuantifications():
+#                        print(
+#                            "\t\t", quant.getLocalId(),
+#                            quant._description,
+#                            ",".join(quant._readGroupIds),
+#                            ",".join(quant._featureSetIds), sep="\t")
         print("Experiments:")
         for experiment in self.getExperiments():
             print(
@@ -477,9 +477,10 @@ class AbstractDataRepository(object):
         """
         Return an iterator over all continuous sets in the data repo
         """
-        for dataset in self.getDatasets():
-            for continuousSet in dataset.getContinuousSets():
-                yield continuousSet
+        pass
+#        for dataset in self.getDatasets():
+#            for continuousSet in dataset.getContinuousSets():
+#                yield continuousSet
 
     def allCallSets(self):
         """
@@ -513,31 +514,34 @@ class AbstractDataRepository(object):
         """
         Return an iterator over all rna quantification sets
         """
-        for dataset in self.getDatasets():
-            for rnaQuantificationSet in dataset.getRnaQuantificationSets():
-                yield rnaQuantificationSet
+        pass
+#        for dataset in self.getDatasets():
+#            for rnaQuantificationSet in dataset.getRnaQuantificationSets():
+#                yield rnaQuantificationSet
 
     def allRnaQuantifications(self):
         """
         Return an iterator over all rna quantifications
         """
-        for dataset in self.getDatasets():
-            for rnaQuantificationSet in dataset.getRnaQuantificationSets():
-                for rnaQuantification in \
-                        rnaQuantificationSet.getRnaQuantifications():
-                    yield rnaQuantification
+        pass
+#        for dataset in self.getDatasets():
+#            for rnaQuantificationSet in dataset.getRnaQuantificationSets():
+#                for rnaQuantification in \
+#                        rnaQuantificationSet.getRnaQuantifications():
+#                    yield rnaQuantification
 
     def allExpressionLevels(self):
         """
         Return an iterator over all expression levels
         """
-        for dataset in self.getDatasets():
-            for rnaQuantificationSet in dataset.getRnaQuantificationSets():
-                for rnaQuantification in \
-                        rnaQuantificationSet.getRnaQuantifications():
-                    for expressionLevel in \
-                            rnaQuantification.getExpressionLevels():
-                        yield expressionLevel
+        pass
+#        for dataset in self.getDatasets():
+#            for rnaQuantificationSet in dataset.getRnaQuantificationSets():
+#                for rnaQuantification in \
+#                        rnaQuantificationSet.getRnaQuantifications():
+#                    for expressionLevel in \
+#                            rnaQuantification.getExpressionLevels():
+#                        yield expressionLevel
 
 
 class EmptyDataRepository(AbstractDataRepository):
@@ -1006,9 +1010,10 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Removes the specified continuousSet from this repository.
         """
-        q = models.ContinuousSet.delete().where(
-            models.ContinuousSet.id == continuousSet.getId())
-        q.execute()
+        pass
+#        q = models.ContinuousSet.delete().where(
+#            models.ContinuousSet.id == continuousSet.getId())
+#        q.execute()
 
     def _readDatasetTable(self):
         for datasetRecord in models.Dataset.select():
@@ -1314,35 +1319,38 @@ class SqlDataRepository(AbstractDataRepository):
             dataset.addFeatureSet(featureSet)
 
     def _createContinuousSetTable(self):
-        self.database.create_table(models.ContinuousSet)
+        pass
+        # self.database.create_table(models.ContinuousSet)
 
     def insertContinuousSet(self, continuousSet):
         """
         Inserts a the specified continuousSet into this repository.
         """
+        pass
         # TODO add support for info and sourceUri fields.
-        try:
-            models.ContinuousSet.create(
-                id=continuousSet.getId(),
-                datasetid=continuousSet.getParentContainer().getId(),
-                referencesetid=continuousSet.getReferenceSet().getId(),
-                name=continuousSet.getLocalId(),
-                dataurl=continuousSet.getDataUrl(),
-                attributes=json.dumps(continuousSet.getAttributes()))
-        except Exception as e:
-            raise exceptions.RepoManagerException(e)
+        # try:
+        #    models.ContinuousSet.create(
+        #        id=continuousSet.getId(),
+        #        datasetid=continuousSet.getParentContainer().getId(),
+        #        referencesetid=continuousSet.getReferenceSet().getId(),
+        #        name=continuousSet.getLocalId(),
+        #        dataurl=continuousSet.getDataUrl(),
+        #        attributes=json.dumps(continuousSet.getAttributes()))
+        # except Exception as e:
+        #    raise exceptions.RepoManagerException(e)
 
     def _readContinuousSetTable(self):
-        for continuousSetRecord in models.ContinuousSet.select():
-            dataset = self.getDataset(continuousSetRecord.datasetid.id)
-            continuousSet = continuous.FileContinuousSet(
-                    dataset, continuousSetRecord.name)
-            continuousSet.setReferenceSet(
-                self.getReferenceSet(
-                    continuousSetRecord.referencesetid.id))
-            continuousSet.populateFromRow(continuousSetRecord)
-            assert continuousSet.getId() == continuousSetRecord.id
-            dataset.addContinuousSet(continuousSet)
+        pass
+        # for continuousSetRecord in models.ContinuousSet.select():
+        #    dataset = self.getDataset(continuousSetRecord.datasetid.id)
+        #    continuousSet = continuous.FileContinuousSet(
+        #            dataset, continuousSetRecord.name)
+        #    continuousSet.setReferenceSet(
+        #        self.getReferenceSet(
+        #            continuousSetRecord.referencesetid.id))
+        #    continuousSet.populateFromRow(continuousSetRecord)
+        #    assert continuousSet.getId() == continuousSetRecord.id
+        #    dataset.addContinuousSet(continuousSet)
 
     def _createBiosampleTable(self):
         self.database.create_table(models.Biosample)
@@ -1589,7 +1597,7 @@ class SqlDataRepository(AbstractDataRepository):
         self._createVariantSetTable()
         self._createVariantAnnotationSetTable()
         self._createFeatureSetTable()
-        self._createContinuousSetTable()
+        # self._createContinuousSetTable()
         self._createBiosampleTable()
         self._createExperimentTable()
         self._createAnalysisTable()
@@ -1634,7 +1642,7 @@ class SqlDataRepository(AbstractDataRepository):
         self._readCallSetTable()
         self._readVariantAnnotationSetTable()
         self._readFeatureSetTable()
-        self._readContinuousSetTable()
+        # self._readContinuousSetTable()
         self._readBiosampleTable()
         self._readIndividualTable()
         self._readPhenotypeAssociationSetTable()
