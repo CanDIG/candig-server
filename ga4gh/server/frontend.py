@@ -15,6 +15,7 @@ import functools
 
 import flask
 import flask.ext.cors as cors
+from flask_oidc import OpenIDConnect
 import humanize
 import werkzeug
 import oic
@@ -44,6 +45,16 @@ app.urls = []
 
 requires_auth = auth.auth_decorator(app)
 
+app.config.update({
+    'SECRET_KEY': 'SomethingNotEntirelySecret',
+    'TESTING': True,
+    'DEBUG': True,
+    'OIDC_CLIENT_SECRETS': 'client_secrets.json',
+    'OIDC_ID_TOKEN_COOKIE_SECURE': False,
+    'OIDC_REQUIRE_VERIFIED_EMAIL': False
+})
+
+oidc = OpenIDConnect(app)
 
 class NoConverter(werkzeug.routing.BaseConverter):
     """
@@ -303,6 +314,7 @@ def configure(configFile=None, baseConfig="ProductionConfig",
     except AssertionError:
         pass
     app.serverStatus = ServerStatus()
+
 
     app.backend = _configure_backend(app)
     if app.config.get('SECRET_KEY'):
@@ -576,6 +588,7 @@ class DisplayedRoute(object):
 
 
 @app.route('/')
+@oidc.require_login
 def index():
     response = flask.render_template('index.html',
                                      info=app.serverStatus)
