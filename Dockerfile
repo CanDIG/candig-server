@@ -61,7 +61,6 @@ EXPOSE 80
 # The directory that the user will land in when executing an interactive shell
 WORKDIR /srv/ga4gh/server
 RUN python scripts/prepare_compliance_data.py -o ../ga4gh-compliance-data
-RUN python scripts/build_test_data.py
 
 # Default action: Bring up a webserver instance to run as a daemon
 CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
