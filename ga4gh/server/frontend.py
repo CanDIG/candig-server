@@ -33,8 +33,8 @@ import ga4gh.server.exceptions as exceptions
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.auth as auth
 import ga4gh.server.network as network
-
 import ga4gh.schemas.protocol as protocol
+
 
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
@@ -42,9 +42,7 @@ SECRET_KEY_LENGTH = 24
 app = flask.Flask(__name__)
 assert not hasattr(app, 'urls')
 app.urls = []
-
 requires_auth = auth.auth_decorator(app)
-
 app.config.update({
     'SECRET_KEY': 'SomethingNotEntirelySecret',
     'TESTING': True,
@@ -53,8 +51,8 @@ app.config.update({
     'OIDC_ID_TOKEN_COOKIE_SECURE': False,
     'OIDC_REQUIRE_VERIFIED_EMAIL': False
 })
-
 oidc = OpenIDConnect(app)
+
 
 class NoConverter(werkzeug.routing.BaseConverter):
     """
@@ -314,8 +312,6 @@ def configure(configFile=None, baseConfig="ProductionConfig",
     except AssertionError:
         pass
     app.serverStatus = ServerStatus()
-
-
     app.backend = _configure_backend(app)
     if app.config.get('SECRET_KEY'):
         app.secret_key = app.config['SECRET_KEY']
@@ -588,7 +584,6 @@ class DisplayedRoute(object):
 
 
 @app.route('/')
-@oidc.require_login
 def index():
     response = flask.render_template('index.html',
                                      info=app.serverStatus)
