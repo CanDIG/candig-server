@@ -62,7 +62,7 @@ class LocalOidConfig(DevelopmentConfig):
     Configuration used for developing against a local OIDC server
     """
     SECRET_KEY = "super_secret"
-    OIDC_PROVIDER = "https://localhost:8443"
+    OIDC_PROVIDER = "https://localhost:8080"
 
 
 class SimulatedConfig(BaseConfig):
@@ -121,11 +121,14 @@ class TestConfig(BaseConfig):
 
 class TestOidcConfig(TestConfig):
     SECRET_KEY = "super_secret"
-    OIDC_PROVIDER = "https://accounts.example.com"
-    OIDC_CLIENT_ID = "XXX"
-    OIDC_CLIENT_SECRET = "XXX"
-    OIDC_AUTHZ_ENDPOINT = "https://accounts.example.com/auth"
-    OIDC_TOKEN_ENDPOINT = "https://accounts.example.com/token"
+#    OIDC_PROVIDER = "https://accounts.example.com"
+    OIDC_PROVIDER = "https://localhost:8080"
+    OIDC_CLIENT_ID = "frontend"
+    OIDC_CLIENT_SECRET = "b7f18dd1-c3ab-4933-8e24-03204ab15561"
+#    OIDC_AUTHZ_ENDPOINT = "https://accounts.example.com/auth"
+    OIDC_AUTHZ_ENDPOINT = "http://localhost:8080/auth/realms/flask/protocol/openid-connect/auth"
+#    OIDC_TOKEN_ENDPOINT = "https://accounts.example.com/token"
+    OIDC_TOKEN_ENDPOINT = "http://localhost:8080/auth/realms/flask/protocol/openid-connect/token"
     OIDC_TOKEN_REV_ENDPOINT = "https://accounts.example.com/revoke"
 
 
