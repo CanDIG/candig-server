@@ -49,6 +49,7 @@ app.config.update({
     'DEBUG': True,
     'OIDC_CLIENT_SECRETS': 'client_secrets.json',
     'OIDC_ID_TOKEN_COOKIE_SECURE': False,
+    'OIDC_COOKIE_SECURE': False,
     'OIDC_REQUIRE_VERIFIED_EMAIL': False
 })
 oidc = OpenIDConnect(app)
