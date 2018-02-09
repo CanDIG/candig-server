@@ -15,6 +15,7 @@ import functools
 
 import flask
 import flask.ext.cors as cors
+from flask_oidc import OpenIDConnect
 import humanize
 import werkzeug
 import oic
