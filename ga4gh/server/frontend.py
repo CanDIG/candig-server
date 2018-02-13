@@ -600,23 +600,43 @@ class DisplayedRoute(object):
         return wrapper
 
 
-@app.route('/')
-def index():
-    response = flask.render_template('index.html',
-                                     info=app.serverStatus)
-    if app.config.get('AUTH0_ENABLED'):
-        key = (flask.request.args.get('key'))
-        try:
-            print(key)
-            profile = app.cache.get(key)
-        except:
-            raise exceptions.NotAuthorizedException()
-        if (profile):
-            return response
+if config["frontend"]["KEYCLOAK"]:
+    @app.route
+    @oidc.require_login
+    def index():
+        response = flask.render_template('index.html',
+                                        info=app.serverStatus)
+        if app.config.get('AUTH0_ENABLED'):
+            key = (flask.request.args.get('key'))
+            try:
+                print(key)
+                profile = app.cache.get(key)
+            except:
+                raise exceptions.NotAuthorizedException()
+            if (profile):
+                return response
+            else:
+                exceptions.NotAuthenticatedException()
         else:
-            exceptions.NotAuthenticatedException()
-    else:
-        return response
+            return response
+else:
+    @app.route('/')
+    def index():
+        response = flask.render_template('index.html',
+                                        info=app.serverStatus)
+        if app.config.get('AUTH0_ENABLED'):
+            key = (flask.request.args.get('key'))
+            try:
+                print(key)
+                profile = app.cache.get(key)
+            except:
+                raise exceptions.NotAuthorizedException()
+            if (profile):
+                return response
+            else:
+                exceptions.NotAuthenticatedException()
+        else:
+            return response
 
 
 @app.route("/login")
