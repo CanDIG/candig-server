@@ -25,6 +25,7 @@ import requests
 import logging
 from logging import StreamHandler
 from werkzeug.contrib.cache import FileSystemCache
+from yaml import load
 
 import ga4gh.server
 import ga4gh.server.backend as backend
@@ -39,10 +40,23 @@ import ga4gh.schemas.protocol as protocol
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
 
+def import_yaml_config(config):
+    """
+    A function that returns the frontend and server configuration
+    as a dictionary.
+    """
+    stream = file(config, 'r')
+    config = load(stream)
+    return config
+
+config = import_yaml_config("oidc_config.yml")
+
 app = flask.Flask(__name__)
 assert not hasattr(app, 'urls')
 app.urls = []
 requires_auth = auth.auth_decorator(app)
+
+app.config.update(KEYCLOAK=True)
 app.config.update({
     'SECRET_KEY': 'SomethingNotEntirelySecret',
     'TESTING': True,
@@ -52,7 +66,8 @@ app.config.update({
     'OIDC_COOKIE_SECURE': False,
     'OIDC_REQUIRE_VERIFIED_EMAIL': False
 })
-oidc = OpenIDConnect(app)
+
+#oidc = OpenIDConnect(app)
 
 class NoConverter(werkzeug.routing.BaseConverter):
     """
