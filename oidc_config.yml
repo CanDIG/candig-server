@@ -1,11 +1,11 @@
 frontend:
-    KEYCLOAL: True
+    KEYCLOAK: False
     OIDC_CLIENT_SECRETS: ga4gh/server/config/client_secrets.json
     OIDC_OPENID_REALM: http://192.168.99.100:8080/oidc_callback
     OIDC_ID_TOKEN_COOKIE_SECURE: False
     OIDC_REQUIRE_VERIFIED_EMAIL: False
     OIDC_ID_TOKEN_COOKIE_NAME: id_token
-    SECRET_KEY: key
+    SECRET_KEY: SomethingNotEntirelySecret
     DEBUG: True
     TESTING: False
     DATA_SOURCE: tests/data/registry.db
