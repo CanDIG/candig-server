@@ -50,6 +50,7 @@ def import_yaml_config(config):
     return config
 
 config = import_yaml_config("oidc_config.yml")
+print(config)
 
 app = flask.Flask(__name__)
 assert not hasattr(app, 'urls')
@@ -67,7 +68,8 @@ app.config.update({
     'OIDC_REQUIRE_VERIFIED_EMAIL': False
 })
 
-#oidc = OpenIDConnect(app)
+if config["frontend"]["KEYCLOAK"]:
+    oidc = OpenIDConnect(app)
 
 class NoConverter(werkzeug.routing.BaseConverter):
     """
