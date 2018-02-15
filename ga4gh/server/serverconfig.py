@@ -39,7 +39,7 @@ class BaseConfig(object):
     FILE_HANDLE_CACHE_MAX_SIZE = 50
 
     LANDING_MESSAGE_HTML = "landing_message.html"
-    INITIAL_PEERS = "ga4gh/server/templates/initial_peers.txt"
+    INITIAL_PEERS = "/srv/ga4gh/server/ga4gh/server/templates/initial_peers.txt"
 
 
 class ComplianceConfig(BaseConfig):
@@ -63,15 +63,15 @@ class LocalOidConfig(DevelopmentConfig):
     """
     Configuration used for developing against a local OIDC server
     """
-    SECRET_KEY = "super_secret"
-    OIDC_PROVIDER = "https://opennet-33-237.uhnres.utoronto.ca:8443"    
+    SECRET_KEY = "key"
+    OIDC_PROVIDER = "http://localhost:8080"    
 
 
 class KeycloakOidConfig(DevelopmentConfig):
     """
     Configuration used for OIDC with Keycloak server
     """
-    SECRET_KEY = "super_secret" #Unsure what this does, but it is needed. 
+    SECRET_KEY = "key" #Unsure what this does, but it is needed. 
     KEYCLOAK = True
 
 class SimulatedConfig(BaseConfig):
