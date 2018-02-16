@@ -20,6 +20,7 @@ install:
   - ga4gh_repo --version
 
 before_script:
+  - easy_install distribute
   - pip install -r dev-requirements.txt
   - python scripts/build_test_data.py 
     
