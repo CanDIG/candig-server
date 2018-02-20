@@ -18,7 +18,7 @@ import ga4gh.server.exceptions as exceptions
 
 import tests.paths as paths
 
-
+@unittest.skip("Disabled")
 class TestContinuous(unittest.TestCase):
     """
     Unit tests for continuous data
