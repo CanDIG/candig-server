@@ -55,7 +55,8 @@ app.config.update({
     'SECRET_KEY': "key",
     'TESTING': False,
     'DEBUG': False,
-    'OIDC_CLIENT_SECRETS': '/srv/ga4gh/server/client_secrets.json',
+    #'OIDC_CLIENT_SECRETS': '/srv/ga4gh/server/client_secrets.json',
+    'OIDC_CLIENT_SECRETS': 'client_secrets.json',
     'OIDC_ID_TOKEN_COOKIE_SECURE': False,
     'OIDC_REQUIRE_VERIFIED_EMAIL': False,
 })
