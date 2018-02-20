@@ -40,7 +40,7 @@ class BaseConfig(object):
 
     LANDING_MESSAGE_HTML = "landing_message.html"
     #INITIAL_PEERS = "/srv/ga4gh/server/ga4gh/server/templates/initial_peers.txt"
-    INITIAL_PEERS = "server/ga4gh/server/templates/initial_peers.txt"
+    INITIAL_PEERS = "ga4gh/server/templates/initial_peers.txt"
 
 
 class ComplianceConfig(BaseConfig):
