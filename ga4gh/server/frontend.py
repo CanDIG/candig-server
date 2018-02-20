@@ -762,32 +762,53 @@ def robots():
         app.static_folder, flask.request.path[1:])
 
 
-@DisplayedRoute('/info')
-@requires_auth
-@oidc.require_login
-def getInfo():
-    return handleFlaskGetRequest(
-        None, flask.request, app.backend.runGetInfo)
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/info')
+    @requires_auth
+    @oidc.require_login
+    def getInfo():
+        return handleFlaskGetRequest(
+            None, flask.request, app.backend.runGetInfo)
+else:
+    @DisplayedRoute('/info')
+    @requires_auth
+    def getInfo():
+        return handleFlaskGetRequest(
+            None, flask.request, app.backend.runGetInfo)
 
 
-@DisplayedRoute('/references/<id>')
-@requires_auth
-@oidc.require_login
-@requires_token
-def getReference(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetReference)
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/references/<id>')
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def getReference(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetReference)
+else:
+    @DisplayedRoute('/references/<id>')
+    @requires_auth
+    @requires_token
+    def getReference(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetReference)
 
 
-@DisplayedRoute('/referencesets/<id>')
-@requires_auth
-@oidc.require_login
-@requires_token
-
-def getReferenceSet(id):
-    return handleFlaskGetRequest(
-        id, flask.request, app.backend.runGetReferenceSet)
-
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/referencesets/<id>')
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def getReferenceSet(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetReferenceSet)
+else:
+    @DisplayedRoute('/referencesets/<id>')
+    @requires_auth
+    def getReferenceSet(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetReferenceSet)
+    
 
 @DisplayedRoute('/listreferencebases', postMethod=True)
 def listReferenceBases():
@@ -849,49 +870,84 @@ def searchVariantAnnotations():
         flask.request, app.backend.runSearchVariantAnnotations)
 
 
-@DisplayedRoute('/datasets/search', postMethod=True)
-@requires_auth
-@oidc.require_login
-@requires_token
-def searchDatasets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchDatasets)
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/datasets/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchDatasets():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchDatasets)
+else:
+    @DisplayedRoute('/datasets/search', postMethod=True)
+    @requires_auth
+    def searchDatasets():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchDatasets)
 
 
-@DisplayedRoute('/featuresets/search', postMethod=True)
-@requires_auth
-@oidc.require_login
-@requires_token
-def searchFeatureSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchFeatureSets)
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/featuresets/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchFeatureSets():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchFeatureSets)
+else:
+    @DisplayedRoute('/featuresets/search', postMethod=True)
+    @requires_auth
+    def searchFeatureSets():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchFeatureSets)
 
 
-@DisplayedRoute('/features/search', postMethod=True)
-@requires_auth
-@oidc.require_login
-@requires_token
-def searchFeatures():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchFeatures)
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/features/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchFeatures():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchFeatures)
+else:
+    @DisplayedRoute('/features/search', postMethod=True)
+    @requires_auth
+    def searchFeatures():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchFeatures)
 
 
-@DisplayedRoute('/continuoussets/search', postMethod=True)
-@requires_auth
-@oidc.require_login
-@requires_token
-def searchContinuousSets():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchContinuousSets)
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/continuoussets/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchContinuousSets():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchContinuousSets)
+else:
+    @DisplayedRoute('/continuoussets/search', postMethod=True)
+    @requires_auth
+    def searchContinuousSets():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchContinuousSets)
 
 
-@DisplayedRoute('/continuous/search', postMethod=True)
-@requires_auth
-@oidc.require_login
-@requires_token
-def searchContinuous():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchContinuous)
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/continuous/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchContinuous():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchContinuous)
+else:
+    @DisplayedRoute('/continuous/search', postMethod=True)
+    @requires_auth
+    def searchContinuous():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchContinuous)
 
 
 @DisplayedRoute('/biosamples/search', postMethod=True)
