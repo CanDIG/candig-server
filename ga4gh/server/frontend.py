@@ -653,7 +653,7 @@ class DisplayedRoute(object):
             return result
         return wrapper
 
-if app.config.get("KEYCLOAK")
+if app.config.get("KEYCLOAK"):
     @app.route('/')
     @oidc.require_login
     @requires_token
