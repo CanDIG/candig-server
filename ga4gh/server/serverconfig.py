@@ -73,7 +73,7 @@ class KeycloakOidConfig(DevelopmentConfig):
     Configuration used for OIDC with Keycloak server
     """
     SECRET_KEY = "key" #Unsure what this does, but it is needed. 
-    KEYCLOAK = True
+    KEYCLOAK = False
 
 class SimulatedConfig(BaseConfig):
     """
