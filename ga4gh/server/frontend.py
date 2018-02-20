@@ -1472,13 +1472,13 @@ else:
 
 
 if app.config.get("KEYCLOAK"):
-@DisplayedRoute('/phenotypes/search', postMethod=True)
-@requires_auth
-@oidc.require_login
-@requires_token
-def searchPhenotypes():
-    return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchPhenotypes)
+    @DisplayedRoute('/phenotypes/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchPhenotypes():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchPhenotypes)
 else:
     @DisplayedRoute('/phenotypes/search', postMethod=True)
     @requires_auth
