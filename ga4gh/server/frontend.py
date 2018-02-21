@@ -1056,7 +1056,7 @@ else:
             id, flask.request, app.backend.runGetIndividual)
 
 
-if app.confif.get("KEYCLOAK"):
+if app.config.get("KEYCLOAK"):
     @DisplayedRoute('/rnaquantificationsets/search', postMethod=True)
     @requires_auth
     @oidc.require_login
