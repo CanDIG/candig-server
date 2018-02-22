@@ -18,3 +18,4 @@ class TestConstraints(unittest.TestCase):
     def testDefault(self):
         utils.assertFileContentsIdentical(
             self.constraintsFilePath, self.constraintsFileDefaultPath)
+
