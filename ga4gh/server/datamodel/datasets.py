@@ -491,17 +491,17 @@ class SimulatedDataset(Dataset):
             featureSet.setReferenceSet(referenceSet)
             self.addFeatureSet(featureSet)
         # Continuous
-        for i in range(numContinuousSets):
-            localId = "simConts{}".format(i)
-            seed = randomSeed + i
-            continuousSet = continuous.SimulatedContinuousSet(
-                self, localId, seed)
-            continuousSet.setReferenceSet(referenceSet)
-            self.addContinuousSet(continuousSet)
-        # RnaQuantificationSets
-        for i in range(numRnaQuantSets):
-            localId = 'simRqs{}'.format(i)
-            rnaQuantSet = rnaQuantification.SimulatedRnaQuantificationSet(
-                self, localId)
-            rnaQuantSet.setReferenceSet(referenceSet)
-            self.addRnaQuantificationSet(rnaQuantSet)
+#        for i in range(numContinuousSets):
+#            localId = "simConts{}".format(i)
+#            seed = randomSeed + i
+#            continuousSet = continuous.SimulatedContinuousSet(
+#                self, localId, seed)
+#            continuousSet.setReferenceSet(referenceSet)
+#            self.addContinuousSet(continuousSet)
+#        # RnaQuantificationSets
+#        for i in range(numRnaQuantSets):
+#            localId = 'simRqs{}'.format(i)
+#            rnaQuantSet = rnaQuantification.SimulatedRnaQuantificationSet(
+#                self, localId)
+#            rnaQuantSet.setReferenceSet(referenceSet)
+#            self.addRnaQuantificationSet(rnaQuantSet)
