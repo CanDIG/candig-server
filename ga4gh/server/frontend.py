@@ -1220,25 +1220,25 @@ else:
             id, flask.request, app.backend.runGetFeatureSet)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/features/<no(search):id>',
-        pathDisplay='/features/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getFeature(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetFeature)
-else:
-    @DisplayedRoute(
-        '/featuresets/<no(search):id>',
-        pathDisplay='/featuresets/<id>')
-    @requires_auth
-    def getFeatureSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetFeatureSet)
-
+#if app.config.get("KEYCLOAK"):
+#    @DisplayedRoute(
+#        '/features/<no(search):id>',
+#        pathDisplay='/features/<id>')
+#    @requires_auth
+#    @oidc.require_login
+#    @requires_token
+#    def getFeature(id):
+#        return handleFlaskGetRequest(
+#            id, flask.request, app.backend.runGetFeature)
+#else:
+#    @DisplayedRoute(
+#        '/featuresets/<no(search):id>',
+#        pathDisplay='/featuresets/<id>')
+#    @requires_auth
+#    def getFeatureSet(id):
+#        return handleFlaskGetRequest(
+#            id, flask.request, app.backend.runGetFeatureSet)
+#
 
 if app.config.get("KEYCLOAK"):
     @DisplayedRoute(
