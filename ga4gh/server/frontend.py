@@ -50,19 +50,18 @@ assert not hasattr(app, 'urls')
 app.urls = []
 requires_auth = auth.auth_decorator(app)
 
-#Edit this for flask-oidc, the endpoints are in the client_secrets.json file
+# Edit this for flask-oidc, the endpoints are in the client_secrets.json file
 if app.config.get("KEYCLOAK"):
     app.config.update({
         'SECRET_KEY': "key",
         'TESTING': False,
         'DEBUG': False,
-        #'OIDC_CLIENT_SECRETS': '/srv/ga4gh/server/client_secrets.json',
         'OIDC_CLIENT_SECRETS': 'client_secrets.json',
         'OIDC_ID_TOKEN_COOKIE_SECURE': False,
         'OIDC_REQUIRE_VERIFIED_EMAIL': False,
     })
 
-    #For configuration of Flask-Oidc
+    # For configuration of Flask-Oidc
     oidc = OpenIDConnect(app)
 
 class NoConverter(werkzeug.routing.BaseConverter):
