@@ -101,7 +101,9 @@ class TestSimulatedStack(unittest.TestCase):
         and returns the response.
         """
         return self.app.post(
-            path, headers={'Content-type': 'application/json', 'Accept': self.serialization},
+            path, headers={
+                'Content-type': 'application/json', 'Accept': self.serialization
+                },
             data=data)
 
     def sendSearchRequest(self, path, request, responseClass):
@@ -123,7 +125,7 @@ class TestSimulatedStack(unittest.TestCase):
         Sends a GET request to the specified path for an object with the
         specified ID and returns the response.
         """
-        #return self.app.get("{}/{}".format(path, id_))
+        # return self.app.get("{}/{}".format(path, id_))
         path = "{}/{}".format(path, id_)
         headers = {'Content-type': 'application/json',
                    'Accept': self.serialization},
@@ -136,7 +138,7 @@ class TestSimulatedStack(unittest.TestCase):
         """
         response = self.sendObjectGetRequest(path, id_)
         self.assertEqual(200, response.status_code)
-	obj = self.deserialize(response, responseClass)
+        obj = self.deserialize(response, responseClass)
         self.assertIsInstance(obj, responseClass)
         return obj
 
@@ -638,7 +640,6 @@ class TestSimulatedStack(unittest.TestCase):
         self.assertEqual(responseData.error_code, 758389611)
         self.assertEqual(responseData.message,
                          'No object of this type exists with id \'b4d==\'')
-
         request.variant_set_id = self.variantSet.getId()
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
         responseData = self.deserialize(response,
@@ -666,7 +667,8 @@ class TestSimulatedStack(unittest.TestCase):
         request.reference_name = "1"
         request.variant_annotation_set_id = self.variantAnnotationSet.getId()
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response,
+        responseData = self.deserialize(
+                response,
                 protocol.SearchVariantAnnotationsResponse)
         self.assertGreater(len(responseData.variant_annotations), 0)
         self.assertIsNotNone(
