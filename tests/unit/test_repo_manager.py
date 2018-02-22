@@ -201,6 +201,7 @@ class TestAddRnaQuantificationSet(AbstractRepoManagerTest):
 #        rnaQuantificationSet = dataset.getRnaQuantificationSetByName(name)
 #        self.assertEqual(rnaQuantificationSet.getLocalId(), name)
 
+
 @unittest.skip("Disabled")
 class TestRemoveRnaQuantificationSet(AbstractRepoManagerTest):
 
@@ -307,6 +308,7 @@ class TestRemoveFeatureSet(AbstractRepoManagerTest):
         self.runCommand(cmd)
         with self.assertRaises(exceptions.FeatureSetNameNotFoundException):
             self.getFeatureSet()
+
 
 @unittest.skip("Disabled")
 class TestAddContinuousSet(AbstractRepoManagerTest):
