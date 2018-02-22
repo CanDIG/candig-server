@@ -21,12 +21,14 @@ import ga4gh.server.frontend as frontend
 
 import ga4gh.schemas.protocol as protocol
 
+
 def round_float32(x_double):
     """
     Uses the array module to return a (truncated) 32-bit float
     representation of a python floating point number (double)
     """
     return array.array(b'f', [x_double])[0]
+
 
 class TestSimulatedStack(unittest.TestCase):
     """
@@ -63,6 +65,7 @@ class TestSimulatedStack(unittest.TestCase):
     def as_float32(cls, x):
         x_dbl = float(x)
         x_flt = array.array(b"f", [x_dbl])[0]
+        return x_flt
 
     def setUp(self):
         self.backend = frontend.app.backend
@@ -98,7 +101,6 @@ class TestSimulatedStack(unittest.TestCase):
         and returns the response.
         """
         return self.app.post(
-            #path, headers={'Content-type': 'application/json'},
             path, headers={'Content-type': 'application/json', 'Accept': self.serialization},
             data=data)
 
