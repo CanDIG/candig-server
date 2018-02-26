@@ -16,12 +16,11 @@ import json
 
 import flask
 import flask.ext.cors as cors
-from flask import request, Flask, g
 from flask.ext.oidc import OpenIDConnect
 import humanize
 import werkzeug
 import oic
-from oic.oic import AuthorizationRequest, Client
+# from oic.oic import AuthorizationRequest, Client
 import oic.oauth2
 import oic.oic.message as message
 from oic.utils.http_util import Redirect
@@ -44,7 +43,7 @@ MIMETYPE = "application/json"
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
 
-app = flask.Flask(__name__)
+app = Flask(__name__)
 
 assert not hasattr(app, 'urls')
 app.urls = []
@@ -514,9 +513,11 @@ def requires_token(f):
         return f(*args, **kargs)
     return decorated     
 
-"""
+
 def startLogin():
-    
+    """
+    Uncommented as this method is used by the "login" method/endpoint
+    """
     If user is not logged in, this generates the redirect URL to the OIDC or Auth
     provider (depending on the configuration)
     Returns: the redirect response
@@ -540,9 +541,11 @@ def startLogin():
     
     if "WELL_KNOWN_CONFIG" in app.config:
         #result = app.oidcClient.do_authorization_request(request_args=args, state=flask.session["state"])
-        result = app.oidcClient.construct_AuthorizationRequest(request_args=args)
+        result = app.oidcClient.construct_AuthorizationRequest(
+            request_args=args)
         addOn = result.request(app.oidcClient.authorization_endpoint)
-        loginUrl = app.oidcClient.provider_info["authorization_endpoint"] + addOn
+        loginUrl = app.oidcClient.provider_info["authorization_endpoint"] +
+        addOn
 
         if request.path == "/login":
             flask.session["path"] = "/"
@@ -550,13 +553,14 @@ def startLogin():
             flask.session["path"] = request.path
         return flask.redirect(loginUrl)
 
-    result = app.oidcClient.do_authorization_request(request_args=args, state=flask.session["state"])
+    result = app.oidcClient.do_authorization_request(
+        request_args=args,
+        state=flask.session["state"])
     return flask.redirect(result.url)
 
-"""
 
-#Commented out by Kevin Chan. If Using the Keycloak Config or no authentication
-#this function is no longer needed
+# Commented out by Kevin Chan. If Using the Keycloak Config or no
+# authentication this function is no longer needed
 """
 @app.before_request
 def checkAuthentication():
@@ -577,8 +581,9 @@ def checkAuthentication():
     if app.oidcClient is None:
         return
 
-    if flask.request.endpoint == 'oidcCallback' or flask.request.endpoint == "keycloakCallback":
-        return 
+    if flask.request.endpoint == 'oidcCallback' or
+        flask.request.endpoint == "keycloakCallback":
+        return
     key = flask.session.get('key') or flask.request.args.get('key')
 
     if key is None: # or not app.cache.get(key):
@@ -652,13 +657,15 @@ class DisplayedRoute(object):
             return result
         return wrapper
 
+
 if app.config.get("KEYCLOAK"):
     @app.route('/')
     @oidc.require_login
     @requires_token
     def index():
-        response = flask.render_template('index.html',
-                                        info=app.serverStatus)
+        response = flask.render_template(
+            'index.html',
+            info=app.serverStatus)
         if app.config.get('AUTH0_ENABLED'):
             key = (flask.request.args.get('key'))
             try:
@@ -670,13 +677,14 @@ if app.config.get("KEYCLOAK"):
                 return response
             else:
                 exceptions.NotAuthenticatedException()
-        else: 
+        else:
             return response
 else:
     @app.route('/')
     def index():
-        response = flask.render_template('index.html',
-                                        info=app.serverStatus)
+        response = flask.render_template(
+            'index.html',
+            info=app.serverStatus)
         if app.config.get('AUTH0_ENABLED'):
             key = (flask.request.args.get('key'))
             try:
@@ -688,13 +696,13 @@ else:
                 return response
             else:
                 exceptions.NotAuthenticatedException()
-        else: 
+        else:
             return response
-    
-#New configuration added by Kevin Chan 
+
+
+# New configuration added by Kevin Chan
 @app.route("/login")
 def login():
-
     if app.config.get('AUTH0_ENABLED'):
         if (flask.request.args.get('code')):
             return auth.render_key(app, key=flask.request.args.get('code'))
@@ -706,12 +714,11 @@ def login():
                 domain=app.config.get('AUTH0_HOST'),
                 client_id=app.config.get('AUTH0_CLIENT_ID'))
 
-    #Configuration for KeyCloak Server
+    # Configuration for KeyCloak Server
     elif app.config.get('KEYCLOAK'):
-        app.oidClient = None 
+        app.oidClient = None
         flask.session.clear()
         return startLogin()
-
     else:
         raise exceptions.NotFoundException()
 
@@ -728,6 +735,7 @@ def callback_handling():
     else:
         raise exceptions.NotFoundException()
 
+
 @app.route("/logout")
 @requires_auth
 @cors.cross_origin(headers=['Content-Type', 'Authorization'])
@@ -742,16 +750,19 @@ def logout():
             app.config.get('AUTH0_CALLBACK_URL'))
         return flask.redirect(url)
     else:
-
-        args = {
-            "token": app.oidcClient.token["access_token"],
-            "client_id": app.oidcClient.client_id,
-            "client_secret": app.oidcClient.client_secret,
-            "refresh_token": app.oidcClient.token["refresh_token"]
-            }
-        logout = requests.post(url=app.oidcClient.provider_info["session_endpoint"], data=args)
+        # args = {
+        #     "token": app.oidcClient.token["access_token"],
+        #     "client_id": app.oidcClient.client_id,
+        #     "client_secret": app.oidcClient.client_secret,
+        #     "refresh_token": app.oidcClient.token["refresh_token"]
+        #     }
+        # logout = requests.post(
+        # url=app.oidcClient.provider_info["session_endpoint"],
+        # data=args)
         flask.session.clear()
-        return flask.redirect("http://{0}:{1}".format(socket.gethostbyname(socket.gethostname()), app.myPort))
+        return flask.redirect("http://{0}:{1}".format(
+            socket.gethostbyname(socket.gethostname()),
+            app.myPort))
 
 
 @app.route('/favicon.ico')
@@ -807,7 +818,7 @@ else:
     def getReferenceSet(id):
         return handleFlaskGetRequest(
             id, flask.request, app.backend.runGetReferenceSet)
-    
+
 
 @DisplayedRoute('/listreferencebases', postMethod=True)
 def listReferenceBases():
@@ -1151,7 +1162,7 @@ if app.config.get("KEYCLOAK"):
     @oidc.require_login
     @requires_token
     def getReadGroupSet(id):
-        return duest(
+        return handleFlaskGetRequest(
             id, flask.request, app.backend.runGetReadGroupSet)
 else:
     @DisplayedRoute(
@@ -1159,7 +1170,7 @@ else:
         pathDisplay='/readgroupsets/<id>')
     @requires_auth
     def getReadGroupSet(id):
-        return duest(
+        return handleFlaskGetRequest(
             id, flask.request, app.backend.runGetReadGroupSet)
 
 
@@ -1219,7 +1230,7 @@ else:
             id, flask.request, app.backend.runGetFeatureSet)
 
 
-#if app.config.get("KEYCLOAK"):
+# if app.config.get("KEYCLOAK"):
 #    @DisplayedRoute(
 #        '/features/<no(search):id>',
 #        pathDisplay='/features/<id>')
@@ -1229,7 +1240,7 @@ else:
 #    def getFeature(id):
 #        return handleFlaskGetRequest(
 #            id, flask.request, app.backend.runGetFeature)
-#else:
+# else:
 #    @DisplayedRoute(
 #        '/featuresets/<no(search):id>',
 #        pathDisplay='/featuresets/<id>')
@@ -1379,24 +1390,27 @@ def oidcCallback():
     response = flask.redirect(indexUrl)
     return response
 
-#Leaving this function here for reference for the Authorization Code flow
-#Added by Kevin Chan
+
+# Leaving this function here for reference for the Authorization Code flow
+# Added by Kevin Chan
 @app.route('/keycallback')
 def keycloakCallback():
     """
-    Similar to the oidcCallback function, once the authorization provider has cleared the user, 
-    browser is returned here with a code. The code is then checked with the authorization provider
-    and if valid a token is returned.
+    Similar to the oidcCallback function, once the authorization provider has
+    cleared the user, browser is returned here with a code. The code is then
+    checked with the authorization provider and if valid a token is returned.
 
     The token is stored in the session, and the user is assumed to be valid.
 
-    Returns: a token and the redirect url to the new page. 
+    Returns: a token and the redirect url to the new page.
     """
     if app.oidcClient is None:
         raise exceptions.NotImplementedException()
 
     response = dict(flask.request.args.iteritems(multi=True))
-    aresp = app.oidcClient.parse_response(message.AuthorizationResponse, info=response, sformat="dict")
+    aresp = app.oidcClient.parse_response(
+        message.AuthorizationResponse,
+        info=response, sformat="dict")
     respState = aresp["state"]
     sessState = flask.session.get('state')
 
@@ -1412,22 +1426,25 @@ def keycloakCallback():
         "grant_type": "authorization_code",
     }
 
-    tokResp = requests.post(url=app.oidcClient.provider_info["token_endpoint"], data=args)
+    tokResp = requests.post(
+        url=app.oidcClient.provider_info["token_endpoint"],
+        data=args)
     tokContent = json.loads(tokResp.content)
-    token = tokContent["access_token"]
+    # token = tokContent["access_token"]
 
     if tokResp.status_code != 200:
-        raise exceptions.NotAuthorizedException()  
+        raise exceptions.NotAuthorizedException()
     app.oidcClient.token = tokContent
 
-
-    #flask.session["key"] = idGenerator(size=SECRET_KEY_LENGTH)
-    #This next line will display the access token on the server front end.
-    #If you do not want this uncomment the line above
+    # flask.session["key"] = idGenerator(size=SECRET_KEY_LENGTH)
+    # This next line will display the access token on the server front end.
+    # If you do not want this uncomment the line above
     flask.session["key"] = app.oidcClient.token["access_token"]
-    #change the url depending on where the GA4GH server is hosted 
+    # change the url depending on where the GA4GH server is hosted
     redirectUri = 'http://{0}:{1}{2}'.format(
-        socket.gethostbyname(socket.gethostname()), app.myPort, flask.session["path"])
+        socket.gethostbyname(socket.gethostname()),
+        app.myPort,
+        flask.session["path"])
     return flask.redirect(redirectUri)
 
 
