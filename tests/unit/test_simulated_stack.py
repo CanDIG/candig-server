@@ -102,7 +102,8 @@ class TestSimulatedStack(unittest.TestCase):
         """
         return self.app.post(
             path, headers={
-                'Content-type': 'application/json', 'Accept': self.serialization
+                'Content-type': 'application/json',
+                'Accept': self.serialization
                 },
             data=data)
 
@@ -642,8 +643,9 @@ class TestSimulatedStack(unittest.TestCase):
                          'No object of this type exists with id \'b4d==\'')
         request.variant_set_id = self.variantSet.getId()
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response,
-                protocol.SearchVariantAnnotationSetsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationSetsResponse)
         self.assertTrue(protocol.validate(
             protocol.toJson(responseData),
             protocol.SearchVariantAnnotationSetsResponse))
@@ -684,8 +686,9 @@ class TestSimulatedStack(unittest.TestCase):
         request.effects.add().term_id = "ThisIsNotAnEffect"
 
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                         SearchVariantAnnotationsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationsResponse)
         self.assertEquals(
             len(responseData.variant_annotations), 0,
             "There should be no results for a nonsense effect")
@@ -696,8 +699,9 @@ class TestSimulatedStack(unittest.TestCase):
         request.end = 10
         request.reference_name = "1"
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                         SearchVariantAnnotationsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationsResponse)
         self.assertGreater(len(responseData.variant_annotations), 0)
         for ann in responseData.variant_annotations:
             self.assertGreater(
@@ -713,8 +717,9 @@ class TestSimulatedStack(unittest.TestCase):
         request.effects.add().term_id = "SO:0001627"
         request.effects.add().term_id = "B4DID"
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                         SearchVariantAnnotationsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationsResponse)
         responseLength = len(responseData.variant_annotations)
         self.assertGreater(
             responseLength, 0,
@@ -738,8 +743,9 @@ class TestSimulatedStack(unittest.TestCase):
         request.effects.add().term_id = "B4DID"
         request.effects.add().term_id = "SO:0001627"
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                         SearchVariantAnnotationsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationsResponse)
         self.assertEqual(
             len(responseData.variant_annotations),
             responseLength,
@@ -763,8 +769,9 @@ class TestSimulatedStack(unittest.TestCase):
         request.reference_name = "1"
         request.effects.add().term_id = "SO:0001627"
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                         SearchVariantAnnotationsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationsResponse)
         self.assertGreater(len(responseData.variant_annotations), 0,
                            "There should be some results for a good effect ID")
         for ann in responseData.variant_annotations:
@@ -788,8 +795,9 @@ class TestSimulatedStack(unittest.TestCase):
         request.effects.add().term_id = "SO:0001627"
         request.effects.add().term_id = "SO:0001791"
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                         SearchVariantAnnotationsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationsResponse)
         self.assertGreater(len(responseData.variant_annotations), 0)
 
     def testGetFeatureSet(self):
@@ -1300,8 +1308,9 @@ class TestSimulatedStack(unittest.TestCase):
     def testInfo(self):
         path = "/info"
         response = self.app.get(path)
-        responseData = self.deserialize(response,
-                                         protocol.GetInfoResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.GetInfoResponse)
         self.assertIsNotNone(responseData)
         self.assertEqual(responseData.protocol_version, protocol.version)
 
