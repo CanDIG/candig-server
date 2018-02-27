@@ -9,7 +9,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import datetime
-import socket
+# import socket
 
 
 class BaseConfig(object):
@@ -39,7 +39,8 @@ class BaseConfig(object):
     FILE_HANDLE_CACHE_MAX_SIZE = 50
 
     LANDING_MESSAGE_HTML = "landing_message.html"
-    #INITIAL_PEERS = "/srv/ga4gh/server/ga4gh/server/templates/initial_peers.txt"
+    # INITIAL_PEERS =
+    #   "/srv/ga4gh/server/ga4gh/server/templates/initial_peers.txt"
     INITIAL_PEERS = "ga4gh/server/templates/initial_peers.txt"
 
 
@@ -55,7 +56,7 @@ class DevelopmentConfig(BaseConfig):
     """
     Configuration used for development.
     """
-    #DATA_SOURCE = "ga4gh-example-data/registry.db"
+    # DATA_SOURCE = "ga4gh-example-data/registry.db"
     DATA_SOURCE = "1000genomes_partition/registry.db"
     DEBUG = True
 
@@ -65,15 +66,17 @@ class LocalOidConfig(DevelopmentConfig):
     Configuration used for developing against a local OIDC server
     """
     SECRET_KEY = "key"
-    OIDC_PROVIDER = "http://localhost:8080"    
+    OIDC_PROVIDER = "http://localhost:8080"
 
 
 class KeycloakOidConfig(DevelopmentConfig):
     """
     Configuration used for OIDC with Keycloak server
     """
-    SECRET_KEY = "key" #Unsure what this does, but it is needed. 
+    # Unsure what this does, but it is needed.
+    SECRET_KEY = "key"
     KEYCLOAK = False
+
 
 class SimulatedConfig(BaseConfig):
     """
@@ -116,7 +119,9 @@ class TestAuth0Config(DevelopmentConfig):
     AUTH0_CALLBACK_URL = "http://localhost:8000/callback"
     AUTH0_HOST = "david4096.auth0.com"
     AUTH0_CLIENT_ID = "r99hdj5hhkazgePB5oMYK9Sv4NaUwwYp"
-    AUTH0_CLIENT_SECRET = "KeV2tMyGaSgLeOhpoGs_XLH65Tfw43yBjT8DIpaTxXAKmd_bguJwXA6T7D0iYfgB"
+    AUTH0_CLIENT_SECRET = (
+        "KeV2tMyGaSgLeOhpoGs_XLH65Tfw43yBjT8DIpaTxXAKmd_bg",
+        "uJwXA6T7D0iYfgB")
     AUTH0_AUTHORIZED_EMAILS = "davidcs@ucsc.edu,your@email.com"
 
 
@@ -133,9 +138,15 @@ class TestOidcConfig(TestConfig):
     OIDC_PROVIDER = "http://localhost:8080/auth/realms/demo"
     OIDC_CLIENT_ID = "demo"
     OIDC_CLIENT_SECRET = "xxx"
-    OIDC_AUTHZ_ENDPOINT = "http://localhost:8080/auth/realms/demo/protocol/openid-connect/auth"
-    OIDC_TOKEN_ENDPOINT = "http://localhost:8080/auth/realms/demo/protocol/openid-connect/token"
-    OIDC_TOKEN_REV_ENDPOINT = "http://localhost:8080/auth/realms/demo/protocol/openid-connect/token/introspect"
+    OIDC_AUTHZ_ENDPOINT = (
+        "http://localhost:8080/auth/realms/demo/protocol/",
+        "openid-connect/auth")
+    OIDC_TOKEN_ENDPOINT = (
+        "http://localhost:8080/auth/realms/demo/protocol/",
+        "openid-connect/token")
+    OIDC_TOKEN_REV_ENDPOINT = (
+        "http://localhost:8080/auth/realms/demo/",
+        "protocol/openid-connect/token/introspect")
 
 
 class FlaskDefaultConfig(object):

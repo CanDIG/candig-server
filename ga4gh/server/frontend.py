@@ -23,7 +23,7 @@ import oic
 # from oic.oic import AuthorizationRequest, Client
 import oic.oauth2
 import oic.oic.message as message
-from oic.utils.http_util import Redirect
+# from oic.utils.http_util import Redirect
 from oauth2client.client import OAuth2Credentials
 import requests
 import logging
@@ -43,7 +43,7 @@ MIMETYPE = "application/json"
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
 
-app = Flask(__name__)
+app = flask.Flask(__name__)
 
 assert not hasattr(app, 'urls')
 app.urls = []
@@ -62,6 +62,7 @@ if app.config.get("KEYCLOAK"):
 
     # For configuration of Flask-Oidc
     oidc = OpenIDConnect(app)
+
 
 class NoConverter(werkzeug.routing.BaseConverter):
     """
@@ -109,7 +110,6 @@ class ServerStatus(object):
             'DEBUG', 'REQUEST_VALIDATION',
             'DEFAULT_PAGE_SIZE', 'MAX_RESPONSE_LENGTH', 'LANDING_MESSAGE_HTML'
         ]
-        
         return [(k, app.config[k]) for k in keys]
 
     def getPreciseUptime(self):
@@ -291,10 +291,9 @@ def configure(configFile=None, baseConfig="ProductionConfig",
     TODO Document this critical function! What does it do? What does
     it assume?
 
-    Based on the configuration the server is being hosted with, it initalizes all
-    the variables needed, and generates the redirect-url for the Auth and OIDC providers 
-    (if present).
-
+    Based on the configuration the server is being hosted with, it initalizes
+    all the variables needed, and generates the redirect-url for the Auth and
+    OIDC providers (if present).
     """
     file_handler = StreamHandler()
     file_handler.setLevel(logging.WARNING)
@@ -379,12 +378,14 @@ def configure(configFile=None, baseConfig="ProductionConfig",
                 redirect_uris=[redirectUri],
                 verify_ssl=False)
             app.oidcClient.store_registration_info(response)
-     #This is for the configuration of the Keycloak Server, added by Kevin Chan on June 12, 2017
     """
+    # This is for the configuration of the Keycloak Server
+    # added by Kevin Chan on June 12, 2017
     if "KEYCLOAK" in app.config:
-        #Configuration using the requests library. I left this here for your reference to
-        #familiarize yourself with the Authorization code flow
-        #Makes a request to get the configuration, and stores all the endpoints/id/secrets needed
+        # Configuration using the requests library. I left this here for your
+        # reference to familiarize yourself with the Authorization code flow
+        # Makes a request to get the configuration, and stores all the
+        # endpoints/id/secrets needed
 
         app.oidcClient = Client(client_authn_method=CLIENT_AUTHN_METHOD)
         endpoints = requests.get(app.config["WELL_KNOWN_CONFIG"]).json()
@@ -482,21 +483,27 @@ def handleException(exception):
         return getFlaskResponse(responseStr, serverException.httpStatus)
 
 
-#Added by Kevin Chan 
+# Added by Kevin Chan
 def requires_token(f):
-    """ 
-    Decorator function that ensures that the token is valid, if the token is invalid
-    or expired, the user will be redirected to the login page. Much of the authorization
-    code flow is done solely by the function decorater @oidc.require_login
+    """
+    Decorator function that ensures that the token is valid, if the token is
+    invalid or expired, the user will be redirected to the login page. Much of
+    the authorization code flow is done solely by the function decorator
+    @oidc.require_login
     """
     @functools.wraps(f)
     def decorated(*args, **kargs):
         if app.config.get("KEYCLOAK"):
             redirectUri = 'http://{0}:{1}{2}'.format(
-                    socket.gethostbyname(socket.gethostname()), app.myPort, request.path)
+                    socket.gethostbyname(
+                        socket.gethostname()),
+                    app.myPort,
+                    flask.request.path)
             try:
                 info = oidc.user_getinfo(['sub'])
-                tokenResponse = OAuth2Credentials.from_json(oidc.credentials_store[info.get('sub')]).token_response
+                tokenResponse = OAuth2Credentials.from_json(
+                    oidc.credentials_store[info.get('sub')]
+                    ).token_response
                 introspectArgs = {
                     "token": tokenResponse["access_token"],
                     "client_id": oidc.client_secrets["client_id"],
@@ -505,24 +512,25 @@ def requires_token(f):
                 }
             except:
                 return flask.redirect(redirectUri)
-            userInfo = requests.post(url=oidc.client_secrets["token_introspection_uri"],
+            userInfo = requests.post(url=oidc.client_secrets[
+                "token_introspection_uri"
+                ],
                 data=introspectArgs)
 
             if userInfo.status_code != 200:
-                raise exceptions.NotAuthenticatedException()                              
+                raise exceptions.NotAuthenticatedException()
         return f(*args, **kargs)
-    return decorated     
+    return decorated
 
 
 def startLogin():
     """
     Uncommented as this method is used by the "login" method/endpoint
-    """
-    If user is not logged in, this generates the redirect URL to the OIDC or Auth
-    provider (depending on the configuration)
+
+    If user is not logged in, this generates the redirect URL to the OIDC or
+    Auth provider (depending on the configuration)
     Returns: the redirect response
-
-
+    """
     flask.session["state"] = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
     flask.session["nonce"] = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
     args = {
@@ -531,26 +539,30 @@ def startLogin():
         "scope": ["openid", "profile"],
         "nonce": flask.session["nonce"],
         "redirect_uri": app.oidcClient.redirect_uris[0],
-        "authorization_endpoint": app.oidcClient.provider_info["authorization_endpoint"],
+        "authorization_endpoint": app.oidcClient.provider_info[
+            "authorization_endpoint"
+            ],
         "state": flask.session["state"],
     }
-
-    #First condition is the configuration for the Keycloak Server. Redirects the user to the 
-    #Keycloak sign in page. I left this here for your reference. 
-    #Added by Kevin Chan
-    
+    # First condition is the configuration for the Keycloak Server. Redirects
+    # the user to the Keycloak sign in page. I left this here for your
+    # reference.
+    # Added by Kevin Chan
     if "WELL_KNOWN_CONFIG" in app.config:
-        #result = app.oidcClient.do_authorization_request(request_args=args, state=flask.session["state"])
+        # result = app.oidcClient.do_authorization_request(
+        # request_args=args,
+        # state=flask.session["state"])
         result = app.oidcClient.construct_AuthorizationRequest(
             request_args=args)
         addOn = result.request(app.oidcClient.authorization_endpoint)
-        loginUrl = app.oidcClient.provider_info["authorization_endpoint"] +
-        addOn
+        loginUrl = app.oidcClient.provider_info[
+            "authorization_endpoint"
+            ] + addOn
 
-        if request.path == "/login":
+        if flask.request.path == "/login":
             flask.session["path"] = "/"
         else:
-            flask.session["path"] = request.path
+            flask.session["path"] = flask.request.path
         return flask.redirect(loginUrl)
 
     result = app.oidcClient.do_authorization_request(
