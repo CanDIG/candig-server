@@ -145,7 +145,7 @@ class AlignmentDataMixin(datamodel.PysamDatamodelMixin):
         ret.aligned_quality.extend(read.query_qualities)
         ret.aligned_sequence = read.query_sequence
         if SamFlags.isFlagSet(read.flag, SamFlags.READ_UNMAPPED):
-            ret.ClearField("alignment")
+            ret.ClearField(b"alignment")
         else:
             ret.alignment.CopyFrom(protocol.LinearAlignment())
             ret.alignment.mapping_quality = read.mapping_quality
@@ -629,8 +629,9 @@ class AbstractReadGroup(datamodel.DatamodelObject):
         """
         Returns the id of the experiment used for this read group
         """
-        return str(datamodel.ExperimentCompoundId(
-            self.getCompoundId(), 'experiment'))
+        # return str(datamodel.ExperimentCompoundId(
+        #     self.getCompoundId(), 'experiment'))
+        return str(datamodel.ExperimentCompoundId(None, 'experiment'))
 
 
 class SimulatedReadGroup(AbstractReadGroup):
