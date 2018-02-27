@@ -46,9 +46,7 @@ class TestClientOutput(unittest.TestCase):
         dataRepository = datarepo.SqlDataRepository(repoPath)
         dataRepository.open(datarepo.MODE_READ)
         self._backend = backend.Backend(dataRepository)
-        self._client = client.LocalClient(
-            self._backend,
-            serialization="application/json")
+        self._client = client.LocalClient(self._backend)
         # TODO probably could use a cache of objects, so we don't
         # need to keep re-fetching them
 
