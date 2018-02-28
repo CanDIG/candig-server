@@ -432,9 +432,10 @@ class ExperimentCompoundId(ReadGroupCompoundId):
     """
     The compound id for an experiment
     """
-    fields = ReadGroupCompoundId.fields + ['experiment']
-    containerIds = ReadGroupCompoundId.containerIds + [('experiment_id', 3)]
-
+    # fields = ReadGroupCompoundId.fields + ['experiment']
+    # containerIds = ReadGroupCompoundId.containerIds + [('experiment_id', 3)]
+    fields = ['experiment']
+    containerIds = [('experiment_id', 0)]
 
 class ReadAlignmentCompoundId(ReadGroupSetCompoundId):
     """
