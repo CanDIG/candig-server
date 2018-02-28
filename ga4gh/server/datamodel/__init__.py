@@ -437,6 +437,7 @@ class ExperimentCompoundId(ReadGroupCompoundId):
     fields = ['experiment']
     containerIds = [('experiment_id', 0)]
 
+
 class ReadAlignmentCompoundId(ReadGroupSetCompoundId):
     """
     The compound id for a read alignment
