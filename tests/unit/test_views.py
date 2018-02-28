@@ -21,6 +21,7 @@ class TestFrontend(unittest.TestCase):
     Tests the basic routing and HTTP handling for the Flask app.
     """
     exampleUrl = 'www.example.com'
+    serialization = protocol.MIMETYPES[0]
 
     @classmethod
     def setUpClass(cls):
@@ -87,6 +88,7 @@ class TestFrontend(unittest.TestCase):
         headers = {
             'Content-type': 'application/json',
             'Origin': self.exampleUrl,
+            'Accept': self.serialization,
         }
         return self.app.post(
             path, headers=headers, data=protocol.toJson(request))
@@ -100,10 +102,21 @@ class TestFrontend(unittest.TestCase):
         }
         return self.app.get(path, headers=headers)
 
+    def deserialize(self, response, responseClass):
+        mimetype = self.serialization
+        if hasattr(response, 'headers'):
+            if 'Content-Type' in response.headers:
+                mimetype = response.headers['Content-Type']
+        return protocol.deserialize(
+            response.get_data(),
+            mimetype,
+            responseClass)
+
+
     def sendVariantsSearch(self):
         response = self.sendVariantSetsSearch()
-        variantSets = protocol.fromJson(
-            response.data, protocol.SearchVariantSetsResponse).variant_sets
+        variantSets = self.deserialize(
+            response, protocol.SearchVariantSetsResponse).variant_sets
         request = protocol.SearchVariantsRequest()
         request.variant_set_id = variantSets[0].id
         request.reference_name = "1"
@@ -118,8 +131,8 @@ class TestFrontend(unittest.TestCase):
 
     def sendCallSetsSearch(self):
         response = self.sendVariantSetsSearch()
-        variantSets = protocol.fromJson(
-            response.data, protocol.SearchVariantSetsResponse).variant_sets
+        variantSets = self.deserialize(
+            response, protocol.SearchVariantSetsResponse).variant_sets
         request = protocol.SearchCallSetsRequest()
         request.variant_set_id = variantSets[0].id
         return self.sendPostRequest('/callsets/search', request)
