@@ -400,8 +400,8 @@ class TestFrontend(unittest.TestCase):
         response = self.sendReadsSearch(readGroupIds=[self.readGroupId],
                                         referenceId=self.referenceId)
         self.assertEqual(200, response.status_code)
-        responseData = protocol.fromJson(
-            response.data, protocol.SearchReadsResponse)
+        responseData = self.deserialize(
+            response, protocol.SearchReadsResponse)
         self.assertEqual(len(responseData.alignments), 2)
         self.assertEqual(
             responseData.alignments[0].id,
@@ -409,8 +409,8 @@ class TestFrontend(unittest.TestCase):
 
     def testPhenotypeAssociationSetsSearch(self):
         response = self.sendPhenotypeAssociationSetsSearch()
-        responseData = protocol.fromJson(
-            response.data, protocol.SearchPhenotypeAssociationSetsResponse)
+        responseData = self.deserialize(
+            response, protocol.SearchPhenotypeAssociationSetsResponse)
         pasets = list(responseData.phenotype_association_sets)
         foundPASet = False
         for paset in pasets:
@@ -436,7 +436,7 @@ class TestFrontend(unittest.TestCase):
     def getObjectTest(self, getMethod, protocolClass, objectId):
         response = getMethod()
         self.assertEqual(200, response.status_code)
-        responseData = protocol.fromJson(response.data, protocolClass)
+        responseData = self.deserialize(response, protocolClass)
         self.assertEqual(responseData.id, objectId)
 
     def testGetReadGroupSet(self):
@@ -488,7 +488,7 @@ class TestFrontend(unittest.TestCase):
             self, responseMethod, responseClass, attributeName, objectId):
         response = responseMethod()
         self.assertEqual(200, response.status_code)
-        responseData = protocol.fromJson(response.data, responseClass)
+        responseData = self.deserialize(response, responseClass)
         responseList = getattr(responseData, attributeName)
         objectList = list(responseList)
         self.assertEqual(objectId, objectList[0].id)
@@ -554,8 +554,8 @@ class TestFrontend(unittest.TestCase):
 
     def testSimplePost(self):
         path = "/datasets/search"
-        response = protocol.fromJson(self.app.post(
-            path, headers={}).get_data(), protocol.SearchDatasetsResponse)
+        response = self.deserialize(self.app.post(
+            path, headers={}), protocol.SearchDatasetsResponse)
         self.assertIsNotNone(
             response.datasets,
             "When an empty JSON document "
@@ -570,11 +570,17 @@ class TestFrontend(unittest.TestCase):
         request.mimetype = "garbage"
         # A bad mimetype should throw an exception
         with self.assertRaises(exceptions.UnsupportedMediaTypeException):
-            response = frontend.handleHttpPost(request, lambda x: x)
+            response = frontend.handleHttpPost(
+                    request,
+                    lambda x,
+                    return_mimetype: x)
 
         # An empty mimetype should work OK
         request = Mock()
-        request.mimetype = None
+        request.mimetype = "application/json"
         request.get_data = lambda: "data"
-        response = frontend.handleHttpPost(request, lambda x: x)
+        response = frontend.handleHttpPost(
+                request,
+                lambda x,
+                return_mimetype: x)
         self.assertEquals(response.get_data(), "data")
