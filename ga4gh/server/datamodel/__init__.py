@@ -536,10 +536,7 @@ class DatamodelObject(object):
         """
         Sets the attributes message to the provided value.
         """
-        if attributesJson is not None:
-            self._attributes = json.loads(attributesJson)
-        else:
-            self._attributes = {}
+        self._attributes = attributes
 
     def setAttributesJson(self, attributesJson):
         """
