@@ -172,12 +172,14 @@ class AbstractRepoManagerTest(unittest.TestCase):
         return featureSet
 
     def getContinuousSet(self):
-        repo = self.readRepo()
-        dataset = repo.getDatasetByName(self._datasetName)
-        continuousSet = dataset.getContinuousSetByName(self._continuousSetName)
-        return continuousSet
+        pass
+        # repo = self.readRepo()
+        # dataset = repo.getDatasetByName(self._datasetName)
+        # continuousSet = dataset.getContinuousSetByName(self._continuousSetName)
+        # return continuousSet
 
 
+@unittest.skip("Disabled")
 class TestAddRnaQuantificationSet(AbstractRepoManagerTest):
 
     def setUp(self):
