@@ -115,7 +115,7 @@ class DummyRequestsSession(object):
             args.end = int(data.get('end', 0))
             args.page_token = data.get('pageToken', "")
             result = self._backend.runListReferenceBases(
-                protocol.toJson(args))
+                protocol.toJson(args), self._serialize)
         return DummyResponse(result)
 
 
@@ -125,13 +125,11 @@ class DummyHttpClient(client.HttpClient):
     """
     def __init__(self, backend):
         self._urlPrefix = "http://example.com"
-        # super(DummyHttpClient, self).__init__(self._urlPrefix)
         # this is what the local client will use
         serialization = "application/protobuf"
         self._serialization = serialization
-        super(DummyHttpClient, self).__init__(
-            self._urlPrefix,
-            serialization=serialization)
+        super(DummyHttpClient, self).__init__(self._urlPrefix,
+                                              serialization=serialization)
         self._session = DummyRequestsSession(backend, self._urlPrefix)
         self._setup_http_session()
 
