@@ -114,7 +114,7 @@ class TestSimulatedStack(unittest.TestCase):
         """
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
         self.assertEqual(200, response.status_code)
-        responseData = protocol.deserialize(response, responseClass)
+        responseData = self.deserialize(response, responseClass)
         self.assertTrue(
             protocol.validate(
                 protocol.toJson(responseData),
@@ -126,7 +126,6 @@ class TestSimulatedStack(unittest.TestCase):
         Sends a GET request to the specified path for an object with the
         specified ID and returns the response.
         """
-        # return self.app.get("{}/{}".format(path, id_))
         path = "{}/{}".format(path, id_)
         headers = {'Content-type': 'application/json',
                    'Accept': self.serialization},
@@ -248,7 +247,7 @@ class TestSimulatedStack(unittest.TestCase):
         self.assertEqual(gaReference.is_derived, reference.getIsDerived())
         self.assertEqual(
             TestSimulatedStack.as_float32(gaReference.source_divergence),
-            TestSimulatedStack.as_float(reference.getSourceDivergence()))
+            TestSimulatedStack.as_float32(reference.getSourceDivergence()))
 
     def verifySearchMethod(
             self, request, path, responseClass, objects, objectVerifier):
