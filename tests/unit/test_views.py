@@ -112,7 +112,6 @@ class TestFrontend(unittest.TestCase):
             mimetype,
             responseClass)
 
-
     def sendVariantsSearch(self):
         response = self.sendVariantSetsSearch()
         variantSets = self.deserialize(
