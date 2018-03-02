@@ -881,7 +881,7 @@ class Backend(object):
         reference = referenceSet.getReference(id_)
         return self.runGetRequest(reference, return_mimetype)
 
-    def runGetReferenceSet(self, id_ return_mimetype="application/json"):
+    def runGetReferenceSet(self, id_, return_mimetype="application/json"):
         """
         Runs a getReferenceSet request for the specified ID.
         """
