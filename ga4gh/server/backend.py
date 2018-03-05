@@ -606,8 +606,8 @@ class Backend(object):
         object into its protocol representation.
         """
         protocolElement = obj.toProtocolElement()
-	    data = protocol.serialize(protocolElement, return_mimetype)
-	    return data
+        data = protocol.serialize(protocolElement, return_mimetype)
+        return data
 
     def runSearchRequest(
         self, requestStr, requestClass, responseClass, objectGenerator,
