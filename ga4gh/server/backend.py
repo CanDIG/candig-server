@@ -227,7 +227,7 @@ class Backend(object):
             if request.name and request.name != obj.getLocalId():
                 include = False
             if request.biosample_id and include:
-                rgsp.ClearField("read_groups")
+                rgsp.ClearField(b"read_groups")
                 for readGroup in obj.getReadGroups():
                     if request.biosample_id == readGroup.getBiosampleId():
                         rgsp.read_groups.extend(
@@ -606,21 +606,21 @@ class Backend(object):
         object into its protocol representation.
         """
         protocolElement = obj.toProtocolElement()
-	data = protocol.serialize(protocolElement, return_mimetype)
-	return data
+	    data = protocol.serialize(protocolElement, return_mimetype)
+	    return data
 
     def runSearchRequest(
-            self, requestStr, requestClass, responseClass, objectGenerator,
+        self, requestStr, requestClass, responseClass, objectGenerator,
 	    return_mimetype="application/json"):
         """
         Runs the specified request. The request is a string containing
         a JSON representation of an instance of the specified requestClass.
         We return a string representation of an instance of the
-	specified responseClass in return_mimetype format. Objects
-	are filled into the page list using the specified object
-	generator, which must return (object, nextPageToken) pairs,
-	and be able to resume iteration from any point using the
-	nextPageToken attribute of the request object.
+        specified responseClass in return_mimetype format. Objects
+        are filled into the page list using the specified object
+        generator, which must return (object, nextPageToken) pairs,
+        and be able to resume iteration from any point using the
+        nextPageToken attribute of the request object.
         """
         self.startProfile()
         try:
@@ -645,8 +645,8 @@ class Backend(object):
         self.endProfile()
         return responseString
 
-    def runListReferenceBases(self, requestJson,
-                              return_mimetype="application/json"):
+    def runListReferenceBases(
+        self, requestJson, return_mimetype="application/json"):
         """
         Runs a listReferenceBases request for the specified ID and
         request arguments.
@@ -751,7 +751,7 @@ class Backend(object):
         """
         Returns information about the service including protocol version.
         """
-        return protocol.toJson(protocol.GetInfoResponse(
+        return protocol.serialize(protocol.GetInfoResponse(
             protocol_version=protocol.version), return_mimetype)
 
     def runAddAnnouncement(self, flaskrequest,
@@ -807,6 +807,13 @@ class Backend(object):
             protocol.ListPeersResponse,
             self.peersGenerator,
             return_mimetype)
+
+    def runGetTest(self, request, return_mimetype="application/json"):
+        """
+        Returns information about the service including protocol version.
+        """
+        repo = self.getDataRepository()
+        repo.verify()
 
     def runGetVariant(self, id_, return_mimetype="application/json"):
         """
