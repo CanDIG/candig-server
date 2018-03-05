@@ -174,12 +174,12 @@ class ServerStatus(object):
         return app.backend.getDataRepository().getDataset(
             datasetId).getFeatureSets()
 
-    def getContinuousSets(self, datasetId):
-        """
-        Returns the list of continuous sets for the dataset
-        """
-        return app.backend.getDataRepository().getDataset(
-            datasetId).getContinuousSets()
+#     def getContinuousSets(self, datasetId):
+#         """
+#         Returns the list of continuous sets for the dataset
+#         """
+#         return app.backend.getDataRepository().getDataset(
+#             datasetId).getContinuousSets()
 
     def getReadGroupSets(self, datasetId):
         """
@@ -210,12 +210,12 @@ class ServerStatus(object):
         return app.backend.getDataRepository().getDataset(
             datasetId).getPhenotypeAssociationSets()
 
-    def getRnaQuantificationSets(self, datasetId):
-        """
-        Returns the list of RnaQuantificationSets for this server.
-        """
-        return app.backend.getDataRepository().getDataset(
-            datasetId).getRnaQuantificationSets()
+#     def getRnaQuantificationSets(self, datasetId):
+#         """
+#         Returns the list of RnaQuantificationSets for this server.
+#         """
+#         return app.backend.getDataRepository().getDataset(
+#             datasetId).getRnaQuantificationSets()
 
 
 def reset():
@@ -358,16 +358,17 @@ def configure(configFile=None, baseConfig="ProductionConfig",
         # If we are testing, then we allow the automatic creation of a
         # redirect uri if none is configured
         redirectUri = app.config.get('OIDC_REDIRECT_URI')
-        if redirectUri is None:
+        if redirectUri is None and app.config.get('TESTING'):
             redirectUri = 'https://{0}:{1}/oauth2callback'.format(
                 socket.gethostname(), app.myPort)
         app.oidcClient.redirect_uris = [redirectUri]
         if redirectUri is []:
             raise exceptions.ConfigurationException(
                 'OIDC configuration requires a redirect uri')
-        print(redirectUri)
+
         # We only support dynamic registration while testing.
-        if ('registration_endpoint' in app.oidcClient.provider_info):
+        if ('registration_endpoint' in app.oidcClient.provider_info) and (
+          app.config.get('TESTING')):
             app.oidcClient.register(
                 app.oidcClient.provider_info["registration_endpoint"],
                 redirect_uris=[redirectUri])
