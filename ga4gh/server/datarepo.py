@@ -24,7 +24,13 @@ import ga4gh.server.datamodel.rna_quantification as rna_quantification
 import ga4gh.server.datamodel.peers as peers
 import ga4gh.server.exceptions as exceptions
 import ga4gh.server.repo.models as models
-
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+import ga4gh.server.datamodel.clinical_metadata as clinical_metadata
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
 import ga4gh.schemas.protocol as protocol
 
 MODE_READ = 'r'
@@ -430,6 +436,84 @@ class AbstractDataRepository(object):
         for dataset in self.getDatasets():
             for individual in dataset.getIndividuals():
                 yield individual
+
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+    def allPatient(self):
+        """
+        Return an iterator over all Patient in the data repo
+        """
+        for dataset in self.getDatasets():
+            for patient in dataset.getPatient():
+                yield patient
+
+    def allEnrollment(self):
+        """
+        Return an iterator over all Enrollment in the data repo
+        """
+        for dataset in self.getDatasets():
+            for enrollment in dataset.getEnrollment():
+                yield enrollment
+
+    def allConsent(self):
+        """
+        Return an iterator over all Consent in the data repo
+        """
+        for dataset in self.getDatasets():
+            for consent in dataset.getConsent():
+                yield consent
+
+    def allDiagnosis(self):
+        """
+        Return an iterator over all Diagnosis in the data repo
+        """
+        for dataset in self.getDatasets():
+            for diagnosis in dataset.getDiagnosis():
+                yield diagnosis
+
+    def allSample(self):
+        """
+        Return an iterator over all Sample in the data repo
+        """
+        for dataset in self.getDatasets():
+            for sample in dataset.getSample():
+                yield sample
+
+    def allTreatment(self):
+        """
+        Return an iterator over all Treatment in the data repo
+        """
+        for dataset in self.getDatasets():
+            for treatment in dataset.getTreatment():
+                yield treatment
+
+    def allOutcome(self):
+        """
+        Return an iterator over all Outcome in the data repo
+        """
+        for dataset in self.getDatasets():
+            for outcome in dataset.getOutcome():
+                yield outcome
+
+    def allComplication(self):
+        """
+        Return an iterator over all Complication in the data repo
+        """
+        for dataset in self.getDatasets():
+            for complication in dataset.getComplication():
+                yield complication
+
+    def allTumourboard(self):
+        """
+        Return an iterator over all Tumourboard in the data repo
+        """
+        for dataset in self.getDatasets():
+            for tumourboard in dataset.getTumourboard():
+                yield tumourboard
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
 
     def allReadGroupSets(self):
         """
@@ -1092,6 +1176,84 @@ class SqlDataRepository(AbstractDataRepository):
             models.Individual.id == individual.getId())
         q.execute()
 
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+    def removePatient(self, patient):
+        """
+        Removes the specified patient from this repository.
+        """
+        q = models.Patient.delete().where(
+            models.Patient.id == patient.getId())
+        q.execute()
+
+    def removeEnrollment(self, enrollment):
+        """
+        Removes the specified enrollment from this repository.
+        """
+        q = models.Enrollment.delete().where(
+            models.Enrollment.id == enrollment.getId())
+        q.execute()
+
+    def removeConsent(self, consent):
+        """
+        Removes the specified consent from this repository.
+        """
+        q = models.Consent.delete().where(
+            models.Consent.id == consent.getId())
+        q.execute()
+
+    def removeDiagnosis(self, diagnosis):
+        """
+        Removes the specified diagnosis from this repository.
+        """
+        q = models.Diagnosis.delete().where(
+            models.Diagnosis.id == diagnosis.getId())
+        q.execute()
+
+    def removeSample(self, sample):
+        """
+        Removes the specified sample from this repository.
+        """
+        q = models.Sample.delete().where(
+            models.Sample.id == sample.getId())
+        q.execute()
+
+    def removeTreatment(self, treatment):
+        """
+        Removes the specified treatment from this repository.
+        """
+        q = models.Treatment.delete().where(
+            models.Treatment.id == treatment.getId())
+        q.execute()
+
+    def removeOutcome(self, outcome):
+        """
+        Removes the specified outcome from this repository.
+        """
+        q = models.Outcome.delete().where(
+            models.Outcome.id == outcome.getId())
+        q.execute()
+
+    def removeComplication(self, complication):
+        """
+        Removes the specified complication from this repository.
+        """
+        q = models.Complication.delete().where(
+            models.Complication.id == complication.getId())
+        q.execute()
+
+    def removeTumourboard(self, tumourboard):
+        """
+        Removes the specified tumourboard from this repository.
+        """
+        q = models.Tumourboard.delete().where(
+            models.Tumourboard.id == tumourboard.getId())
+        q.execute()
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
+
     def _readReadGroupTable(self):
         for readGroupRecord in models.Readgroup.select():
             readGroupSet = self.getReadGroupSet(
@@ -1493,6 +1655,533 @@ class SqlDataRepository(AbstractDataRepository):
             assert analysis.getId() == analysisRecord.id
             self.addAnalysis(analysis)
 
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+
+    def _createPatientTable(self):
+        self.database.create_table(models.Patient)
+
+    def insertPatient(self, patient):
+        """
+        Inserts the specified patient into this repository.
+        """
+        try:
+            models.Patient.create(
+                # Common fields
+                id=patient.getId(),
+                datasetId=patient.getParentContainer().getId(),
+                created=patient.getCreated(),
+                updated=patient.getUpdated(),
+                name=patient.getLocalId(),
+                description=patient.getDescription(),
+                # Unique fields
+                patientId = patient.getPatientId(),
+                otherIds = patient.getOtherIds(),
+                dateOfBirth = patient.getDateOfBirth(),
+                gender = patient.getGender(),
+                ethnicity = patient.getEthnicity(),
+                race = patient.getRace(),
+                provinceOfResidence = patient.getProvinceOfResidence(),
+                dateOfDeath = patient.getDateOfDeath(),
+                causeOfDeath = patient.getCauseOfDeath(),
+                autopsyTissueForResearch = patient.getAutopsyTissueForResearch(),
+                priorMalignancy = patient.getPriorMalignancy(),
+                dateOfPriorMalignancy = patient.getDateOfPriorMalignancy(),
+                familyHistoryAndRiskFactors = patient.getFamilyHistoryAndRiskFactors(),
+                familyHistoryOfPredispositionSyndrome = patient.getFamilyHistoryOfPredispositionSyndrome(),
+                detailsOfPredispositionSyndrome = patient.getDetailsOfPredispositionSyndrome(),
+                geneticCancerSyndrome = patient.getGeneticCancerSyndrome(),
+                otherGeneticConditionOrSignificantComorbidity = patient.getOtherGeneticConditionOrSignificantComorbidity(),
+                occupationalOrEnvironmentalExposure = patient.getOccupationalOrEnvironmentalExposure(),
+
+                )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                patient.getLocalId(),
+                patient.getParentContainer().getLocalId())
+
+
+    def _readPatientTable(self):
+        """
+        Read the Patient table upon load
+        """
+        for patientRecord in models.Patient.select():
+            dataset = self.getDataset(patientRecord.datasetid.id)
+            patient = clinical_metadata.Patient(
+                dataset, patientRecord.name)
+            patient.populateFromRow(patientRecord)
+            assert patient.getId() == patientRecord.id
+            dataset.addPatient(patient)
+
+    def _createEnrollmentTable(self):
+        self.database.create_table(models.Enrollment)
+
+    def insertEnrollment(self, enrollment):
+        """
+        Inserts the specified enrollment into this repository.
+        """
+        try:
+            models.Enrollment.create(
+                # Common fields
+                id=enrollment.getId(),
+                datasetId=enrollment.getParentContainer().getId(),
+                created=enrollment.getCreated(),
+                updated=enrollment.getUpdated(),
+                name=enrollment.getLocalId(),
+                description=enrollment.getDescription(),
+
+                # Unique fields
+                patientId = enrollment.getPatientId(),
+                enrollmentInstitution = enrollment.getEnrollmentInstitution(),
+                enrollmentApprovalDate = enrollment.getEnrollmentApprovalDate(),
+                crossEnrollment = enrollment.getCrossEnrollment(),
+                otherPersonalizedMedicineStudyName = enrollment.getOtherPersonalizedMedicineStudyName(),
+                otherPersonalizedMedicineStudyId = enrollment.getOtherPersonalizedMedicineStudyId(),
+                ageAtEnrollment = enrollment.getAgeAtEnrollment(),
+                eligibilityCategory = enrollment.getEligibilityCategory(),
+                statusAtEnrollment = enrollment.getStatusAtEnrollment(),
+                primaryOncologistName = enrollment.getPrimaryOncologistName(),
+                primaryOncologistContact = enrollment.getPrimaryOncologistContact(),
+                referringPhysicianName = enrollment.getReferringPhysicianName(),
+                referringPhysicianContact = enrollment.getReferringPhysicianContact(),
+                summaryOfIdRequest = enrollment.getSummaryOfIdRequest(),
+                treatingCentreName = enrollment.getTreatingCentreName(),
+                treatingCentreProvince = enrollment.getTreatingCentreProvince(),
+
+                )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                enrollment.getLocalId(),
+                enrollment.getParentContainer().getLocalId())
+
+
+    def _readEnrollmentTable(self):
+        """
+        Read the Enrollment table upon load
+        """
+        for enrollmentRecord in models.Enrollment.select():
+            dataset = self.getDataset(enrollmentRecord.datasetid.id)
+            enrollment = clinical_metadata.Enrollment(
+                dataset, enrollmentRecord.name)
+            enrollment.populateFromRow(enrollmentRecord)
+            assert enrollment.getId() == enrollmentRecord.id
+            dataset.addEnrollment(enrollment)
+
+    def _createConsentTable(self):
+        self.database.create_table(models.Consent)
+
+    def insertConsent(self, consent):
+        """
+        Inserts the specified consent into this repository.
+        """
+        try:
+            models.Consent.create(
+                # Common fields
+                id=consent.getId(),
+                datasetId=consent.getParentContainer().getId(),
+                created=consent.getCreated(),
+                updated=consent.getUpdated(),
+                name=consent.getLocalId(),
+                description=consent.getDescription(),
+
+                # Unique fields
+                patientId = consent.getPatientId(),
+                consentId = consent.getConsentId(),
+                consentDate = consent.getConsentDate(),
+                consentVersion = consent.getConsentVersion(),
+                patientConsentedTo = consent.getPatientConsentedTo(),
+                reasonForRejection = consent.getReasonForRejection(),
+                wasAssentObtained = consent.getWasAssentObtained(),
+                dateOfAssent = consent.getDateOfAssent(),
+                assentFormVersion = consent.getAssentFormVersion(),
+                ifAssentNotObtainedWhyNot = consent.getIfAssentNotObtainedWhyNot(),
+                reconsentDate = consent.getReconsentDate(),
+                reconsentVersion = consent.getReconsentVersion(),
+                consentingCoordinatorName = consent.getConsentingCoordinatorName(),
+                previouslyConsented = consent.getPreviouslyConsented(),
+                nameOfOtherBiobank = consent.getNameOfOtherBiobank(),
+                hasConsentBeenWithdrawn = consent.getHasConsentBeenWithdrawn(),
+                dateOfConsentWithdrawal = consent.getDateOfConsentWithdrawal(),
+                typeOfConsentWithdrawal = consent.getTypeOfConsentWithdrawal(),
+                reasonForConsentWithdrawal = consent.getReasonForConsentWithdrawal(),
+                consentFormComplete = consent.getConsentFormComplete(),
+
+                )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                consent.getLocalId(),
+                consent.getParentContainer().getLocalId())
+
+
+    def _readConsentTable(self):
+        """
+        Read the Consent table upon load
+        """
+        for consentRecord in models.Consent.select():
+            dataset = self.getDataset(consentRecord.datasetid.id)
+            consent = clinical_metadata.Consent(
+                dataset, consentRecord.name)
+            consent.populateFromRow(consentRecord)
+            assert consent.getId() == consentRecord.id
+            dataset.addConsent(consent)
+
+    def _createDiagnosisTable(self):
+        self.database.create_table(models.Diagnosis)
+
+    def insertDiagnosis(self, diagnosis):
+        """
+        Inserts the specified diagnosis into this repository.
+        """
+        try:
+            models.Diagnosis.create(
+                # Common fields
+                id=diagnosis.getId(),
+                datasetId=diagnosis.getParentContainer().getId(),
+                created=diagnosis.getCreated(),
+                updated=diagnosis.getUpdated(),
+                name=diagnosis.getLocalId(),
+                description=diagnosis.getDescription(),
+
+                # Unique fields
+                patientId = diagnosis.getPatientId(),
+                diagnosisId = diagnosis.getDiagnosisId(),
+                diagnosisDate = diagnosis.getDiagnosisDate(),
+                ageAtDiagnosis = diagnosis.getAgeAtDiagnosis(),
+                cancerType = diagnosis.getCancerType(),
+                classification = diagnosis.getClassification(),
+                cancerSite = diagnosis.getCancerSite(),
+                histology = diagnosis.getHistology(),
+                methodOfDefinitiveDiagnosis = diagnosis.getMethodOfDefinitiveDiagnosis(),
+                sampleType = diagnosis.getSampleType(),
+                sampleSite = diagnosis.getSampleSite(),
+                tumorGrade = diagnosis.getTumorGrade(),
+                gradingSystemUsed = diagnosis.getGradingSystemUsed(),
+                sitesOfMetastases = diagnosis.getSitesOfMetastases(),
+                stagingSystem = diagnosis.getStagingSystem(),
+                versionOrEditionOfTheStagingSystem = diagnosis.getVersionOrEditionOfTheStagingSystem(),
+                specificTumorStageAtDiagnosis = diagnosis.getSpecificTumorStageAtDiagnosis(),
+                prognosticBiomarkers = diagnosis.getPrognosticBiomarkers(),
+                biomarkerQuantification = diagnosis.getBiomarkerQuantification(),
+                additionalMolecularTesting = diagnosis.getAdditionalMolecularTesting(),
+                additionalTestType = diagnosis.getAdditionalTestType(),
+                laboratoryName = diagnosis.getLaboratoryName(),
+                laboratoryAddress = diagnosis.getLaboratoryAddress(),
+                siteOfMetastases = diagnosis.getSiteOfMetastases(),
+                stagingSystemVersion = diagnosis.getStagingSystemVersion(),
+                specificStage = diagnosis.getSpecificStage(),
+                cancerSpecificBiomarkers = diagnosis.getCancerSpecificBiomarkers(),
+                additionalMolecularDiagnosticTestingPerformed = diagnosis.getAdditionalMolecularDiagnosticTestingPerformed(),
+                additionalTest = diagnosis.getAdditionalTest(),
+
+                )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                diagnosis.getLocalId(),
+                diagnosis.getParentContainer().getLocalId())
+
+
+    def _readDiagnosisTable(self):
+        """
+        Read the Diagnosis table upon load
+        """
+        for diagnosisRecord in models.Diagnosis.select():
+            dataset = self.getDataset(diagnosisRecord.datasetid.id)
+            diagnosis = clinical_metadata.Diagnosis(
+                dataset, diagnosisRecord.name)
+            diagnosis.populateFromRow(diagnosisRecord)
+            assert diagnosis.getId() == diagnosisRecord.id
+            dataset.addDiagnosis(diagnosis)
+
+    def _createSampleTable(self):
+        self.database.create_table(models.Sample)
+
+    def insertSample(self, sample):
+        """
+        Inserts the specified sample into this repository.
+        """
+        try:
+            models.Sample.create(
+                # Common fields
+                id=sample.getId(),
+                datasetId=sample.getParentContainer().getId(),
+                created=sample.getCreated(),
+                updated=sample.getUpdated(),
+                name=sample.getLocalId(),
+                description=sample.getDescription(),
+
+                # Unique fields
+                patientId = sample.getPatientId(),
+                sampleId = sample.getSampleId(),
+                diagnosisId = sample.getDiagnosisId(),
+                localBiobankId = sample.getLocalBiobankId(),
+                collectionDate = sample.getCollectionDate(),
+                collectionHospital = sample.getCollectionHospital(),
+                sampleType = sample.getSampleType(),
+                tissueDiseaseState = sample.getTissueDiseaseState(),
+                anatomicSiteTheSampleObtainedFrom = sample.getAnatomicSiteTheSampleObtainedFrom(),
+                cancerType = sample.getCancerType(),
+                cancerSubtype = sample.getCancerSubtype(),
+                pathologyReportId = sample.getPathologyReportId(),
+                morphologicalCode = sample.getMorphologicalCode(),
+                topologicalCode = sample.getTopologicalCode(),
+                shippingDate = sample.getShippingDate(),
+                receivedDate = sample.getReceivedDate(),
+                qualityControlPerformed = sample.getQualityControlPerformed(),
+                estimatedTumorContent = sample.getEstimatedTumorContent(),
+                quantity = sample.getQuantity(),
+                units = sample.getUnits(),
+                associatedBiobank = sample.getAssociatedBiobank(),
+                otherBiobank = sample.getOtherBiobank(),
+                sopFollowed = sample.getSopFollowed(),
+                ifNotExplainAnyDeviation = sample.getIfNotExplainAnyDeviation(),
+
+                )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                sample.getLocalId(),
+                sample.getParentContainer().getLocalId())
+
+
+    def _readSampleTable(self):
+        """
+        Read the Sample table upon load
+        """
+        for sampleRecord in models.Sample.select():
+            dataset = self.getDataset(sampleRecord.datasetid.id)
+            sample = clinical_metadata.Sample(
+                dataset, sampleRecord.name)
+            sample.populateFromRow(sampleRecord)
+            assert sample.getId() == sampleRecord.id
+            dataset.addSample(sample)
+
+    def _createTreatmentTable(self):
+        self.database.create_table(models.Treatment)
+
+    def insertTreatment(self, treatment):
+        """
+        Inserts the specified treatment into this repository.
+        """
+        try:
+            models.Treatment.create(
+                # Common fields
+                id=treatment.getId(),
+                datasetId=treatment.getParentContainer().getId(),
+                created=treatment.getCreated(),
+                updated=treatment.getUpdated(),
+                name=treatment.getLocalId(),
+                description=treatment.getDescription(),
+
+                # Unique fields
+                patientId = treatment.getPatientId(),
+                courseNumber = treatment.getCourseNumber(),
+                therapeuticModality = treatment.getTherapeuticModality(),
+                systematicTherapyAgentName = treatment.getSystematicTherapyAgentName(),
+                treatmentPlanType = treatment.getTreatmentPlanType(),
+                treatmentIntent = treatment.getTreatmentIntent(),
+                startDate = treatment.getStartDate(),
+                stopDate = treatment.getStopDate(),
+                reasonForEndingTheTreatment = treatment.getReasonForEndingTheTreatment(),
+                protocolNumberOrCode = treatment.getProtocolNumberOrCode(),
+                surgeryDetails = treatment.getSurgeryDetails(),
+                radiotherapyDetails = treatment.getRadiotherapyDetails(),
+                chemotherapyDetails = treatment.getChemotherapyDetails(),
+                hematopoieticCellTransplant = treatment.getHematopoieticCellTransplant(),
+                immunotherapyDetails = treatment.getImmunotherapyDetails(),
+                responseToTreatment = treatment.getResponseToTreatment(),
+                responseCriteriaUsed = treatment.getResponseCriteriaUsed(),
+                dateOfRecurrenceOrProgressionAfterThisTreatment = treatment.getDateOfRecurrenceOrProgressionAfterThisTreatment(),
+                unexpectedOrUnusualToxicityDuringTreatment = treatment.getUnexpectedOrUnusualToxicityDuringTreatment(),
+                drugListOrAgent = treatment.getDrugListOrAgent(),
+                drugIdNumbers = treatment.getDrugIdNumbers(),
+
+                )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                treatment.getLocalId(),
+                treatment.getParentContainer().getLocalId())
+
+
+    def _readTreatmentTable(self):
+        """
+        Read the Treatment table upon load
+        """
+        for treatmentRecord in models.Treatment.select():
+            dataset = self.getDataset(treatmentRecord.datasetid.id)
+            treatment = clinical_metadata.Treatment(
+                dataset, treatmentRecord.name)
+            treatment.populateFromRow(treatmentRecord)
+            assert treatment.getId() == treatmentRecord.id
+            dataset.addTreatment(treatment)
+
+    def _createOutcomeTable(self):
+        self.database.create_table(models.Outcome)
+
+    def insertOutcome(self, outcome):
+        """
+        Inserts the specified outcome into this repository.
+        """
+        try:
+            models.Outcome.create(
+                # Common fields
+                id=outcome.getId(),
+                datasetId=outcome.getParentContainer().getId(),
+                created=outcome.getCreated(),
+                updated=outcome.getUpdated(),
+                name=outcome.getLocalId(),
+                description=outcome.getDescription(),
+
+                # Unique fields
+                patientId = outcome.getPatientId(),
+                physicalExamId = outcome.getPhysicalExamId(),
+                dateOfAssessment = outcome.getDateOfAssessment(),
+                diseaseResponseOrStatus = outcome.getDiseaseResponseOrStatus(),
+                otherResponseClassification = outcome.getOtherResponseClassification(),
+                minimalResidualDiseaseAssessment = outcome.getMinimalResidualDiseaseAssessment(),
+                methodOfResponseEvaluation = outcome.getMethodOfResponseEvaluation(),
+                responseCriteriaUsed = outcome.getResponseCriteriaUsed(),
+                summaryStage = outcome.getSummaryStage(),
+                sitesOfAnyProgressionOrRecurrence = outcome.getSitesOfAnyProgressionOrRecurrence(),
+                vitalStatus = outcome.getVitalStatus(),
+                height = outcome.getHeight(),
+                weight = outcome.getWeight(),
+                heightUnits = outcome.getHeightUnits(),
+                weightUnits = outcome.getWeightUnits(),
+                performanceStatus = outcome.getPerformanceStatus(),
+
+                )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                outcome.getLocalId(),
+                outcome.getParentContainer().getLocalId())
+
+
+    def _readOutcomeTable(self):
+        """
+        Read the Outcome table upon load
+        """
+        for outcomeRecord in models.Outcome.select():
+            dataset = self.getDataset(outcomeRecord.datasetid.id)
+            outcome = clinical_metadata.Outcome(
+                dataset, outcomeRecord.name)
+            outcome.populateFromRow(outcomeRecord)
+            assert outcome.getId() == outcomeRecord.id
+            dataset.addOutcome(outcome)
+
+    def _createComplicationTable(self):
+        self.database.create_table(models.Complication)
+
+    def insertComplication(self, complication):
+        """
+        Inserts the specified complication into this repository.
+        """
+        try:
+            models.Complication.create(
+                # Common fields
+                id=complication.getId(),
+                datasetId=complication.getParentContainer().getId(),
+                created=complication.getCreated(),
+                updated=complication.getUpdated(),
+                name=complication.getLocalId(),
+                description=complication.getDescription(),
+
+                # Unique fields
+                patientId = complication.getPatientId(),
+                date = complication.getDate(),
+                lateComplicationOfTherapyDeveloped = complication.getLateComplicationOfTherapyDeveloped(),
+                lateToxicityDetail = complication.getLateToxicityDetail(),
+                suspectedTreatmentInducedNeoplasmDeveloped = complication.getSuspectedTreatmentInducedNeoplasmDeveloped(),
+                treatmentInducedNeoplasmDetails = complication.getTreatmentInducedNeoplasmDetails(),
+
+                )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                complication.getLocalId(),
+                complication.getParentContainer().getLocalId())
+
+
+    def _readComplicationTable(self):
+        """
+        Read the Complication table upon load
+        """
+        for complicationRecord in models.Complication.select():
+            dataset = self.getDataset(complicationRecord.datasetid.id)
+            complication = clinical_metadata.Complication(
+                dataset, complicationRecord.name)
+            complication.populateFromRow(complicationRecord)
+            assert complication.getId() == complicationRecord.id
+            dataset.addComplication(complication)
+
+    def _createTumourboardTable(self):
+        self.database.create_table(models.Tumourboard)
+
+    def insertTumourboard(self, tumourboard):
+        """
+        Inserts the specified tumourboard into this repository.
+        """
+        try:
+            models.Tumourboard.create(
+                # Common fields
+                id=tumourboard.getId(),
+                datasetId=tumourboard.getParentContainer().getId(),
+                created=tumourboard.getCreated(),
+                updated=tumourboard.getUpdated(),
+                name=tumourboard.getLocalId(),
+                description=tumourboard.getDescription(),
+
+                # Unique fields
+                patientId = tumourboard.getPatientId(),
+                dateOfMolecularTumorBoard = tumourboard.getDateOfMolecularTumorBoard(),
+                typeOfSampleAnalyzed = tumourboard.getTypeOfSampleAnalyzed(),
+                typeOfTumourSampleAnalyzed = tumourboard.getTypeOfTumourSampleAnalyzed(),
+                analysesDiscussed = tumourboard.getAnalysesDiscussed(),
+                somaticSampleType = tumourboard.getSomaticSampleType(),
+                normalExpressionComparator = tumourboard.getNormalExpressionComparator(),
+                diseaseExpressionComparator = tumourboard.getDiseaseExpressionComparator(),
+                hasAGermlineVariantBeenIdentifiedByProfilingThatMayPredisposeToCancer = tumourboard.getHasAGermlineVariantBeenIdentifiedByProfilingThatMayPredisposeToCancer(),
+                actionableTargetFound = tumourboard.getActionableTargetFound(),
+                molecularTumorBoardRecommendation = tumourboard.getMolecularTumorBoardRecommendation(),
+                germlineDnaSampleId = tumourboard.getGermlineDnaSampleId(),
+                tumorDnaSampleId = tumourboard.getTumorDnaSampleId(),
+                tumorRnaSampleId = tumourboard.getTumorRnaSampleId(),
+                germlineSnvDiscussed = tumourboard.getGermlineSnvDiscussed(),
+                somaticSnvDiscussed = tumourboard.getSomaticSnvDiscussed(),
+                cnvsDiscussed = tumourboard.getCnvsDiscussed(),
+                structuralVariantDiscussed = tumourboard.getStructuralVariantDiscussed(),
+                classificationOfVariants = tumourboard.getClassificationOfVariants(),
+                clinicalValidationProgress = tumourboard.getClinicalValidationProgress(),
+                typeOfValidation = tumourboard.getTypeOfValidation(),
+                agentOrDrugClass = tumourboard.getAgentOrDrugClass(),
+                levelOfEvidenceForExpressionTargetAgentMatch = tumourboard.getLevelOfEvidenceForExpressionTargetAgentMatch(),
+                didTreatmentPlanChangeBasedOnProfilingResult = tumourboard.getDidTreatmentPlanChangeBasedOnProfilingResult(),
+                howTreatmentHasAlteredBasedOnProfiling = tumourboard.getHowTreatmentHasAlteredBasedOnProfiling(),
+                reasonTreatmentPlanDidNotChangeBasedOnProfiling = tumourboard.getReasonTreatmentPlanDidNotChangeBasedOnProfiling(),
+                detailsOfTreatmentPlanImpact = tumourboard.getDetailsOfTreatmentPlanImpact(),
+                patientOrFamilyInformedOfGermlineVariant = tumourboard.getPatientOrFamilyInformedOfGermlineVariant(),
+                patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling = tumourboard.getPatientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling(),
+                summaryReport = tumourboard.getSummaryReport(),
+
+                )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                tumourboard.getLocalId(),
+                tumourboard.getParentContainer().getLocalId())
+
+    def _readTumourboardTable(self):
+        """
+        Read the Tumourboard table upon load
+        """
+        for tumourboardRecord in models.Tumourboard.select():
+            dataset = self.getDataset(tumourboardRecord.datasetid.id)
+            tumourboard = clinical_metadata.Tumourboard(
+                dataset, tumourboardRecord.name)
+            tumourboard.populateFromRow(tumourboardRecord)
+            assert tumourboard.getId() == tumourboardRecord.id
+            dataset.addTumourboard(tumourboard)
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
+
     def _createIndividualTable(self):
         self.database.create_table(models.Individual)
 
@@ -1663,6 +2352,21 @@ class SqlDataRepository(AbstractDataRepository):
         self._createIndividualTable()
         self._createPhenotypeAssociationSetTable()
         self._createRnaQuantificationSetTable()
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+        self._createPatientTable()
+        self._createEnrollmentTable()
+        self._createConsentTable()
+        self._createDiagnosisTable()
+        self._createSampleTable()
+        self._createTreatmentTable()
+        self._createOutcomeTable()
+        self._createComplicationTable()
+        self._createTumourboardTable()
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
 
     def exists(self):
         """
@@ -1706,3 +2410,18 @@ class SqlDataRepository(AbstractDataRepository):
         self._readIndividualTable()
         self._readPhenotypeAssociationSetTable()
         self._readRnaQuantificationSetTable()
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+        self._readPatientTable()
+        self._readEnrollmentTable()
+        self._readConsentTable()
+        self._readDiagnosisTable()
+        self._readSampleTable()
+        self._readTreatmentTable()
+        self._readOutcomeTable()
+        self._readComplicationTable()
+        self._readTumourboardTable()
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###

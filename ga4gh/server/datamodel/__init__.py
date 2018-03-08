@@ -329,6 +329,92 @@ class IndividualCompoundId(DatasetCompoundId):
     containerIds = DatasetCompoundId.containerIds + [('individual_id', 2)]
     differentiator = 'i'
 
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###   
+class PatientCompoundId(DatasetCompoundId):
+    """
+    The compound id for an patient
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'patient']
+    containerIds = DatasetCompoundId.containerIds + [('patient_id', 3)]
+    differentiator = 'pat'
+
+class EnrollmentCompoundId(DatasetCompoundId):
+    """
+    The compound id for an enrollment
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'enrollment']
+    containerIds = DatasetCompoundId.containerIds + [('enrollment_id', 3)]
+    differentiator = 'enr'
+
+class ConsentCompoundId(DatasetCompoundId):
+    """
+    The compound id for an consent
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'consent']
+    containerIds = DatasetCompoundId.containerIds + [('consent_id', 3)]
+    differentiator = 'con'
+
+class DiagnosisCompoundId(DatasetCompoundId):
+    """
+    The compound id for an diagnosis
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'diagnosis']
+    containerIds = DatasetCompoundId.containerIds + [('diagnosis_id', 3)]
+    differentiator = 'dia'
+
+class SampleCompoundId(DatasetCompoundId):
+    """
+    The compound id for an sample
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'sample']
+    containerIds = DatasetCompoundId.containerIds + [('sample_id', 3)]
+    differentiator = 'sam'
+
+class TreatmentCompoundId(DatasetCompoundId):
+    """
+    The compound id for an treatment
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'treatment']
+    containerIds = DatasetCompoundId.containerIds + [('treatment_id', 3)]
+    differentiator = 'tre'
+
+class OutcomeCompoundId(DatasetCompoundId):
+    """
+    The compound id for an outcome
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'outcome']
+    containerIds = DatasetCompoundId.containerIds + [('outcome_id', 3)]
+    differentiator = 'out'
+
+class ComplicationCompoundId(DatasetCompoundId):
+    """
+    The compound id for an complication
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'complication']
+    containerIds = DatasetCompoundId.containerIds + [('complication_id', 3)]
+    differentiator = 'com'
+
+class TumourboardCompoundId(DatasetCompoundId):
+    """
+    The compound id for an tumourboard
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'tumourboard']
+    containerIds = DatasetCompoundId.containerIds + [('tumourboard_id', 3)]
+    differentiator = 'tum'
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ### 
 
 class BiosampleCompoundId(DatasetCompoundId):
     """

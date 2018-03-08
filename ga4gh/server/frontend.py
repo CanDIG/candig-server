@@ -610,26 +610,33 @@ def index():
         return response
 
 
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
 @app.route('/candig')
 def candig():
-    individuals = client.FederatedClient(
-        ServerStatus().getPeers()).search_individuals()
+    patients = client.FederatedClient(
+        ServerStatus().getPeers()).search_Patients()
     ncit = app.serverStatus.getOntologyByName("NCIT")
 
     g2p = {}
     associations = []
     g2p, associations = client.LocalClient(app.backend).get_association(
-        individuals)
+        patients)
 
-    return flask.render_template('candig.html',
-                 info=app.serverStatus,
-                 individuals=individuals,
-                 ncit=ncit,
-                 epsilon_1=DP.DP(individuals, 0.1).get_noise(),
-                 epsilon_2=DP.DP(individuals, 1).get_noise(),
-                 g2p=g2p,
-                 associations=associations)
-
+    return flask.render_template(
+        'candig.html',
+        info=app.serverStatus,
+        individuals=patients,
+        ncit=ncit,
+        epsilon_1=DP.DP(patients, 0.1).get_noise(),
+        epsilon_2=DP.DP(patients, 1).get_noise(),
+        g2p=g2p,
+        associations=associations
+        )
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
 
 @app.route('/concordance')
 def concordance():
@@ -847,6 +854,67 @@ def searchIndividuals():
         flask.request, app.backend.runSearchIndividuals)
 
 
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+@DisplayedRoute('/patients/search', postMethod=True)
+@requires_auth
+def searchPatients():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchPatients)
+
+@DisplayedRoute('/enrollments/search', postMethod=True)
+@requires_auth
+def searchEnrollments():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchEnrollments)
+
+@DisplayedRoute('/consents/search', postMethod=True)
+@requires_auth
+def searchConsents():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchConsents)
+
+@DisplayedRoute('/diagnosiss/search', postMethod=True)
+@requires_auth
+def searchDiagnosiss():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchDiagnosiss)
+
+@DisplayedRoute('/samples/search', postMethod=True)
+@requires_auth
+def searchSamples():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchSamples)
+
+@DisplayedRoute('/treatments/search', postMethod=True)
+@requires_auth
+def searchTreatments():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchTreatments)
+
+@DisplayedRoute('/outcomes/search', postMethod=True)
+@requires_auth
+def searchOutcomes():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchOutcomes)
+
+@DisplayedRoute('/complications/search', postMethod=True)
+@requires_auth
+def searchComplications():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchComplications)
+
+@DisplayedRoute('/tumourboards/search', postMethod=True)
+@requires_auth
+def searchTumourboards():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchTumourboards)
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
+
+
 @DisplayedRoute('/peers/list', postMethod=True)
 @requires_auth
 def listPeers():
@@ -878,6 +946,84 @@ def getBiosample(id):
 def getIndividual(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetIndividual)
+
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+@DisplayedRoute(
+    '/patients/<no(search):id>',
+    pathDisplay='/patients/<id>')
+@requires_auth
+def getPatient(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetPatient)
+
+@DisplayedRoute(
+    '/enrollments/<no(search):id>',
+    pathDisplay='/enrollments/<id>')
+@requires_auth
+def getEnrollment(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetEnrollment)
+
+@DisplayedRoute(
+    '/consents/<no(search):id>',
+    pathDisplay='/consents/<id>')
+@requires_auth
+def getConsent(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetConsent)
+
+@DisplayedRoute(
+    '/diagnosiss/<no(search):id>',
+    pathDisplay='/diagnosiss/<id>')
+@requires_auth
+def getDiagnosis(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetDiagnosis)
+
+@DisplayedRoute(
+    '/samples/<no(search):id>',
+    pathDisplay='/samples/<id>')
+@requires_auth
+def getSample(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetSample)
+
+@DisplayedRoute(
+    '/treatments/<no(search):id>',
+    pathDisplay='/treatments/<id>')
+@requires_auth
+def getTreatment(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetTreatment)
+
+@DisplayedRoute(
+    '/outcomes/<no(search):id>',
+    pathDisplay='/outcomes/<id>')
+@requires_auth
+def getOutcome(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetOutcome)
+
+@DisplayedRoute(
+    '/complications/<no(search):id>',
+    pathDisplay='/complications/<id>')
+@requires_auth
+def getComplication(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetComplication)
+
+@DisplayedRoute(
+    '/tumourboards/<no(search):id>',
+    pathDisplay='/tumourboards/<id>')
+@requires_auth
+def getTumourboard(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetTumourboard)
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
 
 
 @DisplayedRoute('/rnaquantificationsets/search', postMethod=True)

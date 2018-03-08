@@ -52,6 +52,56 @@ class Dataset(datamodel.DatamodelObject):
         self._rnaQuantificationSetIds = []
         self._rnaQuantificationSetIdMap = {}
         self._rnaQuantificationSetNameMap = {}
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+        # Patient
+        self._patientIds = []
+        self._patientIdMap = {}
+        self._patientNameMap = {}
+
+        # Enrollment
+        self._enrollmentIds = []
+        self._enrollmentIdMap = {}
+        self._enrollmentNameMap = {}
+
+        # Consent
+        self._consentIds = []
+        self._consentIdMap = {}
+        self._consentNameMap = {}
+
+        # Diagnosis
+        self._diagnosisIds = []
+        self._diagnosisIdMap = {}
+        self._diagnosisNameMap = {}
+
+        # Sample
+        self._sampleIds = []
+        self._sampleIdMap = {}
+        self._sampleNameMap = {}
+
+        # Treatment
+        self._treatmentIds = []
+        self._treatmentIdMap = {}
+        self._treatmentNameMap = {}
+
+        # Outcome
+        self._outcomeIds = []
+        self._outcomeIdMap = {}
+        self._outcomeNameMap = {}
+
+        # Complication
+        self._complicationIds = []
+        self._complicationIdMap = {}
+        self._complicationNameMap = {}
+
+        # Tumourboard
+        self._tumourboardIds = []
+        self._tumourboardIdMap = {}
+        self._tumourboardNameMap = {}
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
 
     def populateFromRow(self, dataset):
         """
@@ -93,6 +143,93 @@ class Dataset(datamodel.DatamodelObject):
         self._individualIdMap[id_] = individual
         self._individualIds.append(id_)
         self._individualNameMap[individual.getName()] = individual
+
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+    def addPatient(self, patient):
+        """
+        Adds the specified patient to this dataset.
+        """
+        id_ = patient.getId()
+        self._patientIdMap[id_] = patient
+        self._patientIds.append(id_)
+        self._patientNameMap[patient.getName()] = patient
+
+    def addEnrollment(self, enrollment):
+        """
+        Adds the specified enrollment to this dataset.
+        """
+        id_ = enrollment.getId()
+        self._enrollmentIdMap[id_] = enrollment
+        self._enrollmentIds.append(id_)
+        self._enrollmentNameMap[enrollment.getName()] = enrollment
+
+    def addConsent(self, consent):
+        """
+        Adds the specified consent to this dataset.
+        """
+        id_ = consent.getId()
+        self._consentIdMap[id_] = consent
+        self._consentIds.append(id_)
+        self._consentNameMap[consent.getName()] = consent
+
+    def addDiagnosis(self, diagnosis):
+        """
+        Adds the specified diagnosis to this dataset.
+        """
+        id_ = diagnosis.getId()
+        self._diagnosisIdMap[id_] = diagnosis
+        self._diagnosisIds.append(id_)
+        self._diagnosisNameMap[diagnosis.getName()] = diagnosis
+
+    def addSample(self, sample):
+        """
+        Adds the specified sample to this dataset.
+        """
+        id_ = sample.getId()
+        self._sampleIdMap[id_] = sample
+        self._sampleIds.append(id_)
+        self._sampleNameMap[sample.getName()] = sample
+
+    def addTreatment(self, treatment):
+        """
+        Adds the specified treatment to this dataset.
+        """
+        id_ = treatment.getId()
+        self._treatmentIdMap[id_] = treatment
+        self._treatmentIds.append(id_)
+        self._treatmentNameMap[treatment.getName()] = treatment
+
+    def addOutcome(self, outcome):
+        """
+        Adds the specified outcome to this dataset.
+        """
+        id_ = outcome.getId()
+        self._outcomeIdMap[id_] = outcome
+        self._outcomeIds.append(id_)
+        self._outcomeNameMap[outcome.getName()] = outcome
+
+    def addComplication(self, complication):
+        """
+        Adds the specified complication to this dataset.
+        """
+        id_ = complication.getId()
+        self._complicationIdMap[id_] = complication
+        self._complicationIds.append(id_)
+        self._complicationNameMap[complication.getName()] = complication
+
+    def addTumourboard(self, tumourboard):
+        """
+        Adds the specified tumourboard to this dataset.
+        """
+        id_ = tumourboard.getId()
+        self._tumourboardIdMap[id_] = tumourboard
+        self._tumourboardIds.append(id_)
+        self._tumourboardNameMap[tumourboard.getName()] = tumourboard
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
 
     def addFeatureSet(self, featureSet):
         """
@@ -329,6 +466,228 @@ class Dataset(datamodel.DatamodelObject):
         if id_ not in self._individualIdMap:
             raise exceptions.IndividualNotFoundException(id_)
         return self._individualIdMap[id_]
+
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+    def getPatients(self):
+        """
+        Returns the list of patients in this dataset
+        """
+        return [self._patientIdMap[id_] for id_ in self._patientIds]
+
+    def getPatientByName(self, name):
+        """
+        Returns an patient with the specified name, or raises a
+        PatientNameNotFoundException if it does not exist.
+        """
+        if name not in self._patientNameMap:
+            raise exceptions.PatientNameNotFoundException(name)
+        return self._patientNameMap[name]
+
+    def getPatient(self, id_):
+        """
+        Returns the Patient with the specified id, or raises
+        a PatientNotFoundException otherwise.
+        """
+        if id_ not in self._patientIdMap:
+            raise exceptions.PatientNotFoundException(id_)
+        return self._patientIdMap[id_]
+
+    def getEnrollments(self):
+        """
+        Returns the list of enrollments in this dataset
+        """
+        return [self._enrollmentIdMap[id_] for id_ in self._enrollmentIds]
+
+    def getEnrollmentByName(self, name):
+        """
+        Returns an enrollment with the specified name, or raises a
+        EnrollmentNameNotFoundException if it does not exist.
+        """
+        if name not in self._enrollmentNameMap:
+            raise exceptions.EnrollmentNameNotFoundException(name)
+        return self._enrollmentNameMap[name]
+
+    def getEnrollment(self, id_):
+        """
+        Returns the Enrollment with the specified id, or raises
+        a EnrollmentNotFoundException otherwise.
+        """
+        if id_ not in self._enrollmentIdMap:
+            raise exceptions.EnrollmentNotFoundException(id_)
+        return self._enrollmentIdMap[id_]
+
+    def getConsents(self):
+        """
+        Returns the list of consents in this dataset
+        """
+        return [self._consentIdMap[id_] for id_ in self._consentIds]
+
+    def getConsentByName(self, name):
+        """
+        Returns an consent with the specified name, or raises a
+        ConsentNameNotFoundException if it does not exist.
+        """
+        if name not in self._consentNameMap:
+            raise exceptions.ConsentNameNotFoundException(name)
+        return self._consentNameMap[name]
+
+    def getConsent(self, id_):
+        """
+        Returns the Consent with the specified id, or raises
+        a ConsentNotFoundException otherwise.
+        """
+        if id_ not in self._consentIdMap:
+            raise exceptions.ConsentNotFoundException(id_)
+        return self._consentIdMap[id_]
+
+    def getDiagnosiss(self):
+        """
+        Returns the list of diagnosiss in this dataset
+        """
+        return [self._diagnosisIdMap[id_] for id_ in self._diagnosisIds]
+
+    def getDiagnosisByName(self, name):
+        """
+        Returns an diagnosis with the specified name, or raises a
+        DiagnosisNameNotFoundException if it does not exist.
+        """
+        if name not in self._diagnosisNameMap:
+            raise exceptions.DiagnosisNameNotFoundException(name)
+        return self._diagnosisNameMap[name]
+
+    def getDiagnosis(self, id_):
+        """
+        Returns the Diagnosis with the specified id, or raises
+        a DiagnosisNotFoundException otherwise.
+        """
+        if id_ not in self._diagnosisIdMap:
+            raise exceptions.DiagnosisNotFoundException(id_)
+        return self._diagnosisIdMap[id_]
+
+    def getSamples(self):
+        """
+        Returns the list of samples in this dataset
+        """
+        return [self._sampleIdMap[id_] for id_ in self._sampleIds]
+
+    def getSampleByName(self, name):
+        """
+        Returns an sample with the specified name, or raises a
+        SampleNameNotFoundException if it does not exist.
+        """
+        if name not in self._sampleNameMap:
+            raise exceptions.SampleNameNotFoundException(name)
+        return self._sampleNameMap[name]
+
+    def getSample(self, id_):
+        """
+        Returns the Sample with the specified id, or raises
+        a SampleNotFoundException otherwise.
+        """
+        if id_ not in self._sampleIdMap:
+            raise exceptions.SampleNotFoundException(id_)
+        return self._sampleIdMap[id_]
+
+    def getTreatments(self):
+        """
+        Returns the list of treatments in this dataset
+        """
+        return [self._treatmentIdMap[id_] for id_ in self._treatmentIds]
+
+    def getTreatmentByName(self, name):
+        """
+        Returns an treatment with the specified name, or raises a
+        TreatmentNameNotFoundException if it does not exist.
+        """
+        if name not in self._treatmentNameMap:
+            raise exceptions.TreatmentNameNotFoundException(name)
+        return self._treatmentNameMap[name]
+
+    def getTreatment(self, id_):
+        """
+        Returns the Treatment with the specified id, or raises
+        a TreatmentNotFoundException otherwise.
+        """
+        if id_ not in self._treatmentIdMap:
+            raise exceptions.TreatmentNotFoundException(id_)
+        return self._treatmentIdMap[id_]
+
+    def getOutcomes(self):
+        """
+        Returns the list of outcomes in this dataset
+        """
+        return [self._outcomeIdMap[id_] for id_ in self._outcomeIds]
+
+    def getOutcomeByName(self, name):
+        """
+        Returns an outcome with the specified name, or raises a
+        OutcomeNameNotFoundException if it does not exist.
+        """
+        if name not in self._outcomeNameMap:
+            raise exceptions.OutcomeNameNotFoundException(name)
+        return self._outcomeNameMap[name]
+
+    def getOutcome(self, id_):
+        """
+        Returns the Outcome with the specified id, or raises
+        a OutcomeNotFoundException otherwise.
+        """
+        if id_ not in self._outcomeIdMap:
+            raise exceptions.OutcomeNotFoundException(id_)
+        return self._outcomeIdMap[id_]
+
+    def getComplications(self):
+        """
+        Returns the list of complications in this dataset
+        """
+        return [self._complicationIdMap[id_] for id_ in self._complicationIds]
+
+    def getComplicationByName(self, name):
+        """
+        Returns an complication with the specified name, or raises a
+        ComplicationNameNotFoundException if it does not exist.
+        """
+        if name not in self._complicationNameMap:
+            raise exceptions.ComplicationNameNotFoundException(name)
+        return self._complicationNameMap[name]
+
+    def getComplication(self, id_):
+        """
+        Returns the Complication with the specified id, or raises
+        a ComplicationNotFoundException otherwise.
+        """
+        if id_ not in self._complicationIdMap:
+            raise exceptions.ComplicationNotFoundException(id_)
+        return self._complicationIdMap[id_]
+
+    def getTumourboards(self):
+        """
+        Returns the list of tumourboards in this dataset
+        """
+        return [self._tumourboardIdMap[id_] for id_ in self._tumourboardIds]
+
+    def getTumourboardByName(self, name):
+        """
+        Returns an tumourboard with the specified name, or raises a
+        TumourboardNameNotFoundException if it does not exist.
+        """
+        if name not in self._tumourboardNameMap:
+            raise exceptions.TumourboardNameNotFoundException(name)
+        return self._tumourboardNameMap[name]
+
+    def getTumourboard(self, id_):
+        """
+        Returns the Tumourboard with the specified id, or raises
+        a TumourboardNotFoundException otherwise.
+        """
+        if id_ not in self._tumourboardIdMap:
+            raise exceptions.TumourboardNotFoundException(id_)
+        return self._tumourboardIdMap[id_]
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
 
     def getNumReadGroupSets(self):
         """
