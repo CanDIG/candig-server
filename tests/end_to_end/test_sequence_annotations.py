@@ -45,7 +45,7 @@ class TestSequenceAnnotations(unittest.TestCase):
         responseData = protocol.deserialize(
                 response.data,
                 self.serialization,
-                esponseClass)
+                responseClass)
         self.assertTrue(
             protocol.validate(protocol.toJson(responseData), responseClass))
         return responseData
