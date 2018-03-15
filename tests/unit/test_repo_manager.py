@@ -175,7 +175,8 @@ class AbstractRepoManagerTest(unittest.TestCase):
         pass
         # repo = self.readRepo()
         # dataset = repo.getDatasetByName(self._datasetName)
-        # continuousSet = dataset.getContinuousSetByName(self._continuousSetName)
+        # continuousSet = dataset.getContinuousSetByName(
+        #    self._continuousSetName)
         # return continuousSet
 
 
