@@ -611,7 +611,7 @@ class Backend(object):
 
     def runSearchRequest(
         self, requestStr, requestClass, responseClass, objectGenerator,
-	    return_mimetype="application/json"):
+            return_mimetype="application/json"):
         """
         Runs the specified request. The request is a string containing
         a JSON representation of an instance of the specified requestClass.
@@ -646,7 +646,9 @@ class Backend(object):
         return responseString
 
     def runListReferenceBases(
-        self, requestJson, return_mimetype="application/json"):
+            self,
+            requestJson,
+            return_mimetype="application/json"):
         """
         Runs a listReferenceBases request for the specified ID and
         request arguments.
