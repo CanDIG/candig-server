@@ -476,8 +476,11 @@ class RepoManager(object):
         #                     self._args.continuousSetName)
 
         # def func():
-        #     self._updateRepo(self._repo.removeContinuousSet, continuousSet)
-        # self._confirmDelete("ContinuousSet", continuousSet.getLocalId(), func)
+        #    self._updateRepo(self._repo.removeContinuousSet, continuousSet)
+        # self._confirmDelete(
+        #   "ContinuousSet",
+        #   continuousSet.getLocalId(),
+        #   func)
 
     def addBiosample(self):
         """
@@ -1153,7 +1156,9 @@ class RepoManager(object):
         # cls.addFilePathArgument(
         #     addContinuousSetParser,
         #     "The path to the file contianing the continuous data ")
-        # cls.addReferenceSetNameOption(addContinuousSetParser, "continuous set")
+        # cls.addReferenceSetNameOption(
+        #   addContinuousSetParser,
+        #   "continuous set")
         # cls.addClassNameOption(addContinuousSetParser, "continuous set")
 
         # removeContinuousSetParser = common_cli.addSubparser(
