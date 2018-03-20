@@ -13,7 +13,8 @@ class SearchResponseBuilder(object):
     """
     A class to allow sequential building of SearchResponse objects.
     """
-    def __init__(self, responseClass, pageSize, maxBufferSize):
+    def __init__(self, responseClass, pageSize, maxBufferSize,
+        return_mimetype="application/json"):
         """
         Allocates a new SearchResponseBuilder for the specified
         responseClass, user-requested pageSize and the system mandated
@@ -90,5 +91,5 @@ class SearchResponseBuilder(object):
         been built by this SearchResponseBuilder.
         """
         self._protoObject.next_page_token = pb.string(self._nextPageToken)
-        s = protocol.toJson(self._protoObject)
+        s = protocol.serialize(self._protoObject, self._return_mimetype)
         return s
