@@ -29,6 +29,7 @@ class SearchResponseBuilder(object):
         self._protoObject = responseClass()
         self._valueListName = protocol.getValueListName(responseClass)
         self._bufferSize = self._protoObject.ByteSize()
+        self._return_mimetype = return_mimetype
 
     def getPageSize(self):
         """
