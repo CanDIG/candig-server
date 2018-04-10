@@ -27,8 +27,12 @@ def getInitialPeerList(filePath, logger=None):
     startup and will log a warning if the file isn't found.
     """
     ret = []
-    with open(filePath) as textFile:
-        ret = textFile.readlines()
+    try:
+        with open(filePath) as textFile:
+            ret = textFile.readlines()
+    except:
+        pass
+
     if len(ret) == 0:
         if logger:
             logger.warn("Couldn't load the initial "
