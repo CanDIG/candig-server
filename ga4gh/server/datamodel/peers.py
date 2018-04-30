@@ -61,7 +61,17 @@ class Peer(object):
         return self
 
     def getUrl(self):
-        return self._url
+### ======================================================================= ###
+### FEDERATION
+### ======================================================================= ###
+        # Make sure that url ends with "/"
+        url = self._url
+        if not url.endswith('/'):
+            url = ''.join((url, '/'))
+        return url
+### ======================================================================= ###
+### FEDERATION ENDS
+### ======================================================================= ###
 
     def setAttributes(self, attributes):
         """

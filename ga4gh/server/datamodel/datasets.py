@@ -542,9 +542,9 @@ class Dataset(datamodel.DatamodelObject):
             raise exceptions.ConsentNotFoundException(id_)
         return self._consentIdMap[id_]
 
-    def getDiagnosiss(self):
+    def getDiagnoses(self):
         """
-        Returns the list of diagnosiss in this dataset
+        Returns the list of diagnoses in this dataset
         """
         return [self._diagnosisIdMap[id_] for id_ in self._diagnosisIds]
 

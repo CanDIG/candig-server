@@ -12,6 +12,7 @@ import datetime
 import socket
 import urlparse
 import functools
+import json
 
 import flask
 import flask.ext.cors as cors
@@ -402,6 +403,137 @@ def getFlaskResponse(responseString, httpStatus=200,
     return flask.Response(responseString, status=httpStatus, mimetype=mimetype)
 
 
+### ======================================================================= ###
+### FEDERATION
+### ======================================================================= ###
+def federation(endpoint, request, return_mimetype, request_type='POST'):
+    """
+    Federate the queries by iterating through the peer list and merging the
+    result.
+
+    Parameters:
+    ===========
+    endpoint: method
+        Method of a datamodel object that populates the response
+    request: string
+        Request send along with the query, like: id for GET requests
+    return_mimetype: string
+        'http/json or application/json'
+    request_type: string
+        Specify whether the request is a "GET" or a "POST" request
+
+    Returns:
+    ========
+    responseObject: json string
+        Merged responses from the servers. responseObject structure:
+
+    {
+    "status": [
+        "server response code1",
+        "server response code2",
+        ...
+        "server response codeN",
+        ],
+    "results": [
+            {
+            "datasets": [
+                    {record1},
+                    {record2},
+                    ...
+                    {recordN},
+                ]
+            }
+        ]
+    }
+
+    """
+    request_dictionary = flask.request
+
+    # Self query
+    responseObject = {}
+    responseObject['status'] = list()
+    try:
+        responseObject['results'] = [json.loads(
+            endpoint(request, return_mimetype=return_mimetype)
+            )]
+
+        responseObject['status'].append(200)
+    except exceptions.ObjectWithIdNotFoundException as error:
+        responseObject['status'].append(error.status_code)
+
+    # Peer queries
+    # Apply federation by default or if it was specifically requested
+    if ('federation' not in request_dictionary.headers or \
+            request_dictionary.headers['federation'] == 'True'):
+
+        # Iterate through all peers
+        for peer in app.serverStatus.getPeers():
+            # Generate the same call on the peer
+            uri = request_dictionary.url.replace(
+                request_dictionary.host_url,
+                peer.getUrl(),
+                )
+            # federation field must be set to False to avoid infinite loop
+            header = {
+                'Content-Type': return_mimetype,
+                'Accept': return_mimetype,
+                'federation': 'False',
+                }
+            # Make the call
+            try:
+                if request_type == 'GET':
+                    response = requests.Session().get(
+                        uri,
+                        headers=header,
+                        )
+                elif request_type == 'POST':
+                    response = requests.Session().post(
+                        uri,
+                        json=json.loads(request),
+                        headers=header,
+                        )
+                else:
+                    #TODO: Raise error
+                    pass
+
+                print('  >> peer call: {0} - {1}'.format(
+                    uri,
+                    response.status_code,
+                    ))
+
+            except (requests.exceptions.ConnectionError,
+                    requests.exceptions.Timeout,
+                    requests.exceptions.HTTPError):
+                responseObject['status'].append(503)
+
+                print('  >> peer call: {0} - {1}'.format(
+                    uri,
+                    'SERVER IS DOWN OR DID NOT RESPONSE!',
+                    ))
+            else:
+                responseObject['status'].append(response.status_code)
+                # If the call was successful append the results
+                if response.status_code == 200:
+
+                    if request_type == 'GET':
+                        responseObject['results'].append(response.json())
+
+                    elif request_type == 'POST':
+                        peer_response = response.json()
+                        for key in peer_response:
+                            for record in peer_response[key]:
+                                responseObject['results'][0][key].append(record)
+
+    # If no result has been found on any of the servers raise an error
+    if not responseObject['results']:
+        raise exceptions.ObjectWithIdNotFoundException(request)
+    #
+    return json.dumps(responseObject)
+### ======================================================================= ###
+### FEDERATION ENDS
+### ======================================================================= ###
+
+
 def handleHttpPost(request, endpoint):
     """
     Handles the specified HTTP POST request, which maps to the specified
@@ -413,7 +545,18 @@ def handleHttpPost(request, endpoint):
     request = request.get_data()
     if request == '' or request is None:
         request = '{}'
-    responseStr = endpoint(request, return_mimetype=return_mimetype)
+### ======================================================================= ###
+### FEDERATION
+### ======================================================================= ###
+    responseStr = federation(
+        endpoint,
+        request,
+        return_mimetype=return_mimetype,
+        request_type='POST'
+        )
+### ======================================================================= ###
+### FEDERATION ENDS
+### ======================================================================= ###
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
@@ -433,7 +576,18 @@ def handleHttpGet(id_, endpoint):
     """
     request = flask.request
     return_mimetype = chooseReturnMimetype(request)
-    responseStr = endpoint(id_, return_mimetype=return_mimetype)
+### ======================================================================= ###
+### FEDERATION
+### ======================================================================= ###
+    responseStr = federation(
+        endpoint,
+        id_,
+        return_mimetype=return_mimetype,
+        request_type='GET'
+        )
+### ======================================================================= ###
+### FEDERATION ENDS
+### ======================================================================= ###
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
@@ -875,11 +1029,11 @@ def searchConsents():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchConsents)
 
-@DisplayedRoute('/diagnosiss/search', postMethod=True)
+@DisplayedRoute('/diagnoses/search', postMethod=True)
 @requires_auth
-def searchDiagnosiss():
+def searchDiagnoses():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchDiagnosiss)
+        flask.request, app.backend.runSearchDiagnoses)
 
 @DisplayedRoute('/samples/search', postMethod=True)
 @requires_auth
@@ -975,8 +1129,8 @@ def getConsent(id):
         id, flask.request, app.backend.runGetConsent)
 
 @DisplayedRoute(
-    '/diagnosiss/<no(search):id>',
-    pathDisplay='/diagnosiss/<id>')
+    '/diagnoses/<no(search):id>',
+    pathDisplay='/diagnoses/<id>')
 @requires_auth
 def getDiagnosis(id):
     return handleFlaskGetRequest(

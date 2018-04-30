@@ -43,7 +43,6 @@ class AbstractDataRepository(object):
     """
     def __init__(self):
         self._datasetIdMap = {}
-        self._datasetIdMap = {}
         self._datasetNameMap = {}
         self._datasetIds = []
         self._referenceSetIdMap = {}

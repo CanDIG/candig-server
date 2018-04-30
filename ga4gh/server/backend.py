@@ -241,12 +241,12 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results)
 
-    def diagnosissGenerator(self, request):
+    def diagnosesGenerator(self, request):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         results = []
-        for obj in dataset.getDiagnosiss():
+        for obj in dataset.getDiagnoses():
             include = True
             if request.name:
                 if request.name != obj.getLocalId():
@@ -1011,7 +1011,7 @@ class Backend(object):
         """
         Runs a getPatient request for the specified ID.
         """
-        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        compoundId = datamodel.PatientCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         patient = dataset.getPatient(id_)
         return self.runGetRequest(patient, return_mimetype)
@@ -1020,7 +1020,7 @@ class Backend(object):
         """
         Runs a getEnrollment request for the specified ID.
         """
-        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        compoundId = datamodel.EnrollmentCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         enrollment = dataset.getEnrollment(id_)
         return self.runGetRequest(enrollment, return_mimetype)
@@ -1029,7 +1029,7 @@ class Backend(object):
         """
         Runs a getConsent request for the specified ID.
         """
-        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        compoundId = datamodel.ConsentCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         consent = dataset.getConsent(id_)
         return self.runGetRequest(consent, return_mimetype)
@@ -1038,7 +1038,7 @@ class Backend(object):
         """
         Runs a getDiagnosis request for the specified ID.
         """
-        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        compoundId = datamodel.DiagnosisCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         diagnosis = dataset.getDiagnosis(id_)
         return self.runGetRequest(diagnosis, return_mimetype)
@@ -1047,7 +1047,7 @@ class Backend(object):
         """
         Runs a getSample request for the specified ID.
         """
-        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        compoundId = datamodel.SampleCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         sample = dataset.getSample(id_)
         return self.runGetRequest(sample, return_mimetype)
@@ -1056,7 +1056,7 @@ class Backend(object):
         """
         Runs a getTreatment request for the specified ID.
         """
-        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        compoundId = datamodel.TreatmentCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         treatment = dataset.getTreatment(id_)
         return self.runGetRequest(treatment, return_mimetype)
@@ -1065,7 +1065,7 @@ class Backend(object):
         """
         Runs a getOutcome request for the specified ID.
         """
-        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        compoundId = datamodel.OutcomeCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         outcome = dataset.getOutcome(id_)
         return self.runGetRequest(outcome, return_mimetype)
@@ -1074,7 +1074,7 @@ class Backend(object):
         """
         Runs a getComplication request for the specified ID.
         """
-        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        compoundId = datamodel.ComplicationCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         complication = dataset.getComplication(id_)
         return self.runGetRequest(complication, return_mimetype)
@@ -1083,7 +1083,7 @@ class Backend(object):
         """
         Runs a getTumourboard request for the specified ID.
         """
-        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        compoundId = datamodel.TumourboardCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         tumourboard = dataset.getTumourboard(id_)
         return self.runGetRequest(tumourboard, return_mimetype)
@@ -1287,14 +1287,14 @@ class Backend(object):
             self.consentsGenerator,
             return_mimetype)
 
-    def runSearchDiagnosiss(self, request, return_mimetype):
+    def runSearchDiagnoses(self, request, return_mimetype):
         """
-        Runs the specified search SearchDiagnosissRequest.
+        Runs the specified search SearchDiagnosesRequest.
         """
         return self.runSearchRequest(
-            request, protocol.SearchDiagnosissRequest,
-            protocol.SearchDiagnosissResponse,
-            self.diagnosissGenerator,
+            request, protocol.SearchDiagnosesRequest,
+            protocol.SearchDiagnosesResponse,
+            self.diagnosesGenerator,
             return_mimetype)
 
     def runSearchSamples(self, request, return_mimetype):
