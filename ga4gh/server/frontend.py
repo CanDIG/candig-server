@@ -428,12 +428,12 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         Merged responses from the servers. responseObject structure:
 
     {
-    "status": [
-        "server response code1",
-        "server response code2",
-        ...
-        "server response codeN",
-        ],
+    "status": {
+        "Successful communications": <number>,
+        "Known peers": <number>,
+        "Valid response": <true|false>,
+        "Queried peers": <number>
+        },
     "results": [
             {
             "datasets": [
@@ -451,6 +451,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     # Self query
     responseObject = {}
+    responseObject['results'] = []
     responseObject['status'] = list()
     try:
         responseObject['results'] = [json.loads(
@@ -459,12 +460,14 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
         responseObject['status'].append(200)
     except exceptions.ObjectWithIdNotFoundException as error:
-        responseObject['status'].append(error.status_code)
+        responseObject['status'].append(404)
+    except Exception as error:
+        responseObject['status'].append(404)
 
     # Peer queries
     # Apply federation by default or if it was specifically requested
-    if ('federation' not in request_dictionary.headers or \
-            request_dictionary.headers['federation'] == 'True'):
+    if ('Federation' not in request_dictionary.headers or \
+            request_dictionary.headers['Federation'] == 'True'):
 
         # Iterate through all peers
         for peer in app.serverStatus.getPeers():
@@ -477,7 +480,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
             header = {
                 'Content-Type': return_mimetype,
                 'Accept': return_mimetype,
-                'federation': 'False',
+                'Federation': 'False',
                 }
             # Make the call
             try:
@@ -521,14 +524,50 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
                     elif request_type == 'POST':
                         peer_response = response.json()['results'][0]
-                        for key in peer_response:
-                            for record in peer_response[key]:
-                                responseObject['results'][0][key].append(record)
+
+                        if not responseObject['results'][0]:
+                            responseObject['results'] = [peer_response]
+                        else:
+                            for key in peer_response:
+                                for record in peer_response[key]:
+                                    responseObject['results'][0][key].append(record)
 
     # If no result has been found on any of the servers raise an error
-    if not responseObject['results']:
-        raise exceptions.ObjectWithIdNotFoundException(request)
-    #
+    if 'results' not in responseObject or not responseObject['results'][0]:
+        if request_type == 'GET':
+            raise exceptions.ObjectWithIdNotFoundException(request)
+        elif request_type == 'POST':
+            raise exceptions.ObjectWithIdNotFoundException(json.loads(request))
+
+    # Reformat the status response
+    responseObject['status'] = {
+        'Known peers': \
+            # All the peers plus self
+            len(app.serverStatus.getPeers()) + 1,
+        'Queried peers': \
+            # Queried means http status code 200 and 404
+            responseObject['status'].count(200) + \
+            responseObject['status'].count(404),
+        # Successful means http status code 200
+        'Successful communications': \
+            # Successful means http status code 200
+            responseObject['status'].count(200),
+        'Valid response': \
+            # Invalid by default
+            False
+        }
+    
+    # Decide on valid response
+    if responseObject['status']['Known peers'] == \
+            responseObject['status']['Queried peers']:
+        if request_type == 'GET':
+            if responseObject['status']['Successful communications'] >= 1:
+                responseObject['status']['Valid response'] = True
+        elif request_type == 'POST':
+            if responseObject['status']['Successful communications'] == \
+                    responseObject['status']['Queried peers']:
+                responseObject['status']['Valid response'] = True
+
     return json.dumps(responseObject)
 ### ======================================================================= ###
 ### FEDERATION ENDS
