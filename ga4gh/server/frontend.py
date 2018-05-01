@@ -516,7 +516,8 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 if response.status_code == 200:
 
                     if request_type == 'GET':
-                        responseObject['results'].append(response.json())
+                        responseObject['results'].append(
+                            response.json()['results'][0])
 
                     elif request_type == 'POST':
                         peer_response = response.json()['results'][0]
