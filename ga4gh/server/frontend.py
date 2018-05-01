@@ -519,7 +519,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                         responseObject['results'].append(response.json())
 
                     elif request_type == 'POST':
-                        peer_response = response.json()
+                        peer_response = response.json()['results'][0]
                         for key in peer_response:
                             for record in peer_response[key]:
                                 responseObject['results'][0][key].append(record)
