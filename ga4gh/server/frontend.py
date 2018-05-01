@@ -451,7 +451,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     # Self query
     responseObject = {}
-    responseObject['results'] = []
+    responseObject['results'] = [{}]
     responseObject['status'] = list()
     try:
         responseObject['results'] = [json.loads(
