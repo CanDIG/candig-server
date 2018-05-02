@@ -451,7 +451,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     # Self query
     responseObject = {}
-    responseObject['results'] = [{}]
+    responseObject['results'] = []
     responseObject['status'] = list()
     try:
         responseObject['results'] = [json.loads(
@@ -461,8 +461,9 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         responseObject['status'].append(200)
     except exceptions.ObjectWithIdNotFoundException as error:
         responseObject['status'].append(404)
-    except Exception as error:
+    except exceptions.NotFoundException as error:
         responseObject['status'].append(404)
+        if request_type == 'POST': responseObject['results'].append({})
 
     # Peer queries
     # Apply federation by default or if it was specifically requested
@@ -533,7 +534,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                                     responseObject['results'][0][key].append(record)
 
     # If no result has been found on any of the servers raise an error
-    if 'results' not in responseObject or not responseObject['results'][0]:
+    if not responseObject['results'] or not responseObject['results'][0]:
         if request_type == 'GET':
             raise exceptions.ObjectWithIdNotFoundException(request)
         elif request_type == 'POST':
