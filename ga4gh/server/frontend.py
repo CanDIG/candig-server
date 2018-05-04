@@ -530,6 +530,9 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                             responseObject['results'] = [peer_response]
                         else:
                             for key in peer_response:
+                                #TODO: handle truncated responses; for now increased default page_size to 300
+                                if key=='nextPageToken':
+                                    continue
                                 for record in peer_response[key]:
                                     responseObject['results'][0][key].append(record)
 
