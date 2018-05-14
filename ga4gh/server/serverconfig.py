@@ -75,7 +75,7 @@ class KeycloakOidConfig(DevelopmentConfig):
     """
     # Unsure what this does, but it is needed.
     SECRET_KEY = "key"
-    KEYCLOAK = False
+    KEYCLOAK = True
 
 
 class SimulatedConfig(BaseConfig):
