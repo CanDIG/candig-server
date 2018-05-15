@@ -16,9 +16,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import datetime
 import peewee as pw
-
+import datetime
 # The databaseProxy is used to dynamically changed the
 # backing database and needs to be set to an actual
 # database instance to use these models.
@@ -77,10 +76,83 @@ class Biosample(BaseModel):
     name = pw.TextField()
     updated = pw.TextField(null=True)
     individualAgeAtCollection = pw.TextField(null=True)
+### ======================================================================= ###
+# PROFYLE MODIFICATION BEGIN
+### ======================================================================= ###
+    estimated_tumor_content = pw.TextField(null=True)
+    normal_sample_source = pw.TextField(null=True)
+    biopsy_data = pw.TextField(null=True)
+    tumor_biopsy_anatomical_site = pw.TextField(null=True)
+    biopsy_type = pw.TextField(null=True)
+    sample_shipment_date = pw.TextField(null=True)
+### ======================================================================= ###
+# PROFYLE MODIFICATION END
+### ======================================================================= ###
 
     class Meta:
         indexes = (
             (('datasetid', 'name'), True),
+        )
+
+
+class Experiment(BaseModel):
+    name = pw.TextField()
+    id = pw.TextField(primary_key=True)
+    description = pw.TextField(null=True)
+    created = pw.TextField(null=True)
+    updated = pw.TextField(null=True)
+    runTime = pw.TextField(null=True)
+    molecule = pw.TextField(null=True)
+    strategy = pw.TextField(null=True)
+    selection = pw.TextField(null=True)
+    library = pw.TextField(null=True)
+    libraryLayout = pw.TextField(null=True)
+    instrumentModel = pw.TextField(null=True)
+    instrumentDataFile = pw.TextField(null=True)
+    sequencingCenter = pw.TextField(null=True)
+    platformUnit = pw.TextField(null=True)
+### ======================================================================= ###
+# PROFYLE MODIFICATION BEGIN
+### ======================================================================= ###
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    biosample_id = pw.TextField(db_column='biosampleId', null=True)
+    dna_library_construction_method = pw.TextField(null=True)
+    wgs_sequencing_completion_date = pw.TextField(null=True)
+    rna_library_construction_method = pw.TextField(null=True)
+    rna_sequencing_completion_date = pw.TextField(null=True)
+    panel_completion_date = pw.TextField(null=True)
+### ======================================================================= ###
+# PROFYLE MODIFICATION END
+### ======================================================================= ###
+    class Meta:
+        indexes = (
+            (('name'), True),
+        )
+
+
+class Analysis(BaseModel):
+    name = pw.TextField()
+    id = pw.TextField(primary_key=True)
+    description = pw.TextField(null=True)
+    created = pw.TextField(null=True)
+    updated = pw.TextField(null=True)
+    analysistype = pw.TextField(null=True)
+    software = pw.TextField(null=True)
+### ======================================================================= ###
+# PROFYLE MODIFICATION BEGIN
+### ======================================================================= ###
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    experiment_id = pw.TextField(db_column='experimentId', null=True)
+    other_analysis_descriptor = pw.TextField(null=True)
+    other_analysis_completition_date = pw.TextField(null=True)
+### ======================================================================= ###
+# PROFYLE MODIFICATION END
+### ======================================================================= ###
+    class Meta:
+        indexes = (
+            (('name'), True),
         )
 
 
@@ -172,6 +244,344 @@ class ContinuousSet(BaseModel):
             (('datasetid', 'name'), True),
         )
 
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+class Patient(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    otherIds = pw.TextField(null=True)
+    dateOfBirth = pw.TextField(null=True)
+    gender = pw.TextField(null=True)
+    ethnicity = pw.TextField(null=True)
+    race = pw.TextField(null=True)
+    provinceOfResidence = pw.TextField(null=True)
+    dateOfDeath = pw.TextField(null=True)
+    causeOfDeath = pw.TextField(null=True)
+    autopsyTissueForResearch = pw.TextField(null=True)
+    priorMalignancy = pw.TextField(null=True)
+    dateOfPriorMalignancy = pw.TextField(null=True)
+    familyHistoryAndRiskFactors = pw.TextField(null=True)
+    familyHistoryOfPredispositionSyndrome = pw.TextField(null=True)
+    detailsOfPredispositionSyndrome = pw.TextField(null=True)
+    geneticCancerSyndrome = pw.TextField(null=True)
+    otherGeneticConditionOrSignificantComorbidity = pw.TextField(null=True)
+    occupationalOrEnvironmentalExposure = pw.TextField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Enrollment(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    enrollmentInstitution = pw.TextField(null=True)
+    enrollmentApprovalDate = pw.TextField(null=True)
+    crossEnrollment = pw.TextField(null=True)
+    otherPersonalizedMedicineStudyName = pw.TextField(null=True)
+    otherPersonalizedMedicineStudyId = pw.TextField(null=True)
+    ageAtEnrollment = pw.TextField(null=True)
+    eligibilityCategory = pw.TextField(null=True)
+    statusAtEnrollment = pw.TextField(null=True)
+    primaryOncologistName = pw.TextField(null=True)
+    primaryOncologistContact = pw.TextField(null=True)
+    referringPhysicianName = pw.TextField(null=True)
+    referringPhysicianContact = pw.TextField(null=True)
+    summaryOfIdRequest = pw.TextField(null=True)
+    treatingCentreName = pw.TextField(null=True)
+    treatingCentreProvince = pw.TextField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Consent(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    consentId = pw.TextField(null=True)
+    consentDate = pw.TextField(null=True)
+    consentVersion = pw.TextField(null=True)
+    patientConsentedTo = pw.TextField(null=True)
+    reasonForRejection = pw.TextField(null=True)
+    wasAssentObtained = pw.TextField(null=True)
+    dateOfAssent = pw.TextField(null=True)
+    assentFormVersion = pw.TextField(null=True)
+    ifAssentNotObtainedWhyNot = pw.TextField(null=True)
+    reconsentDate = pw.TextField(null=True)
+    reconsentVersion = pw.TextField(null=True)
+    consentingCoordinatorName = pw.TextField(null=True)
+    previouslyConsented = pw.TextField(null=True)
+    nameOfOtherBiobank = pw.TextField(null=True)
+    hasConsentBeenWithdrawn = pw.TextField(null=True)
+    dateOfConsentWithdrawal = pw.TextField(null=True)
+    typeOfConsentWithdrawal = pw.TextField(null=True)
+    reasonForConsentWithdrawal = pw.TextField(null=True)
+    consentFormComplete = pw.TextField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Diagnosis(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    diagnosisId = pw.TextField(null=True)
+    diagnosisDate = pw.TextField(null=True)
+    ageAtDiagnosis = pw.TextField(null=True)
+    cancerType = pw.TextField(null=True)
+    classification = pw.TextField(null=True)
+    cancerSite = pw.TextField(null=True)
+    histology = pw.TextField(null=True)
+    methodOfDefinitiveDiagnosis = pw.TextField(null=True)
+    sampleType = pw.TextField(null=True)
+    sampleSite = pw.TextField(null=True)
+    tumorGrade = pw.TextField(null=True)
+    gradingSystemUsed = pw.TextField(null=True)
+    sitesOfMetastases = pw.TextField(null=True)
+    stagingSystem = pw.TextField(null=True)
+    versionOrEditionOfTheStagingSystem = pw.TextField(null=True)
+    specificTumorStageAtDiagnosis = pw.TextField(null=True)
+    prognosticBiomarkers = pw.TextField(null=True)
+    biomarkerQuantification = pw.TextField(null=True)
+    additionalMolecularTesting = pw.TextField(null=True)
+    additionalTestType = pw.TextField(null=True)
+    laboratoryName = pw.TextField(null=True)
+    laboratoryAddress = pw.TextField(null=True)
+    siteOfMetastases = pw.TextField(null=True)
+    stagingSystemVersion = pw.TextField(null=True)
+    specificStage = pw.TextField(null=True)
+    cancerSpecificBiomarkers = pw.TextField(null=True)
+    additionalMolecularDiagnosticTestingPerformed = pw.TextField(null=True)
+    additionalTest = pw.TextField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Sample(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    sampleId = pw.TextField(null=True)
+    diagnosisId = pw.TextField(null=True)
+    localBiobankId = pw.TextField(null=True)
+    collectionDate = pw.TextField(null=True)
+    collectionHospital = pw.TextField(null=True)
+    sampleType = pw.TextField(null=True)
+    tissueDiseaseState = pw.TextField(null=True)
+    anatomicSiteTheSampleObtainedFrom = pw.TextField(null=True)
+    cancerType = pw.TextField(null=True)
+    cancerSubtype = pw.TextField(null=True)
+    pathologyReportId = pw.TextField(null=True)
+    morphologicalCode = pw.TextField(null=True)
+    topologicalCode = pw.TextField(null=True)
+    shippingDate = pw.TextField(null=True)
+    receivedDate = pw.TextField(null=True)
+    qualityControlPerformed = pw.TextField(null=True)
+    estimatedTumorContent = pw.TextField(null=True)
+    quantity = pw.TextField(null=True)
+    units = pw.TextField(null=True)
+    associatedBiobank = pw.TextField(null=True)
+    otherBiobank = pw.TextField(null=True)
+    sopFollowed = pw.TextField(null=True)
+    ifNotExplainAnyDeviation = pw.TextField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Treatment(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    courseNumber = pw.TextField(null=True)
+    therapeuticModality = pw.TextField(null=True)
+    systematicTherapyAgentName = pw.TextField(null=True)
+    treatmentPlanType = pw.TextField(null=True)
+    treatmentIntent = pw.TextField(null=True)
+    startDate = pw.TextField(null=True)
+    stopDate = pw.TextField(null=True)
+    reasonForEndingTheTreatment = pw.TextField(null=True)
+    protocolNumberOrCode = pw.TextField(null=True)
+    surgeryDetails = pw.TextField(null=True)
+    radiotherapyDetails = pw.TextField(null=True)
+    chemotherapyDetails = pw.TextField(null=True)
+    hematopoieticCellTransplant = pw.TextField(null=True)
+    immunotherapyDetails = pw.TextField(null=True)
+    responseToTreatment = pw.TextField(null=True)
+    responseCriteriaUsed = pw.TextField(null=True)
+    dateOfRecurrenceOrProgressionAfterThisTreatment = pw.TextField(null=True)
+    unexpectedOrUnusualToxicityDuringTreatment = pw.TextField(null=True)
+    drugListOrAgent = pw.TextField(null=True)
+    drugIdNumbers = pw.TextField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Outcome(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    physicalExamId = pw.TextField(null=True)
+    dateOfAssessment = pw.TextField(null=True)
+    diseaseResponseOrStatus = pw.TextField(null=True)
+    otherResponseClassification = pw.TextField(null=True)
+    minimalResidualDiseaseAssessment = pw.TextField(null=True)
+    methodOfResponseEvaluation = pw.TextField(null=True)
+    responseCriteriaUsed = pw.TextField(null=True)
+    summaryStage = pw.TextField(null=True)
+    sitesOfAnyProgressionOrRecurrence = pw.TextField(null=True)
+    vitalStatus = pw.TextField(null=True)
+    height = pw.TextField(null=True)
+    weight = pw.TextField(null=True)
+    heightUnits = pw.TextField(null=True)
+    weightUnits = pw.TextField(null=True)
+    performanceStatus = pw.TextField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Complication(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    date = pw.TextField(null=True)
+    lateComplicationOfTherapyDeveloped = pw.TextField(null=True)
+    lateToxicityDetail = pw.TextField(null=True)
+    suspectedTreatmentInducedNeoplasmDeveloped = pw.TextField(null=True)
+    treatmentInducedNeoplasmDetails = pw.TextField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Tumourboard(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    dateOfMolecularTumorBoard = pw.TextField(null=True)
+    typeOfSampleAnalyzed = pw.TextField(null=True)
+    typeOfTumourSampleAnalyzed = pw.TextField(null=True)
+    analysesDiscussed = pw.TextField(null=True)
+    somaticSampleType = pw.TextField(null=True)
+    normalExpressionComparator = pw.TextField(null=True)
+    diseaseExpressionComparator = pw.TextField(null=True)
+    hasAGermlineVariantBeenIdentifiedByProfilingThatMayPredisposeToCancer = pw.TextField(null=True)
+    actionableTargetFound = pw.TextField(null=True)
+    molecularTumorBoardRecommendation = pw.TextField(null=True)
+    germlineDnaSampleId = pw.TextField(null=True)
+    tumorDnaSampleId = pw.TextField(null=True)
+    tumorRnaSampleId = pw.TextField(null=True)
+    germlineSnvDiscussed = pw.TextField(null=True)
+    somaticSnvDiscussed = pw.TextField(null=True)
+    cnvsDiscussed = pw.TextField(null=True)
+    structuralVariantDiscussed = pw.TextField(null=True)
+    classificationOfVariants = pw.TextField(null=True)
+    clinicalValidationProgress = pw.TextField(null=True)
+    typeOfValidation = pw.TextField(null=True)
+    agentOrDrugClass = pw.TextField(null=True)
+    levelOfEvidenceForExpressionTargetAgentMatch = pw.TextField(null=True)
+    didTreatmentPlanChangeBasedOnProfilingResult = pw.TextField(null=True)
+    howTreatmentHasAlteredBasedOnProfiling = pw.TextField(null=True)
+    reasonTreatmentPlanDidNotChangeBasedOnProfiling = pw.TextField(null=True)
+    detailsOfTreatmentPlanImpact = pw.TextField(null=True)
+    patientOrFamilyInformedOfGermlineVariant = pw.TextField(null=True)
+    patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling = pw.TextField(null=True)
+    summaryReport = pw.TextField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
+
 
 class Individual(BaseModel):
     created = pw.TextField()
@@ -184,6 +594,21 @@ class Individual(BaseModel):
     sex = pw.TextField(null=True)
     species = pw.TextField(null=True)
     updated = pw.TextField(null=True)
+### ======================================================================= ###
+# PROFYLE MODIFICATION BEGIN
+### ======================================================================= ###
+    patient_id = pw.TextField(null=True)
+    regional_profiling_centre = pw.TextField(null=True)
+    diagnosis = pw.TextField(null=True)
+    pathology_type = pw.TextField(null=True)
+    enrollment_approval_date = pw.TextField(null=True)
+    enrollment_approval_initials = pw.TextField(null=True)
+    date_of_upload_to_sFTP = pw.TextField(null=True)
+    tumor_board_presentation_date_and_analyses = pw.TextField(null=True)
+    comments = pw.TextField(null=True)
+### ======================================================================= ###
+# PROFYLE MODIFICATION END
+### ======================================================================= ###
 
     class Meta:
         indexes = (
@@ -226,7 +651,7 @@ class Readgroup(BaseModel):
     biosampleid = pw.TextField(db_column='biosampleId', null=True)
     created = pw.TextField(null=True)
     description = pw.TextField(null=True)
-    experiment = pw.TextField()
+    experiment = pw.TextField(null=True)
     id = pw.TextField(primary_key=True)
     name = pw.TextField()
     predictedinsertsize = pw.IntegerField(
