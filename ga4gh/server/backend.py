@@ -187,6 +187,172 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results)
 
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+    def patientsGenerator(self, request):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        results = []
+        for obj in dataset.getPatients():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results)
+
+    def enrollmentsGenerator(self, request):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        results = []
+        for obj in dataset.getEnrollments():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by patient id
+            if request.patient_id:
+                if request.patient_id != obj.getPatientId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results)
+
+    def consentsGenerator(self, request):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        results = []
+        for obj in dataset.getConsents():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by patient id
+            if request.patient_id:
+                if request.patient_id != obj.getPatientId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results)
+
+    def diagnosesGenerator(self, request):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        results = []
+        for obj in dataset.getDiagnoses():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by patient id
+            if request.patient_id:
+                if request.patient_id != obj.getPatientId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results)
+
+    def samplesGenerator(self, request):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        results = []
+        for obj in dataset.getSamples():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by patient id
+            if request.patient_id:
+                if request.patient_id != obj.getPatientId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results)
+
+    def treatmentsGenerator(self, request):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        results = []
+        for obj in dataset.getTreatments():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by patient id
+            if request.patient_id:
+                if request.patient_id != obj.getPatientId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results)
+
+    def outcomesGenerator(self, request):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        results = []
+        for obj in dataset.getOutcomes():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by patient id
+            if request.patient_id:
+                if request.patient_id != obj.getPatientId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results)
+
+    def complicationsGenerator(self, request):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        results = []
+        for obj in dataset.getComplications():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by patient id
+            if request.patient_id:
+                if request.patient_id != obj.getPatientId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results)
+
+    def tumourboardsGenerator(self, request):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        results = []
+        for obj in dataset.getTumourboards():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by patient id
+            if request.patient_id:
+                if request.patient_id != obj.getPatientId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results)
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
+
+
     def phenotypeAssociationSetsGenerator(self, request):
         """
         Returns a generator over the (phenotypeAssociationSet, nextPageToken)
@@ -756,8 +922,7 @@ class Backend(object):
         return protocol.serialize(protocol.GetInfoResponse(
             protocol_version=protocol.version), return_mimetype)
 
-    def runAddAnnouncement(self, flaskrequest,
-                           return_mimetype="application/json"):
+    def runAddAnnouncement(self, flaskrequest, return_mimetype="application/json"):
         """
         Takes a flask request from the frontend and attempts to parse
         into an AnnouncePeerRequest. If successful, it will log the
@@ -848,6 +1013,93 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         individual = dataset.getIndividual(id_)
         return self.runGetRequest(individual, return_mimetype)
+
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+    def runGetPatient(self, id_, return_mimetype="application/json"):
+        """
+        Runs a getPatient request for the specified ID.
+        """
+        compoundId = datamodel.PatientCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        patient = dataset.getPatient(id_)
+        return self.runGetRequest(patient, return_mimetype)
+
+    def runGetEnrollment(self, id_, return_mimetype="application/json"):
+        """
+        Runs a getEnrollment request for the specified ID.
+        """
+        compoundId = datamodel.EnrollmentCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        enrollment = dataset.getEnrollment(id_)
+        return self.runGetRequest(enrollment, return_mimetype)
+
+    def runGetConsent(self, id_, return_mimetype="application/json"):
+        """
+        Runs a getConsent request for the specified ID.
+        """
+        compoundId = datamodel.ConsentCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        consent = dataset.getConsent(id_)
+        return self.runGetRequest(consent, return_mimetype)
+
+    def runGetDiagnosis(self, id_, return_mimetype="application/json"):
+        """
+        Runs a getDiagnosis request for the specified ID.
+        """
+        compoundId = datamodel.DiagnosisCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        diagnosis = dataset.getDiagnosis(id_)
+        return self.runGetRequest(diagnosis, return_mimetype)
+
+    def runGetSample(self, id_, return_mimetype="application/json"):
+        """
+        Runs a getSample request for the specified ID.
+        """
+        compoundId = datamodel.SampleCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        sample = dataset.getSample(id_)
+        return self.runGetRequest(sample, return_mimetype)
+
+    def runGetTreatment(self, id_, return_mimetype="application/json"):
+        """
+        Runs a getTreatment request for the specified ID.
+        """
+        compoundId = datamodel.TreatmentCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        treatment = dataset.getTreatment(id_)
+        return self.runGetRequest(treatment, return_mimetype)
+
+    def runGetOutcome(self, id_, return_mimetype="application/json"):
+        """
+        Runs a getOutcome request for the specified ID.
+        """
+        compoundId = datamodel.OutcomeCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        outcome = dataset.getOutcome(id_)
+        return self.runGetRequest(outcome, return_mimetype)
+
+    def runGetComplication(self, id_, return_mimetype="application/json"):
+        """
+        Runs a getComplication request for the specified ID.
+        """
+        compoundId = datamodel.ComplicationCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        complication = dataset.getComplication(id_)
+        return self.runGetRequest(complication, return_mimetype)
+
+    def runGetTumourboard(self, id_, return_mimetype="application/json"):
+        """
+        Runs a getTumourboard request for the specified ID.
+        """
+        compoundId = datamodel.TumourboardCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tumourboard = dataset.getTumourboard(id_)
+        return self.runGetRequest(tumourboard, return_mimetype)
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
 
     def runGetFeature(self, id_, return_mimetype="application/json"):
         """
@@ -1011,6 +1263,102 @@ class Backend(object):
             protocol.SearchIndividualsResponse,
             self.individualsGenerator,
             return_mimetype)
+
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+    def runSearchPatients(self, request, return_mimetype):
+        """
+        Runs the specified search SearchPatientsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchPatientsRequest,
+            protocol.SearchPatientsResponse,
+            self.patientsGenerator,
+            return_mimetype)
+
+    def runSearchEnrollments(self, request, return_mimetype):
+        """
+        Runs the specified search SearchEnrollmentsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchEnrollmentsRequest,
+            protocol.SearchEnrollmentsResponse,
+            self.enrollmentsGenerator,
+            return_mimetype)
+
+    def runSearchConsents(self, request, return_mimetype):
+        """
+        Runs the specified search SearchConsentsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchConsentsRequest,
+            protocol.SearchConsentsResponse,
+            self.consentsGenerator,
+            return_mimetype)
+
+    def runSearchDiagnoses(self, request, return_mimetype):
+        """
+        Runs the specified search SearchDiagnosesRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchDiagnosesRequest,
+            protocol.SearchDiagnosesResponse,
+            self.diagnosesGenerator,
+            return_mimetype)
+
+    def runSearchSamples(self, request, return_mimetype):
+        """
+        Runs the specified search SearchSamplesRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchSamplesRequest,
+            protocol.SearchSamplesResponse,
+            self.samplesGenerator,
+            return_mimetype)
+
+    def runSearchTreatments(self, request, return_mimetype):
+        """
+        Runs the specified search SearchTreatmentsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchTreatmentsRequest,
+            protocol.SearchTreatmentsResponse,
+            self.treatmentsGenerator,
+            return_mimetype)
+
+    def runSearchOutcomes(self, request, return_mimetype):
+        """
+        Runs the specified search SearchOutcomesRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchOutcomesRequest,
+            protocol.SearchOutcomesResponse,
+            self.outcomesGenerator,
+            return_mimetype)
+
+    def runSearchComplications(self, request, return_mimetype):
+        """
+        Runs the specified search SearchComplicationsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchComplicationsRequest,
+            protocol.SearchComplicationsResponse,
+            self.complicationsGenerator,
+            return_mimetype)
+
+    def runSearchTumourboards(self, request, return_mimetype):
+        """
+        Runs the specified search SearchTumourboardsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchTumourboardsRequest,
+            protocol.SearchTumourboardsResponse,
+            self.tumourboardsGenerator,
+            return_mimetype)
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
 
     def runSearchBiosamples(self, request, return_mimetype):
         """

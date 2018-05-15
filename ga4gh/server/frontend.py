@@ -17,6 +17,7 @@ import json
 import flask
 import flask.ext.cors as cors
 from flask.ext.oidc import OpenIDConnect
+from flask import Flask, jsonify, render_template, request
 import humanize
 import werkzeug
 import oic
@@ -40,6 +41,10 @@ import ga4gh.server.datarepo as datarepo
 import ga4gh.server.auth as auth
 import ga4gh.server.network as network
 import ga4gh.schemas.protocol as protocol
+import ga4gh.server.DP as DP
+import ga4gh.server.NCIT as NCIT
+
+from ga4gh.client import client
 
 MIMETYPE = "application/json"
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
@@ -161,6 +166,18 @@ class ServerStatus(object):
         """
         return app.backend.getDataRepository().getDatasets()
 
+    def getExperiments(self):
+        """
+        Returns the list of experimentIds for this backend
+        """
+        return app.backend.getDataRepository().getExperiments()
+
+    def getAnalyses(self):
+        """
+        Returns the list of analysisIds for this backend
+        """
+        return app.backend.getDataRepository().getAnalyses()
+
     def getVariantSets(self, datasetId):
         """
         Returns the list of variant sets for the dataset
@@ -217,6 +234,18 @@ class ServerStatus(object):
 #         """
 #         return app.backend.getDataRepository().getDataset(
 #             datasetId).getRnaQuantificationSets()
+
+    def getPeers(self):
+        """
+        Returns the list of peers.
+        """
+        return app.backend.getDataRepository().getPeers()
+
+    def getOntologyByName(self, name):
+        """
+        Returns the list of ontologies.
+        """
+        return app.backend.getDataRepository().getOntologyByName(name)
 
 
 def reset():
@@ -410,6 +439,14 @@ def configure(configFile=None, baseConfig="ProductionConfig",
     """
 
 
+def chooseReturnMimetype(request):
+    mimetype = None
+    if hasattr(request, 'accept_mimetypes'):
+        mimetype = request.accept_mimetypes.best_match(protocol.MIMETYPES)
+    if mimetype is None:
+        mimetype = protocol.MIMETYPES[0]
+    return mimetype
+
 def getFlaskResponse(responseString, httpStatus=200):
     """
     Returns a Flask response object for the specified data and HTTP status.
@@ -417,18 +454,206 @@ def getFlaskResponse(responseString, httpStatus=200):
     return flask.Response(responseString, status=httpStatus, mimetype=MIMETYPE)
 
 
+### ======================================================================= ###
+### FEDERATION
+### ======================================================================= ###
+def federation(endpoint, request, return_mimetype, request_type='POST'):
+    """
+    Federate the queries by iterating through the peer list and merging the
+    result.
+
+    Parameters:
+    ===========
+    endpoint: method
+        Method of a datamodel object that populates the response
+    request: string
+        Request send along with the query, like: id for GET requests
+    return_mimetype: string
+        'http/json or application/json'
+    request_type: string
+        Specify whether the request is a "GET" or a "POST" request
+
+    Returns:
+    ========
+    responseObject: json string
+        Merged responses from the servers. responseObject structure:
+
+    {
+    "status": {
+        "Successful communications": <number>,
+        "Known peers": <number>,
+        "Valid response": <true|false>,
+        "Queried peers": <number>
+        },
+    "results": [
+            {
+            "datasets": [
+                    {record1},
+                    {record2},
+                    ...
+                    {recordN},
+                ]
+            }
+        ]
+    }
+
+    """
+    request_dictionary = flask.request
+
+    # Self query
+    responseObject = {}
+    responseObject['results'] = []
+    responseObject['status'] = list()
+    try:
+        responseObject['results'] = [json.loads(
+            endpoint(request, return_mimetype=return_mimetype)
+        )]
+
+        responseObject['status'].append(200)
+    except exceptions.ObjectWithIdNotFoundException as error:
+        responseObject['status'].append(404)
+    except exceptions.NotFoundException as error:
+        responseObject['status'].append(404)
+        if request_type == 'POST': responseObject['results'].append({})
+
+    # Peer queries
+    # Apply federation by default or if it was specifically requested
+    if ('Federation' not in request_dictionary.headers or \
+            request_dictionary.headers['Federation'] == 'True'):
+
+        # Iterate through all peers
+        for peer in app.serverStatus.getPeers():
+            # Generate the same call on the peer
+            uri = request_dictionary.url.replace(
+                request_dictionary.host_url,
+                peer.getUrl(),
+            )
+            # federation field must be set to False to avoid infinite loop
+            header = {
+                'Content-Type': return_mimetype,
+                'Accept': return_mimetype,
+                'Federation': 'False',
+            }
+            # Make the call
+            try:
+                if request_type == 'GET':
+                    response = requests.Session().get(
+                        uri,
+                        headers=header,
+                    )
+                elif request_type == 'POST':
+                    response = requests.Session().post(
+                        uri,
+                        json=json.loads(request),
+                        headers=header,
+                    )
+                else:
+                    # TODO: Raise error
+                    pass
+
+                print('  >> peer call: {0} - {1}'.format(
+                    uri,
+                    response.status_code,
+                ))
+
+            except (requests.exceptions.ConnectionError,
+                    requests.exceptions.Timeout,
+                    requests.exceptions.HTTPError):
+                responseObject['status'].append(503)
+
+                print('  >> peer call: {0} - {1}'.format(
+                    uri,
+                    'SERVER IS DOWN OR DID NOT RESPONSE!',
+                ))
+            else:
+                responseObject['status'].append(response.status_code)
+                # If the call was successful append the results
+                if response.status_code == 200:
+
+                    if request_type == 'GET':
+                        responseObject['results'].append(
+                            response.json()['results'][0])
+
+                    elif request_type == 'POST':
+                        peer_response = response.json()['results'][0]
+
+                        if not responseObject['results'][0]:
+                            responseObject['results'] = [peer_response]
+                        else:
+                            for key in peer_response:
+                                # TODO: handle truncated responses; for now increased default page_size to 300
+                                if key == 'nextPageToken':
+                                    continue
+                                for record in peer_response[key]:
+                                    responseObject['results'][0][key].append(record)
+
+    # If no result has been found on any of the servers raise an error
+    if not responseObject['results'] or not responseObject['results'][0]:
+        if request_type == 'GET':
+            raise exceptions.ObjectWithIdNotFoundException(request)
+        elif request_type == 'POST':
+            raise exceptions.ObjectWithIdNotFoundException(json.loads(request))
+
+    # Reformat the status response
+    responseObject['status'] = {
+        'Known peers': \
+            # All the peers plus self
+            len(app.serverStatus.getPeers()) + 1,
+        'Queried peers': \
+            # Queried means http status code 200 and 404
+            responseObject['status'].count(200) + \
+            responseObject['status'].count(404),
+        # Successful means http status code 200
+        'Successful communications': \
+            # Successful means http status code 200
+            responseObject['status'].count(200),
+        'Valid response': \
+            # Invalid by default
+            False
+    }
+
+    # Decide on valid response
+    if responseObject['status']['Known peers'] == \
+            responseObject['status']['Queried peers']:
+        if request_type == 'GET':
+            if responseObject['status']['Successful communications'] >= 1:
+                responseObject['status']['Valid response'] = True
+        elif request_type == 'POST':
+            if responseObject['status']['Successful communications'] == \
+                    responseObject['status']['Queried peers']:
+                responseObject['status']['Valid response'] = True
+
+    return json.dumps(responseObject)
+
+
+### ======================================================================= ###
+### FEDERATION ENDS
+### ======================================================================= ###
+
 def handleHttpPost(request, endpoint):
     """
     Handles the specified HTTP POST request, which maps to the specified
     protocol handler endpoint and protocol request class.
     """
-    if request.mimetype and request.mimetype != MIMETYPE:
+    if request.mimetype and request.mimetype not in protocol.MIMETYPES:
         raise exceptions.UnsupportedMediaTypeException()
+    return_mimetype = chooseReturnMimetype(request)
     request = request.get_data()
     if request == '' or request is None:
         request = '{}'
-    responseStr = endpoint(request)
-    return getFlaskResponse(responseStr)
+### ======================================================================= ###
+### FEDERATION
+### ======================================================================= ###
+    responseStr = federation(
+        endpoint,
+        request,
+        return_mimetype=return_mimetype,
+        request_type='POST'
+        )
+### ======================================================================= ###
+### FEDERATION ENDS
+### ======================================================================= ###
+    return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
 def handleList(endpoint, request):
@@ -444,8 +669,21 @@ def handleHttpGet(id_, endpoint):
     Handles the specified HTTP GET request, which maps to the specified
     protocol handler endpoint and protocol request class
     """
-    responseStr = endpoint(id_)
-    return getFlaskResponse(responseStr)
+    request = flask.request
+    return_mimetype = chooseReturnMimetype(request)
+    ### ======================================================================= ###
+    ### FEDERATION
+    ### ======================================================================= ###
+    responseStr = federation(
+        endpoint,
+        id_,
+        return_mimetype=return_mimetype,
+        request_type='GET'
+    )
+    ### ======================================================================= ###
+    ### FEDERATION ENDS
+    ### ======================================================================= ###
+    return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
 def handleHttpOptions():
@@ -693,6 +931,23 @@ def index():
         return response
 
 
+@app.route('/concordance')
+def concordance():
+    gene = request.args.get('gene', '', type=str)
+    if gene == '':
+        return jsonify(result = 'Gene symbol is missing')
+    concordance, freq, uniq = client.FederatedClient(
+        ServerStatus().getPeers()).get_concordance(gene)
+    abnormality = NCIT.NCIT().get_genetic_abnormalities(gene)
+    disease = NCIT.NCIT().get_diseases(gene)
+    return jsonify(result=render_template('concordance.html',
+        concordance=concordance,
+        freq=freq,
+        uniq=uniq,
+        abnormality=abnormality,
+        disease=disease))
+
+
 # New configuration added by Kevin Chan
 @app.route("/login")
 def login():
@@ -888,6 +1143,35 @@ else:
         return handleFlaskPostRequest(
             flask.request, app.backend.runSearchDatasets)
 
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/experiments/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchExperiments():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchExperiments)
+else:
+    @DisplayedRoute('/experiments/search', postMethod=True)
+    @requires_auth
+    def searchExperiments():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchExperiments)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/analyses/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchAnalyses():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchAnalyses)
+else:
+    @DisplayedRoute('/analyses/search', postMethod=True)
+    @requires_auth
+    def searchAnalyses():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchAnalyses)
 
 if app.config.get("KEYCLOAK"):
     @DisplayedRoute('/featuresets/search', postMethod=True)
@@ -984,6 +1268,151 @@ else:
         return handleFlaskPostRequest(
             flask.request, app.backend.runSearchIndividuals)
 
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/patients/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchPatients():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchPatients)
+else:
+    @DisplayedRoute('/patients/search', postMethod=True)
+    @requires_auth
+    def searchPatients():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchPatients)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/enrollments/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchEnrollments():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchEnrollments)
+else:
+    @DisplayedRoute('/enrollments/search', postMethod=True)
+    @requires_auth
+    def searchEnrollments():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchEnrollments)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/consents/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchConsents():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchConsents)
+else:
+    @DisplayedRoute('/consents/search', postMethod=True)
+    @requires_auth
+    def searchConsents():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchConsents)
+
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/diagnoses/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchDiagnoses():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchDiagnoses)
+else:
+    @DisplayedRoute('/diagnoses/search', postMethod=True)
+    @requires_auth
+    def searchDiagnoses():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchDiagnoses)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/samples/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchSamples():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchSamples)
+else:
+    @DisplayedRoute('/samples/search', postMethod=True)
+    @requires_auth
+    def searchSamples():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchSamples)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/treatments/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchTreatments():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchTreatments)
+else:
+    @DisplayedRoute('/treatments/search', postMethod=True)
+    @requires_auth
+    def searchTreatments():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchTreatments)
+
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/outcomes/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchOutcomes():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchOutcomes)
+else:
+    @DisplayedRoute('/outcomes/search', postMethod=True)
+    @requires_auth
+    def searchOutcomes():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchOutcomes)
+
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/complications/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchComplications():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchComplications)
+else:
+    @DisplayedRoute('/complications/search', postMethod=True)
+    @requires_auth
+    def searchComplications():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchComplications)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute('/tumourboards/search', postMethod=True)
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def searchTumourboards():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchTumourboards)
+else:
+    @DisplayedRoute('/tumourboards/search', postMethod=True)
+    @requires_auth
+    def searchTumourboards():
+        return handleFlaskPostRequest(
+            flask.request, app.backend.runSearchTumourboards)
+
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
+
 
 if app.config.get("KEYCLOAK"):
     @DisplayedRoute('/peers/list', postMethod=True)
@@ -1057,6 +1486,183 @@ else:
     def getIndividual(id):
         return handleFlaskGetRequest(
             id, flask.request, app.backend.runGetIndividual)
+
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute(
+        '/patients/<no(search):id>',
+        pathDisplay='/patients/<id>')
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def getPatient(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetPatient)
+else:
+    @DisplayedRoute(
+        '/patients/<no(search):id>',
+        pathDisplay='/patients/<id>')
+    @requires_auth
+    def getPatient(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetPatient)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute(
+        '/enrollments/<no(search):id>',
+        pathDisplay='/enrollments/<id>')
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def getEnrollment(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetEnrollment)
+else:
+    @DisplayedRoute(
+        '/enrollments/<no(search):id>',
+        pathDisplay='/enrollments/<id>')
+    @requires_auth
+    def getEnrollment(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetEnrollment)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute(
+        '/consents/<no(search):id>',
+        pathDisplay='/consents/<id>')
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def getConsent(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetConsent)
+else:
+    @DisplayedRoute(
+        '/consents/<no(search):id>',
+        pathDisplay='/consents/<id>')
+    @requires_auth
+    def getConsent(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetConsent)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute(
+        '/diagnoses/<no(search):id>',
+        pathDisplay='/diagnoses/<id>')
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def getDiagnosis(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetDiagnosis)
+else:
+    @DisplayedRoute(
+        '/diagnoses/<no(search):id>',
+        pathDisplay='/diagnoses/<id>')
+    @requires_auth
+    def getDiagnosis(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetDiagnosis)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute(
+        '/samples/<no(search):id>',
+        pathDisplay='/samples/<id>')
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def getSample(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetSample)
+else:
+    @DisplayedRoute(
+        '/samples/<no(search):id>',
+        pathDisplay='/samples/<id>')
+    @requires_auth
+    def getSample(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetSample)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute(
+        '/treatments/<no(search):id>',
+        pathDisplay='/treatments/<id>')
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def getTreatment(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetTreatment)
+else:
+    @DisplayedRoute(
+        '/treatments/<no(search):id>',
+        pathDisplay='/treatments/<id>')
+    @requires_auth
+    def getTreatment(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetTreatment)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute(
+        '/outcomes/<no(search):id>',
+        pathDisplay='/outcomes/<id>')
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def getOutcome(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetOutcome)
+else:
+    @DisplayedRoute(
+        '/outcomes/<no(search):id>',
+        pathDisplay='/outcomes/<id>')
+    @requires_auth
+    def getOutcome(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetOutcome)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute(
+        '/complications/<no(search):id>',
+        pathDisplay='/complications/<id>')
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def getComplication(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetComplication)
+else:
+    @DisplayedRoute(
+        '/complications/<no(search):id>',
+        pathDisplay='/complications/<id>')
+    @requires_auth
+    def getComplication(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetComplication)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute(
+        '/tumourboards/<no(search):id>',
+        pathDisplay='/tumourboards/<id>')
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def getTumourboard(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetTumourboard)
+else:
+    @DisplayedRoute(
+        '/tumourboards/<no(search):id>',
+        pathDisplay='/tumourboards/<id>')
+    @requires_auth
+    def getTumourboard(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetTumourboard)
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
 
 
 if app.config.get("KEYCLOAK"):
@@ -1459,6 +2065,42 @@ else:
     def getDataset(id):
         return handleFlaskGetRequest(
             id, flask.request, app.backend.runGetDataset)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute(
+        '/experiments/<no(search):id>',
+        pathDisplay='/experiments/<id>')
+    @requires_auth
+    @oidc.require_login
+    @requires_token
+    def getExperiment(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetExperiment)
+else:
+    @DisplayedRoute(
+        '/experiments/<no(search):id>',
+        pathDisplay='/experiments/<id>')
+    @requires_auth
+    def getExperiment(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetExperiment)
+
+if app.config.get("KEYCLOAK"):
+    @DisplayedRoute(
+        '/analyses/<no(search):id>',
+        pathDisplay='/analyses/<id>')
+    @requires_auth
+    def getAnalysis(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetAnalysis)
+else:
+    @DisplayedRoute(
+        '/analyses/<no(search):id>',
+        pathDisplay='/analyses/<id>')
+    @requires_auth
+    def getAnalysis(id):
+        return handleFlaskGetRequest(
+            id, flask.request, app.backend.runGetAnalysis)
 
 if app.config.get("KEYCLOAK"):
     @DisplayedRoute(
