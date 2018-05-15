@@ -30,6 +30,8 @@ import logging
 from logging import StreamHandler
 from werkzeug.contrib.cache import FileSystemCache
 
+import pkg_resources
+
 import ga4gh.server
 import ga4gh.server.backend as backend
 import ga4gh.server.datamodel as datamodel
@@ -50,18 +52,17 @@ app.urls = []
 requires_auth = auth.auth_decorator(app)
 
 # Edit this for flask-oidc, the endpoints are in the client_secrets.json file
-if app.config.get("KEYCLOAK"):
-    app.config.update({
-        'SECRET_KEY': "key",
-        'TESTING': False,
-        'DEBUG': False,
-        'OIDC_CLIENT_SECRETS': 'client_secrets.json',
-        'OIDC_ID_TOKEN_COOKIE_SECURE': False,
-        'OIDC_REQUIRE_VERIFIED_EMAIL': False,
-    })
+app.config.update({
+    'SECRET_KEY': "key",
+    'TESTING': False,
+    'DEBUG': False,
+    'OIDC_CLIENT_SECRETS': pkg_resources.resource_filename(__name__, 'client_secrets.json'),
+    'OIDC_ID_TOKEN_COOKIE_SECURE': False,
+    'OIDC_REQUIRE_VERIFIED_EMAIL': False,
+})
 
-    # For configuration of Flask-Oidc
-    oidc = OpenIDConnect(app)
+# For configuration of Flask-Oidc
+oidc = OpenIDConnect(app)
 
 
 class NoConverter(werkzeug.routing.BaseConverter):
@@ -671,46 +672,25 @@ class DisplayedRoute(object):
         return wrapper
 
 
-if app.config.get("KEYCLOAK"):
-    @app.route('/')
-    @oidc.require_login
-    @requires_token
-    def index():
-        response = flask.render_template(
-            'index.html',
-            info=app.serverStatus)
-        if app.config.get('AUTH0_ENABLED'):
-            key = (flask.request.args.get('key'))
-            try:
-                print(key)
-                profile = app.cache.get(key)
-            except:
-                raise exceptions.NotAuthorizedException()
-            if (profile):
-                return response
-            else:
-                exceptions.NotAuthenticatedException()
-        else:
+@app.route('/')
+@oidc.require_login
+@requires_token
+def index():
+    response = flask.render_template('index.html',
+                                     info=app.serverStatus)
+    if app.config.get('AUTH0_ENABLED'):
+        key = (flask.request.args.get('key'))
+        try:
+            print(key)
+            profile = app.cache.get(key)
+        except:
+            raise exceptions.NotAuthorizedException()
+        if (profile):
             return response
-else:
-    @app.route('/')
-    def index():
-        response = flask.render_template(
-            'index.html',
-            info=app.serverStatus)
-        if app.config.get('AUTH0_ENABLED'):
-            key = (flask.request.args.get('key'))
-            try:
-                print(key)
-                profile = app.cache.get(key)
-            except:
-                raise exceptions.NotAuthorizedException()
-            if (profile):
-                return response
-            else:
-                exceptions.NotAuthenticatedException()
         else:
-            return response
+            exceptions.NotAuthenticatedException()
+    else:
+        return response
 
 
 # New configuration added by Kevin Chan
