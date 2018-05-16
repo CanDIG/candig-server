@@ -57,11 +57,13 @@ app.urls = []
 requires_auth = auth.auth_decorator(app)
 
 # Edit this for flask-oidc, the endpoints are in the client_secrets.json file
+config_path = '/'.join(('.','config','client_secrets.json'))
+
 app.config.update({
     'SECRET_KEY': "key",
     'TESTING': False,
     'DEBUG': False,
-    'OIDC_CLIENT_SECRETS': pkg_resources.resource_filename(__name__, 'client_secrets.json'),
+    'OIDC_CLIENT_SECRETS': pkg_resources.resource_filename(__name__, config_path),
     'OIDC_ID_TOKEN_COOKIE_SECURE': False,
     'OIDC_REQUIRE_VERIFIED_EMAIL': False,
 })
