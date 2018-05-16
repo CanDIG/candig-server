@@ -46,7 +46,6 @@ import ga4gh.server.NCIT as NCIT
 
 from ga4gh.client import client
 
-MIMETYPE = "application/json"
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
 
@@ -449,11 +448,11 @@ def chooseReturnMimetype(request):
         mimetype = protocol.MIMETYPES[0]
     return mimetype
 
-def getFlaskResponse(responseString, httpStatus=200):
+def getFlaskResponse(responseString, httpStatus=200, mimetype="application/json"):
     """
     Returns a Flask response object for the specified data and HTTP status.
     """
-    return flask.Response(responseString, status=httpStatus, mimetype=MIMETYPE)
+    return flask.Response(responseString, status=httpStatus, mimetype=mimetype)
 
 
 ### ======================================================================= ###
