@@ -1,203 +1,933 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>CanDIG</title>
-        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-        <link rel=stylesheet type=text/css href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
-        <style>
-          .single {
-            background-color:olive;
+   <head>
+      <title>Candig server</title>
+      <link rel=stylesheet type=text/css href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+      <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+      <script src="https://code.highcharts.com/highcharts.js"></script>
+      <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+      <style>
+         .single {
+         background-color: olive;
+         }
+         .double {
+         background-color: aqua;
+         }
+         #backButton {
+         border-radius: 4px;
+         padding: 8px;
+         border: none;
+         font-size: 16px;
+         background-color: #2eacd1;
+         color: white;
+         position: absolute;
+         top: 10px;
+         right: 10px;
+         cursor: pointer;
+         }
+         .invisible {
+         display: none;
+         }
+         .card {
+         padding-top: 0.5rem !important;
+         padding-left: 0.25rem !important;
+         }
+      </style>
+   </head>
+   <body>
+
+        <!-- A grey horizontal navbar that becomes vertical on small screens -->
+    <nav class="navbar navbar-expand-sm bg-light">
+
+      <!-- Links -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="candig">Homepage</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="gene_search">Gene search</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="candig_patients">Patient overview</a>
+        </li>
+      </ul>
+    </nav>
+      <div class="container-fluid">
+      <h2>Candig Dashboard</h2>
+      <div>
+      <div class="row" style="margin-top:50px; margin-bottom:50px">
+         <div class="col-sm-3">
+            <div class="card" style="border:solid; padding: 2rem; height: 15rem">
+               <div class="card-body">
+                  <div id="queryStatus" style="max-width: 100%; height: 200px; auto;"></div>
+               </div>
+            </div>
+         </div>
+         <div class="col-sm-3">
+            <div class="card" style="border:solid; padding: 2rem; height: 15rem">
+               <div class="card-body">
+                  <div id="responseToTreatment" style="max-width: 100%; height: 200px; auto;"></div>
+               </div>
+            </div>
+         </div>
+         <div class="col-sm-3">
+            <div class="card" style="border:solid; padding: 2rem; height: 15rem">
+               <div class="card-body">
+                  <div id="hospitals" style="max-width: 100%; height: 200px; auto;"></div>
+               </div>
+            </div>
+         </div>
+         <div class="col-sm-3">
+            <div class="card" style="border:solid; padding: 2rem; height: 15rem">
+               <div class="card-body">
+                  <div id="therapeuticToResponses" style="max-width: 100%; height: 200px; auto;"></div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="row" style="margin-top:50px; margin-bottom:50px">
+         <div class="col-sm-6">
+            <div class="card" style="border:solid; padding: 2rem; height: 30rem">
+               <div class="card-body">
+                  <div id="timelineSamples"></div>
+               </div>
+            </div>
+         </div>
+         <div class="col-sm-6">
+            <div class="card" style="border:solid; padding: 2rem; height: 30rem">
+               <div class="card-body">
+                  <div id="cancerTypes" style="min-width: 310px; height: 400px; auto;"></div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </body>
+   <script type="text/javascript">
+      var knownPeers;
+      var queriedPeers;
+      var success;
+      
+      var completeResponse = 0;
+      var partialResponse = 0;
+      var progressiveDisease = 0;
+      var stableDisease = 0;
+      var otherResponse = 0;
+      
+      var radiationTherapy = 0;
+      var hormonalTherapy = 0;
+      var surgery = 0;
+      var immunotherapy = 0;
+      var chemotherapy = 0;
+      var otherTherapy = 0;
+      
+      var radiationResponse = [0, 0, 0, 0, 0];
+      var hormonalResponse = [0, 0, 0, 0, 0];
+      var surgeryResponse = [0, 0, 0, 0, 0];
+      var immunoResponse = [0, 0, 0, 0, 0];
+      var chemoResponse = [0, 0, 0, 0, 0];
+      var otherTherapeuticResponse = [0, 0, 0, 0, 0];
+      
+      var treatments;
+      
+      var cancerList = [];
+      var drugList = [];
+      var objectDrugList = [];
+      
+      var cancerTypesList = ["Bladder cancer", "Lung cancer", "Brain cancer", "Melanoma", "Breast cancer", "Non-Hodgkin lymphoma", "Cervical cancer", "Ovarian cancer", "Colorectal cancer", "Pancreatic cancer", "Esophageal cancer", "Prostate cancer", "Kidney cancer", "Skin cancer", "Leukemia", "Thyroid cancer", "Liver cancer", "Uterine cancer"];
+      
+      var cancerTypeFreq = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      
+      var drugList = Array(18).join(".").split("."); //Initialize an emptry string array that has 18 empty strings.
+      
+      
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "treatments/search", true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.send(JSON.stringify({
+          'datasetId': 'WyJNRVRBREFUQSJd'
+      }));
+      xhr.onload = function() {
+          var data = JSON.parse(this.responseText);
+          knownPeers = data['status']['Known peers'];
+          queriedPeers = data['status']['Queried peers'];
+          success = data['status']['Successful communications'];
+          // console.log(knownPeers);
+          // console.log(queriedPeers);
+          // console.log(success);
+
+          samplesFetcher();
+      
+          cancerTypeDruglistFetcher();
+          treatments = data['results'][0]['treatments'];
+          treatmentsFetcher(treatments);
+          //Highcharts.setOptions(theme);
+
+      }
+
+      function highChartSeriesObjectMaker(nameArray, dataArray){
+        var tempObj = {};
+        var seriesObjList = [];
+        var tempDataArray = [];
+            for (var i = 0; i < nameArray.length; i++){
+                tempObj = {};
+                //tempDataArray = [];
+                tempObj['name'] = nameArray[i];
+                //tempDataArray.push(dataArray[i]);
+                tempObj['y'] = dataArray[i];
+                seriesObjList.push(tempObj);
+            }
+            return seriesObjList;
+      }
+
+      
+      function treatmentsFetcher(treatments){
+          for (var i = 0; i < treatments.length; i++) {
+                  if (treatments[i]['responseToTreatment'] == "Complete Response") {
+                      completeResponse++;
+                  } else if (treatments[i]['responseToTreatment'] == "Partial Response") {
+                      partialResponse++;
+                  } else if (treatments[i]['responseToTreatment'] == "Progressive Disease") {
+                      progressiveDisease++;
+                  } else if (treatments[i]['responseToTreatment'] == "Stable Disease") {
+                      stableDisease++;
+                  } else {
+                      otherResponse++;
+                  }
+              }
+      
+          for (var i = 0; i < treatments.length; i++) {
+              if (treatments[i]['therapeuticModality'] == "Radiation therapy") {
+                  radiationTherapy++;
+                  responseTypeCalc(radiationResponse, treatments[i]);
+              } else if (treatments[i]['therapeuticModality'] == "Hormonal therapy") {
+                  hormonalTherapy++;
+                  responseTypeCalc(hormonalResponse, treatments[i]);
+              } else if (treatments[i]['therapeuticModality'] == "Surgery") {
+                  surgery++;
+                  responseTypeCalc(surgeryResponse, treatments[i]);            
+              } else if (treatments[i]['therapeuticModality'] == "Immunotherapy") {
+                  immunotherapy++;
+                  responseTypeCalc(immunoResponse, treatments[i]);            
+              } else if (treatments[i]['therapeuticModality'] == "Chemotherapy") {
+                  chemotherapy++;
+                  responseTypeCalc(chemoResponse, treatments[i]);            
+              } else {
+                  otherTherapy++;
+                  responseTypeCalc(otherTherapeuticResponse, treatments[i]);            
+              }
           }
-          .double {
-            background-color:aqua;
-          }
-        </style>
-    </head>
-    <body>
-    <div class="container">
-        <h2>CanDIG 0.07</h2>
-        <div>
-            This is an initial version of the CanDIG project! Features to be implemented: 
-            <ul>
-              <li><strike>0.01 P2P</strike></li>
-              <li><strike>0.02 Federated Dashboard</strike></li>
-              <li><strike>0.03 Differential privacy</strike></li>
-              <li><strike>0.04 Disease ontology</strike></li>
-              <li><strike>0.05 G2P</strike></li>
-              <li><strike>0.06 Federated concordance analysis</strike></li>
-              <li><strike>0.07 NCIT Ontology</strike></li>
-              <li>0.08 IGV JS</li>
-              <li>0.09 Advance Search</li>
-            </ul>
-        </div>
-        <div>
-          <h3>Peer list</h3>
-          <ul>
-              {% for peer in info.getPeers() %}
-              <li>{{ peer.getUrl() }}</li>
-              {% endfor %}
-          </ul>
-        </div>
-        <div>
-          <h3>Federated dashboard</h3>
-            <div style="float:left;width:45%;"><label>Donor distribution<br /><canvas id="donors" width="600" height="400"></canvas></label></div>
-            <div style="float:right;width:45%;"><label>Disease distribution<br /><canvas id="disease" width="600" height="400"></canvas></label></div>
-            <table class="table table-bordered table-hover">
-              {% for peer, inds in individuals.items()|sort %}
-                  <tr>
-                    <td>{{ peer }}</td>
-                    {% for ind in inds %}
-                      <td><a href="{{ peer }}/individuals/{{ ind.id }}" target="_blank">{{ ind.patient_id }}</a></td>
-                    {% endfor %}
-                  </tr>
-              {% endfor %}
-            </table>
-        </div>
-        <div>
-          <h3>Differential privacy for donor distribution</h3>
-            <div style="float:left;width:45%;"><label>ε = 0.1<br /><canvas id="epsilon_1" width="600" height="400"></canvas></label></div>
-            <div style="float:right;width:45%;"><label>ε = 1<br /><canvas id="epsilon_2" width="600" height="400"></canvas></label></div>
-            <table class="table table-bordered table-hover">
-            </table>
-        </div>
-        <div>
-          <h3>Disease ontology</h3>
-          <ul>
-            {% set fed_inds = [] %}
-            {% for peer, inds in individuals.items() %}
-              {% for ind in inds %}
-                {% if fed_inds.append(ind) %} {% endif %}
-              {% endfor %}
-            {% endfor %}
-            {% for grouper, list in fed_inds|groupby('diagnosis.term_id') %}
-                  <li>{{ grouper }} -> {{ ncit.getTermName(grouper) }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-        <div>
-          <h3>Genotype to Phenotype Association</h3>
-          <h4>Phenotypes</h4>
-          <ul>
-            {% for d, p in g2p.items() %}
-              <li>{{ d }} -> {{ p|join(', ') }}</li>
-            {% endfor %}
-          </ul>
-          <h4>Associations</h4>
-            <ul>
-              {% for a in associations %}
-                <li>{{ a.description }}</li>
-              {% endfor %}
-            </ul>
-        </div>
-        <div>
-          <h3>Federated concordance analysis</h3>
-          <script type=text/javascript>
-            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-            $( document ).ajaxStart(function() {
-              $("#results").empty()
-              $("#results").append('<img src="{{ url_for('static', filename='spinner.gif') }}">');
-             });
-            $(function() {
-              $('a#action').bind('click', function() {
-                $.getJSON($SCRIPT_ROOT + '/concordance', {
-                  gene: $('input[name="gene"]').val()
-                }, function(data) {
-                  $("#results").empty()
-                  $("#results").append(data.result);
-                });
-                return false;
+      
+          therapeuticTypeDrawer();
+
+          var queryStatusSeriesArray = highChartSeriesObjectMaker(["Known Peers", "Queried Peers", "Successful Communications"], [knownPeers, queriedPeers, success]);
+          singleLayerDrawer("queryStatus", 'bar', 'Server status', queryStatusSeriesArray);
+
+          var treatmentsSeriesArray = highChartSeriesObjectMaker( ["Complete Response", "Partial Response", "Progressive Disease", "Stable Disease", "Other"], [completeResponse, partialResponse, progressiveDisease, stableDisease, otherResponse]);
+          singleLayerDrawer("responseToTreatment", 'bar', 'Response to treatments', treatmentsSeriesArray);      
+        }
+       
+      function samplesFetcher() {
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "samples/search", true);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.setRequestHeader('Accept', 'application/json');
+          xhr.send(JSON.stringify({
+              'datasetId': 'WyJNRVRBREFUQSJd'
+          }));
+          xhr.onload = function() {
+              var data = JSON.parse(this.responseText);
+      
+              var BCCA = 0;
+              var UHN = 0;
+              var HSC = 0;
+              var PMCC = 0;
+              var MUGQIC = 0;
+              var otherHospitals = 0;
+      
+              var sampleDataset = data['results'][0]['samples'];
+      
+              for (var i = 0; i < sampleDataset.length; i++) {
+                  if (sampleDataset[i]['collectionHospital'] == "BCCA") {
+                      BCCA++;
+                  } else if (sampleDataset[i]['collectionHospital'] == "University Health Network") {
+                      UHN++;
+                  } else if (sampleDataset[i]['collectionHospital'] == "Hospital for Sick Children") {
+                      HSC++;
+                  } else if (sampleDataset[i]['collectionHospital'] == "Princess Margaret Cancer Centre") {
+                      PMCC++;
+                  } else if (sampleDataset[i]['collectionHospital'] == "McGill University and Genome Quebec Innovation Centre") {
+                      MUGQIC++;
+                  } else {
+                      otherHospitals++;
+                  }
+              }
+
+              var hospitalSeriesArray = highChartSeriesObjectMaker(["BCCA", "University Health Network", "Hospital for Sick Children", "Princess Margaret Cancer Centre", "Mcgill University", "Other hospitals"], [BCCA, UHN, HSC, PMCC, MUGQIC, otherHospitals]);
+
+              singleLayerDrawer("hospitals", 'bar', 'Hospital distribution', hospitalSeriesArray);
+            
+              var years = ['2003 or earlier', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'];
+              var yearsCount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+              var cumulativeYearCounts = [0];
+              var misCount = 0;
+      
+              for (var i = 0; i < sampleDataset.length; i++) {
+                  var tempDate = sampleDataset[i]['collectionDate'];
+      
+                  try {
+                      var newDate = tempDate.substr(tempDate.length - 4);
+      
+                      for (var j = 0; j < years.length; j++) {
+                          if (newDate <= years[0]) {
+                              yearsCount[0]++;
+                          } else if (newDate == years[j]) {
+                              yearsCount[years.indexOf(newDate)]++
+                          }
+                      }
+                  } catch (err) {
+                      misCount++;
+                  }
+      
+              }
+      
+              yearsCount.forEach(function(elementToAdd, index) {
+                  var newElement = cumulativeYearCounts[index] + elementToAdd;
+                  cumulativeYearCounts.push(newElement);
               });
-            });
-          </script>
-          <p>Gene symbol: <input type=text size=5 name=gene>
-          <p><a href=# id=action>Perform a concordance analysis</a>
-          <p><span id=results></span>
-        </div>
-        <canvas id="void" width="600" height="200">
-    </div>
-    </body>
-    <script>
-
-      var colors =
-            [
-              '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
-              '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
-              '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
-              '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
-              '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF',
-              '#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
-              '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
-              '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
-              '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
-              '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
-            ];
-
-      var pieDonor = [
-               {% for peer, inds in individuals.items() %}
-                   {
-                       value: {{ inds|length }},
-                       label: "{{ peer }}",
-                       color: colors[{{ loop.index }}]
-                   },
-               {% endfor %}
-            ];
-
-      // get bar chart canvas
-      var donorChart = document.getElementById("donors").getContext("2d");
-
-      // draw pie chart
-      new Chart(donorChart).Pie(pieDonor);
-
-      var pieDisease = [
-            {% for grouper, list in fed_inds|groupby('diagnosis.term_id') %}
-              {
-                  value: {{ list|count }},
-                  label: "{{ ncit.getTermName(grouper) }}",
-                  color: colors[{{ loop.index }}]
+              cumulativeYearCounts.shift();
+      
+              timelineDrawer(yearsCount, years, cumulativeYearCounts);
+      
+          }
+      }
+      
+          // This function calculates the cumulative sum over the years
+          function timelineDrawer(yearsCount, years, cumulativeData) {
+              Highcharts.chart('timelineSamples', {
+                  chart: {
+                      type: 'area'
+                  },
+                  title: {
+                      text: 'Samples received by years'
+                  },
+                  credits: {
+                      enabled: false
+                  },
+                  xAxis: {
+                      categories: years,
+                      tickmarkPlacement: 'on',
+                      title: {
+                          enabled: false
+                      }
+                  },
+                  yAxis: {
+                      title: {
+                          text: ''
+                      },
+                      labels: {
+                          formatter: function() {
+                              return this.value;
+                          }
+                      }
+                  },
+                  tooltip: {
+                      split: true,
+                      valueSuffix: ''
+                  },
+                  plotOptions: {
+                      area: {
+                          stacking: 'normal',
+                          lineColor: '#666666',
+                          lineWidth: 1,
+                          marker: {
+                              lineWidth: 1,
+                              lineColor: '#666666'
+                          }
+                      }
+                  },
+                  series: [{
+                      type: 'column',
+                      name: 'new sample',
+                      data: yearsCount
+                  }, {
+                      type: 'line',
+                      name: 'Cumulative samples',
+                      data: cumulativeData
+                  }]
+              });
+          }
+      
+          function highChartSimpleSeriesDrawer(id, type, title, seriesArray){
+              Highcharts.chart(id, {
+                  chart: {
+                      type: type
+                  },
+                  title: {
+                      text: title
+                  },
+                  credits: {
+                      enabled: false
+                  },
+                  // subtitle: {
+                  //     text: ''
+                  // },
+                  xAxis: {
+                      categories: ' ',
+                      crosshair: false
+                  },
+                  // yAxis: {
+                  //     min: 0,
+                  //     title: {
+                  //         text: ''
+                  //     }
+                  // },
+                  legend: {
+                        enabled: false,
+                        // align: 'bottom',
+                        // verticalAlign: 'left',
+                        // layout: 'horizontal',
+                        // x: 0,
+                        // y: 150
+                  },
+                  tooltip: {
+                      headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                      pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                          '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+                      footerFormat: '</table>',
+                      shared: true,
+                      useHTML: true
+                  },
+                  plotOptions: {
+                      column: {
+                          pointPadding: 0.2,
+                          borderWidth: 0
+                      },
+                      series: {
+                          borderWidth: 0,
+                          dataLabels: {
+                              enabled: true
+                          }
+                      }
+                  },
+                  series: seriesArray,
+                  drilldown: {
+                        series: []
+                  }
+              });
+          }
+      
+      function responseTypeCalc(responseArray, treatment) {
+          if (treatment['responseToTreatment'] == "Complete Response") {
+              responseArray[0]++;
+          } else if (treatment['responseToTreatment'] == "Partial Response") {
+              responseArray[1]++;
+          } else if (treatment['responseToTreatment'] == "Progressive Disease") {
+              responseArray[2]++;
+          } else if (treatment['responseToTreatment'] == "Stable Disease") {
+              responseArray[3]++;
+          } else {
+              responseArray[4]++;
+          }
+      }
+      
+      
+      function drillDownDrawer(elementId, titleText, seriesName, seriesList, drillDownList) {
+          Highcharts.chart(elementId, {
+              chart: {
+                  type: 'bar'
               },
-            {% endfor %}
-          ];
-
-      // get bar chart canvas
-      var diseaseChart = document.getElementById("disease").getContext("2d");
-
-      // draw pie chart
-      new Chart(diseaseChart).Pie(pieDisease);
-
-      var pieEpsilon_1 = [
-            {% for peer, inds in epsilon_1.items() %}
-              {
-                  value: {{ inds }},
-                  label: "{{ peer }}",
-                  color: colors[{{ loop.index }}]
+              title: {
+                  text: titleText
               },
-            {% endfor %}
-          ];
-
-      // get bar chart canvas
-      var epsilon_1Chart = document.getElementById("epsilon_1").getContext("2d");
-
-      // draw pie chart
-      new Chart(epsilon_1Chart).Pie(pieEpsilon_1);
-
-      var pieEpsilon_2 = [
-            {% for peer, inds in epsilon_2.items() %}
-              {
-                  value: {{ inds }},
-                  label: "{{ peer }}",
-                  color: colors[{{ loop.index }}]
+              credits: {
+                      enabled: false
               },
-            {% endfor %}
-          ];
+              xAxis: {
+                  type: 'category'
+              },
+      
+              legend: {
+                  enabled: false
+              },
+      
+              plotOptions: {
+                  series: {
+                      borderWidth: 0,
+                      dataLabels: {
+                          enabled: true
+                      }
+                  }
+              },
+      
+              series: [{
+                  type: 'pie',
+                  name: seriesName,
+                  colorByPoint: true,
+                  data: seriesList
+              }],
+              drilldown: {
+                  series: drillDownList
+              }
+          });
+      }
+      
+      function cancerTypeDruglistFetcher() {
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "diagnoses/search", true);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.setRequestHeader('Accept', 'application/json');
+          xhr.send(JSON.stringify({
+              'datasetId': 'WyJNRVRBREFUQSJd'
+          }));
+          xhr.onload = function() {
+              var data = JSON.parse(this.responseText);
+              var diagnosesDatasets = data['results'][0]['diagnosiss'];
+              var result = {};
+              var seriesList = [];
+              var seriesObj = {};
+              var drillDownList = [];
+              var drillDownObj = {};
+      
+              for (var i = 0; i < diagnosesDatasets.length; i++){
+                  var currCancer = diagnosesDatasets[i]['cancerType'];
+                  drugList[cancerTypesList.indexOf(currCancer)] += treatments[i]['drugListOrAgent'];
+                  cancerTypeFreq[cancerTypesList.indexOf(currCancer)]++;
+              }
+      
+              for (var i = 0; i < cancerTypesList.length; i++){
+                  seriesObj = {};
+                  seriesObj['name'] = cancerTypesList[i];
+                  seriesObj['y'] = cancerTypeFreq[i];
+                  seriesObj['drilldown'] = cancerTypesList[i];
+                  seriesList.push(seriesObj);
+              }
+        
+              for (var j = 0; j < drugList.length; j++){
+                  drugList[j] = drugList[j].split(", ");
+      
+                  result = {};
+                  for (var k = 0; k < drugList[j].length; k++){   
+                      if (!result[drugList[j][k]])
+                          result[drugList[j][k]] = 0;
+                      ++result[drugList[j][k]];
+                  }
+                  objectDrugList.push(result);
+              }
+      
+              for (var i = 0; i < objectDrugList.length; i++){
+                  drillDownObj = {};
+                  var tempData = Object.keys(objectDrugList[i]).map(function(key) {
+                      return [String(key), objectDrugList[i][key]];
+                  });
+      
+                  drillDownObj['id'] = cancerTypesList[i];
+                  drillDownObj['data'] = tempData;
+                  drillDownList.push(drillDownObj);
+              }
+      
+              drillDownDrawer('cancerTypes', "cancer types and corresponding treatment drugs", 'cancer types', seriesList, drillDownList);
+      
+          }
+      }
 
-      // get bar chart canvas
-      var epsilon_2Chart = document.getElementById("epsilon_2").getContext("2d");
+        function singleLayerDrawer(id, type, title, seriesArray){
+              Highcharts.chart(id, {
+                  chart: {
+                      type: type
+                  },
+                  credits: {
+                      enabled: false
+                  },
+                  title: {
+                      text: title
+                  },
+                  xAxis: {
+                      type: 'category'
+                  },
+                  legend: {
+                      enabled: false
+                  },
+                  plotOptions: {
+                      series: {
+                          borderWidth: 0,
+                          dataLabels: {
+                              enabled: true
+                          }
+                      }
+                  },
+                  series: [{
+                    name: 'name',
+                    colorByPoint: true,
+                    data: seriesArray
+                  }]
+              });
+              //Highcharts.setOptions(theme);
+          }
+        
+        function therapeuticTypeDrawer(){
+              Highcharts.chart('therapeuticToResponses', {
+                  chart: {
+                      type: 'bar'
+                  },
+                  credits: {
+                      enabled: false
+                  },
+                  title: {
+                      text: 'Therapeutic types'
+                  },
+                  xAxis: {
+                      type: 'category'
+                  },
+                  legend: {
+                      enabled: false
+                  },
+                  plotOptions: {
+                      series: {
+                          borderWidth: 0,
+                          dataLabels: {
+                              enabled: true
+                          }
+                      }
+                  },
+                  series: [{
+                      //type: 'column',
+                      name: 'Therapeutic Modalities',
+                      colorByPoint: true,
+                      data: [{
+                          name: 'radiationTherapy',
+                          y: radiationTherapy,
+                          drilldown: 'radiationTherapy'
+                      }, {
+                          name: 'hormonalTherapy',
+                          y: hormonalTherapy,
+                          drilldown: 'hormonalTherapy'
+                      }, {
+                          name: 'surgery',
+                          y: surgery,
+                          drilldown: 'surgery'
+                      }, {
+                          name: 'immunotherapy',
+                          y: immunotherapy,
+                          drilldown: 'immunotherapy'
+                      }, {
+                          name: 'chemotherapy',
+                          y: chemotherapy,
+                          drilldown: 'chemotherapy'
+                      }, {
+                          name: 'other',
+                          y: otherTherapy,
+                          drilldown: 'otherTherapy'
+                      }]
+                  }],
+                  drilldown: {
+                      series: [{
+                          id: 'radiationTherapy',
+                          data: [
+                              ['Complete Response', radiationResponse[0]],
+                              ['Partial Response', radiationResponse[1]],
+                              ['Progressive Disease', radiationResponse[2]],
+                              ['Stable Disease', radiationResponse[3]],
+                              ['Other', radiationResponse[4]]
+                          ]
+                      }, {
+                          id: 'hormonalTherapy',
+                          data: [
+                              ['Complete Response', hormonalResponse[0]],
+                              ['Partial Response', hormonalResponse[1]],
+                              ['Progressive Disease', hormonalResponse[2]],
+                              ['Stable Disease', hormonalResponse[3]],
+                              ['Other', hormonalResponse[4]]
+                          ]
+                      }, {
+                          id: 'surgery',
+                          data: [
+                              ['Complete Response', surgeryResponse[0]],
+                              ['Partial Response', surgeryResponse[1]],
+                              ['Progressive Disease', surgeryResponse[2]],
+                              ['Stable Disease', surgeryResponse[3]],
+                              ['Other', surgeryResponse[4]]
+                          ]
+                      }, {
+                          id: 'immunotherapy',
+                          data: [
+                              ['Complete Response', immunoResponse[0]],
+                              ['Partial Response', immunoResponse[1]],
+                              ['Progressive Disease', immunoResponse[2]],
+                              ['Stable Disease', immunoResponse[3]],
+                              ['Other', immunoResponse[4]]
+                          ]
+                      }, {
+                          id: 'chemotherapy',
+                          data: [
+                              ['Complete Response', chemoResponse[0]],
+                              ['Partial Response', chemoResponse[1]],
+                              ['Progressive Disease', chemoResponse[2]],
+                              ['Stable Disease', chemoResponse[3]],
+                              ['Other', chemoResponse[4]]
+                          ]
+                      }, {
+                          id: 'otherTherapy',
+                          data: [
+                              ['Complete Response', otherTherapeuticResponse[0]],
+                              ['Partial Response', otherTherapeuticResponse[1]],
+                              ['Progressive Disease', otherTherapeuticResponse[2]],
+                              ['Stable Disease', otherTherapeuticResponse[3]],
+                              ['Other', otherTherapeuticResponse[4]]
+                          ]
+                      }]
+                  }
+              });
+            //Highcharts.setOptions(theme);
+          }
+      
+      function chartJSDrawer(elementId, chartType, labelsArray, chartLabel, dataArray) {
+              var myChart = new Chart(elementId, {
+              type: chartType,
+              data: {
+                  labels: labelsArray,
+                  datasets: [{
+                      label: chartLabel,
+                      data: dataArray,
+                      backgroundColor: [
+                          'rgba(255, 99, 132, 0.8)',
+                          'rgba(54, 162, 235, 0.8)',
+                          'rgba(255, 206, 86, 0.8)',
+                          'rgba(75, 192, 192, 0.8)',
+                          'rgba(153, 102, 255, 0.8)'
+                      ],
+                      borderColor: [
+                          'rgba(255,99,132,1)',
+                          'rgba(54, 162, 235, 1)',
+                          'rgba(255, 206, 86, 1)',
+                          'rgba(75, 192, 192, 1)',
+                          'rgba(153, 102, 255, 1)'
+                      ],
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  scales: {
+                      xAxes: [{
+                          ticks: {
+                              beginAtZero: true
+                          }
+                      }]
+                  }
+              }
+          });
+      }
 
-      // draw pie chart
-      new Chart(epsilon_2Chart).Pie(pieEpsilon_2);
+/**
+ * (c) 2010-2017 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ *
+ * Dark theme for Highcharts JS
+ * @author Torstein Honsi
+ */
 
-    </script>
+
+var theme = {
+    colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
+        '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
+    chart: {
+        backgroundColor: {
+            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+            stops: [
+                [0, '#2a2a2b'],
+                [1, '#3e3e40']
+            ]
+        },
+        style: {
+            fontFamily: '\'Unica One\', sans-serif'
+        },
+        plotBorderColor: '#606063'
+    },
+    title: {
+        style: {
+            color: '#E0E0E3',
+            textTransform: 'uppercase',
+            fontSize: '20px'
+        }
+    },
+    subtitle: {
+        style: {
+            color: '#E0E0E3',
+            textTransform: 'uppercase'
+        }
+    },
+    xAxis: {
+        gridLineColor: '#707073',
+        labels: {
+            style: {
+                color: '#E0E0E3'
+            }
+        },
+        lineColor: '#707073',
+        minorGridLineColor: '#505053',
+        tickColor: '#707073',
+        title: {
+            style: {
+                color: '#A0A0A3'
+
+            }
+        }
+    },
+    yAxis: {
+        gridLineColor: '#707073',
+        labels: {
+            style: {
+                color: '#E0E0E3'
+            }
+        },
+        lineColor: '#707073',
+        minorGridLineColor: '#505053',
+        tickColor: '#707073',
+        tickWidth: 1,
+        title: {
+            style: {
+                color: '#A0A0A3'
+            }
+        }
+    },
+    tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+        style: {
+            color: '#F0F0F0'
+        }
+    },
+    plotOptions: {
+        series: {
+            dataLabels: {
+                color: '#B0B0B3'
+            },
+            marker: {
+                lineColor: '#333'
+            }
+        },
+        boxplot: {
+            fillColor: '#505053'
+        },
+        candlestick: {
+            lineColor: 'white'
+        },
+        errorbar: {
+            color: 'white'
+        }
+    },
+    legend: {
+        itemStyle: {
+            color: '#E0E0E3'
+        },
+        itemHoverStyle: {
+            color: '#FFF'
+        },
+        itemHiddenStyle: {
+            color: '#606063'
+        }
+    },
+    credits: {
+        style: {
+            color: '#666'
+        }
+    },
+    labels: {
+        style: {
+            color: '#707073'
+        }
+    },
+
+    drilldown: {
+        activeAxisLabelStyle: {
+            color: '#F0F0F3'
+        },
+        activeDataLabelStyle: {
+            color: '#F0F0F3'
+        }
+    },
+
+    navigation: {
+        buttonOptions: {
+            symbolStroke: '#DDDDDD',
+            theme: {
+                fill: '#505053'
+            }
+        }
+    },
+
+    // scroll charts
+    rangeSelector: {
+        buttonTheme: {
+            fill: '#505053',
+            stroke: '#000000',
+            style: {
+                color: '#CCC'
+            },
+            states: {
+                hover: {
+                    fill: '#707073',
+                    stroke: '#000000',
+                    style: {
+                        color: 'white'
+                    }
+                },
+                select: {
+                    fill: '#000003',
+                    stroke: '#000000',
+                    style: {
+                        color: 'white'
+                    }
+                }
+            }
+        },
+        inputBoxBorderColor: '#505053',
+        inputStyle: {
+            backgroundColor: '#333',
+            color: 'silver'
+        },
+        labelStyle: {
+            color: 'silver'
+        }
+    },
+
+    navigator: {
+        handles: {
+            backgroundColor: '#666',
+            borderColor: '#AAA'
+        },
+        outlineColor: '#CCC',
+        maskFill: 'rgba(255,255,255,0.1)',
+        series: {
+            color: '#7798BF',
+            lineColor: '#A6C7ED'
+        },
+        xAxis: {
+            gridLineColor: '#505053'
+        }
+    },
+
+    scrollbar: {
+        barBackgroundColor: '#808083',
+        barBorderColor: '#808083',
+        buttonArrowColor: '#CCC',
+        buttonBackgroundColor: '#606063',
+        buttonBorderColor: '#606063',
+        rifleColor: '#FFF',
+        trackBackgroundColor: '#404043',
+        trackBorderColor: '#404043'
+    },
+
+    // special colors for some of the
+    legendBackgroundColor: 'rgba(0, 0, 0, 0.5)',
+    background2: '#505053',
+    dataLabelsColor: '#B0B0B3',
+    textColor: '#C0C0C0',
+    contrastTextColor: '#F0F0F3',
+    maskColor: 'rgba(255,255,255,0.3)'
+};
+          
+   </script>
 </html>

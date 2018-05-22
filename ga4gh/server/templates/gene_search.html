@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CanDIG - Gene Search Tool</title>
+    <link rel=stylesheet type=text/css href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <link rel=stylesheet type=text/css href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <style>
+        .single {
+            background-color: olive;
+        }
+        
+        .double {
+            background-color: aqua;
+        }
+        
+        #backButton {
+            border-radius: 4px;
+            padding: 8px;
+            border: none;
+            font-size: 16px;
+            background-color: #2eacd1;
+            color: white;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+        
+        .invisible {
+            display: none;
+        }
+        
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            text-align: center;
+        }
+        
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        
+        td:nth-child(even) {
+            background-color: #dddddd;
+        }
+        
+        input[type=text] {
+            padding: 10px;
+            font-size: 17px;
+            border: 1px solid grey;
+            float: left;
+            width: 40%;
+            background: #f1f1f1;
+            margin-right: 20px;
+            margin-left: 25%;
+            margin-bottom: 50px;
+        }
+        
+        button {
+            float: left;
+            width: 10%;
+            padding: 10px;
+            background: #2196F3;
+            color: white;
+            font-size: 17px;
+            border: 1px solid grey;
+            border-left: none;
+            /* Prevent double borders */
+            cursor: pointer;
+        }
+        
+        #myTable {
+            margin-top: 10%;
+            text-align: center;
+        }
+        
+        .title {
+            margin-top: 10%;
+        }
+        
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 60px;
+            height: 60px;
+            -webkit-animation: spin 2s linear infinite;
+            /* Safari */
+            animation: spin 2s linear infinite;
+            margin-left: calc( 50% - 60px);
+            margin-top: 200px;
+        }
+        /* Safari */
+        
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .container-fluid {
+            /*width: 95%;*/
+            padding-right: 50px;
+            padding-left: 50px;
+            margin-right: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- A grey horizontal navbar that becomes vertical on small screens -->
+    <nav class="navbar navbar-expand-sm bg-light">
+
+      <!-- Links -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="candig">Homepage</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="gene_search">Gene search</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="candig_patients">Patient overview</a>
+        </li>
+      </ul>
+  </nav>
+    <div class="container-fluid">
+        <h2 style="text-align: center; margin-bottom: 100px" class="title" id="title">CanDIG 0.07 - Gene Search Tool</h2>
+
+        <div class="row">
+
+            <!--h3 style="text-align: left; margin-left: 50px" class="title" id="postSearchTitle">CanDIG 0.07 - Genomic Data Search Tool</h3 -->
+
+        </div class="row">
+
+        <input type="text" id="request" name="search" placeholder="Search..">
+
+        <button name="submit" onclick="submit()">Submit</button>
+
+        <div class="loader" id="loader" style="display: none"></div>
+
+        <table id="myTable"></table>
+
+    </div>
+</body>
+
+<script type="text/javascript">
+    var statusCode = 0; // Initial value, table is empty
+
+    function submit() {
+
+        if (statusCode == 1) {
+            var table = $('#myTable').DataTable();
+            table.destroy();
+        }
+
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("myTable").innerHTML = "";
+        var geneRequest = document.getElementById("request").value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "variantsbygenesearch", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.send(JSON.stringify({
+            'datasetId': 'WyJjb25jb3JkYW5jZSJd',
+            'gene': geneRequest
+        }));
+        xhr.onload = function() {
+            var data = JSON.parse(this.responseText);
+            if (xhr.status == 200) {
+                var geneDataset = data['results'][0];
+                tableMaker(geneDataset);
+                statusCode = 1; // The Dataset was created successfully
+            } else {
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("myTable").innerHTML = "Sorry, but we are not able to locate the gene.";
+                statusCode = -1; //The dataset failed to initialized.
+            }
+        }
+    }
+
+
+    function tableMaker(geneDataset) {
+        var clickableName;
+        var tbl = $('<table/>').attr("id", "myTable");
+        //$("#myTable").append(tbl);
+        var tempRefName;
+        var fullRefName;
+        var result = {};
+
+        var th = '<thead><tr><th scope="col" >Reference Name</th><th scope="col">Start</th><th scope="col">End</th> <th scope="col">Length</th><th scope="col">Reference Bases</th><th scope="col">Alternate Bases</th><th scope="col">Frequency</th><th scope="col">Names</th></tr></thead><tbody>';
+        $("#myTable").append(th);
+
+        var simplifiedObjArray = []
+
+        for (var j = 0; j < geneDataset.length; j++) {
+            var tempCurrData = JSON.parse(geneDataset[j]);
+            var tempObj = {
+                'referenceName': tempCurrData['referenceName'],
+                'start': tempCurrData['start'],
+                'end': tempCurrData['end'],
+                'referenceBases': tempCurrData['referenceBases'],
+                'alternateBases': tempCurrData['alternateBases'],
+                'names': tempCurrData['names']
+            }
+            simplifiedObjArray.push(JSON.stringify(tempObj));
+        }
+
+        for (var j = 0; j < simplifiedObjArray.length; j++) {
+            if (!result[simplifiedObjArray[j]]) {
+                result[simplifiedObjArray[j]] = 0;
+            }
+            ++result[simplifiedObjArray[j]];
+        }
+
+        var processedDataset = Object.keys(result);
+        var frequencyDataset = Object.values(result);
+
+        for (var i = 0; i < processedDataset.length; i++) {
+            var currDataset = JSON.parse(processedDataset[i]);
+            var tr = "<tr>";
+
+            var tempRefName = currDataset["referenceName"];
+            if (tempRefName.includes('chr')) {
+                fullRefName = tempRefName.replace("chr", "Chromosome ");
+            } else fullRefName = "Chromosome " + tempRefName;
+
+            var td0 = '<td scope="col">' + fullRefName + "</td>";
+            var td1 = '<td scope="col">' + currDataset["start"] + "</td>";
+            var length = currDataset["end"] - currDataset["start"];
+            var tdLength = '<td scope="col">' + length + "</td>";
+            var td2 = '<td scope="col">' + currDataset["end"] + "</td>";
+            var td3 = '<td scope="col">' + currDataset["referenceBases"] + "</td>";
+            var td4 = '<td scope="col">' + currDataset["alternateBases"] + "</td>";
+            var tdFreq = '<td scope="col">' + frequencyDataset[i].toString() + "</td>";
+
+            if (currDataset["names"] != undefined) {
+                clickableName = "";
+                for (var j = 0; j < currDataset["names"].length; j++) {
+                    if (currDataset["names"][j].includes('rs')) {
+                        if (j > 0) {
+                            clickableName += ", "
+                        };
+                        clickableName += '<a href="' + 'https://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=' + currDataset["names"][j] + '">' + currDataset["names"][j] + '</a>';
+                    } else if (currDataset["names"][j].includes('COSM')) {
+                        if (j > 0) {
+                            clickableName += ", "
+                        };
+                        clickableName += '<a href="' + 'https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=' + currDataset["names"][j].split('COSM')[1] + '">' + currDataset["names"][j] + '</a>';
+                    } else {
+                        if (j > 0) {
+                            clickableName += ", "
+                        };
+                        clickableName += ", " + currDataset["names"][j];
+                    }
+                }
+            } else clickableName = 'Not Found';
+
+            var td5 = '<td scope="col">' + clickableName + "</td>";
+            var td6 = "</tr>";
+
+            $("#myTable").append(tr + td0 + td1 + td2 + tdLength + td3 + td4 + tdFreq + td5 + td6);
+        }
+        $("#myTable").append('</tbody>');
+
+        $(document).ready(function() {
+            $('#myTable').DataTable();
+            document.getElementById("myTable_info").innerHTML += ", aggregated from " + geneDataset.length + " records.";
+        });
+
+        document.getElementById("title").style.marginTop = "50px";
+        document.getElementById("loader").style.display = "none";
+    }
+</script>
+
+</html>

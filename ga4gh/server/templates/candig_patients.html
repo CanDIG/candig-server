@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CanDIG - Patients</title>
+    <link rel=stylesheet type=text/css href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <link rel=stylesheet type=text/css href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <style>
+        .single {
+            background-color: olive;
+        }
+        
+        .double {
+            background-color: aqua;
+        }
+        
+        #backButton {
+            border-radius: 4px;
+            padding: 8px;
+            border: none;
+            font-size: 16px;
+            background-color: #2eacd1;
+            color: white;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+        
+        .invisible {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+        <!-- A grey horizontal navbar that becomes vertical on small screens -->
+    <nav class="navbar navbar-expand-sm bg-light">
+
+      <!-- Links -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="candig">Homepage</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="gene_search">Gene search</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="candig_patients">Patient overview</a>
+        </li>
+      </ul>
+  </nav>
+
+
+    <div class="container">
+        <h2 style="margin-top:30px; margin-bottom: 30px">CanDIG 0.07 - Overview of Patients</h2>
+
+        <table id="mytable"></table>
+
+    </div>
+</body>
+
+<script type="text/javascript">
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "patients/search", true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.send(JSON.stringify({
+        'datasetId': 'WyJNRVRBREFUQSJd'
+    }));
+    xhr.onload = function() {
+        var data = JSON.parse(this.responseText);
+        var maleCount = 0;
+        var femaleCount = 0;
+
+        var patientsDataset = data['results'][0]['patients'];
+        console.log(patientsDataset);
+
+        for (var i = 0; i < patientsDataset.length; i++) {
+            if (patientsDataset[i]['gender'] == "male") {
+                maleCount++;
+            } else if (patientsDataset[i]['gender'] == "female") {
+                femaleCount++;
+            }
+        }
+
+        //var ctx = document.getElementById("genderDistribution");
+        //chartJSDrawer(ctx, 'doughnut', ["Male", "Female"], 'Gender distribution', [maleCount, femaleCount]);
+
+        var tbl = $('<table/>').attr("id", "mytable");
+        //$("#patientTable").append(tbl);
+
+        var th = '<thead><tr><th scope="col">Patient ID</th><th scope="col">Date of Death</th><th scope="col">Province of Residence</th> <th scope="col">Date of Birth</th><th scope="col">Race</th><th scope="col">OEE</th></tr></thead><tbody>';
+         $("#mytable").append(th)
+
+        for (var i = 0; i < patientsDataset.length; i++) {
+            var tr = "<tr>";
+            var td0 = '<td scope="col">' + patientsDataset[i]["patientId"] + "</td>";
+            var td1 = '<td scope="col">' + patientsDataset[i]["dateOfDeath"] + "</td>";
+            var td2 = '<td scope="col">' + patientsDataset[i]["provinceOfResidence"] + "</td>";
+            var td3 = '<td scope="col">' + patientsDataset[i]["dateOfBirth"] + "</td>";
+            var td4 = '<td scope="col">' + patientsDataset[i]["race"] + "</td>";
+            var td5 = '<td scope="col">' + patientsDataset[i]["occupationalOrEnvironmentalExposure"] + "</td></tbody>";
+            var td6 = "</td>" + "</tr>";
+
+            $("#mytable").append(tr + td0 + td1 + td2 + td3 + td4 + td5 + td6);
+        }
+
+        $("#mytable").append('</tbody>')
+
+        $(document).ready(function() {
+            $('#mytable').DataTable();
+        });
+
+    }
+
+    function categoriesCounter() {
+        
+    }
+
+    function chartJSDrawer(elementId, chartType, labelsArray, chartLabel, dataArray) {
+        var myChart = new Chart(elementId, {
+            type: chartType,
+            data: {
+                labels: labelsArray,
+                datasets: [{
+                    label: chartLabel,
+                    data: dataArray,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    }
+
+    function drillDownDrawer(elementId, titleText, seriesName, seriesList, drillDownList) {
+        Highcharts.chart(elementId, {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: titleText
+            },
+            xAxis: {
+                type: 'category'
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
+
+            series: [{
+                type: 'pie',
+                name: seriesName,
+                colorByPoint: true,
+                data: seriesList
+            }],
+            drilldown: {
+                series: drillDownList
+            }
+        });
+    }
+
+</script>
+
+</html>
