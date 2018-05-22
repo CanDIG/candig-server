@@ -13,6 +13,14 @@ import ga4gh.server.response_builder as response_builder
 
 import ga4gh.schemas.protocol as protocol
 
+### ======================================================================= ###
+### FRONT END
+### ======================================================================= ###
+import json
+### ======================================================================= ###
+### FRONT END END
+### ======================================================================= ###
+
 
 class Backend(object):
     """
@@ -1579,3 +1587,33 @@ class Backend(object):
             protocol.SearchExpressionLevelsResponse,
             self.expressionLevelsGenerator,
             return_mimetype)
+
+### ======================================================================= ###
+### FRONT END
+### ======================================================================= ###
+    def runSearchVariantsByGeneName(self, request, return_mimetype):
+        """
+        """
+        #TODO put request object into protocol and make this function a generator
+        request = json.loads(request)
+        return_object = []
+        
+        dataset = self.getDataRepository().getDataset(request['datasetId'])
+        #
+        variantsets = dataset.getVariantSets()
+        #
+        for featureset in dataset.getFeatureSets():
+            for feature in featureset.getFeatures(geneSymbol=request['gene']):
+                #
+                for variantset in variantsets:
+                    for variant in variantset.getVariants(
+                            referenceName=feature.reference_name.replace('chr', ''),
+                            startPosition=feature.start,
+                            endPosition=feature.end,
+                            ):
+                        return_object.append(protocol.toJson(variant))
+        
+        return json.dumps(return_object)
+### ======================================================================= ###
+### FRONT END END
+### ======================================================================= ###

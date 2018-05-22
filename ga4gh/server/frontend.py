@@ -809,49 +809,28 @@ def index():
 
 
 ### ======================================================================= ###
-### METADATA
+### FRONT END
 ### ======================================================================= ###
 @app.route('/candig')
 def candig():
-    patients = client.FederatedClient(
-        ServerStatus().getPeers()).search_Patients()
-    ncit = app.serverStatus.getOntologyByName("NCIT")
+    return flask.render_template('candig.html')
 
-    g2p = {}
-    associations = []
-    g2p, associations = client.LocalClient(app.backend).get_association(
-        patients)
+@app.route('/candig_patients')
+def candig_patients():
+    return flask.render_template('candig_patients.html')
 
-    return flask.render_template(
-        'candig.html',
-        info=app.serverStatus,
-        individuals=patients,
-        ncit=ncit,
-        epsilon_1=DP.DP(patients, 0.1).get_noise(),
-        epsilon_2=DP.DP(patients, 1).get_noise(),
-        g2p=g2p,
-        associations=associations
-        )
+@app.route('/gene_search')
+def candig_gene_search():
+    return flask.render_template('gene_search.html')
+
+@DisplayedRoute('/variantsbygenesearch', postMethod=True)
+def search_variant_by_gene_name():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchVariantsByGeneName)
+
 ### ======================================================================= ###
-### METADATA END
+### FRONT END END
 ### ======================================================================= ###
-
-@app.route('/concordance')
-def concordance():
-    gene = request.args.get('gene', '', type=str)
-    if gene == '':
-        return jsonify(result = 'Gene symbol is missing')
-    concordance, freq, uniq = client.FederatedClient(
-        ServerStatus().getPeers()).get_concordance(gene)
-    abnormality = NCIT.NCIT().get_genetic_abnormalities(gene)
-    disease = NCIT.NCIT().get_diseases(gene)
-    return jsonify(result=render_template('concordance.html',
-        concordance=concordance,
-        freq=freq,
-        uniq=uniq,
-        abnormality=abnormality,
-        disease=disease))
-
 
 @app.route("/login")
 def login():
