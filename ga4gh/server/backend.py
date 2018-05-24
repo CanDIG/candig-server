@@ -206,7 +206,8 @@ class Backend(object):
         for obj in dataset.getPatients():
             include = True
             if request.name:
-                if request.name != obj.getLocalId():
+                if obj.getLocalId() not in request.name.split(','):
+#                if request.name != obj.getLocalId():
                     include = False
 
             if include:
@@ -225,7 +226,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -243,7 +245,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -261,7 +264,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -279,7 +283,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -297,7 +302,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -315,7 +321,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -333,7 +340,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -351,7 +359,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
