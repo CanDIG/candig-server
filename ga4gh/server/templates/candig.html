@@ -5,7 +5,6 @@
       <link rel=stylesheet type=text/css href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
       <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
       <script src="https://code.highcharts.com/highcharts.js"></script>
       <script src="https://code.highcharts.com/modules/drilldown.js"></script>
       <style>
@@ -16,16 +15,16 @@
          background-color: aqua;
          }
          #backButton {
-         border-radius: 4px;
-         padding: 8px;
-         border: none;
-         font-size: 16px;
-         background-color: #2eacd1;
-         color: white;
-         position: absolute;
-         top: 10px;
-         right: 10px;
-         cursor: pointer;
+           border-radius: 4px;
+           padding: 8px;
+           border: none;
+           font-size: 12px;
+           background-color: #2eacd1;
+           color: white;
+           position: absolute;
+           top: 10px;
+           right: 10px;
+           cursor: pointer;
          }
          .invisible {
          display: none;
@@ -59,28 +58,28 @@
       <div>
       <div class="row" style="margin-top:50px; margin-bottom:50px">
          <div class="col-sm-3">
-            <div class="card" style="border:solid; padding: 2rem; height: 15rem">
+            <div class="card" style="border:solid; padding: 1rem; height: 15rem">
                <div class="card-body">
                   <div id="queryStatus" style="max-width: 100%; height: 200px; auto;"></div>
                </div>
             </div>
          </div>
          <div class="col-sm-3">
-            <div class="card" style="border:solid; padding: 2rem; height: 15rem">
+            <div class="card" style="border:solid; padding: 1rem; height: 15rem">
                <div class="card-body">
                   <div id="responseToTreatment" style="max-width: 100%; height: 200px; auto;"></div>
                </div>
             </div>
          </div>
          <div class="col-sm-3">
-            <div class="card" style="border:solid; padding: 2rem; height: 15rem">
+            <div class="card" style="border:solid; padding: 1rem; height: 15rem">
                <div class="card-body">
                   <div id="hospitals" style="max-width: 100%; height: 200px; auto;"></div>
                </div>
             </div>
          </div>
          <div class="col-sm-3">
-            <div class="card" style="border:solid; padding: 2rem; height: 15rem">
+            <div class="card" style="border:solid; padding: 1rem; height: 15rem">
                <div class="card-body">
                   <div id="therapeuticToResponses" style="max-width: 100%; height: 200px; auto;"></div>
                </div>
@@ -89,14 +88,14 @@
       </div>
       <div class="row" style="margin-top:50px; margin-bottom:50px">
          <div class="col-sm-6">
-            <div class="card" style="border:solid; padding: 2rem; height: 30rem">
+            <div class="card" style="border:solid; padding: 1rem; height: 30rem">
                <div class="card-body">
                   <div id="timelineSamples"></div>
                </div>
             </div>
          </div>
          <div class="col-sm-6">
-            <div class="card" style="border:solid; padding: 2rem; height: 30rem">
+            <div class="card" style="border:solid; padding: 1rem; height: 30rem">
                <div class="card-body">
                   <div id="cancerTypes" style="min-width: 310px; height: 400px; auto;"></div>
                </div>
@@ -154,16 +153,15 @@
           knownPeers = data['status']['Known peers'];
           queriedPeers = data['status']['Queried peers'];
           success = data['status']['Successful communications'];
-          // console.log(knownPeers);
-          // console.log(queriedPeers);
-          // console.log(success);
+          var queryStatusSeriesArray = highChartSeriesObjectMaker(["Known Peers", "Queried Peers", "Successful Communications"], [knownPeers, queriedPeers, success]);
+          singleLayerDrawer("queryStatus", 'bar', 'Server status', queryStatusSeriesArray);
+
 
           samplesFetcher();
       
           cancerTypeDruglistFetcher();
           treatments = data['results'][0]['treatments'];
           treatmentsFetcher(treatments);
-          //Highcharts.setOptions(theme);
 
       }
 
@@ -180,6 +178,19 @@
                 seriesObjList.push(tempObj);
             }
             return seriesObjList;
+      }
+
+      function freqCounter(arrayToCount){
+          result = {};
+
+          for (var j = 0; j < arrayToCount.length; j++) {
+              if (!result[arrayToCount[j]]) {
+                  result[arrayToCount[j]] = 0;
+              }
+              ++result[arrayToCount[j]];
+          }
+
+          return result;
       }
 
       
@@ -222,9 +233,6 @@
       
           therapeuticTypeDrawer();
 
-          var queryStatusSeriesArray = highChartSeriesObjectMaker(["Known Peers", "Queried Peers", "Successful Communications"], [knownPeers, queriedPeers, success]);
-          singleLayerDrawer("queryStatus", 'bar', 'Server status', queryStatusSeriesArray);
-
           var treatmentsSeriesArray = highChartSeriesObjectMaker( ["Complete Response", "Partial Response", "Progressive Disease", "Stable Disease", "Other"], [completeResponse, partialResponse, progressiveDisease, stableDisease, otherResponse]);
           singleLayerDrawer("responseToTreatment", 'bar', 'Response to treatments', treatmentsSeriesArray);      
         }
@@ -240,35 +248,27 @@
           xhr.onload = function() {
               var data = JSON.parse(this.responseText);
       
-              var BCCA = 0;
-              var UHN = 0;
-              var HSC = 0;
-              var PMCC = 0;
-              var MUGQIC = 0;
-              var otherHospitals = 0;
-      
               var sampleDataset = data['results'][0]['samples'];
-      
+              var tempArray = [];
+              var tempObj;
+
               for (var i = 0; i < sampleDataset.length; i++) {
-                  if (sampleDataset[i]['collectionHospital'] == "BCCA") {
-                      BCCA++;
-                  } else if (sampleDataset[i]['collectionHospital'] == "University Health Network") {
-                      UHN++;
-                  } else if (sampleDataset[i]['collectionHospital'] == "Hospital for Sick Children") {
-                      HSC++;
-                  } else if (sampleDataset[i]['collectionHospital'] == "Princess Margaret Cancer Centre") {
-                      PMCC++;
-                  } else if (sampleDataset[i]['collectionHospital'] == "McGill University and Genome Quebec Innovation Centre") {
-                      MUGQIC++;
-                  } else {
-                      otherHospitals++;
-                  }
+                  tempArray.push(sampleDataset[i]['collectionHospital']);
               }
 
-              var hospitalSeriesArray = highChartSeriesObjectMaker(["BCCA", "University Health Network", "Hospital for Sick Children", "Princess Margaret Cancer Centre", "Mcgill University", "Other hospitals"], [BCCA, UHN, HSC, PMCC, MUGQIC, otherHospitals]);
+              tempObj = freqCounter(tempArray);
+              var listOfHospitals = Object.keys(result);
+              var listOfHospitalNumber = Object.values(result);
 
-              singleLayerDrawer("hospitals", 'bar', 'Hospital distribution', hospitalSeriesArray);
-            
+              var tempIndex = listOfHospitals.indexOf("undefined");
+              if (tempIndex !== -1) {listOfHospitals[tempIndex] = 'Other'};
+
+
+              var hospitalNewArray = highChartSeriesObjectMaker(listOfHospitals, listOfHospitalNumber);
+              hospitalNewArray.sort(function (a, b) {return b.y - a.y});
+              singleLayerDrawer("hospitals", 'bar', 'Hospital distribution', hospitalNewArray);
+
+
               var years = ['2003 or earlier', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'];
               var yearsCount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
               var cumulativeYearCounts = [0];
@@ -359,65 +359,7 @@
                   }]
               });
           }
-      
-          function highChartSimpleSeriesDrawer(id, type, title, seriesArray){
-              Highcharts.chart(id, {
-                  chart: {
-                      type: type
-                  },
-                  title: {
-                      text: title
-                  },
-                  credits: {
-                      enabled: false
-                  },
-                  // subtitle: {
-                  //     text: ''
-                  // },
-                  xAxis: {
-                      categories: ' ',
-                      crosshair: false
-                  },
-                  // yAxis: {
-                  //     min: 0,
-                  //     title: {
-                  //         text: ''
-                  //     }
-                  // },
-                  legend: {
-                        enabled: false,
-                        // align: 'bottom',
-                        // verticalAlign: 'left',
-                        // layout: 'horizontal',
-                        // x: 0,
-                        // y: 150
-                  },
-                  tooltip: {
-                      headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-                      pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                          '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
-                      footerFormat: '</table>',
-                      shared: true,
-                      useHTML: true
-                  },
-                  plotOptions: {
-                      column: {
-                          pointPadding: 0.2,
-                          borderWidth: 0
-                      },
-                      series: {
-                          borderWidth: 0,
-                          dataLabels: {
-                              enabled: true
-                          }
-                      }
-                  },
-                  series: seriesArray,
-                  drilldown: {
-                        series: []
-                  }
-              });
-          }
+  
       
       function responseTypeCalc(responseArray, treatment) {
           if (treatment['responseToTreatment'] == "Complete Response") {
@@ -469,7 +411,13 @@
                   data: seriesList
               }],
               drilldown: {
-                  series: drillDownList
+                  series: drillDownList,
+                  drillUpButton: {
+                    position: {
+                      x: 0,
+                      y: -40
+                    }
+                  }
               }
           });
       }
@@ -484,7 +432,7 @@
           }));
           xhr.onload = function() {
               var data = JSON.parse(this.responseText);
-              var diagnosesDatasets = data['results'][0]['diagnosiss'];
+              var diagnosesDatasets = data['results'][0]['diagnoses'];
               var result = {};
               var seriesList = [];
               var seriesObj = {};
@@ -566,6 +514,8 @@
               });
               //Highcharts.setOptions(theme);
           }
+
+          //TODO: Get rid of function therapeuticTypeDrawer
         
         function therapeuticTypeDrawer(){
               Highcharts.chart('therapeuticToResponses', {
@@ -594,7 +544,7 @@
                   },
                   series: [{
                       //type: 'column',
-                      name: 'Therapeutic Modalities',
+                      name: 'main',
                       colorByPoint: true,
                       data: [{
                           name: 'radiationTherapy',
@@ -677,257 +627,18 @@
                               ['Stable Disease', otherTherapeuticResponse[3]],
                               ['Other', otherTherapeuticResponse[4]]
                           ]
-                      }]
+                      }],
+                      drillUpButton: {
+                          position: {
+                              x: 0,
+                              y: -40
+                          }
+                      }
+
                   }
               });
-            //Highcharts.setOptions(theme);
           }
-      
-      function chartJSDrawer(elementId, chartType, labelsArray, chartLabel, dataArray) {
-              var myChart = new Chart(elementId, {
-              type: chartType,
-              data: {
-                  labels: labelsArray,
-                  datasets: [{
-                      label: chartLabel,
-                      data: dataArray,
-                      backgroundColor: [
-                          'rgba(255, 99, 132, 0.8)',
-                          'rgba(54, 162, 235, 0.8)',
-                          'rgba(255, 206, 86, 0.8)',
-                          'rgba(75, 192, 192, 0.8)',
-                          'rgba(153, 102, 255, 0.8)'
-                      ],
-                      borderColor: [
-                          'rgba(255,99,132,1)',
-                          'rgba(54, 162, 235, 1)',
-                          'rgba(255, 206, 86, 1)',
-                          'rgba(75, 192, 192, 1)',
-                          'rgba(153, 102, 255, 1)'
-                      ],
-                      borderWidth: 1
-                  }]
-              },
-              options: {
-                  scales: {
-                      xAxes: [{
-                          ticks: {
-                              beginAtZero: true
-                          }
-                      }]
-                  }
-              }
-          });
-      }
 
-/**
- * (c) 2010-2017 Torstein Honsi
- *
- * License: www.highcharts.com/license
- *
- * Dark theme for Highcharts JS
- * @author Torstein Honsi
- */
-
-
-var theme = {
-    colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
-        '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
-    chart: {
-        backgroundColor: {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
-            stops: [
-                [0, '#2a2a2b'],
-                [1, '#3e3e40']
-            ]
-        },
-        style: {
-            fontFamily: '\'Unica One\', sans-serif'
-        },
-        plotBorderColor: '#606063'
-    },
-    title: {
-        style: {
-            color: '#E0E0E3',
-            textTransform: 'uppercase',
-            fontSize: '20px'
-        }
-    },
-    subtitle: {
-        style: {
-            color: '#E0E0E3',
-            textTransform: 'uppercase'
-        }
-    },
-    xAxis: {
-        gridLineColor: '#707073',
-        labels: {
-            style: {
-                color: '#E0E0E3'
-            }
-        },
-        lineColor: '#707073',
-        minorGridLineColor: '#505053',
-        tickColor: '#707073',
-        title: {
-            style: {
-                color: '#A0A0A3'
-
-            }
-        }
-    },
-    yAxis: {
-        gridLineColor: '#707073',
-        labels: {
-            style: {
-                color: '#E0E0E3'
-            }
-        },
-        lineColor: '#707073',
-        minorGridLineColor: '#505053',
-        tickColor: '#707073',
-        tickWidth: 1,
-        title: {
-            style: {
-                color: '#A0A0A3'
-            }
-        }
-    },
-    tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.85)',
-        style: {
-            color: '#F0F0F0'
-        }
-    },
-    plotOptions: {
-        series: {
-            dataLabels: {
-                color: '#B0B0B3'
-            },
-            marker: {
-                lineColor: '#333'
-            }
-        },
-        boxplot: {
-            fillColor: '#505053'
-        },
-        candlestick: {
-            lineColor: 'white'
-        },
-        errorbar: {
-            color: 'white'
-        }
-    },
-    legend: {
-        itemStyle: {
-            color: '#E0E0E3'
-        },
-        itemHoverStyle: {
-            color: '#FFF'
-        },
-        itemHiddenStyle: {
-            color: '#606063'
-        }
-    },
-    credits: {
-        style: {
-            color: '#666'
-        }
-    },
-    labels: {
-        style: {
-            color: '#707073'
-        }
-    },
-
-    drilldown: {
-        activeAxisLabelStyle: {
-            color: '#F0F0F3'
-        },
-        activeDataLabelStyle: {
-            color: '#F0F0F3'
-        }
-    },
-
-    navigation: {
-        buttonOptions: {
-            symbolStroke: '#DDDDDD',
-            theme: {
-                fill: '#505053'
-            }
-        }
-    },
-
-    // scroll charts
-    rangeSelector: {
-        buttonTheme: {
-            fill: '#505053',
-            stroke: '#000000',
-            style: {
-                color: '#CCC'
-            },
-            states: {
-                hover: {
-                    fill: '#707073',
-                    stroke: '#000000',
-                    style: {
-                        color: 'white'
-                    }
-                },
-                select: {
-                    fill: '#000003',
-                    stroke: '#000000',
-                    style: {
-                        color: 'white'
-                    }
-                }
-            }
-        },
-        inputBoxBorderColor: '#505053',
-        inputStyle: {
-            backgroundColor: '#333',
-            color: 'silver'
-        },
-        labelStyle: {
-            color: 'silver'
-        }
-    },
-
-    navigator: {
-        handles: {
-            backgroundColor: '#666',
-            borderColor: '#AAA'
-        },
-        outlineColor: '#CCC',
-        maskFill: 'rgba(255,255,255,0.1)',
-        series: {
-            color: '#7798BF',
-            lineColor: '#A6C7ED'
-        },
-        xAxis: {
-            gridLineColor: '#505053'
-        }
-    },
-
-    scrollbar: {
-        barBackgroundColor: '#808083',
-        barBorderColor: '#808083',
-        buttonArrowColor: '#CCC',
-        buttonBackgroundColor: '#606063',
-        buttonBorderColor: '#606063',
-        rifleColor: '#FFF',
-        trackBackgroundColor: '#404043',
-        trackBorderColor: '#404043'
-    },
-
-    // special colors for some of the
-    legendBackgroundColor: 'rgba(0, 0, 0, 0.5)',
-    background2: '#505053',
-    dataLabelsColor: '#B0B0B3',
-    textColor: '#C0C0C0',
-    contrastTextColor: '#F0F0F3',
-    maskColor: 'rgba(255,255,255,0.3)'
-};
           
    </script>
 </html>
