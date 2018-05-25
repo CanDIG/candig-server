@@ -120,7 +120,7 @@
       
           var tbl = $('<table/>').attr("id", "mytable");
       
-          var th = '<thead><tr><th scope="col">Patient ID</th><th scope="col">Date of Death</th><th scope="col">Province of Residence</th> <th scope="col">Date of Birth</th><th scope="col">Race</th><th scope="col">OEE</th></tr></thead><tbody>';
+          var th = '<thead><tr><th scope="col">Patient ID</th><th scope="col">Gender</th><th scope="col">Date of Death</th><th scope="col">Province of Residence</th> <th scope="col">Date of Birth</th><th scope="col">Race</th><th scope="col">OEE</th></tr></thead><tbody>';
       
           $("#mytable").append(th);
       
@@ -131,6 +131,7 @@
       
               var tr = "<tr>";
               var td0 = '<td scope="col">' + patientsDataset[i]["patientId"] + "</td>";
+              var tdGender = '<td scope="col">' + patientsDataset[i]["gender"] + "</td>";
               var td1 = '<td scope="col">' + patientsDataset[i]["dateOfDeath"] + "</td>";
               var td2 = '<td scope="col">' + patientsDataset[i]["provinceOfResidence"] + "</td>";
               var td3 = '<td scope="col">' + patientsDataset[i]["dateOfBirth"] + "</td>";
@@ -138,17 +139,38 @@
               var td5 = '<td scope="col">' + patientsDataset[i]["occupationalOrEnvironmentalExposure"] + "</td>";
               var td6 = "</tr>";
       
-              $("#mytable").append(tr + td0 + td1 + td2 + td3 + td4 + td5 + td6);
+              $("#mytable").append(tr + td0 + tdGender + td1 + td2 + td3 + td4 + td5 + td6);
           }
       
           categoriesDrawer("raceGraph", "Ethnic Groups", listOfRace);
           categoriesDrawer("provinceGraph", "Provinces", listOfProvinces);
           categoriesDrawer("genderGraph", "Genders", listOfGenders);
       
-          $("#mytable").append('</tbody>');
+          $("#mytable").append('</tbody><tfoot><tr><th scope="col">Patient ID</th><th scope="col">Gender</th><th scope="col">Date of Death</th><th scope="col">Province of Residence</th> <th scope="col">Date of Birth</th><th scope="col">Race</th><th scope="col">OEE</th></tr></tfoot>');
       
           $(document).ready(function() {
-              $('#mytable').DataTable();
+              $('#mytable').DataTable({
+                  initComplete: function () {
+                      this.api().columns().every( function () {
+                          var column = this;
+                          var select = $('<select><option value=""></option></select>')
+                              .appendTo( $(column.footer()).empty() )
+                              .on( 'change', function () {
+                                  var val = $.fn.dataTable.util.escapeRegex(
+                                      $(this).val()
+                                  );
+           
+                                  column
+                                      .search( val ? '^'+val+'$' : '', true, false )
+                                      .draw();
+                              } );
+           
+                          column.data().unique().sort().each( function ( d, j ) {
+                              select.append( '<option value="'+d+'">'+d+'</option>' )
+                          } );
+                      } );
+                  }
+              });
           });
       
           $('#mytable tbody').on('click', 'tr', function () {
@@ -193,6 +215,7 @@
       }
       
       function drillDownDrawer(elementId, titleText, categories, seriesName, seriesList, drillDownList) {
+        var lastSearch = "";
           Highcharts.chart(elementId, {
               chart: {
                   type: 'pie'
@@ -216,6 +239,20 @@
                       borderWidth: 0,
                       dataLabels: {
                           enabled: true
+                      },
+                      point: {
+                          events: {
+                            click: function () {
+                                if (lastSearch != this.name){
+                                    $('#mytable').DataTable().search( this.name ).draw();
+                                    lastSearch = this.name;
+                                }
+                                else if (lastSearch == this.name) {
+                                    $('#mytable').DataTable().search( "" ).draw();
+                                    lastSearch = "";
+                                }
+                            }
+                          }
                       }
                   }
               },
