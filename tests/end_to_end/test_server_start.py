@@ -10,7 +10,7 @@ from __future__ import unicode_literals
 
 import unittest
 
-import tests.end_to_end.server as server
+import server as server
 
 import tests.paths as paths
 

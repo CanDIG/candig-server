@@ -42,10 +42,9 @@ class TestSequenceAnnotations(unittest.TestCase):
         """
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
         self.assertEqual(200, response.status_code)
-        responseData = protocol.deserialize(
-                response.data,
-                self.serialization,
-                responseClass)
+        responseData = protocol.deserialize(response.data,
+                                            self.serialization,
+                                            responseClass)
         self.assertTrue(
             protocol.validate(protocol.toJson(responseData), responseClass))
         return responseData
@@ -165,7 +164,6 @@ class TestSequenceAnnotations(unittest.TestCase):
             path, request, protocol.SearchContinuousSetsResponse)
         return responseData.continuous_sets
 
-    @unittest.skip("Disabled")
     def testSearchContinuous(self):
         continuousSets = self.getAllContinuousSets()
         for continuousSet in continuousSets:
