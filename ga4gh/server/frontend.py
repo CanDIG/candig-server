@@ -511,6 +511,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     """
     request_dictionary = flask.request
+    token = request_dictionary.headers['Authorization']
 
     # Self query
     responseObject = {}
@@ -545,6 +546,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 'Content-Type': return_mimetype,
                 'Accept': return_mimetype,
                 'Federation': 'False',
+                'Authorization': token
             }
             # Make the call
             try:
@@ -778,6 +780,60 @@ def requires_token(f):
         return f(*args, **kargs)
     return decorated
 
+def requires_session(f):
+    """
+    Testing: decorator for ensuring we have valid tyk access and an authenticated flask session
+    Modified from Kevin's original use case to grab tokens from session without using flask-oidc login
+    Authentication in this scenario is mostly handled by the Tyk API gateway and its middleware
+    Testing this out as a means of flask session management. Shouldn't be used with REST endpoints
+    """
+    @functools.wraps(f)
+    def decorated(*args, **kargs):
+        # TODO: store this info in a config
+        tyk_server = 'ga4ghdev01'
+        tyk_port = '8008'
+        tyk_listen_path = '/candig-local/'
+
+        redirectUri = 'http://{0}:{1}{2}'.format(
+            tyk_server,
+            tyk_port,
+            tyk_listen_path
+        )
+
+        # tokens to save in session
+        session_tokens = ["access_token", "refresh_token"]
+
+        if not all(token in flask.session for token in session_tokens):
+
+            try:
+                # not sure about this
+                flask.session["access_token"] = flask.request.headers["X-AccessToken"]
+                flask.session["refresh_token"] = flask.request.headers["X-RefreshToken"]
+
+                # for making requests during session
+                flask.session["id_token"] = flask.request.headers["Authorization"][7:]
+
+            except:
+                return flask.redirect(redirectUri)
+
+        introspectArgs = {
+            "token": flask.session["access_token"],
+            "client_id": oidc.client_secrets["client_id"],
+            "client_secret": oidc.client_secrets["client_secret"],
+            "refresh_token": flask.session["refresh_token"]
+        }
+
+        userInfo = requests.post(
+            url=oidc.client_secrets["token_introspection_uri"],
+            data=introspectArgs
+        )
+
+        if userInfo.status_code != 200:
+            raise exceptions.NotAuthenticatedException()
+
+        return f(*args, **kargs)
+    return decorated
+
 
 def startLogin():
     """
@@ -927,8 +983,7 @@ class DisplayedRoute(object):
 
 
 @app.route('/')
-@oidc.require_login
-@requires_token
+@requires_session
 def index():
     response = flask.render_template('index.html',
                                      info=app.serverStatus)
@@ -970,6 +1025,78 @@ def search_variant_by_gene_name():
 ### ======================================================================= ###
 ### FRONT END END
 ### ======================================================================= ###
+
+########################################
+### Start TYK gateway authentication
+########################################
+@app.route('/gateway')
+def gateway():
+    redirect_uri = flask.request.args.get('redirectUri', None, type=str)
+
+    # TODO: store some of this info in a config
+    tyk_server = 'ga4ghdev01'
+    tyk_port = '8008'
+    tyk_listen_path = '/candig-local/'
+
+    redirectUri = 'http://{0}:{1}{2}'.format(
+        tyk_server,
+        tyk_port,
+        tyk_listen_path
+    )
+
+    # using default hardcoded paths for now
+    if not redirect_uri: redirect_uri = redirectUri
+    # TODO: store some of this info in a config
+    idp_serv = 'ga4ghdev01:8080'
+    idp_path = '/auth/realms/CanDIG/protocol/openid-connect/auth?scope=openid+email&redirect_uri='+redirect_uri+'&response_type=code&client_id=ga4gh'
+
+    return flask.redirect('http://{0}{1}'.format(idp_serv,idp_path))
+
+@app.route('/gateway_logout')
+def gateway_logout():
+    # TODO: store this info in a config
+    tyk_server = 'ga4ghdev01'
+    tyk_port = '8008'
+    tyk_listen_path = '/candig-local/'
+
+    redirectUri = 'http://{0}:{1}{2}'.format(
+        tyk_server,
+        tyk_port,
+        tyk_listen_path
+    )
+
+    try:
+        url = 'http://ga4ghdev01:8080/auth/realms/CanDIG/protocol/openid-connect/logout'
+        auth_bearer = 'Bearer ' + flask.session["access_token"]
+
+        payload = {
+            "refresh_token": flask.session["refresh_token"],
+            "client_id": oidc.client_secrets["client_id"],
+            "client_secret": oidc.client_secrets["client_secret"]
+        }
+
+        headers = {
+            'Authorization': auth_bearer,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+
+        requests.post(url, data=payload, headers=headers)
+        flask.session.clear()
+
+    except:
+        raise exceptions.NotAuthenticatedException()
+
+    return flask.redirect(redirectUri)
+
+# get an oidc token for use
+@DisplayedRoute('/authenticate', postMethod=True)
+def authenticate():
+    print(flask.request)
+    return {"token": "abc123"}
+
+###############################################
+### End TYK gateway authentication
+###############################################
 
 @app.route('/concordance')
 def concordance():
