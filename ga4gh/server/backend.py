@@ -792,7 +792,7 @@ class Backend(object):
         return data
 
     def runSearchRequest(
-            self, requestStr, requestClass, responseClass, objectGenerator,
+        self, requestStr, requestClass, responseClass, objectGenerator,
             return_mimetype="application/json"):
         """
         Runs the specified request. The request is a string containing
@@ -827,8 +827,10 @@ class Backend(object):
         self.endProfile()
         return responseString
 
-    def runListReferenceBases(self, requestJson,
-                              return_mimetype="application/json"):
+    def runListReferenceBases(
+            self,
+            requestJson,
+            return_mimetype="application/json"):
         """
         Runs a listReferenceBases request for the specified ID and
         request arguments.
@@ -937,7 +939,7 @@ class Backend(object):
         return protocol.serialize(protocol.GetInfoResponse(
             protocol_version=protocol.version), return_mimetype)
 
-    def runAddAnnouncement(self, flaskrequest):
+    def runAddAnnouncement(self, flaskrequest, return_mimetype="application/json"):
         """
         Takes a flask request from the frontend and attempts to parse
         into an AnnouncePeerRequest. If successful, it will log the
@@ -978,7 +980,7 @@ class Backend(object):
         return protocol.toJson(
             protocol.AnnouncePeerResponse(success=True))
 
-    def runListPeers(self, request):
+    def runListPeers(self, request, return_mimetype="application/json"):
         """
         Takes a ListPeersRequest and returns a ListPeersResponse using
         a page_token and page_size if provided.
@@ -987,7 +989,15 @@ class Backend(object):
             request,
             protocol.ListPeersRequest,
             protocol.ListPeersResponse,
-            self.peersGenerator)
+            self.peersGenerator,
+            return_mimetype)
+
+    def runGetTest(self, request, return_mimetype="application/json"):
+        """
+        Returns information about the service including protocol version.
+        """
+        repo = self.getDataRepository()
+        repo.verify()
 
     def runGetVariant(self, id_, return_mimetype="application/json"):
         """

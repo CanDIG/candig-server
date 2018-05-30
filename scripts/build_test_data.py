@@ -47,10 +47,10 @@ def buildTestData(
     datasetName = "dataset1"
     run("add-dataset", repoFile, datasetName)
 
-    pattern = os.path.join(prefix, "datasets/dataset1/reads", "*.bam")
-    for dataFile in glob.glob(pattern):
-        run("add-readgroupset", repoFile, datasetName, useRelativePath,
-            dataFile)
+    # pattern = os.path.join(prefix, "datasets/dataset1/reads", "*.bam")
+    # for dataFile in glob.glob(pattern):
+    #     run("add-readgroupset", repoFile, datasetName, useRelativePath,
+    #         dataFile)
 
     pattern = os.path.join(prefix, "datasets/dataset1/variants", "*")
     for j, dataFile in enumerate(glob.glob(pattern)):
@@ -67,12 +67,12 @@ def buildTestData(
             dataFile, "-R NCBI37", "-O", sequenceOntologyName,
             "-C ga4gh.datamodel.sequence_annotations.Gff3DbFeatureSet")
 
-    pattern = os.path.join(
-        prefix, "datasets/dataset1/continuous", "*.bw")
-    for dataFile in glob.glob(pattern):
-        run("add-continuousset", repoFile, datasetName, useRelativePath,
-            dataFile, "-R NCBI37",
-            "-C ga4gh.datamodel.continuous.FileContinuousSet")
+#    pattern = os.path.join(
+#        prefix, "datasets/dataset1/continuous", "*.bw")
+#    for dataFile in glob.glob(pattern):
+#        run("add-continuousset", repoFile, datasetName, useRelativePath,
+#            dataFile, "-R NCBI37",
+#            "-C ga4gh.datamodel.continuous.FileContinuousSet")
 
     pattern = os.path.join(prefix, "datasets/dataset1/phenotypes", "*")
     for dataFile in glob.glob(pattern):
@@ -87,13 +87,13 @@ def buildTestData(
             "-C ga4gh.datamodel.genotype_phenotype_featureset."
             "PhenotypeAssociationFeatureSet")
 
-    pattern = os.path.join(
-        prefix, "datasets/dataset1/rnaQuant", "*.db")
-    for j, dataFile in enumerate(glob.glob(pattern)):
-        name = "rnaseq_{}".format(j)
-        run(
-            "add-rnaquantificationset", repoFile, datasetName, dataFile,
-            "-R NCBI37", "-n ", name)
+#    pattern = os.path.join(
+#        prefix, "datasets/dataset1/rnaQuant", "*.db")
+#    for j, dataFile in enumerate(glob.glob(pattern)):
+#        name = "rnaseq_{}".format(j)
+#        run(
+#            "add-rnaquantificationset", repoFile, datasetName, dataFile,
+#            "-R NCBI37", "-n ", name)
 
 
 def parseArgs():

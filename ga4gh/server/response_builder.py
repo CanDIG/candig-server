@@ -14,7 +14,7 @@ class SearchResponseBuilder(object):
     A class to allow sequential building of SearchResponse objects.
     """
     def __init__(self, responseClass, pageSize, maxBufferSize,
-                 return_mimetype="application/json"):
+        return_mimetype="application/json"):
         """
         Allocates a new SearchResponseBuilder for the specified
         responseClass, user-requested pageSize and the system mandated

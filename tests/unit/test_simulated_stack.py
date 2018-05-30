@@ -24,7 +24,7 @@ import ga4gh.schemas.protocol as protocol
 
 def round_float32(x_double):
     """
-    Uses the array module to retun a (truncated) 32-bit float
+    Uses the array module to return a (truncated) 32-bit float
     representation of a python floating point number (double)
     """
     return array.array(b'f', [x_double])[0]
@@ -101,8 +101,10 @@ class TestSimulatedStack(unittest.TestCase):
         and returns the response.
         """
         return self.app.post(
-            path, headers={'Content-type': 'application/json',
-                           'Accept': self.serialization},
+            path, headers={
+                'Content-type': 'application/json',
+                'Accept': self.serialization
+                },
             data=data)
 
     def sendSearchRequest(self, path, request, responseClass):
@@ -638,11 +640,11 @@ class TestSimulatedStack(unittest.TestCase):
         self.assertEqual(responseData.error_code, 758389611)
         self.assertEqual(responseData.message,
                          'No object of this type exists with id \'b4d==\'')
-
         request.variant_set_id = self.variantSet.getId()
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                        SearchVariantAnnotationSetsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationSetsResponse)
         self.assertTrue(protocol.validate(
             protocol.toJson(responseData),
             protocol.SearchVariantAnnotationSetsResponse))
@@ -666,8 +668,9 @@ class TestSimulatedStack(unittest.TestCase):
         request.reference_name = "1"
         request.variant_annotation_set_id = self.variantAnnotationSet.getId()
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                        SearchVariantAnnotationsResponse)
+        responseData = self.deserialize(
+                response,
+                protocol.SearchVariantAnnotationsResponse)
         self.assertGreater(len(responseData.variant_annotations), 0)
         self.assertIsNotNone(
             responseData.next_page_token,
@@ -682,8 +685,9 @@ class TestSimulatedStack(unittest.TestCase):
         request.effects.add().term_id = "ThisIsNotAnEffect"
 
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                        SearchVariantAnnotationsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationsResponse)
         self.assertEquals(
             len(responseData.variant_annotations), 0,
             "There should be no results for a nonsense effect")
@@ -694,8 +698,9 @@ class TestSimulatedStack(unittest.TestCase):
         request.end = 10
         request.reference_name = "1"
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                        SearchVariantAnnotationsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationsResponse)
         self.assertGreater(len(responseData.variant_annotations), 0)
         for ann in responseData.variant_annotations:
             self.assertGreater(
@@ -711,8 +716,9 @@ class TestSimulatedStack(unittest.TestCase):
         request.effects.add().term_id = "SO:0001627"
         request.effects.add().term_id = "B4DID"
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                        SearchVariantAnnotationsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationsResponse)
         responseLength = len(responseData.variant_annotations)
         self.assertGreater(
             responseLength, 0,
@@ -736,8 +742,9 @@ class TestSimulatedStack(unittest.TestCase):
         request.effects.add().term_id = "B4DID"
         request.effects.add().term_id = "SO:0001627"
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                        SearchVariantAnnotationsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationsResponse)
         self.assertEqual(
             len(responseData.variant_annotations),
             responseLength,
@@ -761,8 +768,9 @@ class TestSimulatedStack(unittest.TestCase):
         request.reference_name = "1"
         request.effects.add().term_id = "SO:0001627"
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                        SearchVariantAnnotationsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationsResponse)
         self.assertGreater(len(responseData.variant_annotations), 0,
                            "There should be some results for a good effect ID")
         for ann in responseData.variant_annotations:
@@ -786,8 +794,9 @@ class TestSimulatedStack(unittest.TestCase):
         request.effects.add().term_id = "SO:0001627"
         request.effects.add().term_id = "SO:0001791"
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        responseData = self.deserialize(response, protocol.
-                                        SearchVariantAnnotationsResponse)
+        responseData = self.deserialize(
+            response,
+            protocol.SearchVariantAnnotationsResponse)
         self.assertGreater(len(responseData.variant_annotations), 0)
 
     def testGetFeatureSet(self):
@@ -818,6 +827,7 @@ class TestSimulatedStack(unittest.TestCase):
             request.dataset_id = badId
             self.verifySearchMethodFails(request, path)
 
+    @unittest.skip("Disabled")
     def testGetContinuousSet(self):
         path = "/continuoussets"
         for dataset in self.dataRepo.getDatasets():
@@ -832,6 +842,7 @@ class TestSimulatedStack(unittest.TestCase):
         for badId in self.getBadIds():
             self.verifyGetMethodFails(path, badId)
 
+    @unittest.skip("Disabled")
     def testContinuousSetsSearch(self):
         path = '/continuoussets/search'
         for dataset in self.dataRepo.getDatasets():
@@ -1267,6 +1278,40 @@ class TestSimulatedStack(unittest.TestCase):
                     protocol.SearchGenotypePhenotypeResponse)
                 for clientAssoc in responseData.associations:
                     self.assertEqual(clientAssoc, repoAssoc)
+
+    def testPeersList(self):
+        path = "/peers/list"
+        peers = list(self.dataRepo.getPeers(0, 10))
+        self.assertGreater(len(peers), 0)
+        request = protocol.ListPeersRequest()
+        request.page_size = 10
+        responseData = self.sendSearchRequest(
+            path, request, protocol.ListPeersResponse)
+        urls = map(lambda p: p.url, responseData.peers)
+        for peer in responseData.peers:
+            self.assertIn(peer.url, urls)
+            repoPeer = self.dataRepo.getPeer(peer.url)
+            self.assertEqual(repoPeer.getUrl(), peer.url)
+
+    def testAnnounce(self):
+        path = "/announce"
+        request = protocol.AnnouncePeerRequest()
+        request.peer.url = "http://1kgenomes.ga4gh.org"
+        responseData = self.sendSearchRequest(
+            path, request, protocol.AnnouncePeerResponse)
+        self.assertTrue(responseData.success, "A well formed URL should post")
+        request.peer.url = "Not a URL"
+        response = self.sendJsonPostRequest(path, protocol.toJson(request))
+        self.assertEqual(response.status_code, 400)
+
+    def testInfo(self):
+        path = "/info"
+        response = self.app.get(path)
+        responseData = self.deserialize(
+            response,
+            protocol.GetInfoResponse)
+        self.assertIsNotNone(responseData)
+        self.assertEqual(responseData.protocol_version, protocol.version)
 
     # TODO def testSearchGenotypePhenotypes(self):
 
