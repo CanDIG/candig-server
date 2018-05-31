@@ -813,11 +813,16 @@ def index():
 ### ======================================================================= ###
 @app.route('/candig')
 def candig():
-    return flask.render_template('candig.html')
+    datasetId = "WyJNRVRBREFUQSJd";
+    return flask.render_template('candig.html',datasetId=datasetId)
 
 @app.route('/candig_patients')
 def candig_patients():
     return flask.render_template('candig_patients.html')
+
+@app.route('/igv')
+def candig_igv():
+    return flask.render_template('candig_igv.html')
 
 @app.route('/gene_search')
 def candig_gene_search():
