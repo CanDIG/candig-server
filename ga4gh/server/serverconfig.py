@@ -177,3 +177,15 @@ class FlaskDefaultConfig(object):
     TRAP_BAD_REQUEST_ERRORS = False
     TRAP_HTTP_EXCEPTIONS = False
     USE_X_SENDFILE = False
+
+
+class TykConfig(KeycloakOidConfig):
+    """
+    Configuration to use when forwarding requests through the API gateway.
+    This also requires that keycloak config is being used and is set up properly.
+    Still testing this config out
+    """
+    TYK_ENABLED = True
+    TYK_SERVER = 'ga4ghdev01'
+    TYK_PORT = '8008'
+    TYK_LISTEN_PATH = '/candig-local/'

@@ -787,26 +787,21 @@ def requires_session(f):
     Authentication in this scenario is mostly handled by the Tyk API gateway and its middleware
     Testing this out as a means of flask session management. Shouldn't be used with REST endpoints
     """
+
     @functools.wraps(f)
     def decorated(*args, **kargs):
-        # TODO: store this info in a config
-        tyk_server = 'ga4ghdev01'
-        tyk_port = '8008'
-        tyk_listen_path = '/candig-local/'
+        if app.config.get("TYK_ENABLED"):
 
-        redirectUri = 'http://{0}:{1}{2}'.format(
-            tyk_server,
-            tyk_port,
-            tyk_listen_path
-        )
+            redirect_uri = 'http://{0}:{1}{2}'.format(
+                app.config.get('TYK_SERVER'),
+                app.config.get('TYK_PORT'),
+                app.config.get('TYK_LISTEN_PATH')
+            )
 
-        # tokens to save in session
-        session_tokens = ["access_token", "refresh_token"]
-
-        if not all(token in flask.session for token in session_tokens):
+            if "state" not in flask.session:
+                flask.session["state"] = flask.request.args.get("session_state")
 
             try:
-                # not sure about this
                 flask.session["access_token"] = flask.request.headers["X-AccessToken"]
                 flask.session["refresh_token"] = flask.request.headers["X-RefreshToken"]
 
@@ -814,22 +809,22 @@ def requires_session(f):
                 flask.session["id_token"] = flask.request.headers["Authorization"][7:]
 
             except:
-                return flask.redirect(redirectUri)
+                return flask.redirect(redirect_uri)
 
-        introspectArgs = {
-            "token": flask.session["access_token"],
-            "client_id": oidc.client_secrets["client_id"],
-            "client_secret": oidc.client_secrets["client_secret"],
-            "refresh_token": flask.session["refresh_token"]
-        }
+            introspectArgs = {
+                "token": flask.session["access_token"],
+                "client_id": oidc.client_secrets["client_id"],
+                "client_secret": oidc.client_secrets["client_secret"],
+                "refresh_token": flask.session["refresh_token"]
+            }
 
-        userInfo = requests.post(
-            url=oidc.client_secrets["token_introspection_uri"],
-            data=introspectArgs
-        )
+            userInfo = requests.post(
+                url=oidc.client_secrets["token_introspection_uri"],
+                data=introspectArgs
+            )
 
-        if userInfo.status_code != 200:
-            raise exceptions.NotAuthenticatedException()
+            if userInfo.status_code != 200:
+                raise exceptions.NotAuthenticatedException()
 
         return f(*args, **kargs)
     return decorated
@@ -1006,16 +1001,19 @@ def index():
 ### FRONT END
 ### ======================================================================= ###
 @app.route('/candig')
+@requires_session
 def candig():
-    return flask.render_template('candig.html')
+    return flask.render_template('candig.html', session_id=flask.session["id_token"])
 
 @app.route('/candig_patients')
+@requires_session
 def candig_patients():
-    return flask.render_template('candig_patients.html')
+    return flask.render_template('candig_patients.html', session_id=flask.session["id_token"])
 
 @app.route('/gene_search')
+@requires_session
 def candig_gene_search():
-    return flask.render_template('gene_search.html')
+    return flask.render_template('gene_search.html', session_id=flask.session["id_token"])
 
 @DisplayedRoute('/variantsbygenesearch', postMethod=True)
 def search_variant_by_gene_name():
@@ -1026,47 +1024,49 @@ def search_variant_by_gene_name():
 ### FRONT END END
 ### ======================================================================= ###
 
-########################################
-### Start TYK gateway authentication
-########################################
-@app.route('/gateway')
-def gateway():
+### ======================================================================= ###
+### Start TYK
+### ======================================================================= ###
+
+# proxy to oidc login
+@app.route('/proxy')
+def proxy():
+    """
+    *** this endpoint should ignore Tyk Authorization requirements ***
+
+    All requests without an Authorization header should be proxied through
+    this endpoint (except for authentication request). Tyk 'pre-auth' middleware
+    will use this to ensure users are logged in
+
+    :return: redirect call to the identity provider authentication point
+    """
+
     redirect_uri = flask.request.args.get('redirectUri', None, type=str)
 
-    # TODO: store some of this info in a config
-    tyk_server = 'ga4ghdev01'
-    tyk_port = '8008'
-    tyk_listen_path = '/candig-local/'
-
-    redirectUri = 'http://{0}:{1}{2}'.format(
-        tyk_server,
-        tyk_port,
-        tyk_listen_path
-    )
+    if not redirect_uri:
+        redirect_uri = 'http://{0}:{1}{2}'.format(
+            app.config.get('TYK_SERVER'),
+            app.config.get('TYK_PORT'),
+            app.config.get('TYK_LISTEN_PATH')
+        )
 
     # using default hardcoded paths for now
-    if not redirect_uri: redirect_uri = redirectUri
-    # TODO: store some of this info in a config
     idp_serv = 'ga4ghdev01:8080'
     idp_path = '/auth/realms/CanDIG/protocol/openid-connect/auth?scope=openid+email&redirect_uri='+redirect_uri+'&response_type=code&client_id=ga4gh'
 
     return flask.redirect('http://{0}{1}'.format(idp_serv,idp_path))
 
+
 @app.route('/gateway_logout')
 def gateway_logout():
-    # TODO: store this info in a config
-    tyk_server = 'ga4ghdev01'
-    tyk_port = '8008'
-    tyk_listen_path = '/candig-local/'
+    """
+    End both the flask + oidc login sessions. Requires user to be currently logged in
 
-    redirectUri = 'http://{0}:{1}{2}'.format(
-        tyk_server,
-        tyk_port,
-        tyk_listen_path
-    )
+    :return: redirect to the gateway proxy
+    """
 
     try:
-        url = 'http://ga4ghdev01:8080/auth/realms/CanDIG/protocol/openid-connect/logout'
+        url = oidc.client_secrets["logout_endpoint"]
         auth_bearer = 'Bearer ' + flask.session["access_token"]
 
         payload = {
@@ -1084,19 +1084,47 @@ def gateway_logout():
         flask.session.clear()
 
     except:
+        # send to proxy after failing
+        flask.request.url = flask.url_for('proxy')
         raise exceptions.NotAuthenticatedException()
 
-    return flask.redirect(redirectUri)
+    return flask.redirect(flask.url_for('proxy'))
 
-# get an oidc token for use
-@DisplayedRoute('/authenticate', postMethod=True)
-def authenticate():
-    print(flask.request)
-    return {"token": "abc123"}
 
-###############################################
-### End TYK gateway authentication
-###############################################
+@DisplayedRoute('/token', postMethod=True)
+def token():
+    """
+        *** this endpoint should ignore Tyk Authorization requirements ***
+
+        :return: an oidc id token to attach to subsequent request headers in the following format:
+
+            Authorization: Bearer <token>
+
+        As of now, the tyk 'pre-auth' js middleware handles the token
+        grant API calls and unless there was an authentication error,
+        the token should already be in the request header
+
+        Allows token retrieval without having to use a flask session (ie. for REST API calls)
+    """
+
+    response = {}
+    mimetype = "application/json"
+
+    try:
+        token = flask.request.headers["Authorization"][7:]
+        response["token"] = token
+        status = 200
+
+    except:
+        # get error details from the request
+        response["error"] = flask.request.data
+        status = 401
+
+    return flask.Response(json.dumps(response), status=status, mimetype=mimetype)
+
+### ======================================================================= ###
+### END TYK
+### ======================================================================= ###
 
 @app.route('/concordance')
 def concordance():
