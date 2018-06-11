@@ -448,14 +448,25 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     """
     request_dictionary = flask.request
-
+    
+    usertier = 0
+    if 'Tier' in request_dictionary.headers:
+        usertier = int(request_dictionary.headers['Tier'])
+        
+    print('USER TIER:', usertier)
+    
+    
     # Self query
     responseObject = {}
     responseObject['results'] = []
     responseObject['status'] = list()
     try:
         responseObject['results'] = [json.loads(
-            endpoint(request, return_mimetype=return_mimetype)
+            endpoint(
+                request, 
+                return_mimetype=return_mimetype,
+                tier=usertier,
+                )
             )]
 
         responseObject['status'].append(200)

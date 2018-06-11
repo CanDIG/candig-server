@@ -182,7 +182,7 @@ class AbstractFeatureSet(datamodel.DatamodelObject):
         """
         self._referenceSet = referenceSet
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         """
         Returns the representation of this FeatureSet as the corresponding
         ProtocolElement.

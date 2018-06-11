@@ -45,7 +45,7 @@ class AbstractExpressionLevel(datamodel.DatamodelObject):
         self._confIntervalLow = 0.0
         self._confIntervalHigh = 0.0
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         protocolElement = protocol.ExpressionLevel()
         protocolElement.id = self.getId()
         protocolElement.name = self._name
@@ -135,7 +135,7 @@ class AbstractRnaQuantificationSet(datamodel.DatamodelObject):
         self._rnaQuantificationIdMap[id_] = rnaQuantification
         self._rnaQuantificationIds.append(id_)
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         """
         Converts this rnaQuant into its GA4GH protocol equivalent.
         """
@@ -210,7 +210,7 @@ class AbstractRnaQuantification(datamodel.DatamodelObject):
         self._programs = []
         self._biosampleId = ""
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         """
         Converts this rnaQuant into its GA4GH protocol equivalent.
         """

@@ -79,7 +79,7 @@ class Backend(object):
     #
     ###########################################################
 
-    def _topLevelObjectGenerator(self, request, numObjects, getByIndexMethod):
+    def _topLevelObjectGenerator(self, request, numObjects, getByIndexMethod, tier=0):
         """
         Returns a generator over the results for the specified request, which
         is over a set of objects of the specified size. The objects are
@@ -98,7 +98,7 @@ class Backend(object):
             nextPageToken = None
             if currentIndex < numObjects:
                 nextPageToken = str(currentIndex)
-            yield object_.toProtocolElement(), nextPageToken
+            yield object_.toProtocolElement(tier), nextPageToken
 
     def _protocolObjectGenerator(self, request, numObjects, getByIndexMethod):
         """
@@ -129,15 +129,19 @@ class Backend(object):
         return self._protocolObjectGenerator(
             request, len(objectList), lambda index: objectList[index])
 
-    def _objectListGenerator(self, request, objectList):
+    def _objectListGenerator(self, request, objectList, tier=0):
         """
         Returns a generator over the objects in the specified list using
         _topLevelObjectGenerator to generate page tokens.
         """
         return self._topLevelObjectGenerator(
-            request, len(objectList), lambda index: objectList[index])
+            request,
+            len(objectList),
+            lambda index: objectList[index],
+            tier=tier,
+            )
 
-    def datasetsGenerator(self, request):
+    def datasetsGenerator(self, request, tier=0):
         """
         Returns a generator over the (dataset, nextPageToken) pairs
         defined by the specified request
@@ -146,7 +150,7 @@ class Backend(object):
             request, self.getDataRepository().getNumDatasets(),
             self.getDataRepository().getDatasetByIndex)
 
-    def experimentsGenerator(self, request):
+    def experimentsGenerator(self, request, tier=0):
         """
         Returns a generator over the (experiment, nextPageToken) pairs
         defined by the specified request
@@ -157,7 +161,7 @@ class Backend(object):
             request, self.getDataRepository().getNumExperiments(),
             self.getDataRepository().getExperimentByIndex)
 
-    def analysesGenerator(self, request):
+    def analysesGenerator(self, request, tier=0):
         """
         Returns a generator over the (analysis, nextPageToken) pairs
         defined by the specified request
@@ -168,7 +172,7 @@ class Backend(object):
             request, self.getDataRepository().getNumAnalyses(),
             self.getDataRepository().getAnalysisByIndex)
 
-    def biosamplesGenerator(self, request):
+    def biosamplesGenerator(self, request, tier=0):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         results = []
         for obj in dataset.getBiosamples():
@@ -183,7 +187,7 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results)
 
-    def individualsGenerator(self, request):
+    def individualsGenerator(self, request, tier=0):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         results = []
         for obj in dataset.getIndividuals():
@@ -198,7 +202,7 @@ class Backend(object):
 ### ======================================================================= ###
 ### METADATA
 ### ======================================================================= ###
-    def patientsGenerator(self, request):
+    def patientsGenerator(self, request, tier=0):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
@@ -212,9 +216,9 @@ class Backend(object):
 
             if include:
                 results.append(obj)
-        return self._objectListGenerator(request, results)
+        return self._objectListGenerator(request, results, tier=tier)
 
-    def enrollmentsGenerator(self, request):
+    def enrollmentsGenerator(self, request, tier=0):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
@@ -231,9 +235,9 @@ class Backend(object):
                     include = False
             if include:
                 results.append(obj)
-        return self._objectListGenerator(request, results)
+        return self._objectListGenerator(request, results, tier=tier)
 
-    def consentsGenerator(self, request):
+    def consentsGenerator(self, request, tier=0):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
@@ -250,9 +254,9 @@ class Backend(object):
                     include = False
             if include:
                 results.append(obj)
-        return self._objectListGenerator(request, results)
+        return self._objectListGenerator(request, results, tier=tier)
 
-    def diagnosesGenerator(self, request):
+    def diagnosesGenerator(self, request, tier=0):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
@@ -269,9 +273,9 @@ class Backend(object):
                     include = False
             if include:
                 results.append(obj)
-        return self._objectListGenerator(request, results)
+        return self._objectListGenerator(request, results, tier=tier)
 
-    def samplesGenerator(self, request):
+    def samplesGenerator(self, request, tier=0):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
@@ -288,9 +292,9 @@ class Backend(object):
                     include = False
             if include:
                 results.append(obj)
-        return self._objectListGenerator(request, results)
+        return self._objectListGenerator(request, results, tier=tier)
 
-    def treatmentsGenerator(self, request):
+    def treatmentsGenerator(self, request, tier=0):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
@@ -307,9 +311,9 @@ class Backend(object):
                     include = False
             if include:
                 results.append(obj)
-        return self._objectListGenerator(request, results)
+        return self._objectListGenerator(request, results, tier=tier)
 
-    def outcomesGenerator(self, request):
+    def outcomesGenerator(self, request, tier=0):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
@@ -326,9 +330,9 @@ class Backend(object):
                     include = False
             if include:
                 results.append(obj)
-        return self._objectListGenerator(request, results)
+        return self._objectListGenerator(request, results, tier=tier)
 
-    def complicationsGenerator(self, request):
+    def complicationsGenerator(self, request, tier=0):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
@@ -345,9 +349,9 @@ class Backend(object):
                     include = False
             if include:
                 results.append(obj)
-        return self._objectListGenerator(request, results)
+        return self._objectListGenerator(request, results, tier=tier)
 
-    def tumourboardsGenerator(self, request):
+    def tumourboardsGenerator(self, request, tier=0):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
@@ -364,7 +368,7 @@ class Backend(object):
                     include = False
             if include:
                 results.append(obj)
-        return self._objectListGenerator(request, results)
+        return self._objectListGenerator(request, results, tier=tier)
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ###
@@ -782,18 +786,18 @@ class Backend(object):
     #
     ###########################################################
 
-    def runGetRequest(self, obj, return_mimetype="application/json"):
+    def runGetRequest(self, obj, return_mimetype="application/json", tier=0):
         """
         Runs a get request by converting the specified datamodel
         object into its protocol representation.
         """
-        protocolElement = obj.toProtocolElement()
+        protocolElement = obj.toProtocolElement(tier=tier)
         data = protocol.serialize(protocolElement, return_mimetype)
         return data
 
     def runSearchRequest(
             self, requestStr, requestClass, responseClass, objectGenerator,
-            return_mimetype="application/json"):
+            return_mimetype="application/json", tier=0):
         """
         Runs the specified request. The request is a string containing
         a JSON representation of an instance of the specified requestClass.
@@ -818,7 +822,7 @@ class Backend(object):
             responseClass, request.page_size, self._maxResponseLength,
             return_mimetype)
         nextPageToken = None
-        for obj, nextPageToken in objectGenerator(request):
+        for obj, nextPageToken in objectGenerator(request, tier=tier):
             responseBuilder.addValue(obj)
             if responseBuilder.isFull():
                 break
@@ -920,7 +924,7 @@ class Backend(object):
 
     # Get requests.
 
-    def runGetCallSet(self, id_, return_mimetype="application/json"):
+    def runGetCallSet(self, id_, return_mimetype="application/json", tier=0):
         """
         Returns a callset with the given id
         """
@@ -928,7 +932,7 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         variantSet = dataset.getVariantSet(compoundId.variant_set_id)
         callSet = variantSet.getCallSet(id_)
-        return self.runGetRequest(callSet, return_mimetype)
+        return self.runGetRequest(callSet, return_mimetype, tier=tier)
 
     def runGetInfo(self, request, return_mimetype="application/json"):
         """
@@ -978,7 +982,7 @@ class Backend(object):
         return protocol.toJson(
             protocol.AnnouncePeerResponse(success=True))
 
-    def runListPeers(self, request):
+    def runListPeers(self, request, tier=0):
         """
         Takes a ListPeersRequest and returns a ListPeersResponse using
         a page_token and page_size if provided.
@@ -987,9 +991,11 @@ class Backend(object):
             request,
             protocol.ListPeersRequest,
             protocol.ListPeersResponse,
-            self.peersGenerator)
+            self.peersGenerator, 
+            tier=0,
+            )
 
-    def runGetVariant(self, id_, return_mimetype="application/json"):
+    def runGetVariant(self, id_, return_mimetype="application/json", tier=0):
         """
         Returns a variant with the given id
         """
@@ -1003,112 +1009,112 @@ class Backend(object):
         data = protocol.serialize(gaVariant, return_mimetype)
         return data
 
-    def runGetBiosample(self, id_, return_mimetype="application/json"):
+    def runGetBiosample(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getBiosample request for the specified ID.
         """
         compoundId = datamodel.BiosampleCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         biosample = dataset.getBiosample(id_)
-        return self.runGetRequest(biosample, return_mimetype)
+        return self.runGetRequest(biosample, return_mimetype, tier=tier)
 
-    def runGetIndividual(self, id_, return_mimetype="application/json"):
+    def runGetIndividual(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getIndividual request for the specified ID.
         """
         compoundId = datamodel.BiosampleCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         individual = dataset.getIndividual(id_)
-        return self.runGetRequest(individual, return_mimetype)
+        return self.runGetRequest(individual, return_mimetype, tier=tier)
 
 ### ======================================================================= ###
 ### METADATA
 ### ======================================================================= ###
-    def runGetPatient(self, id_, return_mimetype="application/json"):
+    def runGetPatient(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getPatient request for the specified ID.
         """
         compoundId = datamodel.PatientCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         patient = dataset.getPatient(id_)
-        return self.runGetRequest(patient, return_mimetype)
+        return self.runGetRequest(patient, return_mimetype, tier=tier)
 
-    def runGetEnrollment(self, id_, return_mimetype="application/json"):
+    def runGetEnrollment(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getEnrollment request for the specified ID.
         """
         compoundId = datamodel.EnrollmentCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         enrollment = dataset.getEnrollment(id_)
-        return self.runGetRequest(enrollment, return_mimetype)
+        return self.runGetRequest(enrollment, return_mimetype, tier=tier)
 
-    def runGetConsent(self, id_, return_mimetype="application/json"):
+    def runGetConsent(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getConsent request for the specified ID.
         """
         compoundId = datamodel.ConsentCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         consent = dataset.getConsent(id_)
-        return self.runGetRequest(consent, return_mimetype)
+        return self.runGetRequest(consent, return_mimetype, tier=tier)
 
-    def runGetDiagnosis(self, id_, return_mimetype="application/json"):
+    def runGetDiagnosis(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getDiagnosis request for the specified ID.
         """
         compoundId = datamodel.DiagnosisCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         diagnosis = dataset.getDiagnosis(id_)
-        return self.runGetRequest(diagnosis, return_mimetype)
+        return self.runGetRequest(diagnosis, return_mimetype, tier=tier)
 
-    def runGetSample(self, id_, return_mimetype="application/json"):
+    def runGetSample(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getSample request for the specified ID.
         """
         compoundId = datamodel.SampleCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         sample = dataset.getSample(id_)
-        return self.runGetRequest(sample, return_mimetype)
+        return self.runGetRequest(sample, return_mimetype, tier=tier)
 
-    def runGetTreatment(self, id_, return_mimetype="application/json"):
+    def runGetTreatment(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getTreatment request for the specified ID.
         """
         compoundId = datamodel.TreatmentCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         treatment = dataset.getTreatment(id_)
-        return self.runGetRequest(treatment, return_mimetype)
+        return self.runGetRequest(treatment, return_mimetype, tier=tier)
 
-    def runGetOutcome(self, id_, return_mimetype="application/json"):
+    def runGetOutcome(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getOutcome request for the specified ID.
         """
         compoundId = datamodel.OutcomeCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         outcome = dataset.getOutcome(id_)
-        return self.runGetRequest(outcome, return_mimetype)
+        return self.runGetRequest(outcome, return_mimetype, tier=tier)
 
-    def runGetComplication(self, id_, return_mimetype="application/json"):
+    def runGetComplication(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getComplication request for the specified ID.
         """
         compoundId = datamodel.ComplicationCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         complication = dataset.getComplication(id_)
-        return self.runGetRequest(complication, return_mimetype)
+        return self.runGetRequest(complication, return_mimetype, tier=tier)
 
-    def runGetTumourboard(self, id_, return_mimetype="application/json"):
+    def runGetTumourboard(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getTumourboard request for the specified ID.
         """
         compoundId = datamodel.TumourboardCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         tumourboard = dataset.getTumourboard(id_)
-        return self.runGetRequest(tumourboard, return_mimetype)
+        return self.runGetRequest(tumourboard, return_mimetype, tier=tier)
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ###
 
-    def runGetFeature(self, id_, return_mimetype="application/json"):
+    def runGetFeature(self, id_, return_mimetype="application/json", tier=0):
         """
         Returns JSON string of the feature object corresponding to
         the feature compoundID passed in.
@@ -1120,16 +1126,16 @@ class Backend(object):
         data = protocol.serialize(gaFeature, return_mimetype)
         return data
 
-    def runGetReadGroupSet(self, id_, return_mimetype="application/json"):
+    def runGetReadGroupSet(self, id_, return_mimetype="application/json", tier=0):
         """
         Returns a readGroupSet with the given id_
         """
         compoundId = datamodel.ReadGroupSetCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         readGroupSet = dataset.getReadGroupSet(id_)
-        return self.runGetRequest(readGroupSet, return_mimetype)
+        return self.runGetRequest(readGroupSet, return_mimetype, tier=tier)
 
-    def runGetReadGroup(self, id_, return_mimetype="application/json"):
+    def runGetReadGroup(self, id_, return_mimetype="application/json", tier=0):
         """
         Returns a read group with the given id_
         """
@@ -1137,9 +1143,9 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         readGroupSet = dataset.getReadGroupSet(compoundId.read_group_set_id)
         readGroup = readGroupSet.getReadGroup(id_)
-        return self.runGetRequest(readGroup, return_mimetype)
+        return self.runGetRequest(readGroup, return_mimetype, tier=tier)
 
-    def runGetReference(self, id_, return_mimetype="application/json"):
+    def runGetReference(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getReference request for the specified ID.
         """
@@ -1147,65 +1153,65 @@ class Backend(object):
         referenceSet = self.getDataRepository().getReferenceSet(
             compoundId.reference_set_id)
         reference = referenceSet.getReference(id_)
-        return self.runGetRequest(reference, return_mimetype)
+        return self.runGetRequest(reference, return_mimetype, tier=tier)
 
-    def runGetReferenceSet(self, id_, return_mimetype="application/json"):
+    def runGetReferenceSet(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getReferenceSet request for the specified ID.
         """
         referenceSet = self.getDataRepository().getReferenceSet(id_)
-        return self.runGetRequest(referenceSet, return_mimetype)
+        return self.runGetRequest(referenceSet, return_mimetype, tier=tier)
 
-    def runGetVariantSet(self, id_, return_mimetype="application/json"):
+    def runGetVariantSet(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getVariantSet request for the specified ID.
         """
         compoundId = datamodel.VariantSetCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         variantSet = dataset.getVariantSet(id_)
-        return self.runGetRequest(variantSet, return_mimetype)
+        return self.runGetRequest(variantSet, return_mimetype, tier=tier)
 
-    def runGetFeatureSet(self, id_, return_mimetype="application/json"):
+    def runGetFeatureSet(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getFeatureSet request for the specified ID.
         """
         compoundId = datamodel.FeatureSetCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         featureSet = dataset.getFeatureSet(id_)
-        return self.runGetRequest(featureSet, return_mimetype)
+        return self.runGetRequest(featureSet, return_mimetype, tier=tier)
 
-    def runGetContinuousSet(self, id_, return_mimetype="application/json"):
+    def runGetContinuousSet(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getContinuousSet request for the specified ID.
         """
         compoundId = datamodel.ContinuousSetCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         continuousSet = dataset.getContinuousSet(id_)
-        return self.runGetRequest(continuousSet, return_mimetype)
+        return self.runGetRequest(continuousSet, return_mimetype, tier=tier)
 
-    def runGetDataset(self, id_, return_mimetype="application/json"):
+    def runGetDataset(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getDataset request for the specified ID.
         """
         dataset = self.getDataRepository().getDataset(id_)
-        return self.runGetRequest(dataset, return_mimetype)
+        return self.runGetRequest(dataset, return_mimetype, tier=tier)
 
-    def runGetExperiment(self, id_, return_mimetype="application/json"):
+    def runGetExperiment(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getExperiment request for the specified ID.
         """
         experiment = self.getDataRepository().getExperiment(id_)
-        return self.runGetRequest(experiment, return_mimetype)
+        return self.runGetRequest(experiment, return_mimetype, tier=tier)
 
-    def runGetAnalysis(self, id_, return_mimetype="application/json"):
+    def runGetAnalysis(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getAnalysis request for the specified ID.
         """
         analysis = self.getDataRepository().getAnalysis(id_)
-        return self.runGetRequest(analysis, return_mimetype)
+        return self.runGetRequest(analysis, return_mimetype, tier=tier)
 
     def runGetVariantAnnotationSet(self, id_,
-                                   return_mimetype="application/json"):
+                                   return_mimetype="application/json", tier=0):
         """
         Runs a getVariantSet request for the specified ID.
         """
@@ -1213,9 +1219,9 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         variantSet = dataset.getVariantSet(compoundId.variant_set_id)
         variantAnnotationSet = variantSet.getVariantAnnotationSet(id_)
-        return self.runGetRequest(variantAnnotationSet, return_mimetype)
+        return self.runGetRequest(variantAnnotationSet, return_mimetype, tier=tier)
 
-    def runGetRnaQuantification(self, id_, return_mimetype="application/json"):
+    def runGetRnaQuantification(self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getRnaQuantification request for the specified ID.
         """
@@ -1224,19 +1230,20 @@ class Backend(object):
         rnaQuantificationSet = dataset.getRnaQuantificationSet(
             compoundId.rna_quantification_set_id)
         rnaQuantification = rnaQuantificationSet.getRnaQuantification(id_)
-        return self.runGetRequest(rnaQuantification, return_mimetype)
+        return self.runGetRequest(rnaQuantification, return_mimetype, tier=tier)
 
     def runGetRnaQuantificationSet(self, id_,
-                                   return_mimetype="application/json"):
+                                   return_mimetype="application/json", tier=0):
         """
         Runs a getRnaQuantificationSet request for the specified ID.
         """
         compoundId = datamodel.RnaQuantificationSetCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
         rnaQuantificationSet = dataset.getRnaQuantificationSet(id_)
-        return self.runGetRequest(rnaQuantificationSet, return_mimetype)
+        return self.runGetRequest(rnaQuantificationSet, return_mimetype, tier=tier)
 
-    def runGetExpressionLevel(self, id_, return_mimetype="application/json"):
+    def runGetExpressionLevel(
+            self, id_, return_mimetype="application/json", tier=0):
         """
         Runs a getExpressionLevel request for the specified ID.
         """
@@ -1247,11 +1254,11 @@ class Backend(object):
         rnaQuantification = rnaQuantificationSet.getRnaQuantification(
             compoundId.rna_quantification_id)
         expressionLevel = rnaQuantification.getExpressionLevel(compoundId)
-        return self.runGetRequest(expressionLevel, return_mimetype)
+        return self.runGetRequest(expressionLevel, return_mimetype, tier=tier)
 
     # Search requests.
 
-    def runSearchReadGroupSets(self, request, return_mimetype):
+    def runSearchReadGroupSets(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchReadGroupSetsRequest.
         """
@@ -1261,7 +1268,7 @@ class Backend(object):
             self.readGroupSetsGenerator,
             return_mimetype)
 
-    def runSearchIndividuals(self, request, return_mimetype):
+    def runSearchIndividuals(self, request, return_mimetype, tier=0):
         """
         Runs the specified search SearchIndividualsRequest.
         """
@@ -1274,7 +1281,7 @@ class Backend(object):
 ### ======================================================================= ###
 ### METADATA
 ### ======================================================================= ###
-    def runSearchPatients(self, request, return_mimetype):
+    def runSearchPatients(self, request, return_mimetype, tier=0):
         """
         Runs the specified search SearchPatientsRequest.
         """
@@ -1282,9 +1289,11 @@ class Backend(object):
             request, protocol.SearchPatientsRequest,
             protocol.SearchPatientsResponse,
             self.patientsGenerator,
-            return_mimetype)
+            return_mimetype,
+            tier=tier,
+            )
 
-    def runSearchEnrollments(self, request, return_mimetype):
+    def runSearchEnrollments(self, request, return_mimetype, tier=0):
         """
         Runs the specified search SearchEnrollmentsRequest.
         """
@@ -1292,9 +1301,11 @@ class Backend(object):
             request, protocol.SearchEnrollmentsRequest,
             protocol.SearchEnrollmentsResponse,
             self.enrollmentsGenerator,
-            return_mimetype)
+            return_mimetype,
+            tier=tier,
+            )
 
-    def runSearchConsents(self, request, return_mimetype):
+    def runSearchConsents(self, request, return_mimetype, tier=0):
         """
         Runs the specified search SearchConsentsRequest.
         """
@@ -1302,9 +1313,11 @@ class Backend(object):
             request, protocol.SearchConsentsRequest,
             protocol.SearchConsentsResponse,
             self.consentsGenerator,
-            return_mimetype)
+            return_mimetype,
+            tier=tier,
+            )
 
-    def runSearchDiagnoses(self, request, return_mimetype):
+    def runSearchDiagnoses(self, request, return_mimetype, tier=0):
         """
         Runs the specified search SearchDiagnosesRequest.
         """
@@ -1312,9 +1325,11 @@ class Backend(object):
             request, protocol.SearchDiagnosesRequest,
             protocol.SearchDiagnosesResponse,
             self.diagnosesGenerator,
-            return_mimetype)
+            return_mimetype,
+            tier=tier,
+            )
 
-    def runSearchSamples(self, request, return_mimetype):
+    def runSearchSamples(self, request, return_mimetype, tier=0):
         """
         Runs the specified search SearchSamplesRequest.
         """
@@ -1322,9 +1337,11 @@ class Backend(object):
             request, protocol.SearchSamplesRequest,
             protocol.SearchSamplesResponse,
             self.samplesGenerator,
-            return_mimetype)
+            return_mimetype,
+            tier=tier,
+            )
 
-    def runSearchTreatments(self, request, return_mimetype):
+    def runSearchTreatments(self, request, return_mimetype, tier=0):
         """
         Runs the specified search SearchTreatmentsRequest.
         """
@@ -1332,9 +1349,11 @@ class Backend(object):
             request, protocol.SearchTreatmentsRequest,
             protocol.SearchTreatmentsResponse,
             self.treatmentsGenerator,
-            return_mimetype)
+            return_mimetype,
+            tier=tier,
+            )
 
-    def runSearchOutcomes(self, request, return_mimetype):
+    def runSearchOutcomes(self, request, return_mimetype, tier=0):
         """
         Runs the specified search SearchOutcomesRequest.
         """
@@ -1342,9 +1361,11 @@ class Backend(object):
             request, protocol.SearchOutcomesRequest,
             protocol.SearchOutcomesResponse,
             self.outcomesGenerator,
-            return_mimetype)
+            return_mimetype,
+            tier=tier,
+            )
 
-    def runSearchComplications(self, request, return_mimetype):
+    def runSearchComplications(self, request, return_mimetype, tier=0):
         """
         Runs the specified search SearchComplicationsRequest.
         """
@@ -1352,9 +1373,11 @@ class Backend(object):
             request, protocol.SearchComplicationsRequest,
             protocol.SearchComplicationsResponse,
             self.complicationsGenerator,
-            return_mimetype)
+            return_mimetype,
+            tier=tier,
+            )
 
-    def runSearchTumourboards(self, request, return_mimetype):
+    def runSearchTumourboards(self, request, return_mimetype, tier=0):
         """
         Runs the specified search SearchTumourboardsRequest.
         """
@@ -1362,12 +1385,14 @@ class Backend(object):
             request, protocol.SearchTumourboardsRequest,
             protocol.SearchTumourboardsResponse,
             self.tumourboardsGenerator,
-            return_mimetype)
+            return_mimetype,
+            tier=tier,
+            )
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ###
 
-    def runSearchBiosamples(self, request, return_mimetype):
+    def runSearchBiosamples(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchBiosamplesRequest.
         """
@@ -1377,7 +1402,7 @@ class Backend(object):
             self.biosamplesGenerator,
             return_mimetype)
 
-    def runSearchReads(self, request, return_mimetype):
+    def runSearchReads(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchReadsRequest.
         """
@@ -1387,7 +1412,7 @@ class Backend(object):
             self.readsGenerator,
             return_mimetype)
 
-    def runSearchReferenceSets(self, request, return_mimetype):
+    def runSearchReferenceSets(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchReferenceSetsRequest.
         """
@@ -1397,7 +1422,7 @@ class Backend(object):
             self.referenceSetsGenerator,
             return_mimetype)
 
-    def runSearchReferences(self, request, return_mimetype):
+    def runSearchReferences(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchReferenceRequest.
         """
@@ -1407,7 +1432,7 @@ class Backend(object):
             self.referencesGenerator,
             return_mimetype)
 
-    def runSearchVariantSets(self, request, return_mimetype):
+    def runSearchVariantSets(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchVariantSetsRequest.
         """
@@ -1417,7 +1442,7 @@ class Backend(object):
             self.variantSetsGenerator,
             return_mimetype)
 
-    def runSearchVariantAnnotationSets(self, request, return_mimetype):
+    def runSearchVariantAnnotationSets(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchVariantAnnotationSetsRequest.
         """
@@ -1427,7 +1452,7 @@ class Backend(object):
             self.variantAnnotationSetsGenerator,
             return_mimetype)
 
-    def runSearchVariants(self, request, return_mimetype):
+    def runSearchVariants(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchVariantRequest.
         """
@@ -1437,13 +1462,13 @@ class Backend(object):
             self.variantsGenerator,
             return_mimetype)
 
-    def runSearchGenotypes(self, request, return_mimetype):
+    def runSearchGenotypes(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchVariantRequest.
         """
         return self.runSearchGenotypesRequest(request, return_mimetype)
 
-    def runSearchVariantAnnotations(self, request, return_mimetype):
+    def runSearchVariantAnnotations(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchVariantAnnotationsRequest.
         """
@@ -1453,7 +1478,7 @@ class Backend(object):
             self.variantAnnotationsGenerator,
             return_mimetype)
 
-    def runSearchCallSets(self, request, return_mimetype):
+    def runSearchCallSets(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchCallSetsRequest.
         """
@@ -1463,7 +1488,7 @@ class Backend(object):
             self.callSetsGenerator,
             return_mimetype)
 
-    def runSearchDatasets(self, request, return_mimetype):
+    def runSearchDatasets(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchDatasetsRequest.
         """
@@ -1473,7 +1498,7 @@ class Backend(object):
             self.datasetsGenerator,
             return_mimetype)
 
-    def runSearchExperiments(self, request, return_mimetype):
+    def runSearchExperiments(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchExperimentsRequest.
         """
@@ -1483,7 +1508,7 @@ class Backend(object):
             self.experimentsGenerator,
             return_mimetype)
 
-    def runSearchAnalyses(self, request, return_mimetype):
+    def runSearchAnalyses(self, request, return_mimetype, tier=0):
         """
         Runs the specified SearchAnalysesRequest.
         """
@@ -1493,7 +1518,7 @@ class Backend(object):
             self.analysesGenerator,
             return_mimetype)
 
-    def runSearchFeatureSets(self, request, return_mimetype):
+    def runSearchFeatureSets(self, request, return_mimetype, tier=0):
         """
         Returns a SearchFeatureSetsResponse for the specified
         SearchFeatureSetsRequest object.
@@ -1504,7 +1529,7 @@ class Backend(object):
             self.featureSetsGenerator,
             return_mimetype)
 
-    def runSearchFeatures(self, request, return_mimetype):
+    def runSearchFeatures(self, request, return_mimetype, tier=0):
         """
         Returns a SearchFeaturesResponse for the specified
         SearchFeaturesRequest object.
@@ -1518,7 +1543,7 @@ class Backend(object):
             self.featuresGenerator,
             return_mimetype)
 
-    def runSearchContinuousSets(self, request, return_mimetype):
+    def runSearchContinuousSets(self, request, return_mimetype, tier=0):
         """
         Returns a SearchContinuousSetsResponse for the specified
         SearchContinuousSetsRequest object.
@@ -1529,7 +1554,7 @@ class Backend(object):
             self.continuousSetsGenerator,
             return_mimetype)
 
-    def runSearchContinuous(self, request, return_mimetype):
+    def runSearchContinuous(self, request, return_mimetype, tier=0):
         """
         Returns a SearchContinuousResponse for the specified
         SearchContinuousRequest object.
@@ -1543,28 +1568,28 @@ class Backend(object):
             self.continuousGenerator,
             return_mimetype)
 
-    def runSearchGenotypePhenotypes(self, request, return_mimetype):
+    def runSearchGenotypePhenotypes(self, request, return_mimetype, tier=0):
         return self.runSearchRequest(
             request, protocol.SearchGenotypePhenotypeRequest,
             protocol.SearchGenotypePhenotypeResponse,
             self.genotypesPhenotypesGenerator,
             return_mimetype)
 
-    def runSearchPhenotypes(self, request, return_mimetype):
+    def runSearchPhenotypes(self, request, return_mimetype, tier=0):
         return self.runSearchRequest(
             request, protocol.SearchPhenotypesRequest,
             protocol.SearchPhenotypesResponse,
             self.phenotypesGenerator,
             return_mimetype)
 
-    def runSearchPhenotypeAssociationSets(self, request, return_mimetype):
+    def runSearchPhenotypeAssociationSets(self, request, return_mimetype, tier=0):
         return self.runSearchRequest(
             request, protocol.SearchPhenotypeAssociationSetsRequest,
             protocol.SearchPhenotypeAssociationSetsResponse,
             self.phenotypeAssociationSetsGenerator,
             return_mimetype)
 
-    def runSearchRnaQuantificationSets(self, request, return_mimetype):
+    def runSearchRnaQuantificationSets(self, request, return_mimetype, tier=0):
         """
         Returns a SearchRnaQuantificationSetsResponse for the specified
         SearchRnaQuantificationSetsRequest object.
@@ -1575,7 +1600,7 @@ class Backend(object):
             self.rnaQuantificationSetsGenerator,
             return_mimetype)
 
-    def runSearchRnaQuantifications(self, request, return_mimetype):
+    def runSearchRnaQuantifications(self, request, return_mimetype, tier=0):
         """
         Returns a SearchRnaQuantificationResponse for the specified
         SearchRnaQuantificationRequest object.
@@ -1586,7 +1611,7 @@ class Backend(object):
             self.rnaQuantificationsGenerator,
             return_mimetype)
 
-    def runSearchExpressionLevels(self, request, return_mimetype):
+    def runSearchExpressionLevels(self, request, return_mimetype, tier=0):
         """
         Returns a SearchExpressionLevelResponse for the specified
         SearchExpressionLevelRequest object.
@@ -1606,7 +1631,7 @@ class Backend(object):
         #TODO put request object into protocol and make this function a generator
         request = json.loads(request)
         return_object = []
-        
+
         dataset = self.getDataRepository().getDataset(request['datasetId'])
         #
         variantsets = dataset.getVariantSets()
@@ -1621,7 +1646,7 @@ class Backend(object):
                             endPosition=feature.end,
                             ):
                         return_object.append(protocol.toJson(variant))
-        
+
         return json.dumps(return_object)
 ### ======================================================================= ###
 ### FRONT END END

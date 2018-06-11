@@ -106,7 +106,7 @@ class Peer(object):
         """
         return self._attributes
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         peer = protocol.Peer()
         peer.url = self._url
         self.serializeAttributes(peer)

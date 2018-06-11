@@ -321,7 +321,7 @@ class AbstractContinuousSet(datamodel.DatamodelObject):
         """
         self._referenceSet = referenceSet
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         """
         Returns the representation of this ContinuousSet as the corresponding
         ProtocolElement.

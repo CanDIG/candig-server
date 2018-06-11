@@ -45,7 +45,7 @@ class Biosample(datamodel.DatamodelObject):
 # PROFYLE MODIFICATION END
 ### ======================================================================= ###
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         disease = None
         if self.getDisease():
             disease = protocol.fromJson(
@@ -231,7 +231,7 @@ class Experiment(datamodel.DatamodelObject):
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         experiment = protocol.Experiment(
             id = self.getId(),
             name = self.getName(),
@@ -441,7 +441,7 @@ class Analysis(datamodel.DatamodelObject):
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         analysis = protocol.Analysis(
             id=self.getId(),
             name=self.getName(),
@@ -594,7 +594,7 @@ class Individual(datamodel.DatamodelObject):
 # PROFYLE MODIFICATION END
 ### ======================================================================= ###
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         species = None
         sex = None
         if self.getSpecies():
