@@ -472,7 +472,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     """
     request_dictionary = flask.request
     if 'Authorization' in request_dictionary.headers:
-        authz_token = request_dictionary.headers['Authorization']
+        authz_token = int(request_dictionary.headers['Authorization'])
     else:
         authz_token = -1
 
