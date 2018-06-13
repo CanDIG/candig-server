@@ -45,9 +45,11 @@ import ga4gh.server.DP as DP
 import ga4gh.server.NCIT as NCIT
 
 from ga4gh.client import client
+import base64
 
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
+LOGIN_ENDPOINT_METHODS = ['GET', 'POST']
 
 app = flask.Flask(__name__)
 
@@ -639,6 +641,33 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     return json.dumps(responseObject)
 
+# testing method for access roles through tokens
+def getAccessLevels(token):
+
+    token_payload = token.split(".")[1]
+
+    # make sure token is padded properly for b64 decoding
+    padding = len(token_payload) % 4
+    if padding != 0:
+        token_payload += '=' * (4 - padding)
+    decoded_payload = base64.b64decode(token_payload)
+
+    parsed_payload = json.loads(decoded_payload)
+    access_levels = parsed_payload["access_levels"]
+
+    # setting defaults
+    results = {
+        'tier': -1,
+        'groups': []
+    }
+
+    for role in access_levels:
+        if role.isdigit():
+            results['tier'] = int(role)
+        else:
+            results['groups'].append(role)
+
+    return results
 
 ### ======================================================================= ###
 ### FEDERATION ENDS
@@ -977,7 +1006,7 @@ class DisplayedRoute(object):
         return wrapper
 
 
-@app.route('/')
+@app.route('/', methods=LOGIN_ENDPOINT_METHODS)
 @requires_session
 def index():
     response = flask.render_template('index.html',
@@ -1000,17 +1029,17 @@ def index():
 ### ======================================================================= ###
 ### FRONT END
 ### ======================================================================= ###
-@app.route('/candig')
+@app.route('/candig', methods=LOGIN_ENDPOINT_METHODS)
 @requires_session
 def candig():
     return flask.render_template('candig.html', session_id=flask.session["id_token"])
 
-@app.route('/candig_patients')
+@app.route('/candig_patients', methods=LOGIN_ENDPOINT_METHODS)
 @requires_session
 def candig_patients():
     return flask.render_template('candig_patients.html', session_id=flask.session["id_token"])
 
-@app.route('/gene_search')
+@app.route('/gene_search', methods=LOGIN_ENDPOINT_METHODS)
 @requires_session
 def candig_gene_search():
     return flask.render_template('gene_search.html', session_id=flask.session["id_token"])
@@ -1050,19 +1079,18 @@ def proxy():
             app.config.get('TYK_LISTEN_PATH')
         )
 
-    # using default hardcoded paths for now
-    idp_serv = 'ga4ghdev01:8080'
-    idp_path = '/auth/realms/CanDIG/protocol/openid-connect/auth?scope=openid+email&redirect_uri='+redirect_uri+'&response_type=code&client_id=ga4gh'
+    idp_serv = app.config.get('KC_SERVER')
+    idp_path = app.config.get('KC_LOGIN_REDIRECT')+redirect_uri
 
     return flask.redirect('http://{0}{1}'.format(idp_serv,idp_path))
 
 
-@app.route('/gateway_logout')
+@app.route('/logout_oidc', methods=LOGIN_ENDPOINT_METHODS)
 def gateway_logout():
     """
     End both the flask + oidc login sessions. Requires user to be currently logged in
 
-    :return: redirect to the gateway proxy
+    :return: redirect to the gateway proxy page
     """
 
     try:
@@ -1084,7 +1112,7 @@ def gateway_logout():
         flask.session.clear()
 
     except:
-        # send to proxy after failing
+        # send to proxy endpoint after failing
         flask.request.url = flask.url_for('proxy')
         raise exceptions.NotAuthenticatedException()
 

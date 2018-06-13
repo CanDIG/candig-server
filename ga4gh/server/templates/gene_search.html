@@ -145,6 +145,9 @@
         <li class="nav-item">
           <a class="nav-link" href="candig_patients">Patient overview</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="logout_oidc">Logout</a>
+        </li>
       </ul>
   </nav>
     <div class="container-fluid">
@@ -185,6 +188,7 @@
         xhr.open("POST", "variantsbygenesearch", true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
         xhr.send(JSON.stringify({
             'datasetId': 'WyJjb25jb3JkYW5jZSJd',
             'gene': geneRequest

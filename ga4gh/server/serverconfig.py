@@ -186,6 +186,8 @@ class TykConfig(KeycloakOidConfig):
     Still testing this config out
     """
     TYK_ENABLED = True
-    TYK_SERVER = 'ga4ghdev01'
+    TYK_SERVER = 'ga4ghdev01.bcgsc.ca'
     TYK_PORT = '8008'
     TYK_LISTEN_PATH = '/candig-local/'
+    KC_SERVER = 'ga4ghdev01:8080'
+    KC_LOGIN_REDIRECT = '/auth/realms/CanDIG/protocol/openid-connect/auth?scope=openid+email&response_type=code&client_id=ga4gh&response_mode=form_post&redirect_uri='
