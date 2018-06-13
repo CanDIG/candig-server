@@ -970,11 +970,6 @@ def candig():
 def candig_patients():
     return flask.render_template('candig_patients.html', session_id=flask.session["id_token"])
 
-@app.route('/gene_search', methods=LOGIN_ENDPOINT_METHODS)
-@requires_session
-def candig_gene_search():
-    return flask.render_template('gene_search.html', session_id=flask.session["id_token"])
-
 @app.route('/igv', methods=LOGIN_ENDPOINT_METHODS)
 @requires_session
 def candig_igv():
