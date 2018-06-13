@@ -471,8 +471,10 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     """
     request_dictionary = flask.request
-    token = request_dictionary.headers['Authorization']
-    usertier = 0
+    if 'Authorization' in request_dictionary.headers:
+        authz_token = request_dictionary.headers['Authorization']
+    else:
+        authz_token = -1
 
     # Self query
     responseObject = {}
@@ -483,7 +485,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
             endpoint(
                 request, 
                 return_mimetype=return_mimetype,
-                tier=usertier,
+                tier=authz_token,
                 )
             )]
 
@@ -511,7 +513,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 'Content-Type': return_mimetype,
                 'Accept': return_mimetype,
                 'Federation': 'False',
-                'Authorization': token
+                'Authorization': authz_token,
             }
 
             # Make the call
@@ -593,7 +595,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         }
     
     # Decide on valid response
-    if responseObject['status']['Known peers'] == \
+    if resitponseObject['status']['Known peers'] == \
             responseObject['status']['Queried peers']:
         if request_type == 'GET':
             if responseObject['status']['Successful communications'] >= 1:
