@@ -595,7 +595,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         }
     
     # Decide on valid response
-    if resitponseObject['status']['Known peers'] == \
+    if responseObject['status']['Known peers'] == \
             responseObject['status']['Queried peers']:
         if request_type == 'GET':
             if responseObject['status']['Successful communications'] >= 1:
