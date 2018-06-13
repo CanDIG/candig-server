@@ -16,16 +16,22 @@ import json
 
 import flask
 import flask.ext.cors as cors
+from flask.ext.oidc import OpenIDConnect
 from flask import Flask, jsonify, render_template, request
 import humanize
 import werkzeug
 import oic
+# from oic.oic import AuthorizationRequest, Client
 import oic.oauth2
 import oic.oic.message as message
+# from oic.utils.http_util import Redirect
+from oauth2client.client import OAuth2Credentials
 import requests
 import logging
 from logging import StreamHandler
 from werkzeug.contrib.cache import FileSystemCache
+
+import pkg_resources
 
 import ga4gh.server
 import ga4gh.server.backend as backend
@@ -40,15 +46,32 @@ import ga4gh.server.NCIT as NCIT
 import ga4gh.schemas.protocol as protocol
 
 from ga4gh.client import client
+import base64
 
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
+LOGIN_ENDPOINT_METHODS = ['GET', 'POST']
 
 app = flask.Flask(__name__)
 assert not hasattr(app, 'urls')
 app.urls = []
 
 requires_auth = auth.auth_decorator(app)
+
+# Edit this for flask-oidc, the endpoints are in the client_secrets.json file
+config_path = '/'.join(('.','config','client_secrets.json'))
+
+app.config.update({
+    'SECRET_KEY': "key",
+    'TESTING': False,
+    'DEBUG': False,
+    'OIDC_CLIENT_SECRETS': pkg_resources.resource_filename(__name__, config_path),
+    'OIDC_ID_TOKEN_COOKIE_SECURE': False,
+    'OIDC_REQUIRE_VERIFIED_EMAIL': False,
+})
+
+# For configuration of Flask-Oidc
+oidc = OpenIDConnect(app)
 
 
 class NoConverter(werkzeug.routing.BaseConverter):
@@ -448,14 +471,9 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     """
     request_dictionary = flask.request
-    
+    token = request_dictionary.headers['Authorization']
     usertier = 0
-    if 'Tier' in request_dictionary.headers:
-        usertier = int(request_dictionary.headers['Tier'])
-        
-    print('USER TIER:', usertier)
-    
-    
+
     # Self query
     responseObject = {}
     responseObject['results'] = []
@@ -493,7 +511,9 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 'Content-Type': return_mimetype,
                 'Accept': return_mimetype,
                 'Federation': 'False',
-                }
+                'Authorization': token
+            }
+
             # Make the call
             try:
                 if request_type == 'GET':
@@ -584,10 +604,38 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 responseObject['status']['Valid response'] = True
 
     return json.dumps(responseObject)
+
+# testing method for access roles through tokens
+def getAccessLevels(token):
+
+    token_payload = token.split(".")[1]
+
+    # make sure token is padded properly for b64 decoding
+    padding = len(token_payload) % 4
+    if padding != 0:
+        token_payload += '=' * (4 - padding)
+    decoded_payload = base64.b64decode(token_payload)
+
+    parsed_payload = json.loads(decoded_payload)
+    access_levels = parsed_payload["access_levels"]
+
+    # setting defaults
+    results = {
+        'tier': -1,
+        'groups': []
+    }
+
+    for role in access_levels:
+        if role.isdigit():
+            results['tier'] = int(role)
+        else:
+            results['groups'].append(role)
+
+    return results
+
 ### ======================================================================= ###
 ### FEDERATION ENDS
 ### ======================================================================= ###
-
 
 def handleHttpPost(request, endpoint):
     """
@@ -685,6 +733,94 @@ def handleException(exception):
         return getFlaskResponse(responseStr, serverException.httpStatus,
                                 mimetype=return_mimetype)
 
+
+# Added by Kevin Chan
+def requires_token(f):
+    """
+    Decorator function that ensures that the token is valid, if the token is
+    invalid or expired, the user will be redirected to the login page. Much of
+    the authorization code flow is done solely by the function decorator
+    @oidc.require_login
+    """
+    @functools.wraps(f)
+    def decorated(*args, **kargs):
+        if app.config.get("KEYCLOAK"):
+            redirectUri = 'http://{0}:{1}{2}'.format(
+                    socket.gethostbyname(
+                        socket.gethostname()),
+                    app.myPort,
+                    flask.request.path)
+            try:
+                info = oidc.user_getinfo(['sub'])
+                tokenResponse = OAuth2Credentials.from_json(
+                    oidc.credentials_store[info.get('sub')]
+                    ).token_response
+                introspectArgs = {
+                    "token": tokenResponse["access_token"],
+                    "client_id": oidc.client_secrets["client_id"],
+                    "client_secret": oidc.client_secrets["client_secret"],
+                    "refresh_token": tokenResponse["refresh_token"],
+                }
+            except:
+                return flask.redirect(redirectUri)
+            userInfo = requests.post(url=oidc.client_secrets[
+                "token_introspection_uri"
+                ],
+                data=introspectArgs)
+
+            if userInfo.status_code != 200:
+                raise exceptions.NotAuthenticatedException()
+        return f(*args, **kargs)
+    return decorated
+
+def requires_session(f):
+    """
+    Testing: decorator for ensuring we have valid tyk access and an authenticated flask session
+    Modified from Kevin's original use case to grab tokens from session without using flask-oidc login
+    Authentication in this scenario is mostly handled by the Tyk API gateway and its middleware
+    Testing this out as a means of flask session management. Shouldn't be used with REST endpoints
+    """
+
+    @functools.wraps(f)
+    def decorated(*args, **kargs):
+        if app.config.get("TYK_ENABLED"):
+
+            redirect_uri = 'http://{0}:{1}{2}'.format(
+                app.config.get('TYK_SERVER'),
+                app.config.get('TYK_PORT'),
+                app.config.get('TYK_LISTEN_PATH')
+            )
+
+            if "state" not in flask.session:
+                flask.session["state"] = flask.request.args.get("session_state")
+
+            try:
+                flask.session["access_token"] = flask.request.headers["X-AccessToken"]
+                flask.session["refresh_token"] = flask.request.headers["X-RefreshToken"]
+
+                # for making requests during session
+                flask.session["id_token"] = flask.request.headers["Authorization"][7:]
+
+            except:
+                return flask.redirect(redirect_uri)
+
+            introspectArgs = {
+                "token": flask.session["access_token"],
+                "client_id": oidc.client_secrets["client_id"],
+                "client_secret": oidc.client_secrets["client_secret"],
+                "refresh_token": flask.session["refresh_token"]
+            }
+
+            userInfo = requests.post(
+                url=oidc.client_secrets["token_introspection_uri"],
+                data=introspectArgs
+            )
+
+            if userInfo.status_code != 200:
+                raise exceptions.NotAuthenticatedException()
+
+        return f(*args, **kargs)
+    return decorated
 
 def startLogin():
     """
@@ -800,7 +936,8 @@ class DisplayedRoute(object):
         return wrapper
 
 
-@app.route('/')
+@app.route('/', methods=LOGIN_ENDPOINT_METHODS)
+@requires_session
 def index():
     response = flask.render_template('index.html',
                                      info=app.serverStatus)
@@ -822,22 +959,27 @@ def index():
 ### ======================================================================= ###
 ### FRONT END
 ### ======================================================================= ###
-@app.route('/candig')
+@app.route('/candig', methods=LOGIN_ENDPOINT_METHODS)
+@requires_session
 def candig():
     datasetId = "WyJNRVRBREFUQSJd";
-    return flask.render_template('candig.html',datasetId=datasetId)
+    return flask.render_template('candig.html', session_id=flask.session["id_token"], datasetId=datasetId)
 
-@app.route('/candig_patients')
+@app.route('/candig_patients', methods=LOGIN_ENDPOINT_METHODS)
+@requires_session
 def candig_patients():
-    return flask.render_template('candig_patients.html')
+    return flask.render_template('candig_patients.html', session_id=flask.session["id_token"])
 
-@app.route('/igv')
+@app.route('/gene_search', methods=LOGIN_ENDPOINT_METHODS)
+@requires_session
+
+@app.route('/igv', methods=LOGIN_ENDPOINT_METHODS)
 def candig_igv():
-    return flask.render_template('candig_igv.html')
+    return flask.render_template('candig_igv.html', session_id=flask.session["id_token"])
 
-@app.route('/gene_search')
+@app.route('/gene_search', methods=LOGIN_ENDPOINT_METHODS)
 def candig_gene_search():
-    return flask.render_template('gene_search.html')
+    return flask.render_template('gene_search.html', session_id=flask.session["id_token"])
 
 @DisplayedRoute('/variantsbygenesearch', postMethod=True)
 def search_variant_by_gene_name():
@@ -848,6 +990,125 @@ def search_variant_by_gene_name():
 ### FRONT END END
 ### ======================================================================= ###
 
+### ======================================================================= ###
+### Start TYK
+### ======================================================================= ###
+
+# proxy to oidc login
+@app.route('/proxy')
+def proxy():
+    """
+    *** this endpoint should ignore Tyk Authorization requirements ***
+
+    All requests without an Authorization header should be proxied through
+    this endpoint (except for authentication request). Tyk 'pre-auth' middleware
+    will use this to ensure users are logged in
+
+    :return: redirect call to the identity provider authentication point
+    """
+
+    redirect_uri = flask.request.args.get('redirectUri', None, type=str)
+
+    if not redirect_uri:
+        redirect_uri = 'http://{0}:{1}{2}'.format(
+            app.config.get('TYK_SERVER'),
+            app.config.get('TYK_PORT'),
+            app.config.get('TYK_LISTEN_PATH')
+        )
+
+    idp_serv = app.config.get('KC_SERVER')
+    idp_path = app.config.get('KC_LOGIN_REDIRECT')+redirect_uri
+
+    return flask.redirect('http://{0}{1}'.format(idp_serv,idp_path))
+
+
+@app.route('/logout_oidc', methods=LOGIN_ENDPOINT_METHODS)
+def gateway_logout():
+    """
+    End both the flask + oidc login sessions. Requires user to be currently logged in
+
+    :return: redirect to the gateway proxy page
+    """
+
+    try:
+        url = oidc.client_secrets["logout_endpoint"]
+        auth_bearer = 'Bearer ' + flask.session["access_token"]
+
+        payload = {
+            "refresh_token": flask.session["refresh_token"],
+            "client_id": oidc.client_secrets["client_id"],
+            "client_secret": oidc.client_secrets["client_secret"]
+        }
+
+        headers = {
+            'Authorization': auth_bearer,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+
+        requests.post(url, data=payload, headers=headers)
+        flask.session.clear()
+
+    except:
+        # send to proxy endpoint after failing
+        flask.request.url = flask.url_for('proxy')
+        raise exceptions.NotAuthenticatedException()
+
+    return flask.redirect(flask.url_for('proxy'))
+
+
+@DisplayedRoute('/token', postMethod=True)
+def token():
+    """
+        *** this endpoint should ignore Tyk Authorization requirements ***
+
+        :return: an oidc id token to attach to subsequent request headers in the following format:
+
+            Authorization: Bearer <token>
+
+        As of now, the tyk 'pre-auth' js middleware handles the token
+        grant API calls and unless there was an authentication error,
+        the token should already be in the request header
+
+        Allows token retrieval without having to use a flask session (ie. for REST API calls)
+    """
+
+    response = {}
+    mimetype = "application/json"
+
+    try:
+        token = flask.request.headers["Authorization"][7:]
+        response["token"] = token
+        status = 200
+
+    except:
+        # get error details from the request
+        response["error"] = flask.request.data
+        status = 401
+
+    return flask.Response(json.dumps(response), status=status, mimetype=mimetype)
+
+### ======================================================================= ###
+### END TYK
+### ======================================================================= ###
+
+@app.route('/concordance')
+def concordance():
+    gene = request.args.get('gene', '', type=str)
+    if gene == '':
+        return jsonify(result = 'Gene symbol is missing')
+    concordance, freq, uniq = client.FederatedClient(
+        ServerStatus().getPeers()).get_concordance(gene)
+    abnormality = NCIT.NCIT().get_genetic_abnormalities(gene)
+    disease = NCIT.NCIT().get_diseases(gene)
+    return jsonify(result=render_template('concordance.html',
+        concordance=concordance,
+        freq=freq,
+        uniq=uniq,
+        abnormality=abnormality,
+        disease=disease))
+
+
+# New configuration added by Kevin Chan
 @app.route("/login")
 def login():
     if app.config.get('AUTH0_ENABLED'):

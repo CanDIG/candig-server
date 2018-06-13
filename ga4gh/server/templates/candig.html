@@ -52,8 +52,11 @@
           <a class="nav-link" href="candig_patients">Patient overview</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" href="logout_oidc">Logout</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="igv">IGV</a>
-        </li>        
+        </li>
       </ul>
     </nav>
       <div class="container-fluid">
@@ -118,6 +121,7 @@
       xhr.open("POST", "treatments/search", true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
       xhr.send(JSON.stringify({
           'datasetId': datasetId
       }));
@@ -195,6 +199,7 @@
           xhr.open("POST", "samples/search", true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.setRequestHeader('Accept', 'application/json');
+          xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
           xhr.send(JSON.stringify({
               'datasetId': datasetId
           }));
@@ -372,6 +377,7 @@
           xhr.open("POST", "diagnoses/search", true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.setRequestHeader('Accept', 'application/json');
+          xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
           xhr.send(JSON.stringify({
               'datasetId': datasetId
           }));
