@@ -27,7 +27,7 @@ class AbstractPhenotypeAssociationSet(datamodel.DatamodelObject):
         super(AbstractPhenotypeAssociationSet, self).__init__(
             parentContainer, localId)
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         pas = protocol.PhenotypeAssociationSet()
         pas.name = self.getLocalId()
         pas.id = self.getId()

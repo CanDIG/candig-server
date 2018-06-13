@@ -65,7 +65,7 @@ class CallSet(datamodel.DatamodelObject):
         self._biosampleId = callSetRecord.biosampleid
         self.setAttributesJson(callSetRecord.attributes)
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         """
         Returns the representation of this CallSet as the corresponding
         ProtocolElement.
@@ -248,7 +248,7 @@ class AbstractVariantSet(datamodel.DatamodelObject):
         """
         return self._metadata
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         """
         Converts this VariantSet into its GA4GH protocol equivalent.
         """
@@ -971,7 +971,7 @@ class AbstractVariantAnnotationSet(datamodel.DatamodelObject):
         ret = protocol.AlleleLocation()
         return ret
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         """
         Converts this VariantAnnotationSet into its GA4GH protocol equivalent.
         """

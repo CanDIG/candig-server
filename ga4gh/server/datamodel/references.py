@@ -198,7 +198,7 @@ class AbstractReferenceSet(datamodel.DatamodelObject):
         else:
             return None
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         """
         Returns the GA4GH protocol representation of this ReferenceSet.
         """
@@ -341,7 +341,7 @@ class AbstractReference(datamodel.DatamodelObject):
         """
         return self._md5checksum
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         """
         Returns the GA4GH protocol representation of this Reference.
         """

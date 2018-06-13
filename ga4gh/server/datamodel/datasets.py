@@ -270,7 +270,7 @@ class Dataset(datamodel.DatamodelObject):
         name = rnaQuantSet.getLocalId()
         self._rnaQuantificationSetNameMap[name] = rnaQuantSet
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         dataset = protocol.Dataset()
         dataset.id = self.getId()
         dataset.name = pb.string(self.getLocalId())
