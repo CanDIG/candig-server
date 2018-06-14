@@ -189,6 +189,7 @@
       });
 
       function refreshDataset(datasetIndex) {
+          datasetId = finalDatasetId[datasetIndex];
           let currTab = activeTab.href.split('#')[1];
           $('#topTabs a[href="#' + "refreshTab" + '"]').tab('show');
           $('#topTabs a[href="#' + currTab + '"]').tab('show');
