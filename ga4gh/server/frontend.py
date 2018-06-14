@@ -816,6 +816,10 @@ def candig():
     datasetId = "WyJNRVRBREFUQSJd";
     return flask.render_template('candig.html',datasetId=datasetId)
 
+@app.route('/spa')
+def candig_spa():
+    return flask.render_template('spa.html')
+
 @app.route('/candig_patients')
 def candig_patients():
     return flask.render_template('candig_patients.html')

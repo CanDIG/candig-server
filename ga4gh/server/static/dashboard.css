@@ -1,0 +1,192 @@
+         .single {
+         background-color: olive;
+         }
+         .double {
+         background-color: aqua;
+         }
+         #backButton {
+           border-radius: 4px;
+           padding: 8px;
+           border: none;
+           font-size: 12px;
+           background-color: #2eacd1;
+           color: white;
+           position: absolute;
+           top: 10px;
+           right: 10px;
+           cursor: pointer;
+         }
+         .invisible {
+         display: none;
+         }
+         .card {
+         padding-top: 0.5rem !important;
+         padding-left: 0.25rem !important;
+         }
+        .single {
+            background-color: olive;
+        }
+        
+        .double {
+            background-color: aqua;
+        }
+        
+        #backButton {
+            border-radius: 4px;
+            padding: 8px;
+            border: none;
+            font-size: 16px;
+            background-color: #2eacd1;
+            color: white;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+        
+        .invisible {
+            display: none;
+        }
+        
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            text-align: center;
+        }
+        
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #dddddd !important;
+        }
+        
+        input[type=text] {
+            padding: 10px;
+            font-size: 17px;
+            border: 1px solid grey;
+            float: left;
+            width: 40%;
+            background: #f1f1f1;
+            margin-right: 20px;
+            margin-left: 25%;
+            margin-bottom: 50px;
+        }
+        
+        button {
+            float: left;
+            width: 10%;
+            padding: 10px;
+            background: #2196F3;
+            color: white;
+            font-size: 17px;
+            border: 1px solid grey;
+            border-left: none;
+            /* Prevent double borders */
+            cursor: pointer;
+        }
+        
+        #myTable {
+            margin-top: 10%;
+            text-align: center;
+        }
+        
+        .title {
+            margin-top: 10%;
+        }
+        
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 60px;
+            height: 60px;
+            -webkit-animation: spin 2s linear infinite;
+            /* Safari */
+            animation: spin 2s linear infinite;
+            margin-left: calc( 50% - 60px);
+            margin-top: 200px;
+        }
+        /* Safari */
+        
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .container-fluid {
+            /*width: 95%;*/
+            padding-right: 50px;
+            padding-left: 50px;
+            margin-right: auto;
+        }
+         #backButton {
+         border-radius: 4px;
+         padding: 8px;
+         border: none;
+         font-size: 16px;
+         background-color: #2eacd1;
+         color: white;
+         position: absolute;
+         top: 10px;
+         right: 10px;
+         cursor: pointer;
+         }
+         .invisible {
+         display: none;
+         }
+         #patientTable_wrapper{
+            margin-top: 10px;
+/*            border: solid;
+            border-width: 1px;*/
+         }
+         #patientTable_length{
+            display: none;
+         }
+         #patientTable_filter {
+            display: none;
+         }
+         #patientTable_info {
+            display: none;
+         }
+         #patientTable_paginate {
+            display: none;
+         }
+/*         #mytable_wrapper {
+            border: solid;
+            border-width: 1px;
+         }*/
+         .card {
+            border: solid;
+            border-width: 1px;
+            height: 15rem;
+            margin-bottom: 3px;
+         }
+
+         .dropdown {
+            position: absolute !important;
+            right: 5%;
+         }
+
+         #selectedDataset {
+            position: absolute;
+            right: 15%;
+         }
