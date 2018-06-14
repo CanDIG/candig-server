@@ -472,9 +472,11 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     """
     request_dictionary = flask.request
     if 'Authorization' in request_dictionary.headers:
-        authz_token = int(request_dictionary.headers['Authorization'])
+        authz_token = request_dictionary.headers['Authorization']
+        access_map = getAccessMap(authz_token[7:])
     else:
-        authz_token = -1
+        raise exceptions.NotAuthenticatedException
+
 
     # Self query
     responseObject = {}
@@ -485,7 +487,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
             endpoint(
                 request, 
                 return_mimetype=return_mimetype,
-                tier=authz_token,
+                access_map=access_map
                 )
             )]
 
@@ -608,7 +610,14 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     return json.dumps(responseObject)
 
 # testing method for access roles through tokens
-def getAccessLevels(token):
+def getAccessMap(token):
+    """
+    user roles are defined in the local keycloak server as client roles
+    string formatted as follows: project:tier
+
+    :param token: raw keycloak oidc id_token containing roles as claims
+    :return: python dict in the form {"project" : "access tier", ...}
+    """
 
     token_payload = token.split(".")[1]
 
@@ -621,19 +630,13 @@ def getAccessLevels(token):
     parsed_payload = json.loads(decoded_payload)
     access_levels = parsed_payload["access_levels"]
 
-    # setting defaults
-    results = {
-        'tier': -1,
-        'groups': []
-    }
+    access_map = dict()
 
     for role in access_levels:
-        if role.isdigit():
-            results['tier'] = int(role)
-        else:
-            results['groups'].append(role)
+        split_role = role.split(':')
+        access_map[split_role[0]] = split_role[1]
 
-    return results
+    return access_map
 
 ### ======================================================================= ###
 ### FEDERATION ENDS

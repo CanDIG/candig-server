@@ -202,10 +202,11 @@ class Backend(object):
 ### ======================================================================= ###
 ### METADATA
 ### ======================================================================= ###
-    def patientsGenerator(self, request, tier=0):
+    def patientsGenerator(self, request, access_map):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getPatients():
             include = True
@@ -218,10 +219,11 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
-    def enrollmentsGenerator(self, request, tier=0):
+    def enrollmentsGenerator(self, request, access_map):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getEnrollments():
             include = True
@@ -237,10 +239,11 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
-    def consentsGenerator(self, request, tier=0):
+    def consentsGenerator(self, request, access_map):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getConsents():
             include = True
@@ -256,10 +259,11 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
-    def diagnosesGenerator(self, request, tier=0):
+    def diagnosesGenerator(self, request, access_map):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getDiagnoses():
             include = True
@@ -275,10 +279,11 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
-    def samplesGenerator(self, request, tier=0):
+    def samplesGenerator(self, request, access_map):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getSamples():
             include = True
@@ -294,10 +299,11 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
-    def treatmentsGenerator(self, request, tier=0):
+    def treatmentsGenerator(self, request, access_map):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getTreatments():
             include = True
@@ -313,10 +319,11 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
-    def outcomesGenerator(self, request, tier=0):
+    def outcomesGenerator(self, request, access_map):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getOutcomes():
             include = True
@@ -332,10 +339,11 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
-    def complicationsGenerator(self, request, tier=0):
+    def complicationsGenerator(self, request, access_map):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getComplications():
             include = True
@@ -351,10 +359,11 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
-    def tumourboardsGenerator(self, request, tier=0):
+    def tumourboardsGenerator(self, request, access_map):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getTumourboards():
             include = True
@@ -373,7 +382,7 @@ class Backend(object):
 ### METADATA END
 ### ======================================================================= ###
 
-    def phenotypeAssociationSetsGenerator(self, request):
+    def phenotypeAssociationSetsGenerator(self, request, access_map):
         """
         Returns a generator over the (phenotypeAssociationSet, nextPageToken)
         pairs defined by the specified request
@@ -383,7 +392,7 @@ class Backend(object):
             request, dataset.getNumPhenotypeAssociationSets(),
             dataset.getPhenotypeAssociationSetByIndex)
 
-    def readGroupSetsGenerator(self, request):
+    def readGroupSetsGenerator(self, request, access_map):
         """
         Returns a generator over the (readGroupSet, nextPageToken) pairs
         defined by the specified request.
@@ -430,7 +439,7 @@ class Backend(object):
             if include:
                 yield rgsp, nextPageToken
 
-    def referenceSetsGenerator(self, request):
+    def referenceSetsGenerator(self, request, access_map):
         """
         Returns a generator over the (referenceSet, nextPageToken) pairs
         defined by the specified request.
@@ -451,7 +460,7 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results)
 
-    def referencesGenerator(self, request):
+    def referencesGenerator(self, request, access_map):
         """
         Returns a generator over the (reference, nextPageToken) pairs
         defined by the specified request.
@@ -471,7 +480,7 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results)
 
-    def variantSetsGenerator(self, request):
+    def variantSetsGenerator(self, request, access_map):
         """
         Returns a generator over the (variantSet, nextPageToken) pairs defined
         by the specified request.
@@ -481,7 +490,7 @@ class Backend(object):
             request, dataset.getNumVariantSets(),
             dataset.getVariantSetByIndex)
 
-    def variantAnnotationSetsGenerator(self, request):
+    def variantAnnotationSetsGenerator(self, request, access_map):
         """
         Returns a generator over the (variantAnnotationSet, nextPageToken)
         pairs defined by the specified request.
@@ -494,7 +503,7 @@ class Backend(object):
             request, variantSet.getNumVariantAnnotationSets(),
             variantSet.getVariantAnnotationSetByIndex)
 
-    def readsGenerator(self, request):
+    def readsGenerator(self, request, access_map):
         """
         Returns a generator over the (read, nextPageToken) pairs defined
         by the specified request
@@ -543,7 +552,7 @@ class Backend(object):
             request, readGroupSet, reference)
         return intervalIterator
 
-    def variantsGenerator(self, request):
+    def variantsGenerator(self, request, access_map):
         """
         Returns a generator over the (variant, nextPageToken) pairs defined
         by the specified request.
@@ -556,7 +565,7 @@ class Backend(object):
             request, variantSet)
         return intervalIterator
 
-    def genotypeMatrixGenerator(self, request):
+    def genotypeMatrixGenerator(self, request, access_map):
         """
         Returns a generator over the (genotypematrix, nextPageToken) pairs
         defined by the specified request.
@@ -569,7 +578,7 @@ class Backend(object):
             request, variantSet)
         return intervalIterator
 
-    def variantAnnotationsGenerator(self, request):
+    def variantAnnotationsGenerator(self, request, access_map):
         """
         Returns a generator over the (variantAnnotaitons, nextPageToken) pairs
         defined by the specified request.
@@ -584,7 +593,7 @@ class Backend(object):
             request, variantAnnotationSet)
         return iterator
 
-    def featuresGenerator(self, request):
+    def featuresGenerator(self, request, access_map):
         """
         Returns a generator over the (features, nextPageToken) pairs
         defined by the (JSON string) request.
@@ -623,7 +632,7 @@ class Backend(object):
             request, featureSet, parentId)
         return iterator
 
-    def continuousGenerator(self, request):
+    def continuousGenerator(self, request, access_map):
         """
         Returns a generator over the (continuous, nextPageToken) pairs
         defined by the (JSON string) request.
@@ -641,7 +650,7 @@ class Backend(object):
         iterator = paging.ContinuousIterator(request, continuousSet)
         return iterator
 
-    def phenotypesGenerator(self, request):
+    def phenotypesGenerator(self, request, access_map):
         """
         Returns a generator over the (phenotypes, nextPageToken) pairs
         defined by the (JSON string) request
@@ -657,7 +666,7 @@ class Backend(object):
         return self._protocolListGenerator(
             request, phenotypes)
 
-    def genotypesPhenotypesGenerator(self, request):
+    def genotypesPhenotypesGenerator(self, request, access_map):
         """
         Returns a generator over the (phenotypes, nextPageToken) pairs
         defined by the (JSON string) request
@@ -673,7 +682,7 @@ class Backend(object):
             request, featureSets)
         return self._protocolListGenerator(request, annotationList)
 
-    def callSetsGenerator(self, request):
+    def callSetsGenerator(self, request, access_map):
         """
         Returns a generator over the (callSet, nextPageToken) pairs defined
         by the specified request.
@@ -695,7 +704,7 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results)
 
-    def featureSetsGenerator(self, request):
+    def featureSetsGenerator(self, request, access_map):
         """
         Returns a generator over the (featureSet, nextPageToken) pairs
         defined by the specified request.
@@ -705,7 +714,7 @@ class Backend(object):
             request, dataset.getNumFeatureSets(),
             dataset.getFeatureSetByIndex)
 
-    def continuousSetsGenerator(self, request):
+    def continuousSetsGenerator(self, request, access_map):
         """
         Returns a generator over the (continuousSet, nextPageToken) pairs
         defined by the specified request.
@@ -715,7 +724,7 @@ class Backend(object):
             request, dataset.getNumContinuousSets(),
             dataset.getContinuousSetByIndex)
 
-    def rnaQuantificationSetsGenerator(self, request):
+    def rnaQuantificationSetsGenerator(self, request, access_map):
         """
         Returns a generator over the (rnaQuantificationSet, nextPageToken)
         pairs defined by the specified request.
@@ -725,7 +734,7 @@ class Backend(object):
             request, dataset.getNumRnaQuantificationSets(),
             dataset.getRnaQuantificationSetByIndex)
 
-    def rnaQuantificationsGenerator(self, request):
+    def rnaQuantificationsGenerator(self, request, access_map):
         """
         Returns a generator over the (rnaQuantification, nextPageToken) pairs
         defined by the specified request.
@@ -750,7 +759,7 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results)
 
-    def expressionLevelsGenerator(self, request):
+    def expressionLevelsGenerator(self, request, access_map):
         """
         Returns a generator over the (expressionLevel, nextPageToken) pairs
         defined by the specified request.
@@ -769,7 +778,7 @@ class Backend(object):
             request, rnaQuant)
         return iterator
 
-    def peersGenerator(self, request):
+    def peersGenerator(self, request, access_map):
         """
         Returns a generator over the (peer, nextPageToken) pairs
         defined by the specified request.
@@ -797,7 +806,7 @@ class Backend(object):
 
     def runSearchRequest(
             self, requestStr, requestClass, responseClass, objectGenerator,
-            return_mimetype="application/json", tier=0):
+            access_map, return_mimetype="application/json"):
         """
         Runs the specified request. The request is a string containing
         a JSON representation of an instance of the specified requestClass.
@@ -822,7 +831,7 @@ class Backend(object):
             responseClass, request.page_size, self._maxResponseLength,
             return_mimetype)
         nextPageToken = None
-        for obj, nextPageToken in objectGenerator(request, tier=tier):
+        for obj, nextPageToken in objectGenerator(request, access_map):
             responseBuilder.addValue(obj)
             if responseBuilder.isFull():
                 break
@@ -875,7 +884,7 @@ class Backend(object):
             response.next_page_token = nextPageToken
         return protocol.serialize(response, return_mimetype)
 
-    def runSearchGenotypesRequest(self, requestStr,
+    def runSearchGenotypesRequest(self, requestStr, access_map,
                                   return_mimetype="application/json"):
         """
         Runs a searchGenotypes request for the specified
@@ -904,7 +913,7 @@ class Backend(object):
         genotyperows = []
         variants = []
         callsetIds = None
-        for gt_variant, nextPageToken in objectGenerator(request):
+        for gt_variant, nextPageToken in objectGenerator(request, access_map):
             genotypemtx, variant, callsetids = gt_variant
             genotyperows.append(genotypemtx)
             variant.ClearField(b"calls")
@@ -924,12 +933,13 @@ class Backend(object):
 
     # Get requests.
 
-    def runGetCallSet(self, id_, return_mimetype="application/json", tier=0):
+    def runGetCallSet(self, id_, access_map, return_mimetype="application/json"):
         """
         Returns a callset with the given id
         """
         compoundId = datamodel.CallSetCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         variantSet = dataset.getVariantSet(compoundId.variant_set_id)
         callSet = variantSet.getCallSet(id_)
         return self.runGetRequest(callSet, return_mimetype, tier=tier)
@@ -982,7 +992,7 @@ class Backend(object):
         return protocol.toJson(
             protocol.AnnouncePeerResponse(success=True))
 
-    def runListPeers(self, request, tier=0):
+    def runListPeers(self, request, access_map):
         """
         Takes a ListPeersRequest and returns a ListPeersResponse using
         a page_token and page_size if provided.
@@ -991,8 +1001,8 @@ class Backend(object):
             request,
             protocol.ListPeersRequest,
             protocol.ListPeersResponse,
-            self.peersGenerator, 
-            tier=0,
+            access_map,
+            self.peersGenerator
             )
 
     def runGetVariant(self, id_, return_mimetype="application/json", tier=0):
@@ -1030,84 +1040,93 @@ class Backend(object):
 ### ======================================================================= ###
 ### METADATA
 ### ======================================================================= ###
-    def runGetPatient(self, id_, return_mimetype="application/json", tier=0):
+    def runGetPatient(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getPatient request for the specified ID.
         """
         compoundId = datamodel.PatientCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         patient = dataset.getPatient(id_)
         return self.runGetRequest(patient, return_mimetype, tier=tier)
 
-    def runGetEnrollment(self, id_, return_mimetype="application/json", tier=0):
+    def runGetEnrollment(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getEnrollment request for the specified ID.
         """
         compoundId = datamodel.EnrollmentCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         enrollment = dataset.getEnrollment(id_)
         return self.runGetRequest(enrollment, return_mimetype, tier=tier)
 
-    def runGetConsent(self, id_, return_mimetype="application/json", tier=0):
+    def runGetConsent(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getConsent request for the specified ID.
         """
         compoundId = datamodel.ConsentCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         consent = dataset.getConsent(id_)
         return self.runGetRequest(consent, return_mimetype, tier=tier)
 
-    def runGetDiagnosis(self, id_, return_mimetype="application/json", tier=0):
+    def runGetDiagnosis(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getDiagnosis request for the specified ID.
         """
         compoundId = datamodel.DiagnosisCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         diagnosis = dataset.getDiagnosis(id_)
         return self.runGetRequest(diagnosis, return_mimetype, tier=tier)
 
-    def runGetSample(self, id_, return_mimetype="application/json", tier=0):
+    def runGetSample(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getSample request for the specified ID.
         """
         compoundId = datamodel.SampleCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         sample = dataset.getSample(id_)
         return self.runGetRequest(sample, return_mimetype, tier=tier)
 
-    def runGetTreatment(self, id_, return_mimetype="application/json", tier=0):
+    def runGetTreatment(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getTreatment request for the specified ID.
         """
         compoundId = datamodel.TreatmentCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         treatment = dataset.getTreatment(id_)
         return self.runGetRequest(treatment, return_mimetype, tier=tier)
 
-    def runGetOutcome(self, id_, return_mimetype="application/json", tier=0):
+    def runGetOutcome(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getOutcome request for the specified ID.
         """
         compoundId = datamodel.OutcomeCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         outcome = dataset.getOutcome(id_)
         return self.runGetRequest(outcome, return_mimetype, tier=tier)
 
-    def runGetComplication(self, id_, return_mimetype="application/json", tier=0):
+    def runGetComplication(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getComplication request for the specified ID.
         """
         compoundId = datamodel.ComplicationCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         complication = dataset.getComplication(id_)
         return self.runGetRequest(complication, return_mimetype, tier=tier)
 
-    def runGetTumourboard(self, id_, return_mimetype="application/json", tier=0):
+    def runGetTumourboard(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getTumourboard request for the specified ID.
         """
         compoundId = datamodel.TumourboardCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         tumourboard = dataset.getTumourboard(id_)
         return self.runGetRequest(tumourboard, return_mimetype, tier=tier)
 ### ======================================================================= ###
@@ -1126,26 +1145,28 @@ class Backend(object):
         data = protocol.serialize(gaFeature, return_mimetype)
         return data
 
-    def runGetReadGroupSet(self, id_, return_mimetype="application/json", tier=0):
+    def runGetReadGroupSet(self, id_, access_map, return_mimetype="application/json"):
         """
         Returns a readGroupSet with the given id_
         """
         compoundId = datamodel.ReadGroupSetCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         readGroupSet = dataset.getReadGroupSet(id_)
         return self.runGetRequest(readGroupSet, return_mimetype, tier=tier)
 
-    def runGetReadGroup(self, id_, return_mimetype="application/json", tier=0):
+    def runGetReadGroup(self, id_, access_map, return_mimetype="application/json"):
         """
         Returns a read group with the given id_
         """
         compoundId = datamodel.ReadGroupCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         readGroupSet = dataset.getReadGroupSet(compoundId.read_group_set_id)
         readGroup = readGroupSet.getReadGroup(id_)
         return self.runGetRequest(readGroup, return_mimetype, tier=tier)
 
-    def runGetReference(self, id_, return_mimetype="application/json", tier=0):
+    def runGetReference(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getReference request for the specified ID.
         """
@@ -1153,102 +1174,110 @@ class Backend(object):
         referenceSet = self.getDataRepository().getReferenceSet(
             compoundId.reference_set_id)
         reference = referenceSet.getReference(id_)
-        return self.runGetRequest(reference, return_mimetype, tier=tier)
+        return self.runGetRequest(reference, return_mimetype, tier=0)
 
-    def runGetReferenceSet(self, id_, return_mimetype="application/json", tier=0):
+    def runGetReferenceSet(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getReferenceSet request for the specified ID.
         """
         referenceSet = self.getDataRepository().getReferenceSet(id_)
-        return self.runGetRequest(referenceSet, return_mimetype, tier=tier)
+        return self.runGetRequest(referenceSet, return_mimetype, tier=0)
 
-    def runGetVariantSet(self, id_, return_mimetype="application/json", tier=0):
+    def runGetVariantSet(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getVariantSet request for the specified ID.
         """
         compoundId = datamodel.VariantSetCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         variantSet = dataset.getVariantSet(id_)
         return self.runGetRequest(variantSet, return_mimetype, tier=tier)
 
-    def runGetFeatureSet(self, id_, return_mimetype="application/json", tier=0):
+    def runGetFeatureSet(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getFeatureSet request for the specified ID.
         """
         compoundId = datamodel.FeatureSetCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         featureSet = dataset.getFeatureSet(id_)
         return self.runGetRequest(featureSet, return_mimetype, tier=tier)
 
-    def runGetContinuousSet(self, id_, return_mimetype="application/json", tier=0):
+    def runGetContinuousSet(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getContinuousSet request for the specified ID.
         """
         compoundId = datamodel.ContinuousSetCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         continuousSet = dataset.getContinuousSet(id_)
         return self.runGetRequest(continuousSet, return_mimetype, tier=tier)
 
-    def runGetDataset(self, id_, return_mimetype="application/json", tier=0):
+    def runGetDataset(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getDataset request for the specified ID.
         """
         dataset = self.getDataRepository().getDataset(id_)
+        tier = self.getUserAccessTier(dataset, access_map)
         return self.runGetRequest(dataset, return_mimetype, tier=tier)
 
-    def runGetExperiment(self, id_, return_mimetype="application/json", tier=0):
+    def runGetExperiment(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getExperiment request for the specified ID.
         """
         experiment = self.getDataRepository().getExperiment(id_)
-        return self.runGetRequest(experiment, return_mimetype, tier=tier)
+        return self.runGetRequest(experiment, return_mimetype, tier=0)
 
-    def runGetAnalysis(self, id_, return_mimetype="application/json", tier=0):
+    def runGetAnalysis(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getAnalysis request for the specified ID.
         """
         analysis = self.getDataRepository().getAnalysis(id_)
-        return self.runGetRequest(analysis, return_mimetype, tier=tier)
+        return self.runGetRequest(analysis, return_mimetype, tier=0)
 
-    def runGetVariantAnnotationSet(self, id_,
-                                   return_mimetype="application/json", tier=0):
+    def runGetVariantAnnotationSet(self, id_, access_map,
+                                   return_mimetype="application/json"):
         """
         Runs a getVariantSet request for the specified ID.
         """
         compoundId = datamodel.VariantAnnotationSetCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         variantSet = dataset.getVariantSet(compoundId.variant_set_id)
         variantAnnotationSet = variantSet.getVariantAnnotationSet(id_)
         return self.runGetRequest(variantAnnotationSet, return_mimetype, tier=tier)
 
-    def runGetRnaQuantification(self, id_, return_mimetype="application/json", tier=0):
+    def runGetRnaQuantification(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getRnaQuantification request for the specified ID.
         """
         compoundId = datamodel.RnaQuantificationCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         rnaQuantificationSet = dataset.getRnaQuantificationSet(
             compoundId.rna_quantification_set_id)
         rnaQuantification = rnaQuantificationSet.getRnaQuantification(id_)
         return self.runGetRequest(rnaQuantification, return_mimetype, tier=tier)
 
-    def runGetRnaQuantificationSet(self, id_,
-                                   return_mimetype="application/json", tier=0):
+    def runGetRnaQuantificationSet(self, id_, access_map,
+                                   return_mimetype="application/json"):
         """
         Runs a getRnaQuantificationSet request for the specified ID.
         """
         compoundId = datamodel.RnaQuantificationSetCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         rnaQuantificationSet = dataset.getRnaQuantificationSet(id_)
         return self.runGetRequest(rnaQuantificationSet, return_mimetype, tier=tier)
 
     def runGetExpressionLevel(
-            self, id_, return_mimetype="application/json", tier=0):
+            self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getExpressionLevel request for the specified ID.
         """
         compoundId = datamodel.ExpressionLevelCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         rnaQuantificationSet = dataset.getRnaQuantificationSet(
             compoundId.rna_quantification_set_id)
         rnaQuantification = rnaQuantificationSet.getRnaQuantification(
@@ -1258,7 +1287,7 @@ class Backend(object):
 
     # Search requests.
 
-    def runSearchReadGroupSets(self, request, return_mimetype, tier=0):
+    def runSearchReadGroupSets(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchReadGroupSetsRequest.
         """
@@ -1268,7 +1297,7 @@ class Backend(object):
             self.readGroupSetsGenerator,
             return_mimetype)
 
-    def runSearchIndividuals(self, request, return_mimetype, tier=0):
+    def runSearchIndividuals(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchIndividualsRequest.
         """
@@ -1281,7 +1310,7 @@ class Backend(object):
 ### ======================================================================= ###
 ### METADATA
 ### ======================================================================= ###
-    def runSearchPatients(self, request, return_mimetype, tier=0):
+    def runSearchPatients(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchPatientsRequest.
         """
@@ -1289,11 +1318,11 @@ class Backend(object):
             request, protocol.SearchPatientsRequest,
             protocol.SearchPatientsResponse,
             self.patientsGenerator,
+            access_map,
             return_mimetype,
-            tier=tier,
             )
 
-    def runSearchEnrollments(self, request, return_mimetype, tier=0):
+    def runSearchEnrollments(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchEnrollmentsRequest.
         """
@@ -1301,11 +1330,11 @@ class Backend(object):
             request, protocol.SearchEnrollmentsRequest,
             protocol.SearchEnrollmentsResponse,
             self.enrollmentsGenerator,
-            return_mimetype,
-            tier=tier,
+            access_map,
+            return_mimetype
             )
 
-    def runSearchConsents(self, request, return_mimetype, tier=0):
+    def runSearchConsents(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchConsentsRequest.
         """
@@ -1313,11 +1342,11 @@ class Backend(object):
             request, protocol.SearchConsentsRequest,
             protocol.SearchConsentsResponse,
             self.consentsGenerator,
-            return_mimetype,
-            tier=tier,
+            access_map,
+            return_mimetype
             )
 
-    def runSearchDiagnoses(self, request, return_mimetype, tier=0):
+    def runSearchDiagnoses(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchDiagnosesRequest.
         """
@@ -1325,11 +1354,11 @@ class Backend(object):
             request, protocol.SearchDiagnosesRequest,
             protocol.SearchDiagnosesResponse,
             self.diagnosesGenerator,
-            return_mimetype,
-            tier=tier,
+            access_map,
+            return_mimetype
             )
 
-    def runSearchSamples(self, request, return_mimetype, tier=0):
+    def runSearchSamples(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchSamplesRequest.
         """
@@ -1337,11 +1366,11 @@ class Backend(object):
             request, protocol.SearchSamplesRequest,
             protocol.SearchSamplesResponse,
             self.samplesGenerator,
-            return_mimetype,
-            tier=tier,
+            access_map,
+            return_mimetype
             )
 
-    def runSearchTreatments(self, request, return_mimetype, tier=0):
+    def runSearchTreatments(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchTreatmentsRequest.
         """
@@ -1349,11 +1378,11 @@ class Backend(object):
             request, protocol.SearchTreatmentsRequest,
             protocol.SearchTreatmentsResponse,
             self.treatmentsGenerator,
-            return_mimetype,
-            tier=tier,
+            access_map,
+            return_mimetype
             )
 
-    def runSearchOutcomes(self, request, return_mimetype, tier=0):
+    def runSearchOutcomes(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchOutcomesRequest.
         """
@@ -1361,11 +1390,11 @@ class Backend(object):
             request, protocol.SearchOutcomesRequest,
             protocol.SearchOutcomesResponse,
             self.outcomesGenerator,
-            return_mimetype,
-            tier=tier,
+            access_map,
+            return_mimetype
             )
 
-    def runSearchComplications(self, request, return_mimetype, tier=0):
+    def runSearchComplications(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchComplicationsRequest.
         """
@@ -1373,11 +1402,11 @@ class Backend(object):
             request, protocol.SearchComplicationsRequest,
             protocol.SearchComplicationsResponse,
             self.complicationsGenerator,
-            return_mimetype,
-            tier=tier,
+            access_map,
+            return_mimetype
             )
 
-    def runSearchTumourboards(self, request, return_mimetype, tier=0):
+    def runSearchTumourboards(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchTumourboardsRequest.
         """
@@ -1385,14 +1414,14 @@ class Backend(object):
             request, protocol.SearchTumourboardsRequest,
             protocol.SearchTumourboardsResponse,
             self.tumourboardsGenerator,
-            return_mimetype,
-            tier=tier,
+            access_map,
+            return_mimetype
             )
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ###
 
-    def runSearchBiosamples(self, request, return_mimetype, tier=0):
+    def runSearchBiosamples(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchBiosamplesRequest.
         """
@@ -1400,9 +1429,10 @@ class Backend(object):
             request, protocol.SearchBiosamplesRequest,
             protocol.SearchBiosamplesResponse,
             self.biosamplesGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchReads(self, request, return_mimetype, tier=0):
+    def runSearchReads(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchReadsRequest.
         """
@@ -1410,9 +1440,10 @@ class Backend(object):
             request, protocol.SearchReadsRequest,
             protocol.SearchReadsResponse,
             self.readsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchReferenceSets(self, request, return_mimetype, tier=0):
+    def runSearchReferenceSets(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchReferenceSetsRequest.
         """
@@ -1420,9 +1451,10 @@ class Backend(object):
             request, protocol.SearchReferenceSetsRequest,
             protocol.SearchReferenceSetsResponse,
             self.referenceSetsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchReferences(self, request, return_mimetype, tier=0):
+    def runSearchReferences(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchReferenceRequest.
         """
@@ -1430,9 +1462,10 @@ class Backend(object):
             request, protocol.SearchReferencesRequest,
             protocol.SearchReferencesResponse,
             self.referencesGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchVariantSets(self, request, return_mimetype, tier=0):
+    def runSearchVariantSets(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchVariantSetsRequest.
         """
@@ -1440,9 +1473,10 @@ class Backend(object):
             request, protocol.SearchVariantSetsRequest,
             protocol.SearchVariantSetsResponse,
             self.variantSetsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchVariantAnnotationSets(self, request, return_mimetype, tier=0):
+    def runSearchVariantAnnotationSets(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchVariantAnnotationSetsRequest.
         """
@@ -1450,9 +1484,10 @@ class Backend(object):
             request, protocol.SearchVariantAnnotationSetsRequest,
             protocol.SearchVariantAnnotationSetsResponse,
             self.variantAnnotationSetsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchVariants(self, request, return_mimetype, tier=0):
+    def runSearchVariants(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchVariantRequest.
         """
@@ -1460,15 +1495,16 @@ class Backend(object):
             request, protocol.SearchVariantsRequest,
             protocol.SearchVariantsResponse,
             self.variantsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchGenotypes(self, request, return_mimetype, tier=0):
+    def runSearchGenotypes(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchVariantRequest.
         """
-        return self.runSearchGenotypesRequest(request, return_mimetype)
+        return self.runSearchGenotypesRequest(request, access_map, return_mimetype)
 
-    def runSearchVariantAnnotations(self, request, return_mimetype, tier=0):
+    def runSearchVariantAnnotations(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchVariantAnnotationsRequest.
         """
@@ -1476,9 +1512,10 @@ class Backend(object):
             request, protocol.SearchVariantAnnotationsRequest,
             protocol.SearchVariantAnnotationsResponse,
             self.variantAnnotationsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchCallSets(self, request, return_mimetype, tier=0):
+    def runSearchCallSets(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchCallSetsRequest.
         """
@@ -1486,9 +1523,10 @@ class Backend(object):
             request, protocol.SearchCallSetsRequest,
             protocol.SearchCallSetsResponse,
             self.callSetsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchDatasets(self, request, return_mimetype, tier=0):
+    def runSearchDatasets(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchDatasetsRequest.
         """
@@ -1496,9 +1534,10 @@ class Backend(object):
             request, protocol.SearchDatasetsRequest,
             protocol.SearchDatasetsResponse,
             self.datasetsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchExperiments(self, request, return_mimetype, tier=0):
+    def runSearchExperiments(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchExperimentsRequest.
         """
@@ -1506,9 +1545,10 @@ class Backend(object):
             request, protocol.SearchExperimentsRequest,
             protocol.SearchExperimentsResponse,
             self.experimentsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchAnalyses(self, request, return_mimetype, tier=0):
+    def runSearchAnalyses(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchAnalysesRequest.
         """
@@ -1516,9 +1556,10 @@ class Backend(object):
             request, protocol.SearchAnalysesRequest,
             protocol.SearchAnalysesResponse,
             self.analysesGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchFeatureSets(self, request, return_mimetype, tier=0):
+    def runSearchFeatureSets(self, request, return_mimetype, access_map):
         """
         Returns a SearchFeatureSetsResponse for the specified
         SearchFeatureSetsRequest object.
@@ -1527,9 +1568,10 @@ class Backend(object):
             request, protocol.SearchFeatureSetsRequest,
             protocol.SearchFeatureSetsResponse,
             self.featureSetsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchFeatures(self, request, return_mimetype, tier=0):
+    def runSearchFeatures(self, request, return_mimetype, access_map):
         """
         Returns a SearchFeaturesResponse for the specified
         SearchFeaturesRequest object.
@@ -1541,9 +1583,10 @@ class Backend(object):
             request, protocol.SearchFeaturesRequest,
             protocol.SearchFeaturesResponse,
             self.featuresGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchContinuousSets(self, request, return_mimetype, tier=0):
+    def runSearchContinuousSets(self, request, return_mimetype, access_map):
         """
         Returns a SearchContinuousSetsResponse for the specified
         SearchContinuousSetsRequest object.
@@ -1552,9 +1595,10 @@ class Backend(object):
             request, protocol.SearchContinuousSetsRequest,
             protocol.SearchContinuousSetsResponse,
             self.continuousSetsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchContinuous(self, request, return_mimetype, tier=0):
+    def runSearchContinuous(self, request, return_mimetype, access_map):
         """
         Returns a SearchContinuousResponse for the specified
         SearchContinuousRequest object.
@@ -1566,30 +1610,34 @@ class Backend(object):
             request, protocol.SearchContinuousRequest,
             protocol.SearchContinuousResponse,
             self.continuousGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchGenotypePhenotypes(self, request, return_mimetype, tier=0):
+    def runSearchGenotypePhenotypes(self, request, return_mimetype, access_map):
         return self.runSearchRequest(
             request, protocol.SearchGenotypePhenotypeRequest,
             protocol.SearchGenotypePhenotypeResponse,
             self.genotypesPhenotypesGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchPhenotypes(self, request, return_mimetype, tier=0):
+    def runSearchPhenotypes(self, request, return_mimetype, access_map):
         return self.runSearchRequest(
             request, protocol.SearchPhenotypesRequest,
             protocol.SearchPhenotypesResponse,
             self.phenotypesGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchPhenotypeAssociationSets(self, request, return_mimetype, tier=0):
+    def runSearchPhenotypeAssociationSets(self, request, return_mimetype, access_map):
         return self.runSearchRequest(
             request, protocol.SearchPhenotypeAssociationSetsRequest,
             protocol.SearchPhenotypeAssociationSetsResponse,
             self.phenotypeAssociationSetsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchRnaQuantificationSets(self, request, return_mimetype, tier=0):
+    def runSearchRnaQuantificationSets(self, request, return_mimetype, access_map):
         """
         Returns a SearchRnaQuantificationSetsResponse for the specified
         SearchRnaQuantificationSetsRequest object.
@@ -1598,9 +1646,10 @@ class Backend(object):
             request, protocol.SearchRnaQuantificationSetsRequest,
             protocol.SearchRnaQuantificationSetsResponse,
             self.rnaQuantificationSetsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchRnaQuantifications(self, request, return_mimetype, tier=0):
+    def runSearchRnaQuantifications(self, request, return_mimetype, access_map):
         """
         Returns a SearchRnaQuantificationResponse for the specified
         SearchRnaQuantificationRequest object.
@@ -1609,9 +1658,10 @@ class Backend(object):
             request, protocol.SearchRnaQuantificationsRequest,
             protocol.SearchRnaQuantificationsResponse,
             self.rnaQuantificationsGenerator,
+            access_map,
             return_mimetype)
 
-    def runSearchExpressionLevels(self, request, return_mimetype, tier=0):
+    def runSearchExpressionLevels(self, request, return_mimetype, access_map):
         """
         Returns a SearchExpressionLevelResponse for the specified
         SearchExpressionLevelRequest object.
@@ -1620,6 +1670,7 @@ class Backend(object):
             request, protocol.SearchExpressionLevelsRequest,
             protocol.SearchExpressionLevelsResponse,
             self.expressionLevelsGenerator,
+            access_map,
             return_mimetype)
 
 ### ======================================================================= ###
@@ -1650,4 +1701,24 @@ class Backend(object):
         return json.dumps(return_object)
 ### ======================================================================= ###
 ### FRONT END END
+### ======================================================================= ###
+
+### ======================================================================= ###
+### AUTHORIZATION START
+### ======================================================================= ###
+    def getUserAccessTier(self, dataset, access_map):
+        """
+        :param dataset: dataset object
+        :param access_map: dict mapping the authenticated users groups to access tiers
+        :return: an access tier for a given dataset
+        """
+        dataset_name = dataset.getLocalId()
+
+        if dataset_name in access_map:
+            return int(access_map[dataset_name])
+        else:
+            raise exceptions.NotAuthorizedException("Not authorized to access this dataset")
+
+### ======================================================================= ###
+### AUTHORIZATION END
 ### ======================================================================= ###
