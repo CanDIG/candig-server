@@ -973,7 +973,7 @@ def candig():
 @app.route('/spa', methods=LOGIN_ENDPOINT_METHODS)
 @requires_session
 def candig_spa():
-    return flask.render_template('spa.html')
+    return flask.render_template('spa.html', session_id=flask.session["id_token"])
 
 @app.route('/candig_patients', methods=LOGIN_ENDPOINT_METHODS)
 @requires_session

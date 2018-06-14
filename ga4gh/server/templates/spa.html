@@ -156,6 +156,7 @@
           xhr.open("POST", "datasets/search", true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.setRequestHeader('Accept', 'application/json');
+          xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
           xhr.send(JSON.stringify({
           }));
           xhr.onload = function() {
@@ -239,6 +240,7 @@
       xhr.open("POST", "treatments/search", true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
       xhr.send(JSON.stringify({
           'datasetId': datasetId
       }));
@@ -316,6 +318,7 @@
           xhr.open("POST", "samples/search", true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.setRequestHeader('Accept', 'application/json');
+          xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
           xhr.send(JSON.stringify({
               'datasetId': datasetId
           }));
@@ -493,6 +496,7 @@
           xhr.open("POST", "diagnoses/search", true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.setRequestHeader('Accept', 'application/json');
+          xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
           xhr.send(JSON.stringify({
               'datasetId': datasetId
           }));
@@ -615,6 +619,7 @@
       xhr.open("POST", "patients/search", true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
       xhr.send(JSON.stringify({
           'datasetId': datasetId
       }));
@@ -791,6 +796,7 @@
               xhr.open("POST", "samples/search", true);
               xhr.setRequestHeader('Content-Type', 'application/json');
               xhr.setRequestHeader('Accept', 'application/json');
+              xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');              
               xhr.send(JSON.stringify({
                   'datasetId': datasetId,
                   'patientId': patientId
@@ -802,6 +808,7 @@
                   xhr.open("POST", "treatments/search", true);
                   xhr.setRequestHeader('Content-Type', 'application/json');
                   xhr.setRequestHeader('Accept', 'application/json');
+                  xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
                   xhr.send(JSON.stringify({
                       'datasetId': datasetId,
                       'patientId': patientId
@@ -859,9 +866,10 @@
         var geneRequest = document.getElementById("request").value;
       
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://10.9.208.132:8000/variantsbygenesearch", true);
+        xhr.open("POST", "variantsbygenesearch", true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
         xhr.send(JSON.stringify({
             'datasetId': 'WyJjb25jb3JkYW5jZSJd',
             'gene': geneRequest
