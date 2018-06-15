@@ -158,35 +158,40 @@
           xhr.send(JSON.stringify({
           }));
           xhr.onload = function() {
-              const data = JSON.parse(this.responseText);
-              const listOfDatasetId = data['results'][0]['datasets'];
-
-              if (listOfDatasetId.length == 0) {
-                alert("Sorry, but it seems like no data is available at the moment..")
+              if (xhr.status != 200) {
+                  alert("It looks like we cannot connect to the server at the moment, please try again later.")
               }
 
-              finalDatasetName = [];
-              finalDatasetId = [];
-              let dropdown = document.getElementById("dropdown-menu");
+              else {
+                  const data = JSON.parse(this.responseText);
+                  const listOfDatasetId = data['results'][0]['datasets'];
 
-              for (let i = 0; i < listOfDatasetId.length; i++) {
-                  if (!finalDatasetId.includes(listOfDatasetId[i]['id'])){
-                      finalDatasetId.push(listOfDatasetId[i]['id']);
-                      finalDatasetName.push(listOfDatasetId[i]['name']);
+                  if (listOfDatasetId.length == 0) {
+                    alert("Sorry, but it seems like no data is available at the moment..")
+                  }
+          
+                  else {
+                    finalDatasetName = [];
+                    finalDatasetId = [];
+                    let dropdown = document.getElementById("dropdown-menu");
+          
+                    for (let i = 0; i < listOfDatasetId.length; i++) {
+                        if (!finalDatasetId.includes(listOfDatasetId[i]['id'])){
+                            finalDatasetId.push(listOfDatasetId[i]['id']);
+                            finalDatasetName.push(listOfDatasetId[i]['name']);
+                        }
+                    }
+          
+                    for (let j = 0; j < finalDatasetId.length; j++) {
+                        dropdown.innerHTML += '<a class="dropdown-item" id="refresh" href="javascript:void(0)" onclick="refreshDataset('+ j + ')">' + finalDatasetName[j] + '</a>'
+                    }
+          
+                    datasetId = finalDatasetId[0];
+                    $('#dropdownMenuLink').html("Dataset: " + finalDatasetName[0]);
+
+                    $('.nav-tabs a[href="#candig"]').tab('show');               
                   }
               }
-            // <a class="dropdown-item" href="#">Action</a>
-            // <a class="dropdown-item" href="#">Another action</a>
-            // <a class="dropdown-item" href="#">Something else here</a>
-              for (let j = 0; j < finalDatasetId.length; j++) {
-                  dropdown.innerHTML += '<a class="dropdown-item" id="refresh" href="javascript:void(0)" onclick="refreshDataset('+ j + ')">' + finalDatasetName[j] + '</a>'
-              }
-
-              datasetId = finalDatasetId[0];
-              $('#dropdownMenuLink').html("Dataset: " + finalDatasetName[0]);
-
-              $('.nav-tabs a[href="#candig"]').tab('show');
-
           }
 
       });
