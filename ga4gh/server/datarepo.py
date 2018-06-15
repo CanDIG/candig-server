@@ -175,6 +175,22 @@ class AbstractDataRepository(object):
         """
         return self._datasetIdMap[self._datasetIds[index]]
 
+    ### ======================================================================= ###
+    ### Authorization
+    ### ======================================================================= ###
+    def getAuthzDatasetByIndex(self, index, access_map):
+        """
+        Returns the dataset at the specified index if authorized to do so
+        """
+        dataset = self._datasetIdMap[self._datasetIds[index]]
+        dataset_name = dataset.getLocalId()
+
+        return dataset if dataset_name in access_map else None
+
+    ### ======================================================================= ###
+    ### Authorization End
+    ### ======================================================================= ###
+
     def getDatasetByName(self, name):
         """
         Returns the dataset with the specified name.

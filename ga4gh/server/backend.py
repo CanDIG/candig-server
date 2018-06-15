@@ -141,14 +141,14 @@ class Backend(object):
             tier=tier,
             )
 
-    def datasetsGenerator(self, request, tier=0):
+    def datasetsGenerator(self, request, access_map):
         """
         Returns a generator over the (dataset, nextPageToken) pairs
         defined by the specified request
         """
-        return self._topLevelObjectGenerator(
+        return self._topLevelAuthzObjectGenerator(
             request, self.getDataRepository().getNumDatasets(),
-            self.getDataRepository().getDatasetByIndex)
+            self.getDataRepository().getAuthzDatasetByIndex, access_map=access_map)
 
     def experimentsGenerator(self, request, tier=0):
         """
@@ -1718,6 +1718,23 @@ class Backend(object):
             return int(access_map[dataset_name])
         else:
             raise exceptions.NotAuthorizedException("Not authorized to access this dataset")
+
+    def _topLevelAuthzObjectGenerator(self, request, numObjects, getByAuthzIndexMethod, tier=0, access_map=None):
+        """
+        top level authorized object generator to use with access maps (e.g. datasets/search)
+        """
+        currentIndex = 0
+        if request.page_token:
+            currentIndex, = paging._parsePageToken(
+                request.page_token, 1)
+        while currentIndex < numObjects:
+            object_ = getByAuthzIndexMethod(currentIndex, access_map)
+            currentIndex += 1
+            if (object_):
+                nextPageToken = None
+                if currentIndex < numObjects:
+                    nextPageToken = str(currentIndex)
+                yield object_.toProtocolElement(tier), nextPageToken
 
 ### ======================================================================= ###
 ### AUTHORIZATION END

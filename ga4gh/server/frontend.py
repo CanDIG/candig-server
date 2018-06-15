@@ -628,7 +628,10 @@ def getAccessMap(token):
     decoded_payload = base64.b64decode(token_payload)
 
     parsed_payload = json.loads(decoded_payload)
-    access_levels = parsed_payload["access_levels"]
+    access_levels = []
+
+    if 'access_levels' in parsed_payload:
+        access_levels = parsed_payload["access_levels"]
 
     access_map = dict()
 
