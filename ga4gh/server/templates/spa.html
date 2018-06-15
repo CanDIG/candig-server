@@ -38,9 +38,7 @@
       
 
         <div class="dropdown show">
-          <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-             Dataset: <div id="selectedDataset"></div>
-          </a>
+          <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dataset:</a>
 
           <div class="dropdown-menu" id="dropdown-menu" aria-labelledby="dropdownMenuLink">
           </div>
@@ -185,7 +183,7 @@
               }
 
               datasetId = finalDatasetId[0];
-              document.getElementById("selectedDataset").outerHTML = finalDatasetName[0];
+              $('#dropdownMenuLink').html("Dataset: " + finalDatasetName[0]);
 
               $('.nav-tabs a[href="#candig"]').tab('show');
 
@@ -198,7 +196,7 @@
           let currTab = activeTab.href.split('#')[1];
           $('#topTabs a[href="#' + "refreshTab" + '"]').tab('show');
           $('#topTabs a[href="#' + currTab + '"]').tab('show');
-          document.getElementById("selectedDataset").outerHTML = finalDatasetName[datasetIndex];
+          $('#dropdownMenuLink').html("Dataset: " + finalDatasetName[datasetIndex]);
       }
 
       // function refreshDataset(datasetIndex) {
