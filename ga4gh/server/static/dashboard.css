@@ -190,3 +190,10 @@
             position: absolute;
             right: 15%;
          }
+
+         #warningMsg {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+         }

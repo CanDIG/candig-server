@@ -26,24 +26,25 @@
          <li>
             <a class="nav-link" data-toggle="tab" href="#candig_patients">Patient overview</a>
          </li>
-          <li>
+         <li>
             <a class="nav-link" href="logout_oidc">Log out</a>
          </li>
-<!--          A workaround to refresh the current tab, do not delete this tab with #refreshTab
- -->         <li>
+         <!--          A workaround to refresh the current tab, do not delete this tab with #refreshTab
+            -->         
+         <li>
             <a class="nav-link" data-toggle="tab" href="#refreshTab" style="display: none">refreshTab</a>
          </li>
       </ul>
-
-      
-
-        <div class="dropdown show">
-          <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dataset:</a>
-
-          <div class="dropdown-menu" id="dropdown-menu" aria-labelledby="dropdownMenuLink">
-          </div>
-        </div>
+      <div class="dropdown show">
+         <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dataset:</a>
+         <div class="dropdown-menu" id="dropdown-menu" aria-labelledby="dropdownMenuLink">
+         </div>
+      </div>
    </nav>
+
+    <div class="alert alert-danger alert-dismissible" role="alert" id="warningMsg" style="display:none">
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    </div>
    <div class="tab-content" id="tab-content">
       <div id="candig" class="tab-pane fade in active">
          <div class="container-fluid">
@@ -109,46 +110,37 @@
          </div>
       </div>
       <div id="candig_patients" class="tab-pane fade">
-        <div class="container-fluid">
-         <h2 style="margin-bottom: 10px">CanDIG 0.07 - Overview of Patients</h2>
-         <div class="row" style="margin-top:50px; margin-bottom:50px">
-            <div class="col-sm-3">
-               <div class="card">
-                  <div id="genderGraph" style="max-width: 100%; height: 250px; auto;"></div>
+         <div class="container-fluid">
+            <h2 style="margin-bottom: 10px">CanDIG 0.07 - Overview of Patients</h2>
+            <div class="row" style="margin-top:50px; margin-bottom:50px">
+               <div class="col-sm-3">
+                  <div class="card">
+                     <div id="genderGraph" style="max-width: 100%; height: 250px; auto;"></div>
+                  </div>
+                  <div class="card">
+                     <div id="provinceGraph" style="max-width: 100%; height: 250px; auto;"></div>
+                  </div>
+                  <div class="card">
+                     <div id="raceGraph" style="max-width: 100%; height: 250px; auto;"></div>
+                  </div>
                </div>
-               <div class="card">
-                  <div id="provinceGraph" style="max-width: 100%; height: 250px; auto;"></div>
+               <div class="col-sm-9">
+                  <table id="mytable"></table>
+                  <table id="patientTable"></table>
                </div>
-               <div class="card">
-                  <div id="raceGraph" style="max-width: 100%; height: 250px; auto;"></div>
-               </div>
-            </div>
-            <div class="col-sm-9">
-               <table id="mytable"></table>
-               <table id="patientTable"></table>
             </div>
          </div>
-       </div>
-      </div>
-      <div id="candig_igv" class="tab-pane fade">
-            <p class="show-time"></p>
       </div>
    </div>
-   <script type="text/javascript">
 
+   <script type="text/javascript">
       let datasetId;
       let finalDatasetName;
       let finalDatasetId;
       let activeTab;
-
-      // $(document).on('click', '#refresh', function () {
-      //     let currTab = activeTab.href.split('#')[1];
-      //     $('#topTabs a[href="#' + "refreshTab" + '"]').tab('show');
-      //     $('#topTabs a[href="#' + currTab + '"]').tab('show');
-
-      // });
-
-
+      
+      /*Retrieve a list of datasets and initialize the page*/
+      
       $(window).load(function () {
           var xhr = new XMLHttpRequest();
           xhr.open("POST", "datasets/search", true);
@@ -158,8 +150,14 @@
           xhr.send(JSON.stringify({
           }));
           xhr.onload = function() {
+
               if (xhr.status != 200) {
-                  alert("It looks like we cannot connect to the server at the moment, please try again later.")
+                  //alert("It looks like we cannot connect to the server at the moment, please try again later.")
+                  //$('warningMsg').html("It looks like we cannot connect to the server at the moment, please try again later.")
+                  let warningMsg = document.getElementById('warningMsg');
+                  warningMsg.style.display = "block";
+                  document.getElementById('tab-content').style.display = "none";
+                  warningMsg.innerHTML += "No data currently available. Please contact a system administrator for assistance.";
               }
 
               else {
@@ -167,7 +165,7 @@
                   const listOfDatasetId = data['results'][0]['datasets'];
 
                   if (listOfDatasetId.length == 0) {
-                    alert("Sorry, but it seems like no data is available at the moment..")
+                    $('warningMsg').html("Sorry, but it seems like no data is available at the moment..")
                   }
           
                   else {
@@ -193,9 +191,8 @@
                   }
               }
           }
-
       });
-
+      
       function refreshDataset(datasetIndex) {
           datasetId = finalDatasetId[datasetIndex];
           let currTab = activeTab.href.split('#')[1];
@@ -203,35 +200,12 @@
           $('#topTabs a[href="#' + currTab + '"]').tab('show');
           $('#dropdownMenuLink').html("Dataset: " + finalDatasetName[datasetIndex]);
       }
-
-      // function refreshDataset(datasetIndex) {
-      //     datasetId = finalDatasetId[datasetIndex];
-      //     //console.log(activeTab.href.split('#')[1]);
-
-      //     // var $link = $('li.active a[data-toggle="tab"]');
-      //     // $link.parent().removeClass('active');
-      //     // activeTab.parent().removeClass('active');
-      //     // var tabLink = $link.attr('href');     
-      //     let currTab = activeTab.href.split('#')[1];
-      //     //$('#topTabs a[href="#' + currTab + '"]').tab('show');
-
-
-      //     var $link = $('li.active a[data-toggle="tab"]');
-      //     console.log($link);
-      //     $link.parent().removeClass('active');
-      //     var tabLink = $link.attr('href');
-      //     $('.nav-tabs  a[href="' + tabLink + '"]').tab('show');
-      // }
-
-      // $('a[data-toggle="tab"]').on('shown.bs.tab', function () {
-      //     $('.show-time').html(new Date().toLocaleTimeString());
-      // });
       
       $("a[href='#gene_search']").on('shown.bs.tab', function (e) {
           activeTab = e.target;
       })
       
-
+      
       $("a[href='#candig']").on('shown.bs.tab', function (e) {
       
       activeTab = e.target;
@@ -240,8 +214,6 @@
       var drugList = Array(18).join(".").split("."); //Initialize an emptry string array that has 18 empty strings.
       
       //var datasetId = '{{ datasetId }}';
-
-      console.log(datasetId);    
       
       var xhr = new XMLHttpRequest();
       xhr.open("POST", "treatments/search", true);
@@ -303,8 +275,14 @@
           var therapeuticArray = [];
       
           for (var i = 0; i < treatments.length; i++) {
-                responseArray.push(treatments[i]['responseToTreatment']);
-                therapeuticArray.push(treatments[i]['therapeuticModality']);
+
+            if (treatments[i]['responseToTreatment'] != undefined){
+                responseArray.push(treatments[i]['responseToTreatment']);          
+            }
+
+            if (treatments[i]['therapeuticModality'] != undefined){
+                therapeuticArray.push(treatments[i]['therapeuticModality']);    
+            }
           }
       
           var tempCats = Object.keys(freqCounter(responseArray));
@@ -339,6 +317,8 @@
               var misCount;
       
               for (var i = 0; i < sampleDataset.length; i++) {
+
+                if (sampleDataset[i]['collectionHospital']){                  
                   tempArray.push(sampleDataset[i]['collectionHospital']);
                   var tempDate = sampleDataset[i]['collectionDate'];
       
@@ -348,7 +328,8 @@
                   } catch (err) {
                       misCount++;
                   }
-      
+                }
+    
               }
       
               tempObj = freqCounter(tempArray);
@@ -518,7 +499,9 @@
               var tempCancerList = [];
       
               for (var i = 0; i < diagnosesDatasets.length; i++){
+                if (diagnosesDatasets[i]['cancerType'] != undefined){
                   tempCancerList.push(diagnosesDatasets[i]['cancerType']);
+                }
               }
       
               var tempCancerObj = freqCounter(tempCancerList);
@@ -607,17 +590,17 @@
       
             
       $("a[href='#candig_patients']").on('shown.bs.tab', function (e) {
-
+      
       activeTab = e.target;
       patient_main();
-
+      
       function patient_main(){
         if (document.getElementById('mytable').innerHTML != ""){
               var table = $("#mytable").DataTable();
               table.destroy();
               document.getElementById("mytable").innerHTML = "";          
         }
-
+      
       var statusCode = 0;
       var listOfRace = [];
       var listOfProvinces = [];
@@ -642,21 +625,24 @@
           $("#mytable").append(th);
       
           for (var i = 0; i < patientsDataset.length; i++) {
-              listOfRace.push(patientsDataset[i]["race"]);
-              listOfProvinces.push(patientsDataset[i]["provinceOfResidence"]);
-              listOfGenders.push(patientsDataset[i]["gender"]);
-      
-              var tr = "<tr>";
-              var td0 = '<td scope="col">' + patientsDataset[i]["patientId"] + "</td>";
-              var tdGender = '<td scope="col">' + patientsDataset[i]["gender"] + "</td>";
-              var td1 = '<td scope="col">' + patientsDataset[i]["dateOfDeath"] + "</td>";
-              var td2 = '<td scope="col">' + patientsDataset[i]["provinceOfResidence"] + "</td>";
-              var td3 = '<td scope="col">' + patientsDataset[i]["dateOfBirth"] + "</td>";
-              var td4 = '<td scope="col">' + patientsDataset[i]["race"] + "</td>";
-              var td5 = '<td scope="col">' + patientsDataset[i]["occupationalOrEnvironmentalExposure"] + "</td>";
-              var td6 = "</tr>";
-      
-              $("#mytable").append(tr + td0 + tdGender + td1 + td2 + td3 + td4 + td5 + td6);
+
+            if (patientsDataset[i]["race"] != undefined && patientsDataset[i]["provinceOfResidence"] != undefined && patientsDataset[i]["gender"] != undefined){
+                listOfRace.push(patientsDataset[i]["race"]);
+                listOfProvinces.push(patientsDataset[i]["provinceOfResidence"]);
+                listOfGenders.push(patientsDataset[i]["gender"]);
+        
+                var tr = "<tr>";
+                var td0 = '<td scope="col">' + patientsDataset[i]["patientId"] + "</td>";
+                var tdGender = '<td scope="col">' + patientsDataset[i]["gender"] + "</td>";
+                var td1 = '<td scope="col">' + patientsDataset[i]["dateOfDeath"] + "</td>";
+                var td2 = '<td scope="col">' + patientsDataset[i]["provinceOfResidence"] + "</td>";
+                var td3 = '<td scope="col">' + patientsDataset[i]["dateOfBirth"] + "</td>";
+                var td4 = '<td scope="col">' + patientsDataset[i]["race"] + "</td>";
+                var td5 = '<td scope="col">' + patientsDataset[i]["occupationalOrEnvironmentalExposure"] + "</td>";
+                var td6 = "</tr>";
+        
+                $("#mytable").append(tr + td0 + tdGender + td1 + td2 + td3 + td4 + td5 + td6);              
+              }
           }
       
           categoriesDrawer("raceGraph", "Ethnic Groups", listOfRace);
@@ -700,7 +686,7 @@
       
         }
       
-
+      
       function highChartSeriesObjectMaker(nameArray, dataArray){
         var tempObj = {};
         var seriesObjList = [];
@@ -797,7 +783,7 @@
               table.destroy();
               document.getElementById("patientTable").innerHTML = "";
           }
-
+      
           var xhr = new XMLHttpRequest();
       
               xhr.open("POST", "samples/search", true);
@@ -856,7 +842,7 @@
               }
       
       }       
-    });
+      });
       
       
       var statusCode = 0; // Initial value, table is empty
@@ -895,7 +881,7 @@
             }
         }
       }
-
+      
       function freqCounter(arrayToCount){
           result = {};
       
