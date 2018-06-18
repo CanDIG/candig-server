@@ -190,4 +190,10 @@ class TykConfig(KeycloakOidConfig):
     TYK_PORT = '8080'
     TYK_LISTEN_PATH = '/candig01/'
     KC_SERVER = '10.9.232.136:8080'
-    KC_LOGIN_REDIRECT = '/auth/realms/candig/protocol/openid-connect/auth?scope=openid+email&response_type=code&client_id=ga4gh&response_mode=form_post&redirect_uri='
+    KC_SCOPE = 'openid+email'
+    KC_RTYPE = 'code'
+    KC_CLIENT_ID = 'gsc_candig'
+    KC_RMODE = 'form_post'
+    KC_LOGIN_REDIRECT = '/auth/realms/candig/protocol/openid-connect/auth?scope={0}&response_type={1}&client_id={2}&response_mode={3}&redirect_uri='.format(
+        KC_SCOPE, KC_RTYPE, KC_CLIENT_ID, KC_RMODE
+    )
