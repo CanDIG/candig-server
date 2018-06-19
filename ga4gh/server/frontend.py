@@ -948,7 +948,7 @@ class DisplayedRoute(object):
 @requires_session
 def index():
     return flask.render_template('spa.html', session_id=flask.session["id_token"],
-                                 prepend_path=app.config.get('TYK_LISTEN_PATH'))
+                                 prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
 
 ### ======================================================================= ###
@@ -988,7 +988,7 @@ def candig_patients():
 @requires_session
 def candig_igv():
     return flask.render_template('candig_igv.html', session_id=flask.session["id_token"],
-                                 prepend_path=app.config.get('TYK_LISTEN_PATH'))
+                                 prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
 @app.route('/gene_search', methods=LOGIN_ENDPOINT_METHODS)
 def candig_gene_search():
