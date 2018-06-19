@@ -947,6 +947,21 @@ class DisplayedRoute(object):
 @app.route('/', methods=LOGIN_ENDPOINT_METHODS)
 @requires_session
 def index():
+    return flask.render_template('spa.html', session_id=flask.session["id_token"])
+
+
+### ======================================================================= ###
+### FRONT END
+### ======================================================================= ###
+@app.route('/candig', methods=LOGIN_ENDPOINT_METHODS)
+@requires_session
+def candig():
+    datasetId = "WyJNRVRBREFUQSJd"
+    return flask.render_template('candig.html', session_id=flask.session["id_token"], datasetId=datasetId)
+
+@app.route('/info', methods=LOGIN_ENDPOINT_METHODS)
+@requires_session
+def index_info():
     response = flask.render_template('index.html',
                                      info=app.serverStatus)
     if app.config.get('AUTH0_ENABLED'):
@@ -962,21 +977,6 @@ def index():
             exceptions.NotAuthenticatedException()
     else:
         return response
-
-
-### ======================================================================= ###
-### FRONT END
-### ======================================================================= ###
-@app.route('/candig', methods=LOGIN_ENDPOINT_METHODS)
-@requires_session
-def candig():
-    datasetId = "WyJNRVRBREFUQSJd";
-    return flask.render_template('candig.html', session_id=flask.session["id_token"], datasetId=datasetId)
-
-@app.route('/spa', methods=LOGIN_ENDPOINT_METHODS)
-@requires_session
-def candig_spa():
-    return flask.render_template('spa.html', session_id=flask.session["id_token"])
 
 @app.route('/candig_patients', methods=LOGIN_ENDPOINT_METHODS)
 @requires_session
