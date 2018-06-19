@@ -186,10 +186,10 @@ class TykConfig(KeycloakOidConfig):
     Still testing this config out
     """
     TYK_ENABLED = True
-    TYK_SERVER = '10.9.232.124'
+    TYK_SERVER = 'candigtyk01.dmz.bcgsc.ca'
     TYK_PORT = '8080'
-    TYK_LISTEN_PATH = '/candig01/'
-    KC_SERVER = '10.9.232.136:8080'
+    TYK_LISTEN_PATH = '/candig/'
+    KC_SERVER = 'candigkc01.dmz.bcgsc.ca:8080'
     KC_SCOPE = 'openid+email'
     KC_RTYPE = 'code'
     KC_CLIENT_ID = 'gsc_candig'
