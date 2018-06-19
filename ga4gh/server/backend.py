@@ -1676,7 +1676,7 @@ class Backend(object):
 ### ======================================================================= ###
 ### FRONT END
 ### ======================================================================= ###
-    def runSearchVariantsByGeneName(self, request, return_mimetype):
+    def runSearchVariantsByGeneName(self, request, return_mimetype, access_map):
         """
         """
         #TODO put request object into protocol and make this function a generator
