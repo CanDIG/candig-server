@@ -203,6 +203,26 @@
       
       $("a[href='#gene_search']").on('shown.bs.tab', function (e) {
           activeTab = e.target;
+
+        if (document.getElementById('myTable').innerHTML != ""){
+              var table = $("#myTable").DataTable();
+              table.destroy();
+              document.getElementById("myTable").innerHTML = "";
+              statusCode = 0;       
+        }
+
+        if (document.getElementById('mytable').innerHTML != ""){
+              var table = $("#mytable").DataTable();
+              table.destroy();
+              document.getElementById("mytable").innerHTML = "";          
+        }
+
+        if (document.getElementById('patientTable').innerHTML != ""){
+              var table = $("#patientTable").DataTable();
+              table.destroy();
+              document.getElementById("patientTable").innerHTML = "";          
+        }
+
       })
       
       
@@ -590,7 +610,8 @@
       
             
       $("a[href='#candig_patients']").on('shown.bs.tab', function (e) {
-      
+
+      var patientStatusCode = 0;
       activeTab = e.target;
       patient_main();
       
@@ -600,8 +621,20 @@
               table.destroy();
               document.getElementById("mytable").innerHTML = "";          
         }
+
+        if (document.getElementById('patientTable').innerHTML != ""){
+              var table = $("#patientTable").DataTable();
+              table.destroy();
+              document.getElementById("patientTable").innerHTML = "";          
+        }
+
+        if (document.getElementById('myTable').innerHTML != ""){
+              var table = $("#myTable").DataTable();
+              table.destroy();
+              document.getElementById("myTable").innerHTML = "";          
+        }
       
-      var statusCode = 0;
+      
       var listOfRace = [];
       var listOfProvinces = [];
       var listOfGenders = [];
@@ -778,7 +811,7 @@
       
       function patientInfoFetcher(patientId) {
       
-          if (statusCode == 1) {
+          if (patientStatusCode == 1) {
               var table = $("#patientTable").DataTable();
               table.destroy();
               document.getElementById("patientTable").innerHTML = "";
@@ -835,7 +868,7 @@
       
                       $(document).ready(function() {
                           $("#patientTable").DataTable();
-                          statusCode = 1;
+                          patientStatusCode = 1;
                       });
       
                   }
@@ -850,8 +883,11 @@
       function submit() {
       
         if (statusCode == 1) {
-            var table = $('#myTable').DataTable();
-            table.destroy();
+            if (document.getElementById('myTable').innerHTML != ""){
+                var table = $('#myTable').DataTable();
+                table.destroy();
+                document.getElementById('myTable').innerHTML = "";
+              }
         }
       
         document.getElementById("loader").style.display = "block";
