@@ -204,24 +204,25 @@
       $("a[href='#gene_search']").on('shown.bs.tab', function (e) {
           activeTab = e.target;
 
-        if (document.getElementById('myTable').innerHTML != ""){
+        // If the dataTable is not initialized, statusCode == -1 meaning that the previous response was invalid
+        if (document.getElementById('myTable').innerHTML != "" && statusCode != -1){
               var table = $("#myTable").DataTable();
               table.destroy();
               document.getElementById("myTable").innerHTML = "";
               statusCode = 0;       
         }
 
-        if (document.getElementById('mytable').innerHTML != ""){
-              var table = $("#mytable").DataTable();
-              table.destroy();
-              document.getElementById("mytable").innerHTML = "";          
-        }
+        // if (document.getElementById('mytable').innerHTML != ""){
+        //       var table = $("#mytable").DataTable();
+        //       table.destroy();
+        //       document.getElementById("mytable").innerHTML = "";          
+        // }
 
-        if (document.getElementById('patientTable').innerHTML != ""){
-              var table = $("#patientTable").DataTable();
-              table.destroy();
-              document.getElementById("patientTable").innerHTML = "";          
-        }
+        // if (document.getElementById('patientTable').innerHTML != ""){
+        //       var table = $("#patientTable").DataTable();
+        //       table.destroy();
+        //       document.getElementById("patientTable").innerHTML = "";          
+        // }
 
       })
       
@@ -628,11 +629,11 @@
               document.getElementById("patientTable").innerHTML = "";          
         }
 
-        if (document.getElementById('myTable').innerHTML != ""){
-              var table = $("#myTable").DataTable();
-              table.destroy();
-              document.getElementById("myTable").innerHTML = "";          
-        }
+        // if (document.getElementById('myTable').innerHTML != ""){
+        //       var table = $("#myTable").DataTable();
+        //       table.destroy();
+        //       document.getElementById("myTable").innerHTML = "";          
+        // }
       
       
       var listOfRace = [];
@@ -909,9 +910,11 @@
                 var geneDataset = data['results'][0];
                 tableMaker(geneDataset);
                 igvSearch(geneRequest);
+                document.getElementById("igvSample").style.display = "block";
                 statusCode = 1; // The Dataset was created successfully
             } else {
                 document.getElementById("loader").style.display = "none";
+                document.getElementById("igvSample").style.display = "none";                
                 document.getElementById("myTable").innerHTML = "Sorry, but we are not able to locate the gene.";
                 statusCode = -1; //The dataset failed to initialized.
             }
