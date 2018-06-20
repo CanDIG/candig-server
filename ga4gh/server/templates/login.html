@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login</title>
+    <link rel=stylesheet type=text/css href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <style>
+    .container-fluid {
+        text-align: center;
+        margin-top: 10%;
+    }
+
+    img {
+        width: 30%;
+    }
+
+    .login-form {
+        position: absolute;
+        width: 20%;
+        margin-left: 40%;
+    }
+
+    button {
+        margin-top: 50px;
+    }
+    </style>
+</head>
+
+<body style="background: #272c33">
+        <div class="container-fluid">
+            <div>
+                <img class="align-content" src="{{prepend_path}}static/logo.png" alt="">
+                <div class="login-form">
+                    <form>
+                        <div>
+                            <label>Username</label>
+                            <input type="username" class="form-control" placeholder="Username">
+                        </div>
+                        <div>
+                            <label>Password</label>
+                            <input type="password" class="form-control" placeholder="Password">
+                        </div>
+                        <button type="submit" class="btn btn-success btn-flat">Sign in</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+</body>
+
+</html>

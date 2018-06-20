@@ -950,6 +950,10 @@ def index():
     return flask.render_template('spa.html', session_id=flask.session["id_token"],
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
+@app.route('/login')
+def candig_login():
+    return flask.render_template('login.html',prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
+
 
 ### ======================================================================= ###
 ### FRONT END
