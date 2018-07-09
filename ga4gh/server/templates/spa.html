@@ -226,6 +226,9 @@
 
       })
       
+      /*
+      The following chunk of function gets executed on load, or once the candig tab is selected
+      */
       
       $("a[href='#candig']").on('shown.bs.tab', function (e) {
       
@@ -901,7 +904,7 @@
         xhr.setRequestHeader('Accept', 'application/json');
         xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
         xhr.send(JSON.stringify({
-            'datasetId': 'WyJjb25jb3JkYW5jZSJd',
+            'datasetId': datasetId,
             'gene': geneRequest
         }));
         xhr.onload = function() {
