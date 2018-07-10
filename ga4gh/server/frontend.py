@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 
 import os
 import datetime
+import time
 import socket
 import urlparse
 import functools
@@ -619,15 +620,7 @@ def getAccessMap(token):
     :return: python dict in the form {"project" : "access tier", ...}
     """
 
-    token_payload = token.split(".")[1]
-
-    # make sure token is padded properly for b64 decoding
-    padding = len(token_payload) % 4
-    if padding != 0:
-        token_payload += '=' * (4 - padding)
-    decoded_payload = base64.b64decode(token_payload)
-
-    parsed_payload = json.loads(decoded_payload)
+    parsed_payload = _parseTokenPayload(token)
     access_levels = []
 
     if 'access_levels' in parsed_payload:
@@ -640,6 +633,17 @@ def getAccessMap(token):
         access_map[split_role[0]] = split_role[1]
 
     return access_map
+
+def _parseTokenPayload(token):
+    token_payload = token.split(".")[1]
+
+    # make sure token is padded properly for b64 decoding
+    padding = len(token_payload) % 4
+    if padding != 0:
+        token_payload += '=' * (4 - padding)
+    decoded_payload = base64.b64decode(token_payload)
+
+    return json.loads(decoded_payload)
 
 ### ======================================================================= ###
 ### FEDERATION ENDS
@@ -1150,7 +1154,11 @@ def token():
 
     try:
         token = flask.request.headers["Authorization"][7:]
+        parsed_payload = _parseTokenPayload(token)
+        token_expires = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(parsed_payload["exp"]))
+
         response["token"] = token
+        response["expires"] = token_expires
         status = 200
 
     except:
