@@ -797,8 +797,9 @@ def requires_session(f):
         if app.config.get("TYK_ENABLED"):
 
             # TODO: CSRF check / checksum
-            if not flask.session.get("access_token"):
-                return gateway_logout()
+            if not flask.request.cookies.get("session_id"):
+                flask.session.clear()
+                return flask.redirect(_generate_login_url())
 
         return f(*args, **kargs)
     return decorated
@@ -920,7 +921,10 @@ class DisplayedRoute(object):
 @app.route('/')
 @requires_session
 def index():
-    return flask.render_template('spa.html', session_id=flask.session["id_token"],
+    return flask.render_template('spa.html',
+                                 session_id=flask.session["id_token"],
+                                 refresh=flask.session["refresh_token"],
+                                 access=flask.session["access_token"],
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
 @app.route('/login')
@@ -1043,13 +1047,18 @@ def login_oidc():
         raise exceptions.MethodNotAllowedException()
 
 
-@DisplayedRoute('/logout_oidc', postMethod=True)
+@app.route('/logout_oidc', methods=["POST"])
 def gateway_logout():
     """
     End flask login sessions. Tyk will handle remote keycloak session
     :return: redirect to the keycloak login
     """
-    response = flask.redirect(_generate_login_url())
+    #response = flask.redirect(_generate_base_url()+'/login_oidc')
+    if not flask.request.cookies.get("session_id"):
+        raise exceptions.NotAuthenticatedException
+
+    data = {"redirect": _generate_login_url()}
+    response = flask.Response(json.dumps(data))
 
     # delete browser cookie
     response.set_cookie('session_id', '', expires=0, path=app.config.get('TYK_COOKIE_PATH', '/'), httponly=True)
