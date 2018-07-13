@@ -56,6 +56,7 @@ LOGIN_ENDPOINT_METHODS = ['GET', 'POST']
 app = flask.Flask(__name__)
 assert not hasattr(app, 'urls')
 app.urls = []
+app.url_map.strict_slashes = False
 
 requires_auth = auth.auth_decorator(app)
 
@@ -486,7 +487,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     try:
         responseObject['results'] = [json.loads(
             endpoint(
-                request, 
+                request,
                 return_mimetype=return_mimetype,
                 access_map=access_map
                 )
@@ -596,7 +597,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
             # Invalid by default
             False
         }
-    
+
     # Decide on valid response
     if responseObject['status']['Known peers'] == \
             responseObject['status']['Queried peers']:
@@ -795,18 +796,9 @@ def requires_session(f):
     def decorated(*args, **kargs):
         if app.config.get("TYK_ENABLED"):
 
-            #TODO: CSRF check
-            userInfo = _check_session()
-
-            if not userInfo:
-                #redirect_path = tyk_path+flask.request.path
-                #redirect_uri = tyk_path+'/login_oidc?redirectUri='+redirect_path
-                return flask.redirect(_generate_login_url())
-
-            else:
-                userInfo_content = json.loads(userInfo.content)
-                if not userInfo_content.get('active'):
-                    return gateway_logout()
+            # TODO: CSRF check / checksum
+            if not flask.session.get("access_token"):
+                return gateway_logout()
 
         return f(*args, **kargs)
     return decorated
@@ -943,7 +935,11 @@ def candig_login():
 @requires_session
 def candig():
     datasetId = "WyJNRVRBREFUQSJd"
-    return flask.render_template('candig.html', session_id=flask.session["id_token"], datasetId=datasetId)
+    return flask.render_template('candig.html',
+                                 session_id=flask.session["id_token"],
+                                 refresh=flask.session["refresh_token"],
+                                 access=flask.session["access_token"],
+                                 datasetId=datasetId)
 
 @app.route('/info')
 @requires_session
@@ -1010,19 +1006,9 @@ def login_oidc():
     # GET request: check if authenticated and redirect root page, otherwise render template
     if flask.request.method == "GET":
 
-        # check for valid session
-        userInfo = _check_session()
-
-        if userInfo:
-            userInfo_content = json.loads(userInfo.content)
-
-            # error checking session
-            if userInfo.status_code != 200 or not userInfo_content.get('active'):
-                return gateway_logout()
-
-            # logged in, redirect to root
-            else:
-                return flask.redirect(base_url)
+        # check for valid flask session
+        if flask.request.cookies.get("session_id"):
+            return flask.redirect(base_url)
 
         # not logged in, redirect to keycloak
         else:
@@ -1048,13 +1034,8 @@ def login_oidc():
         elif flask.session.get("access_token"):
             return flask.redirect(base_url)
 
-        # bug?
+        # keycloak error
         else:
-            try:
-                _close_session()
-            except:
-                print("TODO?: Fix keycloak session bug. Admin should manually end session.")
-
             raise exceptions.NotAuthenticatedException()
 
     # Invalid method
@@ -1062,10 +1043,10 @@ def login_oidc():
         raise exceptions.MethodNotAllowedException()
 
 
-@app.route('/logout_oidc')
+@DisplayedRoute('/logout_oidc', postMethod=True)
 def gateway_logout():
     """
-    End both the flask + oidc login sessions. Requires user to be currently logged in
+    End flask login sessions. Tyk will handle remote keycloak session
     :return: redirect to the keycloak login
     """
     response = flask.redirect(_generate_login_url())
@@ -1074,7 +1055,7 @@ def gateway_logout():
     response.set_cookie('session_id', '', expires=0, path=app.config.get('TYK_COOKIE_PATH', '/'), httponly=True)
 
     # delete server/client sessions
-    _close_session()
+    flask.session.clear()
 
     return response
 
