@@ -465,6 +465,31 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         responseObject['status'].append(404)
         if request_type == 'POST': responseObject['results'].append({})
 
+    try:
+        nextToken = responseObject['results'][0].get('nextPageToken')
+
+    # response object not properly formed
+    except AttributeError:
+        nextToken = None
+
+    while nextToken:
+        request = json.loads(request)
+        request["page_token"] = responseObject['results'][0]['nextPageToken']
+        responseObject['results'][0].pop('nextPageToken', None)
+        request = json.dumps(request)
+
+        nextPageRequest = [json.loads(
+            endpoint(request, return_mimetype=return_mimetype)
+            )]
+
+        for key in nextPageRequest[0]:
+            if key in responseObject['results'][0]:
+                responseObject['results'][0][key]+=nextPageRequest[0][key]
+            else:
+                responseObject['results'][0][key]=nextPageRequest[0][key]
+
+        nextToken = responseObject['results'][0].get('nextPageToken')
+
     # Peer queries
     # Apply federation by default or if it was specifically requested
     if ('Federation' not in request_dictionary.headers or \
@@ -530,9 +555,6 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                             responseObject['results'] = [peer_response]
                         else:
                             for key in peer_response:
-                                #TODO: handle truncated responses; for now increased default page_size to 300
-                                if key=='nextPageToken':
-                                    continue
                                 for record in peer_response[key]:
                                     responseObject['results'][0][key].append(record)
 
