@@ -1059,7 +1059,7 @@
                   }
                   console.log("this is the reference id " + referenceId);
 
-                  igvSearch(geneRequest, referenceSetIds, readGroupIds, readGroupSetId, referenceId, chromesomeId);
+                  variantSetIdFetcher(geneRequest, referenceSetIds, readGroupIds, readGroupSetId, referenceId, chromesomeId);
                 }
 
                 catch (err) {
@@ -1074,9 +1074,29 @@
               }
           }        
       }
+
+      function variantSetIdFetcher(geneRequest, referenceSetIds, readGroupIds, readGroupSetId, referenceId, chromesomeId){
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "{{prepend_path}}variantsets/search", true);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.setRequestHeader('Accept', 'application/json');
+          xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
+          xhr.send(JSON.stringify({
+              'datasetId': datasetId,
+          }));
+          xhr.onload = function() {
+              let data = JSON.parse(this.responseText);
+              let variantsetId;
+              if(data['results'][0]["variantSets"][0]["id"] != undefined) {
+                  variantsetId = data['results'][0]["variantSets"][0]["id"];
+
+                  igvSearch(variantsetId, geneRequest, referenceSetIds, readGroupIds, readGroupSetId, referenceId, chromesomeId);
+              }
+          }
+      }
       
       
-      function igvSearch(geneRequest, referenceSetIds, readGroupIds, readGroupSetId, referenceId, chromesomeId) {
+      function igvSearch(variantsetId, geneRequest, referenceSetIds, readGroupIds, readGroupSetId, referenceId, chromesomeId) {
         var div = document.getElementById('igvSample')
       
         var options = {
@@ -1087,7 +1107,7 @@
                 fastaURL: "//igv.broadinstitute.org/genomes/seq/1kg_v37/human_g1k_v37_decoy.fasta",
                 cytobandURL: "//igv.broadinstitute.org/genomes/seq/b37/b37_cytoband.txt"
             },
-            oauthToken: '{{ session_id }}',      
+            oauthToken: '{{ session_id }}',
             showRuler: true,
             // Insert your applications api key here,  or use OAuth
             //apiKey: 'AIzaSyDUUAUFpQEN4mumeMNIRWXSiTh5cPtUAD0',
@@ -1097,7 +1117,7 @@
                         type: "variant",
                         url: "{{prepend_path}}",
                         referenceName: chromesomeId,
-                        variantSetId: "WyJwcm9meWxlIiwidnMiLCJtY2dpbGwiXQ",
+                        variantSetId: variantsetId,
                         name: "Variants",
                         pageSize: 10000,
                         visibilityWindow: 100000
@@ -1106,7 +1126,6 @@
                         sourceType: "ga4gh",
                         type: "alignment",
                         url: "{{prepend_path}}",
-                        //oauthToken: '{{ session_id }}',
                         //referenceSetId: "WyJHUkNoMzctbGl0ZSJd",
                         referenceId: referenceId,
                         //referenceName: chromesomeId,

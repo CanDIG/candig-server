@@ -66,7 +66,7 @@
             background-color: #dddddd !important;
         }
         
-        input[type=text] {
+        #searchBox input[type=text] {
             padding: 10px;
             font-size: 17px;
             border: 1px solid grey;
@@ -189,15 +189,4 @@
          #selectedDataset {
             position: absolute;
             right: 15%;
-         }
-
-         #warningMsg {
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-         }
-
-         #igvSample {
-            margin-top: 100px;
          }
