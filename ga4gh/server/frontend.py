@@ -1058,7 +1058,7 @@ def login_oidc():
 
             response = flask.redirect(base_url)
             response.set_cookie('session_id', flask.session["id_token"], max_age=600,
-                                path=app.config.get('TYK_COOKIE_PATH', '/'), httponly=True)
+                                path=app.config.get('TYK_LISTEN_PATH', '/'), httponly=True)
             return response
 
         # refresh/back POST
@@ -1088,7 +1088,7 @@ def gateway_logout():
     response = flask.Response(json.dumps(data))
 
     # delete browser cookie
-    response.set_cookie('session_id', '', expires=0, path=app.config.get('TYK_COOKIE_PATH', '/'), httponly=True)
+    response.set_cookie('session_id', '', expires=0, path=app.config.get('TYK_LISTEN_PATH', '/'), httponly=True)
 
     # delete server/client sessions
     flask.session.clear()

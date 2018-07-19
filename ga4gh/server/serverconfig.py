@@ -186,9 +186,8 @@ class TykConfig(KeycloakOidConfig):
     """
 
     TYK_ENABLED = True
-    TYK_COOKIE_PATH = '/candig-dev'
     TYK_SERVER = 'http://ga4ghdev01.bcgsc.ca:8008'
-    TYK_LISTEN_PATH = '/candig-dev/'
+    TYK_LISTEN_PATH = '/candig-dev'
 
     # Keycloak settings with redirection through tyk
     KC_REALM = 'CanDIG'
