@@ -11,8 +11,8 @@
       <script src="https://code.highcharts.com/modules/drilldown.js"></script>
       <link rel=stylesheet type=text/css href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
       <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-      <script type="text/javascript" src="{{prepend_path}}static/igv-2.0.0-rc3.js"></script>
-      <link type="text/css" rel="stylesheet" href="{{prepend_path}}static/dashboard.css">
+      <script type="text/javascript" src="{{prepend_path}}/static/igv-2.0.0-rc3.js"></script>
+      <link type="text/css" rel="stylesheet" href="{{prepend_path}}/static/dashboard.css">
    </head>
    <!-- A grey horizontal navbar that becomes vertical on small screens -->
    <nav class="navbar navbar-expand-sm bg-light">
@@ -144,7 +144,7 @@
       
       $(window).load(function () {
           var xhr = new XMLHttpRequest();
-          xhr.open("POST", "{{prepend_path}}datasets/search", true);
+          xhr.open("POST", "{{prepend_path}}/datasets/search", true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.setRequestHeader('Accept', 'application/json');
           xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
@@ -241,7 +241,7 @@
       //var datasetId = '{{ datasetId }}';
       
       var xhr = new XMLHttpRequest();
-      xhr.open("POST", "{{prepend_path}}treatments/search", true);
+      xhr.open("POST", "{{prepend_path}}/treatments/search", true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.setRequestHeader('Accept', 'application/json');
       xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
@@ -325,7 +325,7 @@
        
       function samplesFetcher() {
           var xhr = new XMLHttpRequest();
-          xhr.open("POST", "{{prepend_path}}samples/search", true);
+          xhr.open("POST", "{{prepend_path}}/samples/search", true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.setRequestHeader('Accept', 'application/json');
           xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
@@ -506,7 +506,7 @@
       
       function cancerTypeDruglistFetcher() {
           var xhr = new XMLHttpRequest();
-          xhr.open("POST", "{{prepend_path}}diagnoses/search", true);
+          xhr.open("POST", "{{prepend_path}}/diagnoses/search", true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.setRequestHeader('Accept', 'application/json');
           xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
@@ -644,7 +644,7 @@
       var listOfProvinces = [];
       var listOfGenders = [];
       var xhr = new XMLHttpRequest();
-      xhr.open("POST", "{{prepend_path}}patients/search", true);
+      xhr.open("POST", "{{prepend_path}}/patients/search", true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.setRequestHeader('Accept', 'application/json');
       xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
@@ -824,7 +824,7 @@
       
           var xhr = new XMLHttpRequest();
       
-              xhr.open("POST", "{{prepend_path}}samples/search", true);
+              xhr.open("POST", "{{prepend_path}}/samples/search", true);
               xhr.setRequestHeader('Content-Type', 'application/json');
               xhr.setRequestHeader('Accept', 'application/json');
               xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');              
@@ -886,8 +886,6 @@
       
       function submit() {
       
-        console.log(window.location.hostname + window.location.port + "{{prepend_path}}")
-
         if (statusCode == 1) {
             if (document.getElementById('myTable').innerHTML != ""){
                 var table = $('#myTable').DataTable();
@@ -901,7 +899,7 @@
         var geneRequest = document.getElementById("request").value;
       
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "{{prepend_path}}variantsbygenesearch", true);
+        xhr.open("POST", "{{prepend_path}}/variantsbygenesearch", true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader('Accept', 'application/json');
         xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
@@ -943,7 +941,7 @@
       function readGroupFetcher(geneRequest, geneDataset) {
           console.log("inside readgroup request")
           var xhr = new XMLHttpRequest();
-          xhr.open("POST", "{{prepend_path}}readgroupsets/search", true);
+          xhr.open("POST", "{{prepend_path}}/readgroupsets/search", true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.setRequestHeader('Accept', 'application/json');
           xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
@@ -1034,7 +1032,7 @@
 
         console.log("inside reference id fetcher")
           var xhr = new XMLHttpRequest();
-          xhr.open("POST", "{{prepend_path}}references/search", true);
+          xhr.open("POST", "{{prepend_path}}/references/search", true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.setRequestHeader('Accept', 'application/json');
           xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
@@ -1077,7 +1075,7 @@
 
       function variantSetIdFetcher(geneRequest, referenceSetIds, readGroupIds, readGroupSetId, referenceId, chromesomeId){
           var xhr = new XMLHttpRequest();
-          xhr.open("POST", "{{prepend_path}}variantsets/search", true);
+          xhr.open("POST", "{{prepend_path}}/variantsets/search", true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.setRequestHeader('Accept', 'application/json');
           xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
@@ -1248,7 +1246,7 @@
       
       function logout() {
           var xhr = new XMLHttpRequest();
-          xhr.open("POST", "{{prepend_path}}logout_oidc", true);
+          xhr.open("POST", "{{prepend_path}}/logout_oidc", true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.setRequestHeader('Accept', 'application/json');
           xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
