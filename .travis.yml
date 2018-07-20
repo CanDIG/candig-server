@@ -15,7 +15,7 @@ install:
   - easy_install distribute
   - pip install --upgrade distribute
   - python setup.py sdist
-  - pip install dist/ga4gh*.tar.gz -c constraints.txt
+  - pip install dist/ga4gh*.tar.gz #-c constraints.txt
 # every installable in setup.py's entry_points should be tested here
   - ga4gh_configtest --version
   - ga4gh_server --version
