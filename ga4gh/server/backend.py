@@ -1606,7 +1606,8 @@ class Backend(object):
         #TODO put request object into protocol and make this function a generator
         request = json.loads(request)
         return_object = []
-        
+        result_object = {"variants": return_object}
+
         dataset = self.getDataRepository().getDataset(request['datasetId'])
         #
         variantsets = dataset.getVariantSets()
@@ -1621,8 +1622,8 @@ class Backend(object):
                             endPosition=feature.end,
                             ):
                         return_object.append(protocol.toJson(variant))
-        
-        return json.dumps(return_object)
+
+        return json.dumps(result_object)
 ### ======================================================================= ###
 ### FRONT END END
 ### ======================================================================= ###

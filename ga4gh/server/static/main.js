@@ -749,7 +749,7 @@ function submit() {
     xhr.onload = function() {
         var data = JSON.parse(this.responseText);
         if (xhr.status == 200) {
-            var geneDataset = data['results'][0];
+            var geneDataset = data['results'][0]['variants'];
             tableMaker(geneDataset);
             readGroupFetcher(geneRequest, geneDataset)
             //igvSearch(geneRequest);
@@ -797,15 +797,16 @@ function readGroupFetcher(geneRequest, geneDataset) {
             try {
                 //console.log("inside the try block")
                 let finalChrId;
-                let tempBody = data['results'][0];
-                let readGroups = tempBody["readGroupSets"][0]["readGroups"];
-                let readGroupSetId = tempBody["readGroupSets"][0]["id"];
+                let tempBody = data['results'][0]["readGroupSets"]; //an array of readgroupsets
+                //let readGroups = tempBody["readGroupSets"][0]["readGroups"];
+                let readGroupSetId = [];
 
                 //console.log("printing out the tempBody: " + readGroupSetId)
 
-                for (let i = 0; i < readGroups.length; i++) {
-                    readGroupIds.push(readGroups[i]["id"]);
-                    referenceSetIds.push(readGroups[i]["referenceSetId"])
+                for (let i = 0; i < tempBody.length; i++) {
+                    readGroupSetId.push(tempBody[i]["id"]);
+                    readGroupIds.push(tempBody[i]["readGroups"][0]["id"]);
+                    referenceSetIds.push(tempBody[i]["readGroups"][0]["referenceSetId"])
                 }
 
                 for (var j = 0; j < 1; j++) {
@@ -848,7 +849,7 @@ function readGroupFetcher(geneRequest, geneDataset) {
 
 
                 // For now, only pass on the first element of the array
-                referenceIdFetcher(geneRequest, referenceSetIds[0], readGroupIds[0], readGroupSetId, finalChrId);
+                referenceIdFetcher(geneRequest, referenceSetIds[0], readGroupIds, readGroupSetId, finalChrId);
 
                 //igvSearch(geneRequest, readGroupSetId)
             } catch (err) {
@@ -958,10 +959,32 @@ function igvSearch(variantsetId, geneRequest, referenceSetIds, readGroupIds, rea
                 //referenceSetId: "WyJHUkNoMzctbGl0ZSJd",
                 referenceId: referenceId,
                 //referenceName: chromesomeId,
-                readGroupIds: readGroupIds,
-                readGroupSetIds: readGroupSetId,
-                name: "Alignments"
+                readGroupIds: readGroupIds[0],
+                readGroupSetIds: readGroupSetId[0],
+                name: "Alignments 1"
             },
+            // {
+            //     sourceType: "ga4gh",
+            //     type: "alignment",
+            //     url: prepend_path + "",
+            //     //referenceSetId: "WyJHUkNoMzctbGl0ZSJd",
+            //     referenceId: referenceId,
+            //     //referenceName: chromesomeId,
+            //     readGroupIds: readGroupIds[1],
+            //     readGroupSetIds: readGroupSetId[1],
+            //     name: "Alignments 2"
+            // },
+            // {
+            //     sourceType: "ga4gh",
+            //     type: "alignment",
+            //     url: prepend_path + "",
+            //     //referenceSetId: "WyJHUkNoMzctbGl0ZSJd",
+            //     referenceId: referenceId,
+            //     //referenceName: chromesomeId,
+            //     readGroupIds: readGroupIds[2],
+            //     readGroupSetIds: readGroupSetId[2],
+            //     name: "Alignments 3"
+            // },
             {
                 name: "Genes",
                 type: "annotation",
