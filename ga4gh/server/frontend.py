@@ -881,6 +881,15 @@ def checkAuthentication():
             return startLogin()
 
 
+@app.after_request
+def prevent_cache(response):
+    """
+    Disable response caching for dashboard
+    """
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return response
+
+
 def handleFlaskGetRequest(id_, flaskRequest, endpoint):
     """
     Handles the specified flask request for one of the GET URLs
