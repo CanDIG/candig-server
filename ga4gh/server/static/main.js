@@ -675,7 +675,7 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
             var data = JSON.parse(this.responseText);
             var sampleDataset = data['results'][0]['samples'];
 
-            xhr.open("POST", "treatments/search", true);
+            xhr.open("POST", prepend_path + "treatments/search", true);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Accept', 'application/json');
             xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
