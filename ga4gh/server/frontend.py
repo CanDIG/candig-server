@@ -486,49 +486,49 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     responseObject['status'] = list()
 
     try:
-        responseObject['results'] = [json.loads(
+        responseObject['results'] = json.loads(
             endpoint(
                 request,
                 return_mimetype=return_mimetype,
                 access_map=access_map
                 )
-            )]
+            )
 
         responseObject['status'].append(200)
     except exceptions.ObjectWithIdNotFoundException as error:
         responseObject['status'].append(404)
     except exceptions.NotFoundException as error:
         responseObject['status'].append(404)
-        if request_type == 'POST': responseObject['results'].append({})
+        if request_type == 'POST': responseObject['results'] = {}
 
     try:
-        nextToken = responseObject['results'][0].get('nextPageToken')
+        nextToken = responseObject['results'].get('nextPageToken')
 
     # response object not properly formed
-    except AttributeError:
+    except (IndexError, AttributeError) as error:
         nextToken = None
 
     while nextToken:
         request = json.loads(request)
-        request["page_token"] = responseObject['results'][0]['nextPageToken']
-        responseObject['results'][0].pop('nextPageToken', None)
+        request["page_token"] = responseObject['results']['nextPageToken']
+        responseObject['results'].pop('nextPageToken', None)
         request = json.dumps(request)
 
-        nextPageRequest = [json.loads(
+        nextPageRequest = json.loads(
                 endpoint(
                     request,
                     return_mimetype=return_mimetype,
                     access_map=access_map
                 )
-            )]
+            )
 
-        for key in nextPageRequest[0]:
-            if key in responseObject['results'][0]:
-                responseObject['results'][0][key]+=nextPageRequest[0][key]
+        for key in nextPageRequest:
+            if key in responseObject['results']:
+                responseObject['results'][key]+=nextPageRequest[key]
             else:
-                responseObject['results'][0][key]=nextPageRequest[0][key]
+                responseObject['results'][key]=nextPageRequest[key]
 
-        nextToken = responseObject['results'][0].get('nextPageToken')
+        nextToken = responseObject['results'].get('nextPageToken')
 
     # Peer queries
     # Apply federation by default or if it was specifically requested
@@ -587,21 +587,20 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 if response.status_code == 200:
 
                     if request_type == 'GET':
-                        responseObject['results'].append(
-                            response.json()['results'][0])
+                        responseObject['results'] = response.json()['results']
 
                     elif request_type == 'POST':
-                        peer_response = response.json()['results'][0]
+                        peer_response = response.json()['results']
 
-                        if not responseObject['results'][0]:
+                        if not responseObject['results']:
                             responseObject['results'] = [peer_response]
                         else:
                             for key in peer_response:
                                 for record in peer_response[key]:
-                                    responseObject['results'][0][key].append(record)
+                                    responseObject['results'][key].append(record)
 
     # If no result has been found on any of the servers raise an error
-    if not responseObject['results'] or not responseObject['results'][0]:
+    if not responseObject['results'] or not responseObject['results']:
         if request_type == 'GET':
             raise exceptions.ObjectWithIdNotFoundException(request)
         elif request_type == 'POST':

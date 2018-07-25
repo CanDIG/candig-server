@@ -17,7 +17,7 @@ $(window).load(function() {
             warningMsg.innerHTML += "No data currently available. Please contact a system administrator for assistance.";
         } else {
             const data = JSON.parse(this.responseText);
-            const listOfDatasetId = data['results'][0]['datasets'];
+            const listOfDatasetId = data['results']['datasets'];
 
             if (listOfDatasetId.length == 0) {
                 $('warningMsg').html("Sorry, but it seems like no data is available at the moment..")
@@ -112,7 +112,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
         samplesFetcher();
 
         cancerTypeDruglistFetcher();
-        treatments = data['results'][0]['treatments'];
+        treatments = data['results']['treatments'];
         treatmentsFetcher(treatments);
 
     }
@@ -187,7 +187,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
         xhr.onload = function() {
             var data = JSON.parse(this.responseText);
 
-            var sampleDataset = data['results'][0]['samples'];
+            var sampleDataset = data['results']['samples'];
             var tempArray = [];
             var tempDateArray = [];
             var tempObj;
@@ -355,7 +355,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
         }));
         xhr.onload = function() {
             var data = JSON.parse(this.responseText);
-            var diagnosesDatasets = data['results'][0]['diagnoses'];
+            var diagnosesDatasets = data['results']['diagnoses'];
             var result = {};
             var seriesList = [];
             var seriesObj = {};
@@ -494,7 +494,7 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
         xhr.onload = function() {
             var data = JSON.parse(this.responseText);
 
-            var patientsDataset = data['results'][0]['patients'];
+            var patientsDataset = data['results']['patients'];
 
             var tbl = $('<table/>').attr("id", "mytable");
 
@@ -673,7 +673,7 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
         }));
         xhr.onload = function() {
             var data = JSON.parse(this.responseText);
-            var sampleDataset = data['results'][0]['samples'];
+            var sampleDataset = data['results']['samples'];
 
             xhr.open("POST", prepend_path + "treatments/search", true);
             xhr.setRequestHeader('Content-Type', 'application/json');
@@ -685,7 +685,7 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
             }));
             xhr.onload = function() {
                 var tempRes = JSON.parse(this.responseText);
-                var treatmentDataset = tempRes['results'][0]['treatments'];
+                var treatmentDataset = tempRes['results']['treatments'];
 
                 var tbl = $('<table/>').attr("id", "patientTable");
                 var th = '<thead><tr><th scope="col">Patient ID</th><th scope="col">Collection Hospital</th><th scope="col">Collection Date</th><th scope="col">Cancer Type</th><th scope="col">Response to treatment</th><th scope="col">Drug list</th><th scope="col">Therapeutic Modality </th></tr></thead><tbody>';
@@ -749,7 +749,7 @@ function submit() {
     xhr.onload = function() {
         var data = JSON.parse(this.responseText);
         if (xhr.status == 200) {
-            var geneDataset = data['results'][0]['variants'];
+            var geneDataset = data['results']['variants'];
             tableMaker(geneDataset);
             readGroupFetcher(geneRequest, geneDataset)
             //igvSearch(geneRequest);
@@ -797,7 +797,7 @@ function readGroupFetcher(geneRequest, geneDataset) {
             try {
                 //console.log("inside the try block")
                 let finalChrId;
-                let tempBody = data['results'][0]["readGroupSets"]; //an array of readgroupsets
+                let tempBody = data['results']["readGroupSets"]; //an array of readgroupsets
                 //let readGroups = tempBody["readGroupSets"][0]["readGroups"];
                 let readGroupSetId = [];
 
@@ -846,7 +846,6 @@ function readGroupFetcher(geneRequest, geneDataset) {
 
                 console.log(readGroupIds);
                 console.log(referenceSetIds);
-                console.log(readGroupSetId)
 
 
                 // For now, only pass on the first element of the array
@@ -883,7 +882,7 @@ function referenceIdFetcher(geneRequest, referenceSetIds, readGroupIds, readGrou
         //var referenceSetIds = [];
         if (xhr.status == 200) {
             try {
-                let referencesList = data['results'][0]["references"];
+                let referencesList = data['results']["references"];
                 //console.log(referencesList);
 
                 for (let i = 0; i < referencesList.length; i++) {
@@ -919,8 +918,8 @@ function variantSetIdFetcher(geneRequest, referenceSetIds, readGroupIds, readGro
     xhr.onload = function() {
         let data = JSON.parse(this.responseText);
         let variantsetId;
-        if (data['results'][0]["variantSets"][0]["id"] != undefined) {
-            variantsetId = data['results'][0]["variantSets"][0]["id"];
+        if (data['results']["variantSets"][0]["id"] != undefined) {
+            variantsetId = data['results']["variantSets"][0]["id"];
 
             igvSearch(variantsetId, geneRequest, referenceSetIds, readGroupIds, readGroupSetId, referenceId, chromesomeId);
         }
@@ -974,6 +973,17 @@ function igvSearch(variantsetId, geneRequest, referenceSetIds, readGroupIds, rea
             //     readGroupIds: readGroupIds[1],
             //     readGroupSetIds: readGroupSetId[1],
             //     name: "Alignments 2"
+            // },
+            // {
+            //     sourceType: "ga4gh",
+            //     type: "alignment",
+            //     url: prepend_path + "",
+            //     //referenceSetId: "WyJHUkNoMzctbGl0ZSJd",
+            //     referenceId: referenceId,
+            //     //referenceName: chromesomeId,
+            //     readGroupIds: readGroupIds[2],
+            //     readGroupSetIds: readGroupSetId[2],
+            //     name: "Alignments 3"
             // },
             {
                 name: "Genes",

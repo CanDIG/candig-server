@@ -39598,7 +39598,7 @@ var igv = (function (igv) {
                     .then(function (json) {
                         var nextPageToken, tmp;
 
-                    json = json["results"][0];
+                    json = json["results"];
 
                         if (json) {
 
