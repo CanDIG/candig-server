@@ -540,18 +540,21 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 # If the call was successful append the results
                 if response.status_code == 200:
 
-                    if request_type == 'GET':
-                        responseObject['results'] = response.json()['results']
+                    try:
+                        if request_type == 'GET':
+                                responseObject['results'] = response.json()['results']
 
-                    elif request_type == 'POST':
-                        peer_response = response.json()['results']
+                        elif request_type == 'POST':
+                            peer_response = response.json()['results']
 
-                        if not responseObject['results']:
-                            responseObject['results'] = peer_response
-                        else:
-                            for key in peer_response:
-                                for record in peer_response[key]:
-                                    responseObject['results'][key].append(record)
+                            if not responseObject['results']:
+                                responseObject['results'] = peer_response
+                            else:
+                                for key in peer_response:
+                                    for record in peer_response[key]:
+                                        responseObject['results'][key].append(record)
+                    except StandardError as error:
+                        pass
 
     # If no result has been found on any of the servers raise an error
     if not responseObject['results'] or not responseObject['results']:
