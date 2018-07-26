@@ -36,10 +36,10 @@ script:
            repo_dev.py server_dev.py
            setup.py
            tests ga4gh scripts
-  - python -mnose tests 
-              --with-coverage --cover-package ga4gh.server
-              --cover-inclusive --cover-min-percentage 80
-              --cover-branches --cover-erase
+  # - python -mnose tests 
+  #             --with-coverage --cover-package ga4gh.server
+  #             --cover-inclusive --cover-min-percentage 80
+  #             --cover-branches --cover-erase
   - make clean -C docs
   - make -C docs
 
