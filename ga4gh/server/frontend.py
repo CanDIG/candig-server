@@ -451,7 +451,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     # Self query
     responseObject = {}
-    responseObject['results'] = []
+    responseObject['results'] = {}
     responseObject['status'] = list()
     try:
         responseObject['results'] = json.loads(
@@ -459,11 +459,8 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
             )
 
         responseObject['status'].append(200)
-    except exceptions.ObjectWithIdNotFoundException as error:
+    except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException) as error:
         responseObject['status'].append(404)
-    except exceptions.NotFoundException as error:
-        responseObject['status'].append(404)
-        if request_type == 'POST': responseObject['results'] = {}
 
     try:
         nextToken = responseObject['results'].get('nextPageToken')
@@ -550,7 +547,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                         peer_response = response.json()['results']
 
                         if not responseObject['results']:
-                            responseObject['results'] = [peer_response]
+                            responseObject['results'] = peer_response
                         else:
                             for key in peer_response:
                                 for record in peer_response[key]:

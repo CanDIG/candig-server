@@ -1623,6 +1623,10 @@ class Backend(object):
                             ):
                         return_object.append(protocol.toJson(variant))
 
+        # temp fix until generator is implemented and properly throw error
+        if not return_object:
+            raise exceptions.NotFoundException
+
         return json.dumps(result_object)
 ### ======================================================================= ###
 ### FRONT END END
