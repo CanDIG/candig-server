@@ -22,7 +22,7 @@ install:
   - ga4gh_repo --version
 
 before_script:
-  - pip install -r requirements.txt
+  - pip install -r dev-requirements.txt
   - python scripts/build_test_data.py 
     
 before_install:
