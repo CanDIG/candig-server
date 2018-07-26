@@ -16,22 +16,16 @@ import json
 
 import flask
 import flask.ext.cors as cors
-from flask.ext.oidc import OpenIDConnect
 from flask import Flask, jsonify, render_template, request
 import humanize
 import werkzeug
 import oic
-# from oic.oic import AuthorizationRequest, Client
 import oic.oauth2
 import oic.oic.message as message
-# from oic.utils.http_util import Redirect
-from oauth2client.client import OAuth2Credentials
 import requests
 import logging
 from logging import StreamHandler
 from werkzeug.contrib.cache import FileSystemCache
-
-import pkg_resources
 
 import ga4gh.server
 import ga4gh.server.backend as backend
@@ -40,9 +34,10 @@ import ga4gh.server.exceptions as exceptions
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.auth as auth
 import ga4gh.server.network as network
-import ga4gh.schemas.protocol as protocol
 import ga4gh.server.DP as DP
 import ga4gh.server.NCIT as NCIT
+
+import ga4gh.schemas.protocol as protocol
 
 from ga4gh.client import client
 
@@ -50,25 +45,10 @@ SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
 
 app = flask.Flask(__name__)
-
 assert not hasattr(app, 'urls')
 app.urls = []
+
 requires_auth = auth.auth_decorator(app)
-
-# Edit this for flask-oidc, the endpoints are in the client_secrets.json file
-config_path = '/'.join(('.','config','client_secrets.json'))
-
-app.config.update({
-    'SECRET_KEY': "key",
-    'TESTING': False,
-    'DEBUG': False,
-    'OIDC_CLIENT_SECRETS': pkg_resources.resource_filename(__name__, config_path),
-    'OIDC_ID_TOKEN_COOKIE_SECURE': False,
-    'OIDC_REQUIRE_VERIFIED_EMAIL': False,
-})
-
-# For configuration of Flask-Oidc
-oidc = OpenIDConnect(app)
 
 
 class NoConverter(werkzeug.routing.BaseConverter):
@@ -193,12 +173,12 @@ class ServerStatus(object):
         return app.backend.getDataRepository().getDataset(
             datasetId).getFeatureSets()
 
-#     def getContinuousSets(self, datasetId):
-#         """
-#         Returns the list of continuous sets for the dataset
-#         """
-#         return app.backend.getDataRepository().getDataset(
-#             datasetId).getContinuousSets()
+    def getContinuousSets(self, datasetId):
+        """
+        Returns the list of continuous sets for the dataset
+        """
+        return app.backend.getDataRepository().getDataset(
+            datasetId).getContinuousSets()
 
     def getReadGroupSets(self, datasetId):
         """
@@ -229,12 +209,12 @@ class ServerStatus(object):
         return app.backend.getDataRepository().getDataset(
             datasetId).getPhenotypeAssociationSets()
 
-#     def getRnaQuantificationSets(self, datasetId):
-#         """
-#         Returns the list of RnaQuantificationSets for this server.
-#         """
-#         return app.backend.getDataRepository().getDataset(
-#             datasetId).getRnaQuantificationSets()
+    def getRnaQuantificationSets(self, datasetId):
+        """
+        Returns the list of RnaQuantificationSets for this server.
+        """
+        return app.backend.getDataRepository().getDataset(
+            datasetId).getRnaQuantificationSets()
 
     def getPeers(self):
         """
@@ -247,7 +227,6 @@ class ServerStatus(object):
         Returns the list of ontologies.
         """
         return app.backend.getDataRepository().getOntologyByName(name)
-
 
 def reset():
     """
@@ -321,10 +300,6 @@ def configure(configFile=None, baseConfig="ProductionConfig",
     """
     TODO Document this critical function! What does it do? What does
     it assume?
-
-    Based on the configuration the server is being hosted with, it initalizes
-    all the variables needed, and generates the redirect-url for the Auth and
-    OIDC providers (if present).
     """
     file_handler = StreamHandler()
     file_handler.setLevel(logging.WARNING)
@@ -347,7 +322,6 @@ def configure(configFile=None, baseConfig="ProductionConfig",
     app.serverStatus = ServerStatus()
 
     app.backend = _configure_backend(app)
-
     if app.config.get('SECRET_KEY'):
         app.secret_key = app.config['SECRET_KEY']
     elif app.config.get('OIDC_PROVIDER'):
@@ -398,8 +372,8 @@ def configure(configFile=None, baseConfig="ProductionConfig",
                 'OIDC configuration requires a redirect uri')
 
         # We only support dynamic registration while testing.
-        if ('registration_endpoint' in app.oidcClient.provider_info) and (
-          app.config.get('TESTING')):
+        if ('registration_endpoint' in app.oidcClient.provider_info and
+           app.config.get('TESTING')):
             app.oidcClient.register(
                 app.oidcClient.provider_info["registration_endpoint"],
                 redirect_uris=[redirectUri])
@@ -410,34 +384,6 @@ def configure(configFile=None, baseConfig="ProductionConfig",
                 redirect_uris=[redirectUri],
                 verify_ssl=False)
             app.oidcClient.store_registration_info(response)
-    """
-    # This is for the configuration of the Keycloak Server
-    # added by Kevin Chan on June 12, 2017
-    if "KEYCLOAK" in app.config:
-        # Configuration using the requests library. I left this here for your
-        # reference to familiarize yourself with the Authorization code flow
-        # Makes a request to get the configuration, and stores all the
-        # endpoints/id/secrets needed
-
-        app.oidcClient = Client(client_authn_method=CLIENT_AUTHN_METHOD)
-        endpoints = requests.get(app.config["WELL_KNOWN_CONFIG"]).json()
-        opInfo = message.ProviderConfigurationResponse(
-            issuer=endpoints["issuer"],
-            authorization_endpoint=endpoints["authorization_endpoint"],
-            token_endpoint=endpoints["token_endpoint"],
-            introspect_endpoint=endpoints["token_introspection_endpoint"],
-            user_endpoint= endpoints["userinfo_endpoint"],
-            session_endpoint=endpoints["end_session_endpoint"],
-            jwks_uri= endpoints["jwks_uri"])
-        app.oidcClient.provider_info = opInfo
-        app.oidcClient.client_id = app.config['CLIENT_ID']
-        app.oidcClient.client_secret = app.config["CLIENT_SECRET"]
-
-        #For configuration of your server, change the host.
-        redirectUri = 'http://{0}:{1}/keycallback'.format(
-                socket.gethostbyname(socket.gethostname()), app.myPort)
-        app.oidcClient.redirect_uris = [redirectUri]
-    """
 
 
 def chooseReturnMimetype(request):
@@ -448,7 +394,9 @@ def chooseReturnMimetype(request):
         mimetype = protocol.MIMETYPES[0]
     return mimetype
 
-def getFlaskResponse(responseString, httpStatus=200, mimetype="application/json"):
+
+def getFlaskResponse(responseString, httpStatus=200,
+                     mimetype="application/json"):
     """
     Returns a Flask response object for the specified data and HTTP status.
     """
@@ -503,19 +451,40 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     # Self query
     responseObject = {}
-    responseObject['results'] = []
+    responseObject['results'] = {}
     responseObject['status'] = list()
     try:
-        responseObject['results'] = [json.loads(
+        responseObject['results'] = json.loads(
             endpoint(request, return_mimetype=return_mimetype)
-        )]
+            )
 
         responseObject['status'].append(200)
-    except exceptions.ObjectWithIdNotFoundException as error:
+    except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException) as error:
         responseObject['status'].append(404)
-    except exceptions.NotFoundException as error:
-        responseObject['status'].append(404)
-        if request_type == 'POST': responseObject['results'].append({})
+
+    try:
+        nextToken = responseObject['results'].get('nextPageToken')
+    # response object not properly formed
+    except (IndexError, AttributeError) as error:
+        nextToken = None
+
+    while nextToken:
+        request = json.loads(request)
+        request["page_token"] = responseObject['results']['nextPageToken']
+        responseObject['results'].pop('nextPageToken', None)
+        request = json.dumps(request)
+
+        nextPageRequest = json.loads(
+            endpoint(request, return_mimetype=return_mimetype)
+            )
+
+        for key in nextPageRequest:
+            if key in responseObject['results']:
+                responseObject['results'][key]+=nextPageRequest[key]
+            else:
+                responseObject['results'][key]=nextPageRequest[key]
+
+        nextToken = responseObject['results'].get('nextPageToken')
 
     # Peer queries
     # Apply federation by default or if it was specifically requested
@@ -528,34 +497,34 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
             uri = request_dictionary.url.replace(
                 request_dictionary.host_url,
                 peer.getUrl(),
-            )
+                )
             # federation field must be set to False to avoid infinite loop
             header = {
                 'Content-Type': return_mimetype,
                 'Accept': return_mimetype,
                 'Federation': 'False',
-            }
+                }
             # Make the call
             try:
                 if request_type == 'GET':
                     response = requests.Session().get(
                         uri,
                         headers=header,
-                    )
+                        )
                 elif request_type == 'POST':
                     response = requests.Session().post(
                         uri,
                         json=json.loads(request),
                         headers=header,
-                    )
+                        )
                 else:
-                    # TODO: Raise error
+                    #TODO: Raise error
                     pass
 
                 print('  >> peer call: {0} - {1}'.format(
                     uri,
                     response.status_code,
-                ))
+                    ))
 
             except (requests.exceptions.ConnectionError,
                     requests.exceptions.Timeout,
@@ -565,31 +534,30 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 print('  >> peer call: {0} - {1}'.format(
                     uri,
                     'SERVER IS DOWN OR DID NOT RESPONSE!',
-                ))
+                    ))
             else:
                 responseObject['status'].append(response.status_code)
                 # If the call was successful append the results
                 if response.status_code == 200:
 
-                    if request_type == 'GET':
-                        responseObject['results'].append(
-                            response.json()['results'][0])
+                    try:
+                        if request_type == 'GET':
+                                responseObject['results'] = response.json()['results']
 
-                    elif request_type == 'POST':
-                        peer_response = response.json()['results'][0]
+                        elif request_type == 'POST':
+                            peer_response = response.json()['results']
 
-                        if not responseObject['results'][0]:
-                            responseObject['results'] = [peer_response]
-                        else:
-                            for key in peer_response:
-                                # TODO: handle truncated responses; for now increased default page_size to 300
-                                if key == 'nextPageToken':
-                                    continue
-                                for record in peer_response[key]:
-                                    responseObject['results'][0][key].append(record)
+                            if not responseObject['results']:
+                                responseObject['results'] = peer_response
+                            else:
+                                for key in peer_response:
+                                    for record in peer_response[key]:
+                                        responseObject['results'][key].append(record)
+                    except StandardError as error:
+                        pass
 
     # If no result has been found on any of the servers raise an error
-    if not responseObject['results'] or not responseObject['results'][0]:
+    if not responseObject['results'] or not responseObject['results']:
         if request_type == 'GET':
             raise exceptions.ObjectWithIdNotFoundException(request)
         elif request_type == 'POST':
@@ -611,8 +579,8 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         'Valid response': \
             # Invalid by default
             False
-    }
-
+        }
+    
     # Decide on valid response
     if responseObject['status']['Known peers'] == \
             responseObject['status']['Queried peers']:
@@ -625,11 +593,10 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 responseObject['status']['Valid response'] = True
 
     return json.dumps(responseObject)
-
-
 ### ======================================================================= ###
 ### FEDERATION ENDS
 ### ======================================================================= ###
+
 
 def handleHttpPost(request, endpoint):
     """
@@ -661,8 +628,9 @@ def handleList(endpoint, request):
     """
     Handles the specified HTTP GET request, mapping to a list request
     """
-    responseStr = endpoint(request.get_data())
-    return getFlaskResponse(responseStr)
+    return_mimetype = chooseReturnMimetype(request)
+    responseStr = endpoint(request.get_data(), return_mimetype=return_mimetype)
+    return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
 def handleHttpGet(id_, endpoint):
@@ -672,18 +640,18 @@ def handleHttpGet(id_, endpoint):
     """
     request = flask.request
     return_mimetype = chooseReturnMimetype(request)
-    ### ======================================================================= ###
-    ### FEDERATION
-    ### ======================================================================= ###
+### ======================================================================= ###
+### FEDERATION
+### ======================================================================= ###
     responseStr = federation(
         endpoint,
         id_,
         return_mimetype=return_mimetype,
         request_type='GET'
-    )
-    ### ======================================================================= ###
-    ### FEDERATION ENDS
-    ### ======================================================================= ###
+        )
+### ======================================================================= ###
+### FEDERATION ENDS
+### ======================================================================= ###
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
@@ -720,57 +688,18 @@ def handleException(exception):
             message += "Please try <a href=\"/login\">logging in</a>."
         return message
     else:
-        responseStr = protocol.toJson(error)
-        return getFlaskResponse(responseStr, serverException.httpStatus)
-
-
-# Added by Kevin Chan
-def requires_token(f):
-    """
-    Decorator function that ensures that the token is valid, if the token is
-    invalid or expired, the user will be redirected to the login page. Much of
-    the authorization code flow is done solely by the function decorator
-    @oidc.require_login
-    """
-    @functools.wraps(f)
-    def decorated(*args, **kargs):
-        if app.config.get("KEYCLOAK"):
-            redirectUri = 'http://{0}:{1}{2}'.format(
-                    socket.gethostbyname(
-                        socket.gethostname()),
-                    app.myPort,
-                    flask.request.path)
-            try:
-                info = oidc.user_getinfo(['sub'])
-                tokenResponse = OAuth2Credentials.from_json(
-                    oidc.credentials_store[info.get('sub')]
-                    ).token_response
-                introspectArgs = {
-                    "token": tokenResponse["access_token"],
-                    "client_id": oidc.client_secrets["client_id"],
-                    "client_secret": oidc.client_secrets["client_secret"],
-                    "refresh_token": tokenResponse["refresh_token"],
-                }
-            except:
-                return flask.redirect(redirectUri)
-            userInfo = requests.post(url=oidc.client_secrets[
-                "token_introspection_uri"
-                ],
-                data=introspectArgs)
-
-            if userInfo.status_code != 200:
-                raise exceptions.NotAuthenticatedException()
-        return f(*args, **kargs)
-    return decorated
+        # Errors aren't well defined enough to use protobuf, even if requested
+        return_mimetype = 'application/json'
+        responseStr = protocol.serialize(error, return_mimetype)
+        return getFlaskResponse(responseStr, serverException.httpStatus,
+                                mimetype=return_mimetype)
 
 
 def startLogin():
     """
-    Uncommented as this method is used by the "login" method/endpoint
-
-    If user is not logged in, this generates the redirect URL to the OIDC or
-    Auth provider (depending on the configuration)
-    Returns: the redirect response
+    If we are not logged in, this generates the redirect URL to the OIDC
+    provider and returns the redirect response
+    :return: A redirect response to the OIDC provider
     """
     flask.session["state"] = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
     flask.session["nonce"] = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
@@ -780,49 +709,22 @@ def startLogin():
         "scope": ["openid", "profile"],
         "nonce": flask.session["nonce"],
         "redirect_uri": app.oidcClient.redirect_uris[0],
-        "authorization_endpoint": app.oidcClient.provider_info[
-            "authorization_endpoint"
-            ],
-        "state": flask.session["state"],
+        "state": flask.session["state"]
     }
-    # First condition is the configuration for the Keycloak Server. Redirects
-    # the user to the Keycloak sign in page. I left this here for your
-    # reference.
-    # Added by Kevin Chan
-    if "WELL_KNOWN_CONFIG" in app.config:
-        # result = app.oidcClient.do_authorization_request(
-        # request_args=args,
-        # state=flask.session["state"])
-        result = app.oidcClient.construct_AuthorizationRequest(
-            request_args=args)
-        addOn = result.request(app.oidcClient.authorization_endpoint)
-        loginUrl = app.oidcClient.provider_info[
-            "authorization_endpoint"
-            ] + addOn
-
-        if flask.request.path == "/login":
-            flask.session["path"] = "/"
-        else:
-            flask.session["path"] = flask.request.path
-        return flask.redirect(loginUrl)
 
     result = app.oidcClient.do_authorization_request(
-        request_args=args,
-        state=flask.session["state"])
+        request_args=args, state=flask.session["state"])
     return flask.redirect(result.url)
 
 
-# Commented out by Kevin Chan. If Using the Keycloak Config or no
-# authentication this function is no longer needed
-"""
 @app.before_request
 def checkAuthentication():
-
+    """
     The request will have a parameter 'key' if it came from the command line
     client, or have a session key of 'key' if it's the browser.
     If the token is not found, start the login process.
 
-    If there is no oidcClient, we are runnning naked and we don't check.
+    If there is no oidcClient, we are running naked and we don't check.
     If we're being redirected to the oidcCallback we don't check.
 
     :returns None if all is ok (and the request handler continues as usual).
@@ -830,21 +732,17 @@ def checkAuthentication():
     then startLogin() will redirect to the OIDC provider. If the key was in
     the request arguments, we're using the command line and just raise an
     exception.
-
+    """
     if app.oidcClient is None:
         return
-
-    if flask.request.endpoint == 'oidcCallback' or
-        flask.request.endpoint == "keycloakCallback":
+    if flask.request.endpoint == 'oidcCallback':
         return
     key = flask.session.get('key') or flask.request.args.get('key')
-
-    if key is None: # or not app.cache.get(key):
+    if key is None or not app.cache.get(key):
         if 'key' in flask.request.args:
-            raise exceptions.NotAuthorizedException()
+            raise exceptions.NotAuthenticatedException()
         else:
             return startLogin()
-"""
 
 
 def handleFlaskGetRequest(id_, flaskRequest, endpoint):
@@ -912,8 +810,6 @@ class DisplayedRoute(object):
 
 
 @app.route('/')
-@oidc.require_login
-@requires_token
 def index():
     response = flask.render_template('index.html',
                                      info=app.serverStatus)
@@ -932,24 +828,39 @@ def index():
         return response
 
 
-@app.route('/concordance')
-def concordance():
-    gene = request.args.get('gene', '', type=str)
-    if gene == '':
-        return jsonify(result = 'Gene symbol is missing')
-    concordance, freq, uniq = client.FederatedClient(
-        ServerStatus().getPeers()).get_concordance(gene)
-    abnormality = NCIT.NCIT().get_genetic_abnormalities(gene)
-    disease = NCIT.NCIT().get_diseases(gene)
-    return jsonify(result=render_template('concordance.html',
-        concordance=concordance,
-        freq=freq,
-        uniq=uniq,
-        abnormality=abnormality,
-        disease=disease))
+### ======================================================================= ###
+### FRONT END
+### ======================================================================= ###
+@app.route('/candig')
+def candig():
+    datasetId = "WyJNRVRBREFUQSJd";
+    return flask.render_template('candig.html',datasetId=datasetId)
 
+@app.route('/spa')
+def candig_spa():
+    return flask.render_template('spa.html')
 
-# New configuration added by Kevin Chan
+@app.route('/candig_patients')
+def candig_patients():
+    return flask.render_template('candig_patients.html')
+
+@app.route('/igv')
+def candig_igv():
+    return flask.render_template('candig_igv.html')
+
+@app.route('/gene_search')
+def candig_gene_search():
+    return flask.render_template('gene_search.html')
+
+@DisplayedRoute('/variantsbygenesearch', postMethod=True)
+def search_variant_by_gene_name():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchVariantsByGeneName)
+
+### ======================================================================= ###
+### FRONT END END
+### ======================================================================= ###
+
 @app.route("/login")
 def login():
     if app.config.get('AUTH0_ENABLED'):
@@ -962,12 +873,6 @@ def login():
                 redirect_uri=app.config.get('AUTH0_CALLBACK_URL'),
                 domain=app.config.get('AUTH0_HOST'),
                 client_id=app.config.get('AUTH0_CLIENT_ID'))
-
-    # Configuration for KeyCloak Server
-    elif app.config.get('KEYCLOAK'):
-        app.oidClient = None
-        flask.session.clear()
-        return startLogin()
     else:
         raise exceptions.NotFoundException()
 
@@ -989,29 +894,14 @@ def callback_handling():
 @requires_auth
 @cors.cross_origin(headers=['Content-Type', 'Authorization'])
 def logout():
-    if app.config.get('AUTH0_ENABLED'):
-        key = flask.session['auth0_key']
-        auth.logout(app.cache)
-        url = 'https://{}/v2/logout?access_token={}&?client_id={}'.format(
-            app.config.get('AUTH0_HOST'),
-            key,
-            app.config.get('AUTH0_CLIENT_ID'),
-            app.config.get('AUTH0_CALLBACK_URL'))
-        return flask.redirect(url)
-    else:
-        # args = {
-        #     "token": app.oidcClient.token["access_token"],
-        #     "client_id": app.oidcClient.client_id,
-        #     "client_secret": app.oidcClient.client_secret,
-        #     "refresh_token": app.oidcClient.token["refresh_token"]
-        #     }
-        # logout = requests.post(
-        # url=app.oidcClient.provider_info["session_endpoint"],
-        # data=args)
-        flask.session.clear()
-        return flask.redirect("http://{0}:{1}".format(
-            socket.gethostbyname(socket.gethostname()),
-            app.myPort))
+    key = flask.session['auth0_key']
+    auth.logout(app.cache)
+    url = 'https://{}/v2/logout?access_token={}&?client_id={}'.format(
+        app.config.get('AUTH0_HOST'),
+        key,
+        app.config.get('AUTH0_CLIENT_ID'),
+        app.config.get('AUTH0_CALLBACK_URL'))
+    return flask.redirect(url)
 
 
 @app.route('/favicon.ico')
@@ -1021,52 +911,24 @@ def robots():
         app.static_folder, flask.request.path[1:])
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/info')
-    @requires_auth
-    @oidc.require_login
-    def getInfo():
-        return handleFlaskGetRequest(
-            None, flask.request, app.backend.runGetInfo)
-else:
-    @DisplayedRoute('/info')
-    @requires_auth
-    def getInfo():
-        return handleFlaskGetRequest(
-            None, flask.request, app.backend.runGetInfo)
+@DisplayedRoute('/info')
+@requires_auth
+def getInfo():
+    return handleFlaskGetRequest(
+        None, flask.request, app.backend.runGetInfo)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/references/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getReference(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetReference)
-else:
-    @DisplayedRoute('/references/<id>')
-    @requires_auth
-    @requires_token
-    def getReference(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetReference)
+@DisplayedRoute('/references/<id>')
+@requires_auth
+def getReference(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetReference)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/referencesets/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getReferenceSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetReferenceSet)
-else:
-    @DisplayedRoute('/referencesets/<id>')
-    @requires_auth
-    def getReferenceSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetReferenceSet)
+@DisplayedRoute('/referencesets/<id>')
+def getReferenceSet(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetReferenceSet)
 
 
 @DisplayedRoute('/listreferencebases', postMethod=True)
@@ -1117,6 +979,12 @@ def searchVariants():
         flask.request, app.backend.runSearchVariants)
 
 
+@DisplayedRoute('/genotypes/search', postMethod=True)
+def searchGenotypes():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchGenotypes)
+
+
 @DisplayedRoute('/variantannotationsets/search', postMethod=True)
 def searchVariantAnnotationSets():
     return handleFlaskPostRequest(
@@ -1129,804 +997,357 @@ def searchVariantAnnotations():
         flask.request, app.backend.runSearchVariantAnnotations)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/datasets/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchDatasets():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchDatasets)
-else:
-    @DisplayedRoute('/datasets/search', postMethod=True)
-    @requires_auth
-    def searchDatasets():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchDatasets)
-
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/experiments/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchExperiments():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchExperiments)
-else:
-    @DisplayedRoute('/experiments/search', postMethod=True)
-    @requires_auth
-    def searchExperiments():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchExperiments)
-
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/analyses/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchAnalyses():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchAnalyses)
-else:
-    @DisplayedRoute('/analyses/search', postMethod=True)
-    @requires_auth
-    def searchAnalyses():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchAnalyses)
-
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/featuresets/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchFeatureSets():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchFeatureSets)
-else:
-    @DisplayedRoute('/featuresets/search', postMethod=True)
-    @requires_auth
-    def searchFeatureSets():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchFeatureSets)
+@DisplayedRoute('/datasets/search', postMethod=True)
+@requires_auth
+def searchDatasets():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchDatasets)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/features/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchFeatures():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchFeatures)
-else:
-    @DisplayedRoute('/features/search', postMethod=True)
-    @requires_auth
-    def searchFeatures():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchFeatures)
+@DisplayedRoute('/experiments/search', postMethod=True)
+@requires_auth
+def searchExperiments():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchExperiments)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/continuoussets/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchContinuousSets():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchContinuousSets)
-else:
-    @DisplayedRoute('/continuoussets/search', postMethod=True)
-    @requires_auth
-    def searchContinuousSets():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchContinuousSets)
+@DisplayedRoute('/analyses/search', postMethod=True)
+@requires_auth
+def searchAnalyses():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchAnalyses)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/continuous/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchContinuous():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchContinuous)
-else:
-    @DisplayedRoute('/continuous/search', postMethod=True)
-    @requires_auth
-    def searchContinuous():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchContinuous)
+@DisplayedRoute('/featuresets/search', postMethod=True)
+@requires_auth
+def searchFeatureSets():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchFeatureSets)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/biosamples/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchBiosamples():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchBiosamples)
-else:
-    @DisplayedRoute('/biosamples/search', postMethod=True)
-    @requires_auth
-    def searchBiosamples():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchBiosamples)
+@DisplayedRoute('/features/search', postMethod=True)
+@requires_auth
+def searchFeatures():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchFeatures)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/individuals/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchIndividuals():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchIndividuals)
-else:
-    @DisplayedRoute('/individuals/search', postMethod=True)
-    @requires_auth
-    def searchIndividuals():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchIndividuals)
+@DisplayedRoute('/continuoussets/search', postMethod=True)
+@requires_auth
+def searchContinuousSets():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchContinuousSets)
+
+
+@DisplayedRoute('/continuous/search', postMethod=True)
+@requires_auth
+def searchContinuous():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchContinuous)
+
+
+@DisplayedRoute('/biosamples/search', postMethod=True)
+@requires_auth
+def searchBiosamples():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchBiosamples)
+
+
+@DisplayedRoute('/individuals/search', postMethod=True)
+@requires_auth
+def searchIndividuals():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchIndividuals)
+
 
 ### ======================================================================= ###
 ### METADATA
 ### ======================================================================= ###
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/patients/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchPatients():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchPatients)
-else:
-    @DisplayedRoute('/patients/search', postMethod=True)
-    @requires_auth
-    def searchPatients():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchPatients)
+@DisplayedRoute('/patients/search', postMethod=True)
+@requires_auth
+def searchPatients():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchPatients)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/enrollments/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchEnrollments():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchEnrollments)
-else:
-    @DisplayedRoute('/enrollments/search', postMethod=True)
-    @requires_auth
-    def searchEnrollments():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchEnrollments)
+@DisplayedRoute('/enrollments/search', postMethod=True)
+@requires_auth
+def searchEnrollments():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchEnrollments)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/consents/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchConsents():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchConsents)
-else:
-    @DisplayedRoute('/consents/search', postMethod=True)
-    @requires_auth
-    def searchConsents():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchConsents)
+@DisplayedRoute('/consents/search', postMethod=True)
+@requires_auth
+def searchConsents():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchConsents)
 
+@DisplayedRoute('/diagnoses/search', postMethod=True)
+@requires_auth
+def searchDiagnoses():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchDiagnoses)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/diagnoses/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchDiagnoses():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchDiagnoses)
-else:
-    @DisplayedRoute('/diagnoses/search', postMethod=True)
-    @requires_auth
-    def searchDiagnoses():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchDiagnoses)
+@DisplayedRoute('/samples/search', postMethod=True)
+@requires_auth
+def searchSamples():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchSamples)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/samples/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchSamples():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchSamples)
-else:
-    @DisplayedRoute('/samples/search', postMethod=True)
-    @requires_auth
-    def searchSamples():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchSamples)
+@DisplayedRoute('/treatments/search', postMethod=True)
+@requires_auth
+def searchTreatments():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchTreatments)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/treatments/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchTreatments():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchTreatments)
-else:
-    @DisplayedRoute('/treatments/search', postMethod=True)
-    @requires_auth
-    def searchTreatments():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchTreatments)
+@DisplayedRoute('/outcomes/search', postMethod=True)
+@requires_auth
+def searchOutcomes():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchOutcomes)
 
+@DisplayedRoute('/complications/search', postMethod=True)
+@requires_auth
+def searchComplications():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchComplications)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/outcomes/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchOutcomes():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchOutcomes)
-else:
-    @DisplayedRoute('/outcomes/search', postMethod=True)
-    @requires_auth
-    def searchOutcomes():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchOutcomes)
-
-
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/complications/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchComplications():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchComplications)
-else:
-    @DisplayedRoute('/complications/search', postMethod=True)
-    @requires_auth
-    def searchComplications():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchComplications)
-
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/tumourboards/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchTumourboards():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchTumourboards)
-else:
-    @DisplayedRoute('/tumourboards/search', postMethod=True)
-    @requires_auth
-    def searchTumourboards():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchTumourboards)
-
+@DisplayedRoute('/tumourboards/search', postMethod=True)
+@requires_auth
+def searchTumourboards():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchTumourboards)
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ###
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/peers/list', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def listPeers():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runListPeers)
-else:
-    @DisplayedRoute('/peers/list', postMethod=True)
-    @requires_auth
-    def listPeers():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runListPeers)
+@DisplayedRoute('/peers/list', postMethod=True)
+@requires_auth
+def listPeers():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runListPeers)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/announce', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def announce():
-        # We can't use the post handler here because we want detailed request
-        # data.
-        return app.backend.runAddAnnouncement(flask.request)
-else:
-    @DisplayedRoute('/announce', postMethod=True)
-    @requires_auth
-    def announce():
-        # We can't use the post handler here because we want detailed request
-        # data.
-        return app.backend.runAddAnnouncement(flask.request)
+@DisplayedRoute('/announce', postMethod=True)
+@requires_auth
+def announce():
+    # We can't use the post handler here because we want detailed request
+    # data.
+    return app.backend.runAddAnnouncement(flask.request)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/biosamples/<no(search):id>',
-        pathDisplay='/biosamples/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getBiosample(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetBiosample)
-else:
-    @DisplayedRoute(
-        '/biosamples/<no(search):id>',
-        pathDisplay='/biosamples/<id>')
-    @requires_auth
-    def getBiosample(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetBiosample)
+@DisplayedRoute(
+    '/biosamples/<no(search):id>',
+    pathDisplay='/biosamples/<id>')
+@requires_auth
+def getBiosample(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetBiosample)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/individuals/<no(search):id>',
-        pathDisplay='/individuals/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getIndividual(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetIndividual)
-else:
-    @DisplayedRoute(
-        '/individuals/<no(search):id>',
-        pathDisplay='/individuals/<id>')
-    @requires_auth
-    def getIndividual(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetIndividual)
+@DisplayedRoute(
+    '/individuals/<no(search):id>',
+    pathDisplay='/individuals/<id>')
+@requires_auth
+def getIndividual(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetIndividual)
 
 ### ======================================================================= ###
 ### METADATA
 ### ======================================================================= ###
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/patients/<no(search):id>',
-        pathDisplay='/patients/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getPatient(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetPatient)
-else:
-    @DisplayedRoute(
-        '/patients/<no(search):id>',
-        pathDisplay='/patients/<id>')
-    @requires_auth
-    def getPatient(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetPatient)
+@DisplayedRoute(
+    '/patients/<no(search):id>',
+    pathDisplay='/patients/<id>')
+@requires_auth
+def getPatient(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetPatient)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/enrollments/<no(search):id>',
-        pathDisplay='/enrollments/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getEnrollment(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetEnrollment)
-else:
-    @DisplayedRoute(
-        '/enrollments/<no(search):id>',
-        pathDisplay='/enrollments/<id>')
-    @requires_auth
-    def getEnrollment(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetEnrollment)
+@DisplayedRoute(
+    '/enrollments/<no(search):id>',
+    pathDisplay='/enrollments/<id>')
+@requires_auth
+def getEnrollment(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetEnrollment)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/consents/<no(search):id>',
-        pathDisplay='/consents/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getConsent(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetConsent)
-else:
-    @DisplayedRoute(
-        '/consents/<no(search):id>',
-        pathDisplay='/consents/<id>')
-    @requires_auth
-    def getConsent(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetConsent)
+@DisplayedRoute(
+    '/consents/<no(search):id>',
+    pathDisplay='/consents/<id>')
+@requires_auth
+def getConsent(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetConsent)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/diagnoses/<no(search):id>',
-        pathDisplay='/diagnoses/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getDiagnosis(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetDiagnosis)
-else:
-    @DisplayedRoute(
-        '/diagnoses/<no(search):id>',
-        pathDisplay='/diagnoses/<id>')
-    @requires_auth
-    def getDiagnosis(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetDiagnosis)
+@DisplayedRoute(
+    '/diagnoses/<no(search):id>',
+    pathDisplay='/diagnoses/<id>')
+@requires_auth
+def getDiagnosis(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetDiagnosis)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/samples/<no(search):id>',
-        pathDisplay='/samples/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getSample(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetSample)
-else:
-    @DisplayedRoute(
-        '/samples/<no(search):id>',
-        pathDisplay='/samples/<id>')
-    @requires_auth
-    def getSample(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetSample)
+@DisplayedRoute(
+    '/samples/<no(search):id>',
+    pathDisplay='/samples/<id>')
+@requires_auth
+def getSample(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetSample)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/treatments/<no(search):id>',
-        pathDisplay='/treatments/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getTreatment(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetTreatment)
-else:
-    @DisplayedRoute(
-        '/treatments/<no(search):id>',
-        pathDisplay='/treatments/<id>')
-    @requires_auth
-    def getTreatment(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetTreatment)
+@DisplayedRoute(
+    '/treatments/<no(search):id>',
+    pathDisplay='/treatments/<id>')
+@requires_auth
+def getTreatment(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetTreatment)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/outcomes/<no(search):id>',
-        pathDisplay='/outcomes/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getOutcome(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetOutcome)
-else:
-    @DisplayedRoute(
-        '/outcomes/<no(search):id>',
-        pathDisplay='/outcomes/<id>')
-    @requires_auth
-    def getOutcome(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetOutcome)
+@DisplayedRoute(
+    '/outcomes/<no(search):id>',
+    pathDisplay='/outcomes/<id>')
+@requires_auth
+def getOutcome(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetOutcome)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/complications/<no(search):id>',
-        pathDisplay='/complications/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getComplication(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetComplication)
-else:
-    @DisplayedRoute(
-        '/complications/<no(search):id>',
-        pathDisplay='/complications/<id>')
-    @requires_auth
-    def getComplication(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetComplication)
+@DisplayedRoute(
+    '/complications/<no(search):id>',
+    pathDisplay='/complications/<id>')
+@requires_auth
+def getComplication(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetComplication)
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/tumourboards/<no(search):id>',
-        pathDisplay='/tumourboards/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getTumourboard(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetTumourboard)
-else:
-    @DisplayedRoute(
-        '/tumourboards/<no(search):id>',
-        pathDisplay='/tumourboards/<id>')
-    @requires_auth
-    def getTumourboard(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetTumourboard)
+@DisplayedRoute(
+    '/tumourboards/<no(search):id>',
+    pathDisplay='/tumourboards/<id>')
+@requires_auth
+def getTumourboard(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetTumourboard)
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ###
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/rnaquantificationsets/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchRnaQuantificationSets():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchRnaQuantificationSets)
-else:
-    @DisplayedRoute('/rnaquantificationsets/search', postMethod=True)
-    @requires_auth
-    def searchRnaQuantificationSets():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchRnaQuantificationSets)
+@DisplayedRoute('/rnaquantificationsets/search', postMethod=True)
+@requires_auth
+def searchRnaQuantificationSets():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchRnaQuantificationSets)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/rnaquantifications/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchRnaQuantifications():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchRnaQuantifications)
-else:
-    @DisplayedRoute('/rnaquantifications/search', postMethod=True)
-    @requires_auth
-    def searchRnaQuantifications():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchRnaQuantifications)
+@DisplayedRoute('/rnaquantifications/search', postMethod=True)
+@requires_auth
+def searchRnaQuantifications():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchRnaQuantifications)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/expressionlevels/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchExpressionLevels():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchExpressionLevels)
-else:
-    @DisplayedRoute('/expressionlevels/search', postMethod=True)
-    @requires_auth
-    def searchExpressionLevels():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchExpressionLevels)
+@DisplayedRoute('/expressionlevels/search', postMethod=True)
+@requires_auth
+def searchExpressionLevels():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchExpressionLevels)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/variantsets/<no(search):id>',
-        pathDisplay='/variantsets/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getVariantSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetVariantSet)
-else:
-    @DisplayedRoute(
-        '/variantsets/<no(search):id>',
-        pathDisplay='/variantsets/<id>')
-    @requires_auth
-    def getVariantSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetVariantSet)
+@DisplayedRoute(
+    '/variantsets/<no(search):id>',
+    pathDisplay='/variantsets/<id>')
+@requires_auth
+def getVariantSet(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetVariantSet)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/variants/<no(search):id>',
-        pathDisplay='/variants/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getVariant(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetVariant)
-else:
-    @DisplayedRoute(
-        '/variants/<no(search):id>',
-        pathDisplay='/variants/<id>')
-    @requires_auth
-    def getVariant(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetVariant)
+@DisplayedRoute(
+    '/variants/<no(search):id>',
+    pathDisplay='/variants/<id>')
+@requires_auth
+def getVariant(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetVariant)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/readgroupsets/<no(search):id>',
-        pathDisplay='/readgroupsets/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getReadGroupSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetReadGroupSet)
-else:
-    @DisplayedRoute(
-        '/readgroupsets/<no(search):id>',
-        pathDisplay='/readgroupsets/<id>')
-    @requires_auth
-    def getReadGroupSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetReadGroupSet)
+@DisplayedRoute(
+    '/readgroupsets/<no(search):id>',
+    pathDisplay='/readgroupsets/<id>')
+@requires_auth
+def getReadGroupSet(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetReadGroupSet)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/readgroups/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getReadGroup(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetReadGroup)
-else:
-    @DisplayedRoute('/readgroups/<id>')
-    @requires_auth
-    def getReadGroup(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetReadGroup)
+@DisplayedRoute('/readgroups/<id>')
+@requires_auth
+def getReadGroup(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetReadGroup)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/callsets/<no(search):id>',
-        pathDisplay='/callsets/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getCallSet(did):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetCallSet)
-else:
-    @DisplayedRoute(
-        '/callsets/<no(search):id>',
-        pathDisplay='/callsets/<id>')
-    @requires_auth
-    def getCallSet(did):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetCallSet)
+@DisplayedRoute(
+    '/callsets/<no(search):id>',
+    pathDisplay='/callsets/<id>')
+@requires_auth
+def getCallSet(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetCallSet)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/featuresets/<no(search):id>',
-        pathDisplay='/featuresets/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getFeatureSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetFeatureSet)
-else:
-    @DisplayedRoute(
-        '/featuresets/<no(search):id>',
-        pathDisplay='/featuresets/<id>')
-    @requires_auth
-    def getFeatureSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetFeatureSet)
+@DisplayedRoute(
+    '/featuresets/<no(search):id>',
+    pathDisplay='/featuresets/<id>')
+@requires_auth
+def getFeatureSet(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetFeatureSet)
 
 
-# if app.config.get("KEYCLOAK"):
-#    @DisplayedRoute(
-#        '/features/<no(search):id>',
-#        pathDisplay='/features/<id>')
-#    @requires_auth
-#    @oidc.require_login
-#    @requires_token
-#    def getFeature(id):
-#        return handleFlaskGetRequest(
-#            id, flask.request, app.backend.runGetFeature)
-# else:
-#    @DisplayedRoute(
-#        '/featuresets/<no(search):id>',
-#        pathDisplay='/featuresets/<id>')
-#    @requires_auth
-#    def getFeatureSet(id):
-#        return handleFlaskGetRequest(
-#            id, flask.request, app.backend.runGetFeatureSet)
-#
-
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/continuoussets/<no(search):id>',
-        pathDisplay='/continuoussets/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getcontinuousSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetContinuousSet)
-else:
-    @DisplayedRoute(
-        '/continuoussets/<no(search):id>',
-        pathDisplay='/continuoussets/<id>')
-    @requires_auth
-    def getcontinuousSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetContinuousSet)
-
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/rnaquantificationsets/<no(search):id>',
-        pathDisplay='/rnaquantificationsets/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getRnaQuantificationSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetRnaQuantificationSet)
-else:
-    @DisplayedRoute(
-        '/rnaquantificationsets/<no(search):id>',
-        pathDisplay='/rnaquantificationsets/<id>')
-    @requires_auth
-    def getRnaQuantificationSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetRnaQuantificationSet)
+@DisplayedRoute(
+    '/features/<no(search):id>',
+    pathDisplay='/features/<id>')
+@requires_auth
+def getFeature(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetFeature)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/rnaquantifications/<no(search):id>',
-        pathDisplay='/rnaquantifications/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getRnaQuantification(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetRnaQuantification)
-else:
-    @DisplayedRoute(
-        '/rnaquantifications/<no(search):id>',
-        pathDisplay='/rnaquantifications/<id>')
-    @requires_auth
-    def getRnaQuantification(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetRnaQuantification)
+@DisplayedRoute(
+    '/continuoussets/<no(search):id>',
+    pathDisplay='/continuoussets/<id>')
+@requires_auth
+def getcontinuousSet(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetContinuousSet)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/expressionlevels/<no(search):id>',
-        pathDisplay='/expressionlevels/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getExpressionLevel(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetExpressionLevel)
-else:
-    @DisplayedRoute(
-        '/expressionlevels/<no(search):id>',
-        pathDisplay='/expressionlevels/<id>')
-    @requires_auth
-    def getExpressionLevel(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetExpressionLevel)
+@DisplayedRoute(
+    '/rnaquantificationsets/<no(search):id>',
+    pathDisplay='/rnaquantificationsets/<id>')
+@requires_auth
+def getRnaQuantificationSet(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetRnaQuantificationSet)
+
+
+@DisplayedRoute(
+    '/rnaquantifications/<no(search):id>',
+    pathDisplay='/rnaquantifications/<id>')
+@requires_auth
+def getRnaQuantification(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetRnaQuantification)
+
+
+@DisplayedRoute(
+    '/expressionlevels/<no(search):id>',
+    pathDisplay='/expressionlevels/<id>')
+@requires_auth
+def getExpressionLevel(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetExpressionLevel)
 
 
 @app.route('/oauth2callback', methods=['GET'])
@@ -1946,7 +1367,6 @@ def oidcCallback():
     """
     if app.oidcClient is None:
         raise exceptions.NotImplementedException()
-
     response = dict(flask.request.args.iteritems(multi=True))
     aresp = app.oidcClient.parse_response(
         message.AuthorizationResponse,
@@ -1964,11 +1384,11 @@ def oidcCallback():
         "client_id": app.oidcClient.client_id,
         "client_secret": app.oidcClient.client_secret
     }
-
     atr = app.oidcClient.do_access_token_request(
         scope="openid",
         state=respState,
         request_args=args)
+
     if not isinstance(atr, message.AccessTokenResponse):
         raise exceptions.NotAuthenticatedException()
 
@@ -1991,190 +1411,67 @@ def oidcCallback():
     return response
 
 
-# Leaving this function here for reference for the Authorization Code flow
-# Added by Kevin Chan
-@app.route('/keycallback')
-def keycloakCallback():
-    """
-    Similar to the oidcCallback function, once the authorization provider has
-    cleared the user, browser is returned here with a code. The code is then
-    checked with the authorization provider and if valid a token is returned.
-
-    The token is stored in the session, and the user is assumed to be valid.
-
-    Returns: a token and the redirect url to the new page.
-    """
-    if app.oidcClient is None:
-        raise exceptions.NotImplementedException()
-
-    response = dict(flask.request.args.iteritems(multi=True))
-    aresp = app.oidcClient.parse_response(
-        message.AuthorizationResponse,
-        info=response, sformat="dict")
-    respState = aresp["state"]
-    sessState = flask.session.get('state')
-
-    if sessState != respState:
-        raise exceptions.NotAuthorizedException()
-
-    args = {
-        "code": aresp["code"],
-        "redirect_uri": app.oidcClient.redirect_uris[0],
-        "client_id": app.oidcClient.client_id,
-        "client_secret": app.oidcClient.client_secret,
-        "token_endpoint": app.oidcClient.provider_info["token_endpoint"],
-        "grant_type": "authorization_code",
-    }
-
-    tokResp = requests.post(
-        url=app.oidcClient.provider_info["token_endpoint"],
-        data=args)
-    tokContent = json.loads(tokResp.content)
-    # token = tokContent["access_token"]
-
-    if tokResp.status_code != 200:
-        raise exceptions.NotAuthorizedException()
-    app.oidcClient.token = tokContent
-
-    # flask.session["key"] = idGenerator(size=SECRET_KEY_LENGTH)
-    # This next line will display the access token on the server front end.
-    # If you do not want this uncomment the line above
-    flask.session["key"] = app.oidcClient.token["access_token"]
-    # change the url depending on where the GA4GH server is hosted
-    redirectUri = 'http://{0}:{1}{2}'.format(
-        socket.gethostbyname(socket.gethostname()),
-        app.myPort,
-        flask.session["path"])
-    return flask.redirect(redirectUri)
+@DisplayedRoute(
+    '/datasets/<no(search):id>',
+    pathDisplay='/datasets/<id>')
+@requires_auth
+def getDataset(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetDataset)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/datasets/<no(search):id>',
-        pathDisplay='/datasets/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getDataset(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetDataset)
-else:
-    @DisplayedRoute(
-        '/datasets/<no(search):id>',
-        pathDisplay='/datasets/<id>')
-    @requires_auth
-    def getDataset(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetDataset)
-
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/experiments/<no(search):id>',
-        pathDisplay='/experiments/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getExperiment(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetExperiment)
-else:
-    @DisplayedRoute(
-        '/experiments/<no(search):id>',
-        pathDisplay='/experiments/<id>')
-    @requires_auth
-    def getExperiment(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetExperiment)
-
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/analyses/<no(search):id>',
-        pathDisplay='/analyses/<id>')
-    @requires_auth
-    def getAnalysis(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetAnalysis)
-else:
-    @DisplayedRoute(
-        '/analyses/<no(search):id>',
-        pathDisplay='/analyses/<id>')
-    @requires_auth
-    def getAnalysis(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetAnalysis)
-
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute(
-        '/variantannotationsets/<no(search):id>',
-        pathDisplay='/variantannotationsets/<id>')
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def getVariantAnnotationSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetVariantAnnotationSet)
-else:
-    @DisplayedRoute(
-        '/variantannotationsets/<no(search):id>',
-        pathDisplay='/variantannotationsets/<id>')
-    @requires_auth
-    def getVariantAnnotationSet(id):
-        return handleFlaskGetRequest(
-            id, flask.request, app.backend.runGetVariantAnnotationSet)
+@DisplayedRoute(
+    '/experiments/<no(search):id>',
+    pathDisplay='/experiments/<id>')
+@requires_auth
+def getExperiment(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetExperiment)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/phenotypes/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchPhenotypes():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchPhenotypes)
-else:
-    @DisplayedRoute('/phenotypes/search', postMethod=True)
-    @requires_auth
-    def searchPhenotypes():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchPhenotypes)
+@DisplayedRoute(
+    '/analyses/<no(search):id>',
+    pathDisplay='/analyses/<id>')
+@requires_auth
+def getAnalysis(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetAnalysis)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/featurephenotypeassociations/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchGenotypePhenotypes():
-        return handleFlaskPostRequest(
-            flask.request,
-            app.backend.runSearchGenotypePhenotypes)
-else:
-    @DisplayedRoute('/featurephenotypeassociations/search', postMethod=True)
-    @requires_auth
-    def searchGenotypePhenotypes():
-        return handleFlaskPostRequest(
-            flask.request,
-            app.backend.runSearchGenotypePhenotypes)
+@DisplayedRoute(
+    '/variantannotationsets/<no(search):id>',
+    pathDisplay='/variantannotationsets/<id>')
+@requires_auth
+def getVariantAnnotationSet(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetVariantAnnotationSet)
 
 
-if app.config.get("KEYCLOAK"):
-    @DisplayedRoute('/phenotypeassociationsets/search', postMethod=True)
-    @requires_auth
-    @oidc.require_login
-    @requires_token
-    def searchPhenotypeAssociationSets():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchPhenotypeAssociationSets)
-else:
-    @DisplayedRoute('/phenotypeassociationsets/search', postMethod=True)
-    @requires_auth
-    def searchPhenotypeAssociationSets():
-        return handleFlaskPostRequest(
-            flask.request, app.backend.runSearchPhenotypeAssociationSets)
+@DisplayedRoute('/phenotypes/search', postMethod=True)
+@requires_auth
+def searchPhenotypes():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchPhenotypes)
+
+
+@DisplayedRoute('/featurephenotypeassociations/search', postMethod=True)
+@requires_auth
+def searchGenotypePhenotypes():
+    return handleFlaskPostRequest(
+        flask.request,
+        app.backend.runSearchGenotypePhenotypes)
+
+
+@DisplayedRoute('/phenotypeassociationsets/search', postMethod=True)
+@requires_auth
+def searchPhenotypeAssociationSets():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchPhenotypeAssociationSets)
 
 
 # The below methods ensure that JSON is returned for various errors
 # instead of the default, html
+
 
 @app.errorhandler(401)
 def unauthorizedHandler(errorString):

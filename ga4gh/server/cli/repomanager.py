@@ -20,14 +20,14 @@ import ga4gh.server.datamodel.genotype_phenotype as genotype_phenotype
 import ga4gh.server.datamodel.ontologies as ontologies
 import ga4gh.server.datamodel.reads as reads
 import ga4gh.server.datamodel.references as references
-# import ga4gh.server.datamodel.rna_quantification as rna_quantification
+import ga4gh.server.datamodel.rna_quantification as rna_quantification
 import ga4gh.server.datamodel.sequence_annotations as sequence_annotations
-# mport ga4gh.server.datamodel.continuous as continuous
+import ga4gh.server.datamodel.continuous as continuous
 import ga4gh.server.datamodel.variants as variants
 import ga4gh.server.datamodel.peers as peers
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.exceptions as exceptions
-# import ga4gh.server.repo.rnaseq2ga as rnaseq2ga
+import ga4gh.server.repo.rnaseq2ga as rnaseq2ga
 
 import ga4gh.common.cli as common_cli
 
@@ -135,7 +135,7 @@ class RepoManager(object):
         """
         self._openRepo()
         self._repo.printAnnouncements()
-
+        
     def clearAnnouncements(self):
         """
         Clears the list of announcements from the repo.
@@ -449,38 +449,33 @@ class RepoManager(object):
         """
         Adds a new continuous set into this repo
         """
-        pass
-        # self._openRepo()
-        # dataset = self._repo.getDatasetByName(self._args.datasetName)
-        # filePath = self._getFilePath(self._args.filePath,
-        #                              self._args.relativePath)
-        # name = getNameFromPath(self._args.filePath)
-        # continuousSet = continuous.FileContinuousSet(dataset, name)
-        # referenceSetName = self._args.referenceSetName
-        # if referenceSetName is None:
-        #     raise exceptions.RepoManagerException(
-        #         "A reference set name must be provided")
-        # referenceSet = self._repo.getReferenceSetByName(referenceSetName)
-        # continuousSet.setReferenceSet(referenceSet)
-        # continuousSet.populateFromFile(filePath)
-        # self._updateRepo(self._repo.insertContinuousSet, continuousSet)
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        filePath = self._getFilePath(self._args.filePath,
+                                     self._args.relativePath)
+        name = getNameFromPath(self._args.filePath)
+        continuousSet = continuous.FileContinuousSet(dataset, name)
+        referenceSetName = self._args.referenceSetName
+        if referenceSetName is None:
+            raise exceptions.RepoManagerException(
+                "A reference set name must be provided")
+        referenceSet = self._repo.getReferenceSetByName(referenceSetName)
+        continuousSet.setReferenceSet(referenceSet)
+        continuousSet.populateFromFile(filePath)
+        self._updateRepo(self._repo.insertContinuousSet, continuousSet)
 
     def removeContinuousSet(self):
         """
         Removes a continuous set from this repo
         """
-        pass
-        # self._openRepo()
-        # dataset = self._repo.getDatasetByName(self._args.datasetName)
-        # continuousSet = dataset.getContinuousSetByName(
-        #                     self._args.continuousSetName)
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        continuousSet = dataset.getContinuousSetByName(
+                            self._args.continuousSetName)
 
-        # def func():
-        #    self._updateRepo(self._repo.removeContinuousSet, continuousSet)
-        # self._confirmDelete(
-        #   "ContinuousSet",
-        #   continuousSet.getLocalId(),
-        #   func)
+        def func():
+            self._updateRepo(self._repo.removeContinuousSet, continuousSet)
+        self._confirmDelete("ContinuousSet", continuousSet.getLocalId(), func)
 
     def addBiosample(self):
         """
@@ -528,6 +523,246 @@ class RepoManager(object):
             self._updateRepo(self._repo.removeIndividual, individual)
         self._confirmDelete("Individual", individual.getLocalId(), func)
 
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+    def addPatient(self):
+        """
+        Adds a new patient into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        patient = bio_metadata.Patient(
+            dataset, self._args.patientName)
+        patient.populateFromJson(self._args.patient)
+        self._updateRepo(self._repo.insertPatient, patient)
+
+    def removePatient(self):
+        """
+        Removes an patient from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        patient = dataset.getPatientByName(self._args.patientName)
+
+        def func():
+            self._updateRepo(self._repo.removePatient, patient)
+        self._confirmDelete("Patient", patient.getLocalId(), func)
+        
+    def addEnrollment(self):
+        """
+        Adds a new enrollment into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        enrollment = bio_metadata.Enrollment(
+            dataset, self._args.enrollmentName)
+        enrollment.populateFromJson(self._args.enrollment)
+        self._updateRepo(self._repo.insertEnrollment, enrollment)
+
+    def removeEnrollment(self):
+        """
+        Removes an enrollment from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        enrollment = dataset.getEnrollmentByName(self._args.enrollmentName)
+
+        def func():
+            self._updateRepo(self._repo.removeEnrollment, enrollment)
+        self._confirmDelete("Enrollment", enrollment.getLocalId(), func)
+        
+    def addConsent(self):
+        """
+        Adds a new consent into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        consent = bio_metadata.Consent(
+            dataset, self._args.consentName)
+        consent.populateFromJson(self._args.consent)
+        self._updateRepo(self._repo.insertConsent, consent)
+
+    def removeConsent(self):
+        """
+        Removes an consent from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        consent = dataset.getConsentByName(self._args.consentName)
+
+        def func():
+            self._updateRepo(self._repo.removeConsent, consent)
+        self._confirmDelete("Consent", consent.getLocalId(), func)
+        
+    def addDiagnosis(self):
+        """
+        Adds a new diagnosis into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        diagnosis = bio_metadata.Diagnosis(
+            dataset, self._args.diagnosisName)
+        diagnosis.populateFromJson(self._args.diagnosis)
+        self._updateRepo(self._repo.insertDiagnosis, diagnosis)
+
+    def removeDiagnosis(self):
+        """
+        Removes an diagnosis from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        diagnosis = dataset.getDiagnosisByName(self._args.diagnosisName)
+
+        def func():
+            self._updateRepo(self._repo.removeDiagnosis, diagnosis)
+        self._confirmDelete("Diagnosis", diagnosis.getLocalId(), func)
+        
+    def addSample(self):
+        """
+        Adds a new sample into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        sample = bio_metadata.Sample(
+            dataset, self._args.sampleName)
+        sample.populateFromJson(self._args.sample)
+        self._updateRepo(self._repo.insertSample, sample)
+
+    def removeSample(self):
+        """
+        Removes an sample from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        sample = dataset.getSampleByName(self._args.sampleName)
+
+        def func():
+            self._updateRepo(self._repo.removeSample, sample)
+        self._confirmDelete("Sample", sample.getLocalId(), func)
+        
+    def addTreatment(self):
+        """
+        Adds a new treatment into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        treatment = bio_metadata.Treatment(
+            dataset, self._args.treatmentName)
+        treatment.populateFromJson(self._args.treatment)
+        self._updateRepo(self._repo.insertTreatment, treatment)
+
+    def removeTreatment(self):
+        """
+        Removes an treatment from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        treatment = dataset.getTreatmentByName(self._args.treatmentName)
+
+        def func():
+            self._updateRepo(self._repo.removeTreatment, treatment)
+        self._confirmDelete("Treatment", treatment.getLocalId(), func)
+        
+    def addOutcome(self):
+        """
+        Adds a new outcome into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        outcome = bio_metadata.Outcome(
+            dataset, self._args.outcomeName)
+        outcome.populateFromJson(self._args.outcome)
+        self._updateRepo(self._repo.insertOutcome, outcome)
+
+    def removeOutcome(self):
+        """
+        Removes an outcome from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        outcome = dataset.getOutcomeByName(self._args.outcomeName)
+
+        def func():
+            self._updateRepo(self._repo.removeOutcome, outcome)
+        self._confirmDelete("Outcome", outcome.getLocalId(), func)
+        
+    def addComplication(self):
+        """
+        Adds a new complication into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        complication = bio_metadata.Complication(
+            dataset, self._args.complicationName)
+        complication.populateFromJson(self._args.complication)
+        self._updateRepo(self._repo.insertComplication, complication)
+
+    def removeComplication(self):
+        """
+        Removes an complication from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        complication = dataset.getComplicationByName(self._args.complicationName)
+
+        def func():
+            self._updateRepo(self._repo.removeComplication, complication)
+        self._confirmDelete("Complication", complication.getLocalId(), func)
+        
+    def addTumourboard(self):
+        """
+        Adds a new tumourboard into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        tumourboard = bio_metadata.Tumourboard(
+            dataset, self._args.tumourboardName)
+        tumourboard.populateFromJson(self._args.tumourboard)
+        self._updateRepo(self._repo.insertTumourboard, tumourboard)
+
+    def removeTumourboard(self):
+        """
+        Removes an tumourboard from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        tumourboard = dataset.getTumourboardByName(self._args.tumourboardName)
+
+        def func():
+            self._updateRepo(self._repo.removeTumourboard, tumourboard)
+        self._confirmDelete("Tumourboard", tumourboard.getLocalId(), func)
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
+
+    def addPeer(self):
+        """
+        Adds a new peer into this repo
+        """
+        self._openRepo()
+        try:
+            peer = peers.Peer(
+                self._args.url, json.loads(self._args.attributes))
+        except exceptions.BadUrlException:
+            raise exceptions.RepoManagerException("The URL for the peer was "
+                                                  "malformed.")
+        except ValueError as e:
+            raise exceptions.RepoManagerException(
+                "The attributes message "
+                "was malformed. {}".format(e))
+        self._updateRepo(self._repo.insertPeer, peer)
+
+    def removePeer(self):
+        """
+        Removes a peer by URL from this repo
+        """
+        self._openRepo()
+
+        def func():
+            self._updateRepo(self._repo.removePeer, self._args.url)
+        self._confirmDelete("Peer", self._args.url, func)
+
     def addExperiment(self):
         """
         Adds a new experiment into this repo
@@ -571,33 +806,6 @@ class RepoManager(object):
             self._updateRepo(self._repo.removeAnalysis, analysis)
         self._confirmDelete("Analysis", analysis.getLocalId(), func)
 
-    def addPeer(self):
-        """
-        Adds a new peer into this repo
-        """
-        self._openRepo()
-        try:
-            peer = peers.Peer(
-                self._args.url, json.loads(self._args.attributes))
-        except exceptions.BadUrlException:
-            raise exceptions.RepoManagerException("The URL for the peer was "
-                                                  "malformed.")
-        except ValueError as e:
-            raise exceptions.RepoManagerException(
-                "The attributes message "
-                "was malformed. {}".format(e))
-        self._updateRepo(self._repo.insertPeer, peer)
-
-    def removePeer(self):
-        """
-        Removes a peer by URL from this repo
-        """
-        self._openRepo()
-
-        def func():
-            self._updateRepo(self._repo.removePeer, self._args.url)
-        self._confirmDelete("Peer", self._args.url, func)
-
     def removeOntology(self):
         """
         Removes an ontology from the repo.
@@ -613,77 +821,73 @@ class RepoManager(object):
         """
         Adds an rnaQuantification into this repo
         """
-        pass
-#         self._openRepo()
-#         dataset = self._repo.getDatasetByName(self._args.datasetName)
-#         biosampleId = ""
-#         if self._args.biosampleName:
-#             biosample = dataset.getBiosampleByName(self._args.biosampleName)
-#             biosampleId = biosample.getId()
-#         if self._args.name is None:
-#             name = getNameFromPath(self._args.quantificationFilePath)
-#         else:
-#             name = self._args.name
-#         # TODO: programs not fully supported by GA4GH yet
-#         programs = ""
-#         featureType = "gene"
-#         if self._args.transcript:
-#             featureType = "transcript"
-#         rnaseq2ga.rnaseq2ga(
-#             self._args.quantificationFilePath, self._args.filePath, name,
-#             self._args.format, dataset=dataset, featureType=featureType,
-#             description=self._args.description, programs=programs,
-#             featureSetNames=self._args.featureSetNames,
-#             readGroupSetNames=self._args.readGroupSetName,
-#             biosampleId=biosampleId)
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        biosampleId = ""
+        if self._args.biosampleName:
+            biosample = dataset.getBiosampleByName(self._args.biosampleName)
+            biosampleId = biosample.getId()
+        if self._args.name is None:
+            name = getNameFromPath(self._args.quantificationFilePath)
+        else:
+            name = self._args.name
+        # TODO: programs not fully supported by GA4GH yet
+        programs = ""
+        featureType = "gene"
+        if self._args.transcript:
+            featureType = "transcript"
+        rnaseq2ga.rnaseq2ga(
+            self._args.quantificationFilePath, self._args.filePath, name,
+            self._args.format, dataset=dataset, featureType=featureType,
+            description=self._args.description, programs=programs,
+            featureSetNames=self._args.featureSetNames,
+            readGroupSetNames=self._args.readGroupSetName,
+            biosampleId=biosampleId)
 
     def initRnaQuantificationSet(self):
         """
         Initialize an empty RNA quantification set
         """
-        pass
-        # store = rnaseq2ga.RnaSqliteStore(self._args.filePath)
-        # store.createTables()
+        store = rnaseq2ga.RnaSqliteStore(self._args.filePath)
+        store.createTables()
 
     def addRnaQuantificationSet(self):
         """
         Adds an rnaQuantificationSet into this repo
         """
-        pass
-        # self._openRepo()
-        # dataset = self._repo.getDatasetByName(self._args.datasetName)
-        # if self._args.name is None:
-        #     name = getNameFromPath(self._args.filePath)
-        # else:
-        #     name = self._args.name
-        # rnaQuantificationSet = rna_quantification.SqliteRnaQuantificationSet(
-        #     dataset, name)
-        # referenceSetName = self._args.referenceSetName
-        # if referenceSetName is None:
-        #     raise exceptions.RepoManagerException(
-        #         "A reference set name must be provided")
-        # referenceSet = self._repo.getReferenceSetByName(referenceSetName)
-        # rnaQuantificationSet.setReferenceSet(referenceSet)
-        # rnaQuantificationSet.populateFromFile(self._args.filePath)
-        # rnaQuantificationSet.setAttributes(json.loads(self._args.attributes))
-        # self._updateRepo(
-        #     self._repo.insertRnaQuantificationSet, rnaQuantificationSet)
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        if self._args.name is None:
+            name = getNameFromPath(self._args.filePath)
+        else:
+            name = self._args.name
+        rnaQuantificationSet = rna_quantification.SqliteRnaQuantificationSet(
+            dataset, name)
+        referenceSetName = self._args.referenceSetName
+        if referenceSetName is None:
+            raise exceptions.RepoManagerException(
+                "A reference set name must be provided")
+        referenceSet = self._repo.getReferenceSetByName(referenceSetName)
+        rnaQuantificationSet.setReferenceSet(referenceSet)
+        rnaQuantificationSet.populateFromFile(self._args.filePath)
+        rnaQuantificationSet.setAttributes(json.loads(self._args.attributes))
+        self._updateRepo(
+            self._repo.insertRnaQuantificationSet, rnaQuantificationSet)
 
     def removeRnaQuantificationSet(self):
         """
         Removes an rnaQuantificationSet from this repo
         """
-        pass
-        # self._openRepo()
-        # dataset = self._repo.getDatasetByName(self._args.datasetName)
-        # rnaQuantSet = dataset.getRnaQuantificationSetByName(
-        #     self._args.rnaQuantificationSetName)
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        rnaQuantSet = dataset.getRnaQuantificationSetByName(
+            self._args.rnaQuantificationSetName)
 
-        # def func():
-        #     self._updateRepo(self._repo.removeRnaQuantificationSet,
-        #                      rnaQuantSet)
-        # self._confirmDelete(
-        #     "RnaQuantificationSet", rnaQuantSet.getLocalId(), func)
+        def func():
+            self._updateRepo(self._repo.removeRnaQuantificationSet,
+                             rnaQuantSet)
+        self._confirmDelete(
+            "RnaQuantificationSet", rnaQuantSet.getLocalId(), func)
 
     #
     # Methods to simplify adding common arguments to the parser.
@@ -772,17 +976,131 @@ class RepoManager(object):
             "featureSetName",
             help="the name of the feature set")
 
-    # @classmethod
-    # def addContinuousSetNameArgument(cls, subparser):
-    #     subparser.add_argument(
-    #         "continuousSetName",
-    #         help="the name of the continuous set")
+    @classmethod
+    def addContinuousSetNameArgument(cls, subparser):
+        subparser.add_argument(
+            "continuousSetName",
+            help="the name of the continuous set")
 
     @classmethod
     def addIndividualNameArgument(cls, subparser):
         subparser.add_argument(
             "individualName",
             help="the name of the individual")
+
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+    @classmethod
+    def addPatientNameArgument(cls, subparser):
+        subparser.add_argument(
+            "patientName",
+            help="the name of the patient")
+
+    @classmethod
+    def addPatientArgument(cls, subparser):
+        subparser.add_argument(
+            "patient",
+            help="the JSON of the patient")
+
+    @classmethod
+    def addEnrollmentNameArgument(cls, subparser):
+        subparser.add_argument(
+            "enrollmentName",
+            help="the name of the enrollment")
+
+    @classmethod
+    def addEnrollmentArgument(cls, subparser):
+        subparser.add_argument(
+            "enrollment",
+            help="the JSON of the enrollment")
+
+    @classmethod
+    def addConsentNameArgument(cls, subparser):
+        subparser.add_argument(
+            "consentName",
+            help="the name of the consent")
+
+    @classmethod
+    def addConsentArgument(cls, subparser):
+        subparser.add_argument(
+            "consent",
+            help="the JSON of the consent")
+
+    @classmethod
+    def addDiagnosisNameArgument(cls, subparser):
+        subparser.add_argument(
+            "diagnosisName",
+            help="the name of the diagnosis")
+
+    @classmethod
+    def addDiagnosisArgument(cls, subparser):
+        subparser.add_argument(
+            "diagnosis",
+            help="the JSON of the diagnosis")
+
+    @classmethod
+    def addSampleNameArgument(cls, subparser):
+        subparser.add_argument(
+            "sampleName",
+            help="the name of the sample")
+
+    @classmethod
+    def addSampleArgument(cls, subparser):
+        subparser.add_argument(
+            "sample",
+            help="the JSON of the sample")
+
+    @classmethod
+    def addTreatmentNameArgument(cls, subparser):
+        subparser.add_argument(
+            "treatmentName",
+            help="the name of the treatment")
+
+    @classmethod
+    def addTreatmentArgument(cls, subparser):
+        subparser.add_argument(
+            "treatment",
+            help="the JSON of the treatment")
+
+    @classmethod
+    def addOutcomeNameArgument(cls, subparser):
+        subparser.add_argument(
+            "outcomeName",
+            help="the name of the outcome")
+
+    @classmethod
+    def addOutcomeArgument(cls, subparser):
+        subparser.add_argument(
+            "outcome",
+            help="the JSON of the outcome")
+
+    @classmethod
+    def addComplicationNameArgument(cls, subparser):
+        subparser.add_argument(
+            "complicationName",
+            help="the name of the complication")
+
+    @classmethod
+    def addComplicationArgument(cls, subparser):
+        subparser.add_argument(
+            "complication",
+            help="the JSON of the complication")
+
+    @classmethod
+    def addTumourboardNameArgument(cls, subparser):
+        subparser.add_argument(
+            "tumourboardName",
+            help="the name of the tumourboard")
+
+    @classmethod
+    def addTumourboardArgument(cls, subparser):
+        subparser.add_argument(
+            "tumourboard",
+            help="the JSON of the tumourboard")
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
 
     @classmethod
     def addBiosampleNameArgument(cls, subparser):
@@ -1146,29 +1464,27 @@ class RepoManager(object):
         cls.addFeatureSetNameArgument(removeFeatureSetParser)
         cls.addForceOption(removeFeatureSetParser)
 
-        # addContinuousSetParser = common_cli.addSubparser(
-        #     subparsers, "add-continuousset",
-        #     "Add a continuous set to the data repo")
-        # addContinuousSetParser.set_defaults(runner="addContinuousSet")
-        # cls.addRepoArgument(addContinuousSetParser)
-        # cls.addDatasetNameArgument(addContinuousSetParser)
-        # cls.addRelativePathOption(addContinuousSetParser)
-        # cls.addFilePathArgument(
-        #     addContinuousSetParser,
-        #     "The path to the file contianing the continuous data ")
-        # cls.addReferenceSetNameOption(
-        #   addContinuousSetParser,
-        #   "continuous set")
-        # cls.addClassNameOption(addContinuousSetParser, "continuous set")
+        addContinuousSetParser = common_cli.addSubparser(
+            subparsers, "add-continuousset",
+            "Add a continuous set to the data repo")
+        addContinuousSetParser.set_defaults(runner="addContinuousSet")
+        cls.addRepoArgument(addContinuousSetParser)
+        cls.addDatasetNameArgument(addContinuousSetParser)
+        cls.addRelativePathOption(addContinuousSetParser)
+        cls.addFilePathArgument(
+            addContinuousSetParser,
+            "The path to the file contianing the continuous data ")
+        cls.addReferenceSetNameOption(addContinuousSetParser, "continuous set")
+        cls.addClassNameOption(addContinuousSetParser, "continuous set")
 
-        # removeContinuousSetParser = common_cli.addSubparser(
-        #     subparsers, "remove-continuousset",
-        #     "Remove a continuous set from the repo")
-        # removeContinuousSetParser.set_defaults(runner="removeContinuousSet")
-        # cls.addRepoArgument(removeContinuousSetParser)
-        # cls.addDatasetNameArgument(removeContinuousSetParser)
-        # cls.addContinuousSetNameArgument(removeContinuousSetParser)
-        # cls.addForceOption(removeContinuousSetParser)
+        removeContinuousSetParser = common_cli.addSubparser(
+            subparsers, "remove-continuousset",
+            "Remove a continuous set from the repo")
+        removeContinuousSetParser.set_defaults(runner="removeContinuousSet")
+        cls.addRepoArgument(removeContinuousSetParser)
+        cls.addDatasetNameArgument(removeContinuousSetParser)
+        cls.addContinuousSetNameArgument(removeContinuousSetParser)
+        cls.addForceOption(removeContinuousSetParser)
 
         addBiosampleParser = common_cli.addSubparser(
             subparsers, "add-biosample", "Add a Biosample to the dataset")
@@ -1204,67 +1520,226 @@ class RepoManager(object):
         cls.addIndividualNameArgument(removeIndividualParser)
         cls.addForceOption(removeIndividualParser)
 
-        # objectType = "RnaQuantification"
-        # addRnaQuantificationParser = common_cli.addSubparser(
-        #     subparsers, "add-rnaquantification",
-        #     "Add an RNA quantification to the data repo")
-        # addRnaQuantificationParser.set_defaults(
-        #     runner="addRnaQuantification")
-        # cls.addFilePathArgument(
-        #     addRnaQuantificationParser,
-        #     "The path to the RNA SQLite database to create or modify")
-        # cls.addQuantificationFilePathArgument(
-        #     addRnaQuantificationParser, "The path to the expression file.")
-        # cls.addRnaFormatArgument(addRnaQuantificationParser)
-        # cls.addRepoArgument(addRnaQuantificationParser)
-        # cls.addDatasetNameArgument(addRnaQuantificationParser)
-        # addRnaQuantificationParser.add_argument(
-        #     "--biosampleName", default=None, help="Biosample Name")
-        # addRnaQuantificationParser.add_argument(
-        #     "--readGroupSetName", default=None, help="Read Group Set Name")
-        # addRnaQuantificationParser.add_argument(
-        #     "--featureSetNames", default=None, help="Comma separated list")
-        # cls.addNameOption(addRnaQuantificationParser, "rna quantification")
-        # cls.addDescriptionOption(addRnaQuantificationParser, objectType)
-        # cls.addRnaFeatureTypeOption(addRnaQuantificationParser)
-        # cls.addAttributesArgument(addRnaQuantificationParser)
+### ======================================================================= ###
+### METADATA
+### ======================================================================= ###
+        addPatientParser = common_cli.addSubparser(
+            subparsers, "add-patient", "Add an Patient to the dataset")
+        addPatientParser.set_defaults(runner="addPatient")
+        cls.addRepoArgument(addPatientParser)
+        cls.addDatasetNameArgument(addPatientParser)
+        cls.addPatientNameArgument(addPatientParser)
+        cls.addPatientArgument(addPatientParser)
 
-        # objectType = "RnaQuantificationSet"
-        # initRnaQuantificationSetParser = common_cli.addSubparser(
-        #     subparsers, "init-rnaquantificationset",
-        #     "Initializes an RNA quantification set")
-        # initRnaQuantificationSetParser.set_defaults(
-        #     runner="initRnaQuantificationSet")
-        # cls.addRepoArgument(initRnaQuantificationSetParser)
-        # cls.addFilePathArgument(
-        #     initRnaQuantificationSetParser,
-        #     "The path to the resulting Quantification Set")
+        removePatientParser = common_cli.addSubparser(
+            subparsers, "remove-patient",
+            "Remove an Patient from the repo")
+        removePatientParser.set_defaults(runner="removePatient")
+        cls.addRepoArgument(removePatientParser)
+        cls.addDatasetNameArgument(removePatientParser)
+        cls.addPatientNameArgument(removePatientParser)
+        cls.addForceOption(removePatientParser)
 
-        # addRnaQuantificationSetParser = common_cli.addSubparser(
-        #     subparsers, "add-rnaquantificationset",
-        #     "Add an RNA quantification set to the data repo")
-        # addRnaQuantificationSetParser.set_defaults(
-        #     runner="addRnaQuantificationSet")
-        # cls.addRepoArgument(addRnaQuantificationSetParser)
-        # cls.addDatasetNameArgument(addRnaQuantificationSetParser)
-        # cls.addFilePathArgument(
-        #     addRnaQuantificationSetParser,
-        #     "The path to the converted SQLite database containing RNA data")
-        # cls.addReferenceSetNameOption(
-        #     addRnaQuantificationSetParser, objectType)
-        # cls.addNameOption(addRnaQuantificationSetParser, objectType)
-        # cls.addAttributesArgument(addRnaQuantificationSetParser)
+        addEnrollmentParser = common_cli.addSubparser(
+            subparsers, "add-enrollment", "Add an Enrollment to the dataset")
+        addEnrollmentParser.set_defaults(runner="addEnrollment")
+        cls.addRepoArgument(addEnrollmentParser)
+        cls.addDatasetNameArgument(addEnrollmentParser)
+        cls.addEnrollmentNameArgument(addEnrollmentParser)
+        cls.addEnrollmentArgument(addEnrollmentParser)
 
-        # removeRnaQuantificationSetParser = common_cli.addSubparser(
-        #     subparsers, "remove-rnaquantificationset",
-        #     "Remove an RNA quantification set from the repo")
-        # removeRnaQuantificationSetParser.set_defaults(
-        #     runner="removeRnaQuantificationSet")
-        # cls.addRepoArgument(removeRnaQuantificationSetParser)
-        # cls.addDatasetNameArgument(removeRnaQuantificationSetParser)
-        # cls.addRnaQuantificationSetNameArgument(
-        #     removeRnaQuantificationSetParser)
-        # cls.addForceOption(removeRnaQuantificationSetParser)
+        removeEnrollmentParser = common_cli.addSubparser(
+            subparsers, "remove-enrollment",
+            "Remove an Enrollment from the repo")
+        removeEnrollmentParser.set_defaults(runner="removeEnrollment")
+        cls.addRepoArgument(removeEnrollmentParser)
+        cls.addDatasetNameArgument(removeEnrollmentParser)
+        cls.addEnrollmentNameArgument(removeEnrollmentParser)
+        cls.addForceOption(removeEnrollmentParser)
+
+        addConsentParser = common_cli.addSubparser(
+            subparsers, "add-consent", "Add an Consent to the dataset")
+        addConsentParser.set_defaults(runner="addConsent")
+        cls.addRepoArgument(addConsentParser)
+        cls.addDatasetNameArgument(addConsentParser)
+        cls.addConsentNameArgument(addConsentParser)
+        cls.addConsentArgument(addConsentParser)
+
+        removeConsentParser = common_cli.addSubparser(
+            subparsers, "remove-consent",
+            "Remove an Consent from the repo")
+        removeConsentParser.set_defaults(runner="removeConsent")
+        cls.addRepoArgument(removeConsentParser)
+        cls.addDatasetNameArgument(removeConsentParser)
+        cls.addConsentNameArgument(removeConsentParser)
+        cls.addForceOption(removeConsentParser)
+
+        addDiagnosisParser = common_cli.addSubparser(
+            subparsers, "add-diagnosis", "Add an Diagnosis to the dataset")
+        addDiagnosisParser.set_defaults(runner="addDiagnosis")
+        cls.addRepoArgument(addDiagnosisParser)
+        cls.addDatasetNameArgument(addDiagnosisParser)
+        cls.addDiagnosisNameArgument(addDiagnosisParser)
+        cls.addDiagnosisArgument(addDiagnosisParser)
+
+        removeDiagnosisParser = common_cli.addSubparser(
+            subparsers, "remove-diagnosis",
+            "Remove an Diagnosis from the repo")
+        removeDiagnosisParser.set_defaults(runner="removeDiagnosis")
+        cls.addRepoArgument(removeDiagnosisParser)
+        cls.addDatasetNameArgument(removeDiagnosisParser)
+        cls.addDiagnosisNameArgument(removeDiagnosisParser)
+        cls.addForceOption(removeDiagnosisParser)
+
+        addSampleParser = common_cli.addSubparser(
+            subparsers, "add-sample", "Add an Sample to the dataset")
+        addSampleParser.set_defaults(runner="addSample")
+        cls.addRepoArgument(addSampleParser)
+        cls.addDatasetNameArgument(addSampleParser)
+        cls.addSampleNameArgument(addSampleParser)
+        cls.addSampleArgument(addSampleParser)
+
+        removeSampleParser = common_cli.addSubparser(
+            subparsers, "remove-sample",
+            "Remove an Sample from the repo")
+        removeSampleParser.set_defaults(runner="removeSample")
+        cls.addRepoArgument(removeSampleParser)
+        cls.addDatasetNameArgument(removeSampleParser)
+        cls.addSampleNameArgument(removeSampleParser)
+        cls.addForceOption(removeSampleParser)
+
+        addTreatmentParser = common_cli.addSubparser(
+            subparsers, "add-treatment", "Add an Treatment to the dataset")
+        addTreatmentParser.set_defaults(runner="addTreatment")
+        cls.addRepoArgument(addTreatmentParser)
+        cls.addDatasetNameArgument(addTreatmentParser)
+        cls.addTreatmentNameArgument(addTreatmentParser)
+        cls.addTreatmentArgument(addTreatmentParser)
+
+        removeTreatmentParser = common_cli.addSubparser(
+            subparsers, "remove-treatment",
+            "Remove an Treatment from the repo")
+        removeTreatmentParser.set_defaults(runner="removeTreatment")
+        cls.addRepoArgument(removeTreatmentParser)
+        cls.addDatasetNameArgument(removeTreatmentParser)
+        cls.addTreatmentNameArgument(removeTreatmentParser)
+        cls.addForceOption(removeTreatmentParser)
+
+        addOutcomeParser = common_cli.addSubparser(
+            subparsers, "add-outcome", "Add an Outcome to the dataset")
+        addOutcomeParser.set_defaults(runner="addOutcome")
+        cls.addRepoArgument(addOutcomeParser)
+        cls.addDatasetNameArgument(addOutcomeParser)
+        cls.addOutcomeNameArgument(addOutcomeParser)
+        cls.addOutcomeArgument(addOutcomeParser)
+
+        removeOutcomeParser = common_cli.addSubparser(
+            subparsers, "remove-outcome",
+            "Remove an Outcome from the repo")
+        removeOutcomeParser.set_defaults(runner="removeOutcome")
+        cls.addRepoArgument(removeOutcomeParser)
+        cls.addDatasetNameArgument(removeOutcomeParser)
+        cls.addOutcomeNameArgument(removeOutcomeParser)
+        cls.addForceOption(removeOutcomeParser)
+
+        addComplicationParser = common_cli.addSubparser(
+            subparsers, "add-complication", "Add an Complication to the dataset")
+        addComplicationParser.set_defaults(runner="addComplication")
+        cls.addRepoArgument(addComplicationParser)
+        cls.addDatasetNameArgument(addComplicationParser)
+        cls.addComplicationNameArgument(addComplicationParser)
+        cls.addComplicationArgument(addComplicationParser)
+
+        removeComplicationParser = common_cli.addSubparser(
+            subparsers, "remove-complication",
+            "Remove an Complication from the repo")
+        removeComplicationParser.set_defaults(runner="removeComplication")
+        cls.addRepoArgument(removeComplicationParser)
+        cls.addDatasetNameArgument(removeComplicationParser)
+        cls.addComplicationNameArgument(removeComplicationParser)
+        cls.addForceOption(removeComplicationParser)
+
+        addTumourboardParser = common_cli.addSubparser(
+            subparsers, "add-tumourboard", "Add an Tumourboard to the dataset")
+        addTumourboardParser.set_defaults(runner="addTumourboard")
+        cls.addRepoArgument(addTumourboardParser)
+        cls.addDatasetNameArgument(addTumourboardParser)
+        cls.addTumourboardNameArgument(addTumourboardParser)
+        cls.addTumourboardArgument(addTumourboardParser)
+
+        removeTumourboardParser = common_cli.addSubparser(
+            subparsers, "remove-tumourboard",
+            "Remove an Tumourboard from the repo")
+        removeTumourboardParser.set_defaults(runner="removeTumourboard")
+        cls.addRepoArgument(removeTumourboardParser)
+        cls.addDatasetNameArgument(removeTumourboardParser)
+        cls.addTumourboardNameArgument(removeTumourboardParser)
+        cls.addForceOption(removeTumourboardParser)
+### ======================================================================= ###
+### METADATA END
+### ======================================================================= ###
+
+        objectType = "RnaQuantification"
+        addRnaQuantificationParser = common_cli.addSubparser(
+            subparsers, "add-rnaquantification",
+            "Add an RNA quantification to the data repo")
+        addRnaQuantificationParser.set_defaults(
+            runner="addRnaQuantification")
+        cls.addFilePathArgument(
+            addRnaQuantificationParser,
+            "The path to the RNA SQLite database to create or modify")
+        cls.addQuantificationFilePathArgument(
+            addRnaQuantificationParser, "The path to the expression file.")
+        cls.addRnaFormatArgument(addRnaQuantificationParser)
+        cls.addRepoArgument(addRnaQuantificationParser)
+        cls.addDatasetNameArgument(addRnaQuantificationParser)
+        addRnaQuantificationParser.add_argument(
+            "--biosampleName", default=None, help="Biosample Name")
+        addRnaQuantificationParser.add_argument(
+            "--readGroupSetName", default=None, help="Read Group Set Name")
+        addRnaQuantificationParser.add_argument(
+            "--featureSetNames", default=None, help="Comma separated list")
+        cls.addNameOption(addRnaQuantificationParser, "rna quantification")
+        cls.addDescriptionOption(addRnaQuantificationParser, objectType)
+        cls.addRnaFeatureTypeOption(addRnaQuantificationParser)
+        cls.addAttributesArgument(addRnaQuantificationParser)
+
+        objectType = "RnaQuantificationSet"
+        initRnaQuantificationSetParser = common_cli.addSubparser(
+            subparsers, "init-rnaquantificationset",
+            "Initializes an RNA quantification set")
+        initRnaQuantificationSetParser.set_defaults(
+            runner="initRnaQuantificationSet")
+        cls.addRepoArgument(initRnaQuantificationSetParser)
+        cls.addFilePathArgument(
+            initRnaQuantificationSetParser,
+            "The path to the resulting Quantification Set")
+
+        addRnaQuantificationSetParser = common_cli.addSubparser(
+            subparsers, "add-rnaquantificationset",
+            "Add an RNA quantification set to the data repo")
+        addRnaQuantificationSetParser.set_defaults(
+            runner="addRnaQuantificationSet")
+        cls.addRepoArgument(addRnaQuantificationSetParser)
+        cls.addDatasetNameArgument(addRnaQuantificationSetParser)
+        cls.addFilePathArgument(
+            addRnaQuantificationSetParser,
+            "The path to the converted SQLite database containing RNA data")
+        cls.addReferenceSetNameOption(
+            addRnaQuantificationSetParser, objectType)
+        cls.addNameOption(addRnaQuantificationSetParser, objectType)
+        cls.addAttributesArgument(addRnaQuantificationSetParser)
+
+        removeRnaQuantificationSetParser = common_cli.addSubparser(
+            subparsers, "remove-rnaquantificationset",
+            "Remove an RNA quantification set from the repo")
+        removeRnaQuantificationSetParser.set_defaults(
+            runner="removeRnaQuantificationSet")
+        cls.addRepoArgument(removeRnaQuantificationSetParser)
+        cls.addDatasetNameArgument(removeRnaQuantificationSetParser)
+        cls.addRnaQuantificationSetNameArgument(
+            removeRnaQuantificationSetParser)
+        cls.addForceOption(removeRnaQuantificationSetParser)
 
         addPhenotypeAssociationSetParser = common_cli.addSubparser(
             subparsers, "add-phenotypeassociationset",

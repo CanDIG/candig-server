@@ -1,6 +1,7 @@
 """
 G2P testing on the test data
 """
+from __future__ import print_function
 import unittest
 
 import ga4gh.server.datamodel as datamodel
@@ -13,6 +14,7 @@ import ga4gh.schemas.protocol as protocol
 class TestG2P(unittest.TestCase):
     exampleUrl = 'www.example.com'
     phenotypeAssociationSetId = ""
+    serialization = protocol.MIMETYPES[0]
 
     @classmethod
     def setUpClass(cls):
@@ -25,6 +27,13 @@ class TestG2P(unittest.TestCase):
             baseConfig="DevelopmentConfig", extraConfig=config)
         cls.app = frontend.app.test_client()
 
+    def deserialize(self, response, protoClass):
+        print('g2p_deserialize1: ', response)
+        print('g2p_deserialize2: ', self.serialization)
+        foo = protocol.deserialize(response, self.serialization, protoClass)
+        print('g2p_deserialize3: ', repr(foo))
+        return foo
+
     def sendSearchRequest(self, path, request, responseClass):
         """
         Sends the specified protocol request instance as JSON, and
@@ -32,7 +41,9 @@ class TestG2P(unittest.TestCase):
         """
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
         self.assertEqual(200, response.status_code)
-        responseData = protocol.fromJson(response.data, responseClass)
+        responseData = self.deserialize(response.data, responseClass)
+        responseData = protocol.fromProtobufString(response.data,
+                                                   responseClass)
         self.assertTrue(
             protocol.validate(protocol.toJson(responseData), responseClass))
         return responseData
@@ -57,7 +68,7 @@ class TestG2P(unittest.TestCase):
         request.dataset_id = datasetId
         response = self.sendPostRequest(
             "phenotypeassociationsets/search", request)
-        response = protocol.fromJson(
+        response = self.deserialize(
             response.data, protocol.SearchPhenotypeAssociationSetsResponse)
         return response.phenotype_association_sets[0].id
 
@@ -67,6 +78,7 @@ class TestG2P(unittest.TestCase):
         """
         headers = {
             'Content-type': 'application/json',
+            'Accept': self.serialization,
             'Origin': self.exampleUrl,
         }
         return self.app.post(
@@ -78,7 +90,8 @@ class TestG2P(unittest.TestCase):
         and returns the response.
         """
         return self.app.post(
-            path, headers={'Content-type': 'application/json'},
+            path, headers={'Content-type': 'application/json',
+                           'Accept': self.serialization},
             data=data)
 
     def testPhenotypeAssociationSetSearch(self):
@@ -169,7 +182,7 @@ class TestG2P(unittest.TestCase):
         request.feature_id = obfuscated
         response = self.sendGetRequest('/features/{}'.format(obfuscated))
 
-        feature = protocol.fromJson(response.data, protocol.Feature)
+        feature = self.deserialize(response.data, protocol.Feature)
 
         self.assertIsNotNone(feature)
         featureId = feature.id
@@ -196,7 +209,7 @@ class TestG2P(unittest.TestCase):
         response = self.sendGetRequest(
             '/features/{}'.format(obfuscated))
 
-        feature = protocol.fromJson(response.data, protocol.Feature)
+        feature = self.deserialize(response.data, protocol.Feature)
         self.assertIsNotNone(feature)
         self.assertEqual(request.feature_id, feature.id)
         self.assertIsNotNone(feature.feature_type)

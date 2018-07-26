@@ -331,7 +331,7 @@ class IndividualCompoundId(DatasetCompoundId):
 
 ### ======================================================================= ###
 ### METADATA
-### ======================================================================= ###
+### ======================================================================= ###   
 class PatientCompoundId(DatasetCompoundId):
     """
     The compound id for an patient
@@ -414,7 +414,7 @@ class TumourboardCompoundId(DatasetCompoundId):
     differentiator = 'tum'
 ### ======================================================================= ###
 ### METADATA END
-### ======================================================================= ###
+### ======================================================================= ### 
 
 class BiosampleCompoundId(DatasetCompoundId):
     """

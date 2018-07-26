@@ -13,6 +13,14 @@ import ga4gh.server.response_builder as response_builder
 
 import ga4gh.schemas.protocol as protocol
 
+### ======================================================================= ###
+### FRONT END
+### ======================================================================= ###
+import json
+### ======================================================================= ###
+### FRONT END END
+### ======================================================================= ###
+
 
 class Backend(object):
     """
@@ -21,7 +29,7 @@ class Backend(object):
     """
     def __init__(self, dataRepository):
         self._requestValidation = False
-        self._defaultPageSize = 100
+        self._defaultPageSize = 300
         self._maxResponseLength = 2**20  # 1 MiB
         self._dataRepository = dataRepository
 
@@ -198,7 +206,8 @@ class Backend(object):
         for obj in dataset.getPatients():
             include = True
             if request.name:
-                if request.name != obj.getLocalId():
+                if obj.getLocalId() not in request.name.split(','):
+#                if request.name != obj.getLocalId():
                     include = False
 
             if include:
@@ -217,7 +226,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -235,7 +245,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -253,7 +264,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -271,7 +283,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -289,7 +302,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -307,7 +321,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -325,7 +340,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -343,7 +359,8 @@ class Backend(object):
                     include = False
             # Search table by patient id
             if request.patient_id:
-                if request.patient_id != obj.getPatientId():
+                if obj.getPatientId() not in request.patient_id.split(','):
+#                if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -351,7 +368,6 @@ class Backend(object):
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ###
-
 
     def phenotypeAssociationSetsGenerator(self, request):
         """
@@ -776,7 +792,7 @@ class Backend(object):
         return data
 
     def runSearchRequest(
-        self, requestStr, requestClass, responseClass, objectGenerator,
+            self, requestStr, requestClass, responseClass, objectGenerator,
             return_mimetype="application/json"):
         """
         Runs the specified request. The request is a string containing
@@ -811,10 +827,8 @@ class Backend(object):
         self.endProfile()
         return responseString
 
-    def runListReferenceBases(
-            self,
-            requestJson,
-            return_mimetype="application/json"):
+    def runListReferenceBases(self, requestJson,
+                              return_mimetype="application/json"):
         """
         Runs a listReferenceBases request for the specified ID and
         request arguments.
@@ -862,6 +876,7 @@ class Backend(object):
         """
         Runs a searchGenotypes request for the specified
         request arguments.
+
         Can't just use runSearchRequest because we're appending
         multiple things - the variants and the genotype matrix
         """
@@ -922,7 +937,7 @@ class Backend(object):
         return protocol.serialize(protocol.GetInfoResponse(
             protocol_version=protocol.version), return_mimetype)
 
-    def runAddAnnouncement(self, flaskrequest, return_mimetype="application/json"):
+    def runAddAnnouncement(self, flaskrequest):
         """
         Takes a flask request from the frontend and attempts to parse
         into an AnnouncePeerRequest. If successful, it will log the
@@ -963,7 +978,7 @@ class Backend(object):
         return protocol.toJson(
             protocol.AnnouncePeerResponse(success=True))
 
-    def runListPeers(self, request, return_mimetype="application/json"):
+    def runListPeers(self, request):
         """
         Takes a ListPeersRequest and returns a ListPeersResponse using
         a page_token and page_size if provided.
@@ -972,15 +987,7 @@ class Backend(object):
             request,
             protocol.ListPeersRequest,
             protocol.ListPeersResponse,
-            self.peersGenerator,
-            return_mimetype)
-
-    def runGetTest(self, request, return_mimetype="application/json"):
-        """
-        Returns information about the service including protocol version.
-        """
-        repo = self.getDataRepository()
-        repo.verify()
+            self.peersGenerator)
 
     def runGetVariant(self, id_, return_mimetype="application/json"):
         """
@@ -1589,3 +1596,38 @@ class Backend(object):
             protocol.SearchExpressionLevelsResponse,
             self.expressionLevelsGenerator,
             return_mimetype)
+
+### ======================================================================= ###
+### FRONT END
+### ======================================================================= ###
+    def runSearchVariantsByGeneName(self, request, return_mimetype):
+        """
+        """
+        #TODO put request object into protocol and make this function a generator
+        request = json.loads(request)
+        return_object = []
+        result_object = {"variants": return_object}
+
+        dataset = self.getDataRepository().getDataset(request['datasetId'])
+        #
+        variantsets = dataset.getVariantSets()
+        #
+        for featureset in dataset.getFeatureSets():
+            for feature in featureset.getFeatures(geneSymbol=request['gene']):
+                #
+                for variantset in variantsets:
+                    for variant in variantset.getVariants(
+                            referenceName=feature.reference_name.replace('chr', ''),
+                            startPosition=feature.start,
+                            endPosition=feature.end,
+                            ):
+                        return_object.append(protocol.toJson(variant))
+
+        # temp fix until generator is implemented and properly throw error
+        if not return_object:
+            raise exceptions.NotFoundException
+
+        return json.dumps(result_object)
+### ======================================================================= ###
+### FRONT END END
+### ======================================================================= ###

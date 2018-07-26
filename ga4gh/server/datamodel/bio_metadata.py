@@ -164,7 +164,7 @@ class Biosample(datamodel.DatamodelObject):
             return self._individualAgeAtCollection
         else:
             return None
-
+        
 ### ======================================================================= ###
 # PROFYLE MODIFICATION BEGIN
 ### ======================================================================= ###
@@ -584,7 +584,7 @@ class Individual(datamodel.DatamodelObject):
         self._patient_id = None
         self._regional_profiling_centre = None
         self._diagnosis = None
-        self._pathology_type = None
+        self._pathology_type = None 
         self._enrollment_approval_date = None
         self._enrollment_approval_initials = None
         self._date_of_upload_to_sFTP = None
@@ -608,7 +608,7 @@ class Individual(datamodel.DatamodelObject):
 ### ======================================================================= ###
         if self.getDiagnosis():
             diagnosis = protocol.fromJson(
-                json.dumps(self.getDiagnosis()), protocol.OntologyTerm)
+                json.dumps(self.getDiagnosis()), protocol.OntologyTerm)            
 ### ======================================================================= ###
 # PROFYLE MODIFICATION END
 ### ======================================================================= ###
