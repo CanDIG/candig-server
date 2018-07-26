@@ -22,7 +22,7 @@ install:
   - ga4gh_repo --version
 
 before_script:
-  - pip install -r requirements.txt
+  - pip install -r dev-requirements.txt
   - python scripts/build_test_data.py 
     
 before_install:
@@ -40,8 +40,8 @@ script:
   #             --with-coverage --cover-package ga4gh.server
   #             --cover-inclusive --cover-min-percentage 80
   #             --cover-branches --cover-erase
-  # - make clean -C docs
-  # - make -C docs
+  - make clean -C docs
+  - make -C docs
 
 after_success:
 # run codecov
