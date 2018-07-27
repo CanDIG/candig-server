@@ -17,7 +17,7 @@ import json
 
 import flask
 import flask.ext.cors as cors
-from flask.ext.oidc import OpenIDConnect
+# from flask.ext.oidc import OpenIDConnect
 from flask import Flask, jsonify, render_template, request
 import humanize
 import werkzeug
@@ -31,8 +31,6 @@ import requests
 import logging
 from logging import StreamHandler
 from werkzeug.contrib.cache import FileSystemCache
-
-import pkg_resources
 
 import ga4gh.server
 import ga4gh.server.backend as backend
@@ -60,22 +58,6 @@ app.url_map.strict_slashes = False
 
 requires_auth = auth.auth_decorator(app)
 
-# Edit this for flask-oidc, the endpoints are in the client_secrets.json file
-config_path = '/'.join(('.','config','client_secrets.json'))
-
-app.config.update({
-    'SECRET_KEY': "key",
-    'TESTING': False,
-    'DEBUG': False,
-    'OIDC_CLIENT_SECRETS': pkg_resources.resource_filename(__name__, config_path),
-    'OIDC_ID_TOKEN_COOKIE_SECURE': False,
-    'OIDC_REQUIRE_VERIFIED_EMAIL': False,
-})
-
-# For configuration of Flask-Oidc
-oidc = OpenIDConnect(app)
-
-
 class NoConverter(werkzeug.routing.BaseConverter):
     """
     A converter that allows the routing matching algorithm to not
@@ -98,9 +80,7 @@ class NoConverter(werkzeug.routing.BaseConverter):
             raise werkzeug.routing.ValidationError()
         return value
 
-
 app.url_map.converters['no'] = NoConverter
-
 
 class ServerStatus(object):
     """
@@ -770,46 +750,6 @@ def handleException(exception):
         return getFlaskResponse(responseStr, serverException.httpStatus,
                                 mimetype=return_mimetype)
 
-
-# Added by Kevin Chan
-def requires_token(f):
-    """
-    Decorator function that ensures that the token is valid, if the token is
-    invalid or expired, the user will be redirected to the login page. Much of
-    the authorization code flow is done solely by the function decorator
-    @oidc.require_login
-    """
-    @functools.wraps(f)
-    def decorated(*args, **kargs):
-        if app.config.get("KEYCLOAK"):
-            redirectUri = 'http://{0}:{1}{2}'.format(
-                    socket.gethostbyname(
-                        socket.gethostname()),
-                    app.myPort,
-                    flask.request.path)
-            try:
-                info = oidc.user_getinfo(['sub'])
-                tokenResponse = OAuth2Credentials.from_json(
-                    oidc.credentials_store[info.get('sub')]
-                    ).token_response
-                introspectArgs = {
-                    "token": tokenResponse["access_token"],
-                    "client_id": oidc.client_secrets["client_id"],
-                    "client_secret": oidc.client_secrets["client_secret"],
-                    "refresh_token": tokenResponse["refresh_token"],
-                }
-            except:
-                return flask.redirect(redirectUri)
-            userInfo = requests.post(url=oidc.client_secrets[
-                "token_introspection_uri"
-                ],
-                data=introspectArgs)
-
-            if userInfo.status_code != 200:
-                raise exceptions.NotAuthenticatedException()
-        return f(*args, **kargs)
-    return decorated
-
 def requires_session(f):
     """
     Decorator for browser session routes. Inspects tokens and ensures client sessions + server
@@ -1100,51 +1040,6 @@ def gateway_logout():
     flask.session.clear()
 
     return response
-
-def _close_session():
-    """
-    helper method for terminating both a keycloak+flask session
-    """
-    url = oidc.client_secrets["logout_endpoint"]
-    auth_bearer = 'Bearer ' + flask.session["access_token"]
-
-    payload = {
-        "refresh_token": flask.session["refresh_token"],
-        "client_id": oidc.client_secrets["client_id"],
-        "client_secret": oidc.client_secrets["client_secret"]
-    }
-
-    headers = {
-        'Authorization': auth_bearer,
-        'Content-Type': 'application/x-www-form-urlencoded',
-    }
-
-    requests.post(url, data=payload, headers=headers)
-    flask.session.clear()
-
-def _check_session():
-    """
-    helper method for checking if keycloak+flask session still valid
-    :returns userInfo response object containing status code/token info
-    """
-
-    try:
-        introspectArgs = {
-            "token": flask.session["access_token"],
-            "client_id": oidc.client_secrets["client_id"],
-            "client_secret": oidc.client_secrets["client_secret"],
-            "refresh_token": flask.session["refresh_token"]
-        }
-
-        userInfo = requests.post(
-            url=oidc.client_secrets["token_introspection_uri"],
-            data=introspectArgs
-        )
-
-    except:
-        userInfo = None
-
-    return userInfo
 
 def _generate_login_url():
     '''
