@@ -969,16 +969,16 @@ def search_variant_by_gene_name():
 @app.route('/login_oidc', methods=LOGIN_ENDPOINT_METHODS)
 def login_oidc():
     """
-    *** POSTs/GETs to this endpoint should be set to 'ignore' in Tyk Endpoint settings ***
+    *** GETs to this endpoint should be set to 'ignore' in Tyk Endpoint settings ***
 
-    All requests without an Authorization header should be proxied through
+    All GET requests without an Authorization header should be proxied through
     this endpoint (except for API token request).
 
     :return: redirect call to the identity provider authentication point
     """
 
     base_url = _generate_base_url()
-    #redirect_uri = flask.request.args.get('redirectUri', base_url, type=str)
+    redirect_from = flask.request.args.get('redirectUri', type=str).replace(base_url, '')
 
     # GET request: check if authenticated and redirect root page, otherwise render template
     if flask.request.method == "GET":
@@ -987,12 +987,17 @@ def login_oidc():
         if flask.request.cookies.get("session_id"):
             return flask.redirect(base_url)
 
-        # not logged in, redirect to keycloak
+        # not logged in, redirect to keycloak (browser) or raise error (API)
         else:
+            get_endpoints = [x[1].replace('<id>', '') for x in app.serverStatus.getUrls() if x[0] == 'GET']
+
+            if redirect_from.startswith(tuple(get_endpoints)):
+                return getFlaskResponse(json.dumps({'error': 'Key not authorised'}), 403)
+
             return flask.redirect(_generate_login_url())
 
 
-    # POST request: successful keycloak authentication
+    # POST request: successful keycloak authentication else Tyk blocks request
     elif flask.request.method == "POST":
 
         if flask.request.headers.get('KC-Access'):
