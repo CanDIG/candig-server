@@ -183,6 +183,8 @@ class TykConfig(KeycloakOidConfig):
     """
     Configuration to use when forwarding requests through the API gateway.
     This also requires that keycloak config is being used and is set up properly.
+
+    To start a dev flask server using this config add in launch option, -c TykConfig
     """
 
     TYK_ENABLED = True
@@ -200,3 +202,14 @@ class TykConfig(KeycloakOidConfig):
     KC_LOGIN_REDIRECT = '/auth/realms/{0}/protocol/openid-connect/auth?scope={1}&response_type={2}&client_id={3}&response_mode={4}&redirect_uri={5}'.format(
         KC_REALM, KC_SCOPE, KC_RTYPE, KC_CLIENT_ID, KC_RMODE, KC_REDIRECT
     )
+
+class NoAuth(DevelopmentConfig):
+    """
+    Configuration to use when not using API gateway to forward requests.
+    This means requests do not need to be authenticated. For dev only.
+
+    To start a dev flask server using this config add in launch option, -c NoAuth
+    """
+
+    TYK_ENABLED = False
+    TYK_SERVER = TYK_LISTEN_PATH = KC_SERVER = KC_LOGIN_REDIRECT = ''
