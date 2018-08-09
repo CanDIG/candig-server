@@ -453,11 +453,17 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     """
     request_dictionary = flask.request
-    if 'Authorization' in request_dictionary.headers:
-        authz_token = request_dictionary.headers['Authorization']
-        access_map = getAccessMap(authz_token[7:])
+
+    if app.config.get("TYK_ENABLED"):
+        # Check authorization if using gateway
+        if 'Authorization' in request_dictionary.headers:
+            authz_token = request_dictionary.headers['Authorization']
+            access_map = getAccessMap(authz_token[7:])
+        else:
+            raise exceptions.NotAuthenticatedException
     else:
-        raise exceptions.NotAuthenticatedException
+        authz_token = ''
+        access_map = getAccessMap(authz_token)
 
 
     # Self query
@@ -621,32 +627,45 @@ def getAccessMap(token):
     user roles are defined in the local keycloak server as client roles
     string formatted as follows: project:tier
 
+    if running NoAuth config, user has full access to local dataset
+
     :param token: raw keycloak oidc id_token containing roles as claims
     :return: python dict in the form {"project" : "access tier", ...}
     """
 
-    parsed_payload = _parseTokenPayload(token)
-    access_levels = []
+    access_map = {}
 
-    if 'access_levels' in parsed_payload:
-        access_levels = parsed_payload["access_levels"]
+    if app.config.get("TYK_ENABLED"):
+        # assign access based on token
+        parsed_payload = _parseTokenPayload(token)
+        access_levels = []
 
-    access_map = dict()
+        if 'access_levels' in parsed_payload:
+            access_levels = parsed_payload["access_levels"]
 
-    for role in access_levels:
-        split_role = role.split(':')
-        access_map[split_role[0]] = split_role[1]
+        for role in access_levels:
+            split_role = role.split(':')
+            access_map[split_role[0]] = split_role[1]
+    else:
+        # mock full access to local dataset
+        for dataset in app.serverStatus.getDatasets():
+            access_map[dataset.getLocalId()] = 4
 
     return access_map
 
 def _parseTokenPayload(token):
-    token_payload = token.split(".")[1]
 
-    # make sure token is padded properly for b64 decoding
-    padding = len(token_payload) % 4
-    if padding != 0:
-        token_payload += '=' * (4 - padding)
-    decoded_payload = base64.b64decode(token_payload)
+    try:
+        token_payload = token.split(".")[1]
+
+        # make sure token is padded properly for b64 decoding
+        padding = len(token_payload) % 4
+        if padding != 0:
+            token_payload += '=' * (4 - padding)
+        decoded_payload = base64.b64decode(token_payload)
+
+    except IndexError:
+        decoded_payload = '{}'
 
     return json.loads(decoded_payload)
 
@@ -895,9 +914,9 @@ class DisplayedRoute(object):
 @requires_session
 def index():
     return flask.render_template('spa.html',
-                                 session_id=flask.session["id_token"],
-                                 refresh=flask.session["refresh_token"],
-                                 access=flask.session["access_token"],
+                                 session_id=flask.session.get('id_token',''),
+                                 refresh=flask.session.get('refresh_token', ''),
+                                 access=flask.session.get('access_token', ''),
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
 @app.route('/login')
@@ -978,7 +997,7 @@ def login_oidc():
     """
 
     base_url = _generate_base_url()
-    redirect_from = flask.request.args.get('redirectUri', type=str).replace(base_url, '')
+    redirect_from = flask.request.args.get('redirectUri', '', type=str).replace(base_url, '')
 
     # GET request: check if authenticated and redirect root page, otherwise render template
     if flask.request.method == "GET":
