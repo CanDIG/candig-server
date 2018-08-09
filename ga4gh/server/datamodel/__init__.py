@@ -412,6 +412,16 @@ class TumourboardCompoundId(DatasetCompoundId):
         CompoundId.differentiatorFieldName, 'tumourboard']
     containerIds = DatasetCompoundId.containerIds + [('tumourboard_id', 3)]
     differentiator = 'tum'
+
+class ExtractionCompoundId(DatasetCompoundId):
+    """
+    The compound id for extraction metadata
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'extraction']
+    containerIds = DatasetCompoundId.containerIds + [('extraction_id', 3)]
+    differentiator = 'ext'
+
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ### 
