@@ -633,7 +633,7 @@ def getAccessMap(token):
     :return: python dict in the form {"project" : "access tier", ...}
     """
 
-    access_map = dict()
+    access_map = {}
 
     if app.config.get("TYK_ENABLED"):
         # assign access based on token
@@ -997,7 +997,7 @@ def login_oidc():
     """
 
     base_url = _generate_base_url()
-    redirect_from = flask.request.args.get('redirectUri','',type=str).replace(base_url, '')
+    redirect_from = flask.request.args.get('redirectUri', '', type=str).replace(base_url, '')
 
     # GET request: check if authenticated and redirect root page, otherwise render template
     if flask.request.method == "GET":
