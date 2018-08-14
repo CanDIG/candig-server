@@ -59,7 +59,7 @@ class TestClientOutput(unittest.TestCase):
         self.assertEqual(len(stderr), 0)
         return stdout
 
-
+@unittest.skip("Disabling, client not used")
 class TestClientFasta(TestClientOutput):
     """
     Tests client FASTA output
@@ -85,7 +85,7 @@ class TestClientFasta(TestClientOutput):
         bases = self._client.list_reference_bases(reference.id, start, end)
         self.assertEqual(cliBases, bases)
 
-
+@unittest.skip("Disabling, client not used")
 class TestClientJson(TestClientOutput):
     """
     Tests that the JSON output by the client on the command line for

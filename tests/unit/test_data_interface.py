@@ -14,7 +14,7 @@ import tests.paths as paths
 import ga4gh.client.client as client
 import ga4gh.common.utils as utils
 
-
+@unittest.skip('Disabling, client not used')
 class TestInterfacingLayer(unittest.TestCase):
     """
     Test fetching objects via the db and via the client return

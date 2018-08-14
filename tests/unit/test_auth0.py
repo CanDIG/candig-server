@@ -87,6 +87,7 @@ class TestAuth0(unittest.TestCase):
             200, "Ensure that when Auth0 is turned on the login page"
                  "returns 200 {}".format(response.status_code))
 
+    @unittest.skip("Disabled auth for testing (tyk handles bearers)")
     def testBadBearer(self):
         """
         Tests to see if a malformed bearer token fails in expected ways
