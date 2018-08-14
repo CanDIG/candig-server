@@ -659,7 +659,7 @@ class SimulatedDataRepository(AbstractDataRepository):
             numPhenotypeAssociations=2,
             numPhenotypeAssociationSets=1,
             numAlignments=2, numRnaQuantSets=2, numExpressionLevels=2,
-            numPeers=200):
+            numPeers=1):
         super(SimulatedDataRepository, self).__init__()
         for i in xrange(numPeers):
             peer = peers.Peer("http://test{}.org".format(i))

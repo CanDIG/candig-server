@@ -430,24 +430,24 @@ class ExperimentCompoundId(CompoundId):
     """
     The compound id for an experiment
     """
-    fields = DatasetCompoundId.fields + [
-        CompoundId.differentiatorFieldName, 'experiment']
-    containerIds = DatasetCompoundId.containerIds + [('experiment_id', 2)]
-    differentiator = 'ex'
-#    fields = ['experiment']
-#    containerIds = [('experiment_id', 0)]
+#    fields = DatasetCompoundId.fields + [
+#        CompoundId.differentiatorFieldName, 'experiment']
+#    containerIds = DatasetCompoundId.containerIds + [('experiment_id', 2)]
+#    differentiator = 'ex'
+    fields = ['experiment']
+    containerIds = [('experiment_id', 0)]
 
 
 class AnalysisCompoundId(CompoundId):
     """
     The compound id for an analysis
     """
-    fields = DatasetCompoundId.fields + [
-        CompoundId.differentiatorFieldName, 'analysis']
-    containerIds = DatasetCompoundId.containerIds + [('analysis_id', 2)]
-    differentiator = 'an'
-#    fields = ['analysis']
-#    containerIds = [('analysis_id', 0)]
+#    fields = DatasetCompoundId.fields + [
+#        CompoundId.differentiatorFieldName, 'analysis']
+#    containerIds = DatasetCompoundId.containerIds + [('analysis_id', 2)]
+#    differentiator = 'an'
+    fields = ['analysis']
+    containerIds = [('analysis_id', 0)]
 
 
 class VariantAnnotationSetCompoundId(VariantSetCompoundId):

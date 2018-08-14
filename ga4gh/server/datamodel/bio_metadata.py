@@ -608,7 +608,9 @@ class Individual(datamodel.DatamodelObject):
 ### ======================================================================= ###
         if self.getDiagnosis():
             diagnosis = protocol.fromJson(
-                json.dumps(self.getDiagnosis()), protocol.OntologyTerm)            
+                json.dumps(self.getDiagnosis()), protocol.OntologyTerm)
+        else:
+            diagnosis = None
 ### ======================================================================= ###
 # PROFYLE MODIFICATION END
 ### ======================================================================= ###

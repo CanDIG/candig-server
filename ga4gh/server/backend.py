@@ -1005,12 +1005,13 @@ class Backend(object):
             self.peersGenerator
             )
 
-    def runGetVariant(self, id_, return_mimetype="application/json", tier=0):
+    def runGetVariant(self, id_, access_map, return_mimetype="application/json"):
         """
         Returns a variant with the given id
         """
         compoundId = datamodel.VariantCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         variantSet = dataset.getVariantSet(compoundId.variant_set_id)
         gaVariant = variantSet.getVariant(compoundId)
         # TODO variant is a special case here, as it's returning a
@@ -1019,21 +1020,23 @@ class Backend(object):
         data = protocol.serialize(gaVariant, return_mimetype)
         return data
 
-    def runGetBiosample(self, id_, return_mimetype="application/json", tier=0):
+    def runGetBiosample(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getBiosample request for the specified ID.
         """
         compoundId = datamodel.BiosampleCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         biosample = dataset.getBiosample(id_)
         return self.runGetRequest(biosample, return_mimetype, tier=tier)
 
-    def runGetIndividual(self, id_, return_mimetype="application/json", tier=0):
+    def runGetIndividual(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getIndividual request for the specified ID.
         """
         compoundId = datamodel.BiosampleCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         individual = dataset.getIndividual(id_)
         return self.runGetRequest(individual, return_mimetype, tier=tier)
 
@@ -1133,13 +1136,14 @@ class Backend(object):
 ### METADATA END
 ### ======================================================================= ###
 
-    def runGetFeature(self, id_, return_mimetype="application/json", tier=0):
+    def runGetFeature(self, id_, access_map, return_mimetype="application/json"):
         """
         Returns JSON string of the feature object corresponding to
         the feature compoundID passed in.
         """
         compoundId = datamodel.FeatureCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         featureSet = dataset.getFeatureSet(compoundId.feature_set_id)
         gaFeature = featureSet.getFeature(compoundId)
         data = protocol.serialize(gaFeature, return_mimetype)

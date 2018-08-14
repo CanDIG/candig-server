@@ -26,7 +26,7 @@ import oic
 import oic.oauth2
 import oic.oic.message as message
 # from oic.utils.http_util import Redirect
-from oauth2client.client import OAuth2Credentials
+# from oauth2client.client import OAuth2Credentials
 import requests
 import logging
 from logging import StreamHandler
@@ -517,7 +517,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     # Peer queries
     # Apply federation by default or if it was specifically requested
     if ('Federation' not in request_dictionary.headers or \
-            request_dictionary.headers['Federation'] == 'True'):
+            request_dictionary.headers.get('Federation') == 'True'):
 
         # Iterate through all peers
         for peer in app.serverStatus.getPeers():
@@ -569,19 +569,21 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 responseObject['status'].append(response.status_code)
                 # If the call was successful append the results
                 if response.status_code == 200:
+                    try:
+                        if request_type == 'GET':
+                            responseObject['results'] = response.json()['results']
 
-                    if request_type == 'GET':
-                        responseObject['results'] = response.json()['results']
+                        elif request_type == 'POST':
+                            peer_response = response.json()['results']
 
-                    elif request_type == 'POST':
-                        peer_response = response.json()['results']
-
-                        if not responseObject['results']:
-                            responseObject['results'] = peer_response
-                        else:
-                            for key in peer_response:
-                                for record in peer_response[key]:
-                                    responseObject['results'][key].append(record)
+                            if not responseObject['results']:
+                                responseObject['results'] = peer_response
+                            else:
+                                for key in peer_response:
+                                    for record in peer_response[key]:
+                                        responseObject['results'][key].append(record)
+                    except ValueError:
+                        pass
 
     # If no result has been found on any of the servers raise an error
     if not responseObject['results'] or not responseObject['results']:
@@ -918,10 +920,6 @@ def index():
                                  refresh=flask.session.get('refresh_token', ''),
                                  access=flask.session.get('access_token', ''),
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
-
-@app.route('/login')
-def candig_login():
-    return flask.render_template('login.html',prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
 
 ### ======================================================================= ###
