@@ -477,12 +477,12 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 request,
                 return_mimetype=return_mimetype,
                 access_map=access_map
-                )
             )
+        )
 
         responseObject['status'].append(200)
 
-    except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException) as error:
+    except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException):
         responseObject['status'].append(404)
 
     try:
@@ -500,9 +500,9 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
         nextPageRequest = json.loads(
             endpoint(
-                    request,
-                    return_mimetype=return_mimetype,
-                    access_map=access_map
+                request,
+                return_mimetype=return_mimetype,
+                access_map=access_map
             )
         )
 
@@ -524,7 +524,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
             uri = request_dictionary.url.replace(
                 request_dictionary.host_url,
                 peer.getUrl(),
-                )
+            )
             # federation field must be set to False to avoid infinite loop
             header = {
                 'Content-Type': return_mimetype,
@@ -539,13 +539,13 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                     response = requests.Session().get(
                         uri,
                         headers=header,
-                        )
+                    )
                 elif request_type == 'POST':
                     response = requests.Session().post(
                         uri,
                         json=json.loads(request),
                         headers=header,
-                        )
+                    )
                 else:
                     # TODO: Raise error
                     pass
@@ -689,7 +689,7 @@ def handleHttpPost(request, endpoint):
         request,
         return_mimetype=return_mimetype,
         request_type='POST'
-        )
+    )
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
@@ -714,7 +714,7 @@ def handleHttpGet(id_, endpoint):
         id_,
         return_mimetype=return_mimetype,
         request_type='GET'
-        )
+    )
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
