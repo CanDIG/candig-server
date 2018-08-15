@@ -329,9 +329,6 @@ class IndividualCompoundId(DatasetCompoundId):
     containerIds = DatasetCompoundId.containerIds + [('individual_id', 2)]
     differentiator = 'i'
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###   
 class PatientCompoundId(DatasetCompoundId):
     """
     The compound id for an patient
@@ -412,9 +409,6 @@ class TumourboardCompoundId(DatasetCompoundId):
         CompoundId.differentiatorFieldName, 'tumourboard']
     containerIds = DatasetCompoundId.containerIds + [('tumourboard_id', 3)]
     differentiator = 'tum'
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ### 
 
 class BiosampleCompoundId(DatasetCompoundId):
     """

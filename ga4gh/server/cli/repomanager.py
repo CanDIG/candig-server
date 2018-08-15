@@ -523,9 +523,6 @@ class RepoManager(object):
             self._updateRepo(self._repo.removeIndividual, individual)
         self._confirmDelete("Individual", individual.getLocalId(), func)
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
     def addPatient(self):
         """
         Adds a new patient into this repo
@@ -732,9 +729,6 @@ class RepoManager(object):
         def func():
             self._updateRepo(self._repo.removeTumourboard, tumourboard)
         self._confirmDelete("Tumourboard", tumourboard.getLocalId(), func)
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
 
     def addPeer(self):
         """
@@ -988,9 +982,6 @@ class RepoManager(object):
             "individualName",
             help="the name of the individual")
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
     @classmethod
     def addPatientNameArgument(cls, subparser):
         subparser.add_argument(
@@ -1098,9 +1089,6 @@ class RepoManager(object):
         subparser.add_argument(
             "tumourboard",
             help="the JSON of the tumourboard")
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
 
     @classmethod
     def addBiosampleNameArgument(cls, subparser):
@@ -1520,9 +1508,6 @@ class RepoManager(object):
         cls.addIndividualNameArgument(removeIndividualParser)
         cls.addForceOption(removeIndividualParser)
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
         addPatientParser = common_cli.addSubparser(
             subparsers, "add-patient", "Add an Patient to the dataset")
         addPatientParser.set_defaults(runner="addPatient")
@@ -1675,9 +1660,6 @@ class RepoManager(object):
         cls.addDatasetNameArgument(removeTumourboardParser)
         cls.addTumourboardNameArgument(removeTumourboardParser)
         cls.addForceOption(removeTumourboardParser)
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
 
         objectType = "RnaQuantification"
         addRnaQuantificationParser = common_cli.addSubparser(

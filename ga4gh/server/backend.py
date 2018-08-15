@@ -13,13 +13,7 @@ import ga4gh.server.response_builder as response_builder
 
 import ga4gh.schemas.protocol as protocol
 
-### ======================================================================= ###
-### FRONT END
-### ======================================================================= ###
 import json
-### ======================================================================= ###
-### FRONT END END
-### ======================================================================= ###
 
 
 class Backend(object):
@@ -71,13 +65,9 @@ class Backend(object):
         """
         pass
 
-    ###########################################################
-    #
     # Iterators over the data hierarchy. These methods help to
     # implement the search endpoints by providing iterators
     # over the objects to be returned to the client.
-    #
-    ###########################################################
 
     def _topLevelObjectGenerator(self, request, numObjects, getByIndexMethod, tier=0):
         """
@@ -199,9 +189,7 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results)
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
+# METADATA
     def patientsGenerator(self, request, access_map):
         """
         """
@@ -378,9 +366,7 @@ class Backend(object):
             if include:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
+# METADATA END
 
     def phenotypeAssociationSetsGenerator(self, request, access_map):
         """
@@ -787,14 +773,12 @@ class Backend(object):
             request,
             self.getDataRepository())
 
-    ###########################################################
-    #
+    #    #
     # Public API methods. Each of these methods implements the
     # corresponding API end point, and return data ready to be
     # written to the wire.
     #
-    ###########################################################
-
+    #
     def runGetRequest(self, obj, return_mimetype="application/json", tier=0):
         """
         Runs a get request by converting the specified datamodel
@@ -1040,9 +1024,7 @@ class Backend(object):
         individual = dataset.getIndividual(id_)
         return self.runGetRequest(individual, return_mimetype, tier=tier)
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
+# METADATA
     def runGetPatient(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getPatient request for the specified ID.
@@ -1132,9 +1114,7 @@ class Backend(object):
         tier = self.getUserAccessTier(dataset, access_map)
         tumourboard = dataset.getTumourboard(id_)
         return self.runGetRequest(tumourboard, return_mimetype, tier=tier)
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
+# METADATA END
 
     def runGetFeature(self, id_, access_map, return_mimetype="application/json"):
         """
@@ -1311,9 +1291,7 @@ class Backend(object):
             self.individualsGenerator,
             return_mimetype)
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
+# METADATA
     def runSearchPatients(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchPatientsRequest.
@@ -1421,9 +1399,7 @@ class Backend(object):
             access_map,
             return_mimetype
             )
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
+# METADATA END
 
     def runSearchBiosamples(self, request, return_mimetype, access_map):
         """
@@ -1677,9 +1653,6 @@ class Backend(object):
             access_map,
             return_mimetype)
 
-### ======================================================================= ###
-### FRONT END
-### ======================================================================= ###
     def runSearchVariantsByGeneName(self, request, return_mimetype, access_map):
         """
         """
@@ -1708,13 +1681,8 @@ class Backend(object):
             raise exceptions.NotFoundException
 
         return json.dumps(result_object)
-### ======================================================================= ###
-### FRONT END END
-### ======================================================================= ###
 
-### ======================================================================= ###
-### AUTHORIZATION START
-### ======================================================================= ###
+# AUTHORIZATION START
     def getUserAccessTier(self, dataset, access_map):
         """
         :param dataset: dataset object
@@ -1745,6 +1713,4 @@ class Backend(object):
                     nextPageToken = str(currentIndex)
                 yield object_.toProtocolElement(tier), nextPageToken
 
-### ======================================================================= ###
-### AUTHORIZATION END
-### ======================================================================= ###
+# AUTHORIZATION END

@@ -408,9 +408,6 @@ def getFlaskResponse(responseString, httpStatus=200,
     return flask.Response(responseString, status=httpStatus, mimetype=mimetype)
 
 
-### ======================================================================= ###
-### FEDERATION
-### ======================================================================= ###
 def federation(endpoint, request, return_mimetype, request_type='POST'):
     """
     Federate the queries by iterating through the peer list and merging the
@@ -464,7 +461,6 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     else:
         authz_token = ''
         access_map = getAccessMap(authz_token)
-
 
     # Self query
     responseObject = {}
@@ -671,9 +667,6 @@ def _parseTokenPayload(token):
 
     return json.loads(decoded_payload)
 
-### ======================================================================= ###
-### FEDERATION ENDS
-### ======================================================================= ###
 
 def handleHttpPost(request, endpoint):
     """
@@ -686,18 +679,12 @@ def handleHttpPost(request, endpoint):
     request = request.get_data()
     if request == '' or request is None:
         request = '{}'
-### ======================================================================= ###
-### FEDERATION
-### ======================================================================= ###
     responseStr = federation(
         endpoint,
         request,
         return_mimetype=return_mimetype,
         request_type='POST'
         )
-### ======================================================================= ###
-### FEDERATION ENDS
-### ======================================================================= ###
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
@@ -717,18 +704,12 @@ def handleHttpGet(id_, endpoint):
     """
     request = flask.request
     return_mimetype = chooseReturnMimetype(request)
-### ======================================================================= ###
-### FEDERATION
-### ======================================================================= ###
     responseStr = federation(
         endpoint,
         id_,
         return_mimetype=return_mimetype,
         request_type='GET'
         )
-### ======================================================================= ###
-### FEDERATION ENDS
-### ======================================================================= ###
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
@@ -922,9 +903,6 @@ def index():
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
 
-### ======================================================================= ###
-### FRONT END
-### ======================================================================= ###
 @app.route('/candig')
 @requires_session
 def candig():
@@ -974,13 +952,9 @@ def search_variant_by_gene_name():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchVariantsByGeneName)
 
-### ======================================================================= ###
-### FRONT END END
-### ======================================================================= ###
+# FRONT END END
 
-### ======================================================================= ###
-### Start TYK
-### ======================================================================= ###
+# Start TYK
 
 # proxy to oidc login
 @app.route('/login_oidc', methods=LOGIN_ENDPOINT_METHODS)
@@ -1108,9 +1082,7 @@ def token():
 
     return flask.Response(json.dumps(response), status=status, mimetype=mimetype)
 
-### ======================================================================= ###
-### END TYK
-### ======================================================================= ###
+# END TYK
 
 @app.route('/concordance')
 def concordance():
@@ -1329,14 +1301,13 @@ def searchIndividuals():
         flask.request, app.backend.runSearchIndividuals)
 
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
+# METADATA
 @DisplayedRoute('/patients/search', postMethod=True)
 @requires_auth
 def searchPatients():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchPatients)
+
 
 @DisplayedRoute('/enrollments/search', postMethod=True)
 @requires_auth
@@ -1344,11 +1315,13 @@ def searchEnrollments():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchEnrollments)
 
+
 @DisplayedRoute('/consents/search', postMethod=True)
 @requires_auth
 def searchConsents():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchConsents)
+
 
 @DisplayedRoute('/diagnoses/search', postMethod=True)
 @requires_auth
@@ -1356,11 +1329,13 @@ def searchDiagnoses():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchDiagnoses)
 
+
 @DisplayedRoute('/samples/search', postMethod=True)
 @requires_auth
 def searchSamples():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchSamples)
+
 
 @DisplayedRoute('/treatments/search', postMethod=True)
 @requires_auth
@@ -1368,11 +1343,13 @@ def searchTreatments():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchTreatments)
 
+
 @DisplayedRoute('/outcomes/search', postMethod=True)
 @requires_auth
 def searchOutcomes():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchOutcomes)
+
 
 @DisplayedRoute('/complications/search', postMethod=True)
 @requires_auth
@@ -1380,14 +1357,13 @@ def searchComplications():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchComplications)
 
+
 @DisplayedRoute('/tumourboards/search', postMethod=True)
 @requires_auth
 def searchTumourboards():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchTumourboards)
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
+# METADATA END
 
 
 @DisplayedRoute('/peers/list', postMethod=True)
@@ -1422,9 +1398,8 @@ def getIndividual(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetIndividual)
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
+
+# METADATA
 @DisplayedRoute(
     '/patients/<no(search):id>',
     pathDisplay='/patients/<id>')
@@ -1432,6 +1407,7 @@ def getIndividual(id):
 def getPatient(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetPatient)
+
 
 @DisplayedRoute(
     '/enrollments/<no(search):id>',
@@ -1441,6 +1417,7 @@ def getEnrollment(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetEnrollment)
 
+
 @DisplayedRoute(
     '/consents/<no(search):id>',
     pathDisplay='/consents/<id>')
@@ -1448,6 +1425,7 @@ def getEnrollment(id):
 def getConsent(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetConsent)
+
 
 @DisplayedRoute(
     '/diagnoses/<no(search):id>',
@@ -1457,6 +1435,7 @@ def getDiagnosis(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetDiagnosis)
 
+
 @DisplayedRoute(
     '/samples/<no(search):id>',
     pathDisplay='/samples/<id>')
@@ -1464,6 +1443,7 @@ def getDiagnosis(id):
 def getSample(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetSample)
+
 
 @DisplayedRoute(
     '/treatments/<no(search):id>',
@@ -1473,6 +1453,7 @@ def getTreatment(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetTreatment)
 
+
 @DisplayedRoute(
     '/outcomes/<no(search):id>',
     pathDisplay='/outcomes/<id>')
@@ -1480,6 +1461,7 @@ def getTreatment(id):
 def getOutcome(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetOutcome)
+
 
 @DisplayedRoute(
     '/complications/<no(search):id>',
@@ -1489,6 +1471,7 @@ def getComplication(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetComplication)
 
+
 @DisplayedRoute(
     '/tumourboards/<no(search):id>',
     pathDisplay='/tumourboards/<id>')
@@ -1496,9 +1479,7 @@ def getComplication(id):
 def getTumourboard(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetTumourboard)
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
+# METADATA END
 
 
 @DisplayedRoute('/rnaquantificationsets/search', postMethod=True)

@@ -32,18 +32,12 @@ class Biosample(datamodel.DatamodelObject):
         self._individualId = None
         self._datasetId = parentContainer.getId()
         self._individualAgeAtCollection = None
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
         self._estimated_tumor_content = None
         self._normal_sample_source = None
         self._biopsy_data = None
         self._tumor_biopsy_anatomical_site = None
         self._biopsy_type = None
         self._sample_shipment_date = None
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
 
     def toProtocolElement(self, tier=0):
         disease = None
@@ -64,18 +58,12 @@ class Biosample(datamodel.DatamodelObject):
             name = self.getName(),
             disease = disease,
             individual_age_at_collection = individualAgeAtCollection,
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
             estimated_tumor_content = self.getEstimatedTumorContent(),
             normal_sample_source = self.getNormalSampleSource(),
             biopsy_data = self.getBiopsyData(),
             tumor_biopsy_anatomical_site = self.getTumorBiopsyAnatomicalSite(),
             biopsy_type = self.getBiopsyType(),
             sample_shipment_date = self.getSampleShipmentDate(),
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
             )
         self.serializeAttributes(biosample)
         return biosample
@@ -90,18 +78,12 @@ class Biosample(datamodel.DatamodelObject):
         self.setAttributesJson(biosampleRecord.attributes)
         self._individualAgeAtCollection = json.loads(
                                 biosampleRecord.individualAgeAtCollection)
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
         self._estimated_tumor_content = biosampleRecord.estimated_tumor_content
         self._normal_sample_source = biosampleRecord.normal_sample_source
         self._biopsy_data = biosampleRecord.biopsy_data
         self._tumor_biopsy_anatomical_site = biosampleRecord.tumor_biopsy_anatomical_site
         self._biopsy_type = biosampleRecord.biopsy_type
         self._sample_shipment_date = biosampleRecord.sample_shipment_date
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
         return self
 
     def populateFromJson(self, jsonString):
@@ -121,18 +103,12 @@ class Biosample(datamodel.DatamodelObject):
             attributes[key] = {
                 "values": protocol.toJsonDict(parsed.attributes.attr[key])}
         self.setAttributes(attributes)
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
         self._estimated_tumor_content = parsed.estimated_tumor_content
         self._normal_sample_source = parsed.normal_sample_source
         self._biopsy_data = parsed.biopsy_data
         self._tumor_biopsy_anatomical_site = parsed.tumor_biopsy_anatomical_site
         self._biopsy_type = parsed.biopsy_type
         self._sample_shipment_date = parsed.sample_shipment_date
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
         return self
 
     def setIndividualId(self, individualId):
@@ -165,9 +141,6 @@ class Biosample(datamodel.DatamodelObject):
         else:
             return None
         
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
     def getEstimatedTumorContent(self):
         return self._estimated_tumor_content
 
@@ -185,9 +158,6 @@ class Biosample(datamodel.DatamodelObject):
 
     def getSampleShipmentDate(self):
         return self._sample_shipment_date
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
 
 class Experiment(datamodel.DatamodelObject):
     """
@@ -214,9 +184,6 @@ class Experiment(datamodel.DatamodelObject):
         self._platform_unit = None
         self._name = localId
         self._attributes = {}
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
         self._datasetId = parentContainer.getId()
         self._biosample_id = None
         self._dna_library_construction_method = None
@@ -224,9 +191,6 @@ class Experiment(datamodel.DatamodelObject):
         self._rna_library_construction_method = None
         self._rna_sequencing_completion_date = None
         self._panel_completion_date = None
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
@@ -248,9 +212,6 @@ class Experiment(datamodel.DatamodelObject):
             instrument_data_file = self.getInstrumentDataFile(),
             sequencing_center = self.getSequencingCenter(),
             platform_unit = self.getPlatformUnit(),
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
             dataset_id = self._datasetId,
             biosample_id = self.getBiosampleId(),
             dna_library_construction_method = self.getDnaLibraryConstructionMethod(),
@@ -258,9 +219,6 @@ class Experiment(datamodel.DatamodelObject):
             rna_library_construction_method = self.getRnaLibraryConstructionMethod(),
             rna_sequencing_completion_date = self.getRnaSequencingCompletionDate(),
             panel_completion_date = self.getPanelCompletionDate(),
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
             )
         self.serializeAttributes(experiment)
         return experiment
@@ -281,18 +239,12 @@ class Experiment(datamodel.DatamodelObject):
         self._sequencing_center = experimentRecord.sequencingCenter
         self._platform_unit = experimentRecord.platformUnit
         self.setAttributesJson(experimentRecord.attributes)
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
         self._biosample_id = experimentRecord.biosample_id
         self._dna_library_construction_method = experimentRecord.dna_library_construction_method
         self._wgs_sequencing_completion_date = experimentRecord.wgs_sequencing_completion_date
         self._rna_library_construction_method = experimentRecord.rna_library_construction_method
         self._rna_sequencing_completion_date = experimentRecord.rna_sequencing_completion_date
         self._panel_completion_date = experimentRecord.panel_completion_date
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
         return self
 
     def populateFromJson(self, jsonString):
@@ -320,18 +272,12 @@ class Experiment(datamodel.DatamodelObject):
             attributes[key] = {
                 "values": protocol.toJsonDict(parsed.attributes.attr[key])}
         self.setAttributes(attributes)
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
         self._biosample_id = parsed.biosample_id
         self._dna_library_construction_method = parsed.dna_library_construction_method
         self._wgs_sequencing_completion_date = parsed.wgs_sequencing_completion_date
         self._rna_library_construction_method = parsed.rna_library_construction_method
         self._rna_sequencing_completion_date = parsed.rna_sequencing_completion_date
         self._panel_completion_date = parsed.panel_completion_date
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
         return self
 
     def getCreated(self):
@@ -385,9 +331,6 @@ class Experiment(datamodel.DatamodelObject):
     def getPlatformUnit(self):
         return self._platform_unit
 
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
     def getBiosampleId(self):
         return self._biosample_id
 
@@ -405,9 +348,6 @@ class Experiment(datamodel.DatamodelObject):
 
     def getPanelCompletionDate(self):
         return self._panel_completion_date
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
 
 
 class Analysis(datamodel.DatamodelObject):
@@ -427,16 +367,10 @@ class Analysis(datamodel.DatamodelObject):
         self._type = None
         self._software = []
         self._attributes = {}
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
         self._datasetId = parentContainer.getId()
         self._experiment_id = None
         self._other_analysis_descriptor = None
         self._other_analysis_completition_date = None
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
@@ -449,16 +383,10 @@ class Analysis(datamodel.DatamodelObject):
             created=self.getCreated(),
             updated=self.getUpdated(),
             type=self.getAnalysisType(),
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
             dataset_id = self._datasetId,
             experiment_id = self.getExperimentId(),
             other_analysis_descriptor = self.getOtherAnalysisDescriptor(),
             other_analysis_completition_date = self.getOtherAnalysisCompletitionDate(),
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
             )
         analysis.software.extend(self.getSoftware())
         self.serializeAttributes(analysis)
@@ -472,15 +400,9 @@ class Analysis(datamodel.DatamodelObject):
         self._name = analysisRecord.name
         self._type = analysisRecord.analysistype
         self.setAttributesJson(analysisRecord.attributes)
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
         self._experiment_id = analysisRecord.experiment_id
         self._other_analysis_descriptor = analysisRecord.other_analysis_descriptor
         self._other_analysis_completition_date = analysisRecord.other_analysis_completition_date
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
         return self
 
     def populateFromJson(self, jsonString):
@@ -502,15 +424,9 @@ class Analysis(datamodel.DatamodelObject):
             attributes[key] = {
                 "values": protocol.toJsonDict(parsed.attributes.attr[key])}
         self.setAttributes(attributes)
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
         self._experiment_id = parsed.experiment_id
         self._other_analysis_descriptor = parsed.other_analysis_descriptor
         self._other_analysis_completition_date = parsed.other_analysis_completition_date
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
         return self
 
     def getCreated(self):
@@ -545,9 +461,6 @@ class Analysis(datamodel.DatamodelObject):
 
     def getPlatformUnit(self):
         return self._platform_unit
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
     def getExperimentId(self):
         return self._experiment_id
 
@@ -556,9 +469,6 @@ class Analysis(datamodel.DatamodelObject):
 
     def getOtherAnalysisCompletitionDate(self):
         return self._other_analysis_completition_date
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
 
 
 class Individual(datamodel.DatamodelObject):
@@ -578,9 +488,6 @@ class Individual(datamodel.DatamodelObject):
         self._sex = None
         self._name = localId
         self._datasetId = parentContainer.getId()
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
         self._patient_id = None
         self._regional_profiling_centre = None
         self._diagnosis = None
@@ -590,9 +497,6 @@ class Individual(datamodel.DatamodelObject):
         self._date_of_upload_to_sFTP = None
         self._tumor_board_presentation_date_and_analyses = None
         self._comments = None
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
 
     def toProtocolElement(self, tier=0):
         species = None
@@ -603,17 +507,11 @@ class Individual(datamodel.DatamodelObject):
         if self.getSex():
             sex = protocol.fromJson(
                 json.dumps(self.getSex()), protocol.OntologyTerm)
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
         if self.getDiagnosis():
             diagnosis = protocol.fromJson(
                 json.dumps(self.getDiagnosis()), protocol.OntologyTerm)
         else:
             diagnosis = None
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
         gaIndividual = protocol.Individual(
             dataset_id=self._datasetId,
             created=self.getCreated(),
@@ -623,9 +521,6 @@ class Individual(datamodel.DatamodelObject):
             name=self.getName(),
             species=species,
             sex=sex,
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
             patient_id = self.getPatientId(),
             regional_profiling_centre = self.getRegionalProfilingCentre(),
             diagnosis = diagnosis,
@@ -635,9 +530,6 @@ class Individual(datamodel.DatamodelObject):
             date_of_upload_to_sFTP = self.getDateOfUploadToSftp(),
             tumor_board_presentation_date_and_analyses = self.getTumorBoardPresentationDateAndAnalyses(),
             comments = self.getComments(),
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
             )
         self.serializeAttributes(gaIndividual)
         return gaIndividual
@@ -651,9 +543,6 @@ class Individual(datamodel.DatamodelObject):
         self._species = json.loads(individualRecord.species)
         self._sex = json.loads(individualRecord.sex)
         self.setAttributesJson(individualRecord.attributes)
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
         self._patient_id = individualRecord.patient_id
         self._regional_profiling_centre = individualRecord.regional_profiling_centre
         self._diagnosis = json.loads(individualRecord.diagnosis)
@@ -663,9 +552,6 @@ class Individual(datamodel.DatamodelObject):
         self._date_of_upload_to_sFTP = individualRecord.date_of_upload_to_sFTP
         self._tumor_board_presentation_date_and_analyses = individualRecord.tumor_board_presentation_date_and_analyses
         self._comments = individualRecord.comments
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
         return self
 
     def populateFromJson(self, jsonString):
@@ -684,9 +570,6 @@ class Individual(datamodel.DatamodelObject):
             attributes[key] = {
                 "values": protocol.toJsonDict(parsed.attributes.attr[key])}
         self.setAttributes(attributes)
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
         self._patient_id = parsed.patient_id
         self._regional_profiling_centre = parsed.regional_profiling_centre
         self._diagnosis = json.dumps(protocol.toJsonDict(parsed.diagnosis))
@@ -696,9 +579,6 @@ class Individual(datamodel.DatamodelObject):
         self._date_of_upload_to_sFTP = parsed.date_of_upload_to_sFTP
         self._tumor_board_presentation_date_and_analyses = parsed.tumor_board_presentation_date_and_analyses
         self._comments = parsed.comments
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
         return self
 
     def getCreated(self):
@@ -718,9 +598,6 @@ class Individual(datamodel.DatamodelObject):
 
     def getName(self):
         return self._name
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
     def getPatientId(self):
         return self._patient_id
 
@@ -747,7 +624,3 @@ class Individual(datamodel.DatamodelObject):
 
     def getComments(self):
         return self._comments
-
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
