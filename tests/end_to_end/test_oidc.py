@@ -52,6 +52,7 @@ def getClientKey(server_url, username, password):
         raise StopIteration
     return sessionKey
 
+
 @unittest.skip("Disabled, tyk handles oidc flow")
 class TestOidc(server_test.ServerTestClass):
     """

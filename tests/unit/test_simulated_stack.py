@@ -111,7 +111,7 @@ class TestSimulatedStack(unittest.TestCase):
         parses the result into an instance of the specified response.
         """
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        #self.assertEqual(200, response.status_code) POST may return 404
+        # self.assertEqual(200, response.status_code) POST may return 404
         response_data = json.loads(response.data)
         response = json.dumps(response_data.get('results', {}))
         responseData = self.deserialize(response, responseClass)

@@ -1,6 +1,7 @@
 from collections import defaultdict
 import numpy as np
 
+
 class DP(object):
 
     def __init__(self, federated_individuals, eps):
@@ -17,7 +18,7 @@ class DP(object):
 
         return federated_counts_dp
 
-    def _add_noise(self, vec, server, sensitivity = 1.):
+    def _add_noise(self, vec, server, sensitivity=1.):
 
         if server not in self._epsilon:
             # print("Warning! Server has no registered privacy settings. Returning original results")
@@ -32,7 +33,7 @@ class DP(object):
             if not len(vec.keys()):
                 # print("Warning! can't add noise to empty input");
                 return vec
-            for pop,v in vec.items():
+            for pop, v in vec.items():
                 if type(v) is dict:
                     for var, count in v.items():
                         vec[pop][var] += int(np.random.laplace(0, scale=scale))

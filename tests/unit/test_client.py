@@ -259,6 +259,7 @@ class ExhaustiveListingsMixin(object):
                 rnaQuantificationSets, datamodelRnaQuantificationSets,
                 self.client.get_rna_quantification_set)
 
+
 @unittest.skip("Disabling, client not used")
 class TestExhaustiveListingsHttp(ExhaustiveListingsMixin, unittest.TestCase):
     """
@@ -267,6 +268,7 @@ class TestExhaustiveListingsHttp(ExhaustiveListingsMixin, unittest.TestCase):
 
     def getClient(self):
         return DummyHttpClient(self.backend)
+
 
 @unittest.skip("Disabling, client not used")
 class TestExhaustiveListingsLocal(ExhaustiveListingsMixin, unittest.TestCase):
@@ -331,6 +333,7 @@ class PagingMixin(object):
     def testPageSizeListLength(self):
         self.verifyPageSize(self.numReferences)
 
+
 @unittest.skip("Disabling, client not used")
 class TestPagingLocal(PagingMixin, unittest.TestCase):
     """
@@ -339,6 +342,7 @@ class TestPagingLocal(PagingMixin, unittest.TestCase):
 
     def getClient(self):
         return client.LocalClient(self.backend)
+
 
 @unittest.skip("Disabling, client not used")
 class TestPagingHttp(PagingMixin, unittest.TestCase):

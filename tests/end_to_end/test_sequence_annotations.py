@@ -42,7 +42,7 @@ class TestSequenceAnnotations(unittest.TestCase):
         parses the result into an instance of the specified response.
         """
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        #self.assertEqual(200, response.status_code) federated search can return 404
+        # self.assertEqual(200, response.status_code) federated search can return 404
         response_json = json.loads(response.data)
         response = json.dumps(response_json.get('results', {}))
         responseData = protocol.deserialize(response,

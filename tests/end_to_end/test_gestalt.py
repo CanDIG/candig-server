@@ -18,6 +18,7 @@ import unittest
 
 import ga4gh.server.datarepo as datarepo
 
+
 @unittest.skip("Disabled, client not used")
 class TestGestalt(server_test.ServerTest):
     """

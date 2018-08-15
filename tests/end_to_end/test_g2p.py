@@ -43,9 +43,9 @@ class TestG2P(unittest.TestCase):
         parses the result into an instance of the specified response.
         """
         response = self.sendJsonPostRequest(path, protocol.toJson(request))
-        #self.assertEqual(200, response.status_code) federated search can return 404
+        # self.assertEqual(200, response.status_code) federated search can return 404
         responseData = self.deserialize(response.data, responseClass)
-        #responseData = protocol.fromProtobufString(response.data,
+        # responseData = protocol.fromProtobufString(response.data,
         #                                           responseClass)
         self.assertTrue(
             protocol.validate(protocol.toJson(responseData), responseClass))
@@ -525,7 +525,7 @@ class TestG2P(unittest.TestCase):
             request,
             protocol.SearchFeaturesResponse)
 
-        #self.assertEqual(1, len(response.features))
+        self.assertEqual(1, len(response.features))
         self.assertIsNotNone(response.next_page_token)
         print("NEXT PAGE TOKEN: ")
         print(response.next_page_token)

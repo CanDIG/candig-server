@@ -1,5 +1,6 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
 
+
 class NCIT(object):
 
     def __init__(self):
@@ -31,7 +32,6 @@ class NCIT(object):
         results = _sparql.query().convert()
 
         return results["results"]["bindings"][0]['gene']['value']
-
 
     def get_genetic_abnormalities(self, gene):
         _sparql = SPARQLWrapper("https://stars-app.renci.org/ncitgraph/sparql")

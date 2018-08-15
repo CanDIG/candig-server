@@ -200,7 +200,7 @@ class Backend(object):
             include = True
             if request.name:
                 if obj.getLocalId() not in request.name.split(','):
-#                if request.name != obj.getLocalId():
+                    # if request.name != obj.getLocalId():
                     include = False
 
             if include:
@@ -221,7 +221,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -241,7 +241,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -261,7 +261,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -281,7 +281,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -301,7 +301,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -321,7 +321,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -341,7 +341,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -361,12 +361,11 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
-# METADATA END
 
     def phenotypeAssociationSetsGenerator(self, request, access_map):
         """
@@ -995,7 +994,7 @@ class Backend(object):
         """
         compoundId = datamodel.VariantCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
-        tier = self.getUserAccessTier(dataset, access_map)
+        # tier = self.getUserAccessTier(dataset, access_map)
         variantSet = dataset.getVariantSet(compoundId.variant_set_id)
         gaVariant = variantSet.getVariant(compoundId)
         # TODO variant is a special case here, as it's returning a
@@ -1024,7 +1023,6 @@ class Backend(object):
         individual = dataset.getIndividual(id_)
         return self.runGetRequest(individual, return_mimetype, tier=tier)
 
-# METADATA
     def runGetPatient(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getPatient request for the specified ID.
@@ -1123,7 +1121,7 @@ class Backend(object):
         """
         compoundId = datamodel.FeatureCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
-        tier = self.getUserAccessTier(dataset, access_map)
+        # tier = self.getUserAccessTier(dataset, access_map)
         featureSet = dataset.getFeatureSet(compoundId.feature_set_id)
         gaFeature = featureSet.getFeature(compoundId)
         data = protocol.serialize(gaFeature, return_mimetype)
@@ -1656,7 +1654,7 @@ class Backend(object):
     def runSearchVariantsByGeneName(self, request, return_mimetype, access_map):
         """
         """
-        #TODO put request object into protocol and make this function a generator
+        # TODO put request object into protocol and make this function a generator
         request = json.loads(request)
         return_object = []
         result_object = {"variants": return_object}

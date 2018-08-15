@@ -570,7 +570,6 @@ class TestFrontend(unittest.TestCase):
         request.mimetype = "application/json"
         request.get_data = lambda: '{"data":"test"}'
         with frontend.app.test_request_context():
-            response = frontend.handleHttpPost(request,
-                                        lambda x, return_mimetype, access_map: x)
+            response = frontend.handleHttpPost(request, lambda x, return_mimetype, access_map: x)
             results = json.loads(response.get_data())["results"]["data"]
             self.assertEquals(results, "test")
