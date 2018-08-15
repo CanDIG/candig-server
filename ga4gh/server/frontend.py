@@ -18,7 +18,7 @@ import json
 import flask
 import flask.ext.cors as cors
 # from flask.ext.oidc import OpenIDConnect
-from flask import jsonify, render_template, request  # Flask
+from flask import Flask, jsonify, render_template, request
 import humanize
 import werkzeug
 import oic
@@ -39,7 +39,7 @@ import ga4gh.server.exceptions as exceptions
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.auth as auth
 import ga4gh.server.network as network
-# import ga4gh.server.DP as DP
+import ga4gh.server.DP as DP
 import ga4gh.server.NCIT as NCIT
 
 import ga4gh.schemas.protocol as protocol
@@ -57,7 +57,6 @@ app.urls = []
 app.url_map.strict_slashes = False
 
 requires_auth = auth.auth_decorator(app)
-
 
 class NoConverter(werkzeug.routing.BaseConverter):
     """
@@ -81,9 +80,7 @@ class NoConverter(werkzeug.routing.BaseConverter):
             raise werkzeug.routing.ValidationError()
         return value
 
-
 app.url_map.converters['no'] = NoConverter
-
 
 class ServerStatus(object):
     """
@@ -235,7 +232,6 @@ class ServerStatus(object):
         Returns the list of ontologies.
         """
         return app.backend.getDataRepository().getOntologyByName(name)
-
 
 def reset():
     """
@@ -477,19 +473,19 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 request,
                 return_mimetype=return_mimetype,
                 access_map=access_map
+                )
             )
-        )
 
         responseObject['status'].append(200)
 
-    except exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException:
+    except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException) as error:
         responseObject['status'].append(404)
 
     try:
         nextToken = responseObject['results'].get('nextPageToken')
 
     # response object not properly formed
-    except (IndexError, AttributeError):
+    except (IndexError, AttributeError) as error:
         nextToken = None
 
     while nextToken:
@@ -499,24 +495,24 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         request = json.dumps(request)
 
         nextPageRequest = json.loads(
-            endpoint(
-                request,
-                return_mimetype=return_mimetype,
-                access_map=access_map
+                endpoint(
+                    request,
+                    return_mimetype=return_mimetype,
+                    access_map=access_map
+                )
             )
-        )
 
         for key in nextPageRequest:
             if key in responseObject['results']:
-                responseObject['results'][key] += nextPageRequest[key]
+                responseObject['results'][key]+=nextPageRequest[key]
             else:
-                responseObject['results'][key] = nextPageRequest[key]
+                responseObject['results'][key]=nextPageRequest[key]
 
         nextToken = responseObject['results'].get('nextPageToken')
 
     # Peer queries
     # Apply federation by default or if it was specifically requested
-    if ('Federation' not in request_dictionary.headers or
+    if ('Federation' not in request_dictionary.headers or \
             request_dictionary.headers.get('Federation') == 'True'):
 
         # Iterate through all peers
@@ -525,7 +521,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
             uri = request_dictionary.url.replace(
                 request_dictionary.host_url,
                 peer.getUrl(),
-            )
+                )
             # federation field must be set to False to avoid infinite loop
             header = {
                 'Content-Type': return_mimetype,
@@ -540,21 +536,21 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                     response = requests.Session().get(
                         uri,
                         headers=header,
-                    )
+                        )
                 elif request_type == 'POST':
                     response = requests.Session().post(
                         uri,
                         json=json.loads(request),
                         headers=header,
-                    )
+                        )
                 else:
-                    # TODO: Raise error
+                    #TODO: Raise error
                     pass
 
                 print('  >> peer call: {0} - {1}'.format(
                     uri,
                     response.status_code,
-                ))
+                    ))
 
             except (requests.exceptions.ConnectionError,
                     requests.exceptions.Timeout,
@@ -564,7 +560,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 print('  >> peer call: {0} - {1}'.format(
                     uri,
                     'SERVER IS DOWN OR DID NOT RESPONSE!',
-                ))
+                    ))
             else:
                 responseObject['status'].append(response.status_code)
                 # If the call was successful append the results
@@ -594,19 +590,21 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     # Reformat the status response
     responseObject['status'] = {
-
-        # All the peers plus self
-        'Known peers': len(app.serverStatus.getPeers()) + 1,
-
-        # Queried means http status code 200 and 404
-        'Queried peers': responseObject['status'].count(200) + responseObject['status'].count(404),
-
+        'Known peers': \
+            # All the peers plus self
+            len(app.serverStatus.getPeers()) + 1,
+        'Queried peers': \
+            # Queried means http status code 200 and 404
+            responseObject['status'].count(200) + \
+            responseObject['status'].count(404),
         # Successful means http status code 200
-        'Successful communications': responseObject['status'].count(200),
-
-        # Invalid by default
-        'Valid response': False
-    }
+        'Successful communications': \
+            # Successful means http status code 200
+            responseObject['status'].count(200),
+        'Valid response': \
+            # Invalid by default
+            False
+        }
 
     # Decide on valid response
     if responseObject['status']['Known peers'] == \
@@ -620,7 +618,6 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 responseObject['status']['Valid response'] = True
 
     return json.dumps(responseObject)
-
 
 # testing method for access roles through tokens
 def getAccessMap(token):
@@ -653,7 +650,6 @@ def getAccessMap(token):
             access_map[dataset.getLocalId()] = 4
 
     return access_map
-
 
 def _parseTokenPayload(token):
 
@@ -688,7 +684,7 @@ def handleHttpPost(request, endpoint):
         request,
         return_mimetype=return_mimetype,
         request_type='POST'
-    )
+        )
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
@@ -713,7 +709,7 @@ def handleHttpGet(id_, endpoint):
         id_,
         return_mimetype=return_mimetype,
         request_type='GET'
-    )
+        )
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
@@ -743,10 +739,11 @@ def handleException(exception):
     if flask.request and 'Accept' in flask.request.headers and \
             flask.request.headers['Accept'].find('text/html') != -1:
         message = "<h1>Error {}</h1><pre>{}</pre>".format(
-            serverException.httpStatus,
-            protocol.toJson(error))
-        if serverException.httpStatus == 401 or serverException.httpStatus == 403:
-            message += "Please try <a href=\"" + app.config.get('TYK_LISTEN_PATH') + "login_oidc\">logging in</a>."
+                    serverException.httpStatus,
+                    protocol.toJson(error))
+        if serverException.httpStatus == 401 \
+                or serverException.httpStatus == 403:
+            message += "Please try <a href=\""+app.config.get('TYK_LISTEN_PATH')+"login_oidc\">logging in</a>."
         return message
     else:
         # Errors aren't well defined enough to use protobuf, even if requested
@@ -754,7 +751,6 @@ def handleException(exception):
         responseStr = protocol.serialize(error, return_mimetype)
         return getFlaskResponse(responseStr, serverException.httpStatus,
                                 mimetype=return_mimetype)
-
 
 def requires_session(f):
     """
@@ -773,7 +769,6 @@ def requires_session(f):
 
         return f(*args, **kargs)
     return decorated
-
 
 def startLogin():
     """
@@ -902,7 +897,7 @@ class DisplayedRoute(object):
 @requires_session
 def index():
     return flask.render_template('spa.html',
-                                 session_id=flask.session.get('id_token', ''),
+                                 session_id=flask.session.get('id_token',''),
                                  refresh=flask.session.get('refresh_token', ''),
                                  access=flask.session.get('access_token', ''),
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
@@ -917,7 +912,6 @@ def candig():
                                  refresh=flask.session["refresh_token"],
                                  access=flask.session["access_token"],
                                  datasetId=datasetId)
-
 
 @app.route('/info')
 @requires_session
@@ -938,12 +932,10 @@ def index_info():
     else:
         return response
 
-
 @app.route('/candig_patients')
 @requires_session
 def candig_patients():
     return flask.render_template('candig_patients.html', session_id=flask.session["id_token"])
-
 
 @app.route('/igv')
 @requires_session
@@ -951,11 +943,9 @@ def candig_igv():
     return flask.render_template('candig_igv.html', session_id=flask.session["id_token"],
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
-
 @app.route('/gene_search')
 def candig_gene_search():
     return flask.render_template('gene_search.html', session_id=flask.session["id_token"])
-
 
 @DisplayedRoute('/variantsbygenesearch', postMethod=True)
 def search_variant_by_gene_name():
@@ -967,8 +957,6 @@ def search_variant_by_gene_name():
 # Start TYK
 
 # proxy to oidc login
-
-
 @app.route('/login_oidc', methods=LOGIN_ENDPOINT_METHODS)
 def login_oidc():
     """
@@ -998,6 +986,7 @@ def login_oidc():
                 return getFlaskResponse(json.dumps({'error': 'Key not authorised'}), 403)
 
             return flask.redirect(_generate_login_url())
+
 
     # POST request: successful keycloak authentication else Tyk blocks request
     elif flask.request.method == "POST":
@@ -1033,7 +1022,7 @@ def gateway_logout():
     End flask login sessions. Tyk will handle remote keycloak session
     :return: redirect to the keycloak login
     """
-    # response = flask.redirect(_generate_base_url()+'/login_oidc')
+    #response = flask.redirect(_generate_base_url()+'/login_oidc')
     if not flask.request.cookies.get("session_id"):
         raise exceptions.NotAuthenticatedException
 
@@ -1048,20 +1037,17 @@ def gateway_logout():
 
     return response
 
-
 def _generate_login_url():
     '''
     :return: formatted url for keycloak login
     '''
     return '{0}{1}'.format(app.config.get('KC_SERVER'), app.config.get('KC_LOGIN_REDIRECT'))
 
-
 def _generate_base_url():
     '''
     :return: formatted url for TYK proxied dashboard homepage
     '''
     return '{0}{1}'.format(app.config.get('TYK_SERVER'), app.config.get('TYK_LISTEN_PATH'))
-
 
 @DisplayedRoute('/token', postMethod=True)
 def token():
@@ -1098,7 +1084,6 @@ def token():
 
 # END TYK
 
-
 @app.route('/concordance')
 def concordance():
     gene = request.args.get('gene', '', type=str)
@@ -1108,8 +1093,7 @@ def concordance():
         ServerStatus().getPeers()).get_concordance(gene)
     abnormality = NCIT.NCIT().get_genetic_abnormalities(gene)
     disease = NCIT.NCIT().get_diseases(gene)
-    return jsonify(result=render_template(
-        'concordance.html',
+    return jsonify(result=render_template('concordance.html',
         concordance=concordance,
         freq=freq,
         uniq=uniq,
