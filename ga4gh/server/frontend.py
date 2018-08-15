@@ -18,7 +18,7 @@ import json
 import flask
 import flask.ext.cors as cors
 # from flask.ext.oidc import OpenIDConnect
-from flask import Flask, jsonify, render_template, request
+from flask import jsonify, render_template, request  # Flask
 import humanize
 import werkzeug
 import oic
@@ -39,7 +39,7 @@ import ga4gh.server.exceptions as exceptions
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.auth as auth
 import ga4gh.server.network as network
-import ga4gh.server.DP as DP
+# import ga4gh.server.DP as DP
 import ga4gh.server.NCIT as NCIT
 
 import ga4gh.schemas.protocol as protocol
@@ -57,6 +57,7 @@ app.urls = []
 app.url_map.strict_slashes = False
 
 requires_auth = auth.auth_decorator(app)
+
 
 class NoConverter(werkzeug.routing.BaseConverter):
     """
@@ -80,7 +81,9 @@ class NoConverter(werkzeug.routing.BaseConverter):
             raise werkzeug.routing.ValidationError()
         return value
 
+
 app.url_map.converters['no'] = NoConverter
+
 
 class ServerStatus(object):
     """
@@ -232,6 +235,7 @@ class ServerStatus(object):
         Returns the list of ontologies.
         """
         return app.backend.getDataRepository().getOntologyByName(name)
+
 
 def reset():
     """
@@ -485,7 +489,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         nextToken = responseObject['results'].get('nextPageToken')
 
     # response object not properly formed
-    except (IndexError, AttributeError) as error:
+    except (IndexError, AttributeError):
         nextToken = None
 
     while nextToken:
@@ -495,25 +499,24 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         request = json.dumps(request)
 
         nextPageRequest = json.loads(
-                endpoint(
+            endpoint(
                     request,
                     return_mimetype=return_mimetype,
                     access_map=access_map
-                )
             )
+        )
 
         for key in nextPageRequest:
             if key in responseObject['results']:
-                responseObject['results'][key]+=nextPageRequest[key]
+                responseObject['results'][key] += nextPageRequest[key]
             else:
-                responseObject['results'][key]=nextPageRequest[key]
+                responseObject['results'][key] = nextPageRequest[key]
 
         nextToken = responseObject['results'].get('nextPageToken')
 
     # Peer queries
     # Apply federation by default or if it was specifically requested
-    if ('Federation' not in request_dictionary.headers or \
-            request_dictionary.headers.get('Federation') == 'True'):
+    if ('Federation' not in request_dictionary.headers or request_dictionary.headers.get('Federation') == 'True'):
 
         # Iterate through all peers
         for peer in app.serverStatus.getPeers():
@@ -544,7 +547,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                         headers=header,
                         )
                 else:
-                    #TODO: Raise error
+                    # TODO: Raise error
                     pass
 
                 print('  >> peer call: {0} - {1}'.format(
@@ -619,6 +622,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     return json.dumps(responseObject)
 
+
 # testing method for access roles through tokens
 def getAccessMap(token):
     """
@@ -650,6 +654,7 @@ def getAccessMap(token):
             access_map[dataset.getLocalId()] = 4
 
     return access_map
+
 
 def _parseTokenPayload(token):
 
@@ -743,7 +748,7 @@ def handleException(exception):
                     protocol.toJson(error))
         if serverException.httpStatus == 401 \
                 or serverException.httpStatus == 403:
-            message += "Please try <a href=\""+app.config.get('TYK_LISTEN_PATH')+"login_oidc\">logging in</a>."
+            message += "Please try <a href=\"" + app.config.get('TYK_LISTEN_PATH') + "login_oidc\">logging in</a>."
         return message
     else:
         # Errors aren't well defined enough to use protobuf, even if requested
@@ -751,6 +756,7 @@ def handleException(exception):
         responseStr = protocol.serialize(error, return_mimetype)
         return getFlaskResponse(responseStr, serverException.httpStatus,
                                 mimetype=return_mimetype)
+
 
 def requires_session(f):
     """
@@ -769,6 +775,7 @@ def requires_session(f):
 
         return f(*args, **kargs)
     return decorated
+
 
 def startLogin():
     """
@@ -897,7 +904,7 @@ class DisplayedRoute(object):
 @requires_session
 def index():
     return flask.render_template('spa.html',
-                                 session_id=flask.session.get('id_token',''),
+                                 session_id=flask.session.get('id_token', ''),
                                  refresh=flask.session.get('refresh_token', ''),
                                  access=flask.session.get('access_token', ''),
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
@@ -912,6 +919,7 @@ def candig():
                                  refresh=flask.session["refresh_token"],
                                  access=flask.session["access_token"],
                                  datasetId=datasetId)
+
 
 @app.route('/info')
 @requires_session
@@ -932,10 +940,12 @@ def index_info():
     else:
         return response
 
+
 @app.route('/candig_patients')
 @requires_session
 def candig_patients():
     return flask.render_template('candig_patients.html', session_id=flask.session["id_token"])
+
 
 @app.route('/igv')
 @requires_session
@@ -943,20 +953,18 @@ def candig_igv():
     return flask.render_template('candig_igv.html', session_id=flask.session["id_token"],
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
+
 @app.route('/gene_search')
 def candig_gene_search():
     return flask.render_template('gene_search.html', session_id=flask.session["id_token"])
+
 
 @DisplayedRoute('/variantsbygenesearch', postMethod=True)
 def search_variant_by_gene_name():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchVariantsByGeneName)
 
-# FRONT END END
 
-# Start TYK
-
-# proxy to oidc login
 @app.route('/login_oidc', methods=LOGIN_ENDPOINT_METHODS)
 def login_oidc():
     """
@@ -986,7 +994,6 @@ def login_oidc():
                 return getFlaskResponse(json.dumps({'error': 'Key not authorised'}), 403)
 
             return flask.redirect(_generate_login_url())
-
 
     # POST request: successful keycloak authentication else Tyk blocks request
     elif flask.request.method == "POST":
@@ -1022,7 +1029,7 @@ def gateway_logout():
     End flask login sessions. Tyk will handle remote keycloak session
     :return: redirect to the keycloak login
     """
-    #response = flask.redirect(_generate_base_url()+'/login_oidc')
+    # response = flask.redirect(_generate_base_url()+'/login_oidc')
     if not flask.request.cookies.get("session_id"):
         raise exceptions.NotAuthenticatedException
 
@@ -1037,17 +1044,20 @@ def gateway_logout():
 
     return response
 
+
 def _generate_login_url():
     '''
     :return: formatted url for keycloak login
     '''
     return '{0}{1}'.format(app.config.get('KC_SERVER'), app.config.get('KC_LOGIN_REDIRECT'))
 
+
 def _generate_base_url():
     '''
     :return: formatted url for TYK proxied dashboard homepage
     '''
     return '{0}{1}'.format(app.config.get('TYK_SERVER'), app.config.get('TYK_LISTEN_PATH'))
+
 
 @DisplayedRoute('/token', postMethod=True)
 def token():
@@ -1082,7 +1092,6 @@ def token():
 
     return flask.Response(json.dumps(response), status=status, mimetype=mimetype)
 
-# END TYK
 
 @app.route('/concordance')
 def concordance():
@@ -1093,7 +1102,8 @@ def concordance():
         ServerStatus().getPeers()).get_concordance(gene)
     abnormality = NCIT.NCIT().get_genetic_abnormalities(gene)
     disease = NCIT.NCIT().get_diseases(gene)
-    return jsonify(result=render_template('concordance.html',
+    return jsonify(result=render_template(
+        'concordance.html',
         concordance=concordance,
         freq=freq,
         uniq=uniq,
