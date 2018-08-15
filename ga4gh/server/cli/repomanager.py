@@ -470,8 +470,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        continuousSet = dataset.getContinuousSetByName(
-                            self._args.continuousSetName)
+        continuousSet = dataset.getContinuousSetByName(self._args.continuousSetName)
 
         def func():
             self._updateRepo(self._repo.removeContinuousSet, continuousSet)
@@ -1402,13 +1401,15 @@ class RepoManager(object):
                 "a single directory argument may be passed or a "
                 "list of file paths/URLS, but not a mixture of "
                 "directories and paths.")
-            )
+        )
         addVariantSetParser.add_argument(
             "-I", "--indexFiles", nargs="+", metavar="indexFiles",
             help=(
                 "The index files for the VCF/BCF files provided in "
                 "the dataFiles argument. These must be provided in the "
-                "same order as the data files."))
+                "same order as the data files."
+            )
+        )
         cls.addNameOption(addVariantSetParser, objectType)
         cls.addReferenceSetNameOption(addVariantSetParser, objectType)
         cls.addSequenceOntologyNameOption(addVariantSetParser, objectType)

@@ -54,7 +54,7 @@ class DevelopmentConfig(BaseConfig):
     Configuration used for development.
     """
     DATA_SOURCE = "ga4gh-example-data/registry.db"
-    #DATA_SOURCE = "1000genomes_partition/registry.db"
+    # DATA_SOURCE = "1000genomes_partition/registry.db"
     DEBUG = True
     # INITIAL_PEERS =
     #   "/srv/ga4gh/server/ga4gh/server/templates/initial_peers.txt"
@@ -200,10 +200,11 @@ class TykConfig(KeycloakOidConfig):
     KC_RTYPE = 'code'
     KC_CLIENT_ID = 'ga4gh'
     KC_RMODE = 'form_post'
-    KC_REDIRECT = TYK_SERVER+TYK_LISTEN_PATH+'/login_oidc'
+    KC_REDIRECT = TYK_SERVER + TYK_LISTEN_PATH + '/login_oidc'
     KC_LOGIN_REDIRECT = '/auth/realms/{0}/protocol/openid-connect/auth?scope={1}&response_type={2}&client_id={3}&response_mode={4}&redirect_uri={5}'.format(
         KC_REALM, KC_SCOPE, KC_RTYPE, KC_CLIENT_ID, KC_RMODE, KC_REDIRECT
     )
+
 
 class NoAuth(DevelopmentConfig):
     """

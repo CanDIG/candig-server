@@ -9,7 +9,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import datetime
-import json
+# import json
 
 import ga4gh.server.datamodel as datamodel
 import ga4gh.server.exceptions as exceptions
@@ -83,7 +83,7 @@ class Patient(datamodel.DatamodelObject):
             str('updated'): str(self.getUpdated()),
             str('name'): str(self.getName()),
             str('description'): str(self.getDescription()),
-            }
+        }
             
         # Unique fields
         if tier >= self.getPatientIdTier():
@@ -359,7 +359,6 @@ class Patient(datamodel.DatamodelObject):
         return self._occupationalOrEnvironmentalExposureTier
 
 
-
 class Enrollment(datamodel.DatamodelObject):
     """
     """
@@ -422,7 +421,7 @@ class Enrollment(datamodel.DatamodelObject):
             str('updated'): str(self.getUpdated()),
             str('name'): str(self.getName()),
             str('description'): str(self.getDescription()),
-            }
+        }
             
         # Unique fields
         if tier >= self.getPatientIdTier():
@@ -745,7 +744,7 @@ class Consent(datamodel.DatamodelObject):
             str('updated'): str(self.getUpdated()),
             str('name'): str(self.getName()),
             str('description'): str(self.getDescription()),
-            }
+        }
 
         # Unique fields
         if tier >= self.getPatientIdTier():
@@ -1134,7 +1133,7 @@ class Diagnosis(datamodel.DatamodelObject):
             str('updated'): str(self.getUpdated()),
             str('name'): str(self.getName()),
             str('description'): str(self.getDescription()),
-            }
+        }
 
         # Unique fields
         if tier >= self.getPatientIdTier():
@@ -1543,7 +1542,6 @@ class Diagnosis(datamodel.DatamodelObject):
         return self._additionalTestTier
 
 
-
 class Sample(datamodel.DatamodelObject):
     """
     """
@@ -1622,7 +1620,7 @@ class Sample(datamodel.DatamodelObject):
             str('updated'): str(self.getUpdated()),
             str('name'): str(self.getName()),
             str('description'): str(self.getDescription()),
-            }
+        }
 
         # Unique fields
         if tier >= self.getPatientIdTier():
@@ -1971,7 +1969,6 @@ class Sample(datamodel.DatamodelObject):
         return self._ifNotExplainAnyDeviationTier
 
 
-
 class Treatment(datamodel.DatamodelObject):
     """
     """
@@ -2044,7 +2041,7 @@ class Treatment(datamodel.DatamodelObject):
             str('updated'): str(self.getUpdated()),
             str('name'): str(self.getName()),
             str('description'): str(self.getDescription()),
-            }
+        }
 
         # Unique fields
         if tier >= self.getPatientIdTier():
@@ -2419,7 +2416,7 @@ class Outcome(datamodel.DatamodelObject):
             str('updated'): str(self.getUpdated()),
             str('name'): str(self.getName()),
             str('description'): str(self.getDescription()),
-            }
+        }
 
         # Unique fields
         if tier >= self.getPatientIdTier():
@@ -2672,7 +2669,6 @@ class Outcome(datamodel.DatamodelObject):
         return self._performanceStatusTier
 
 
-
 class Complication(datamodel.DatamodelObject):
     """
     """
@@ -2712,10 +2708,10 @@ class Complication(datamodel.DatamodelObject):
             str('id'): str(self.getId()),
             str('dataset_id'): str(self._datasetId),
             str('created'): str(self.getCreated()),
-            str('updated') : str(self.getUpdated()),
+            str('updated'): str(self.getUpdated()),
             str('name'): str(self.getName()),
             str('description'): str(self.getDescription()),
-            }
+        }
 
         # Unique fields
         if tier >= self.getPatientIdTier():
@@ -2848,7 +2844,6 @@ class Complication(datamodel.DatamodelObject):
         return self._treatmentInducedNeoplasmDetailsTier
 
 
-
 class Tumourboard(datamodel.DatamodelObject):
     """
     """
@@ -2939,7 +2934,7 @@ class Tumourboard(datamodel.DatamodelObject):
             str('updated'): str(self.getUpdated()),
             str('name'): str(self.getName()),
             str('description'): str(self.getDescription()),
-            }
+        }
 
         # Unique fields
         if tier >= self.getPatientIdTier():

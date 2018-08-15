@@ -325,7 +325,7 @@ class G2PUtility(object):
             if prefix == termPrefix:
                 return "".join([namespace, termId])
         raise exceptions.NotImplementedException(
-           "Term has a prefix not found in this instance. {}".format(term))
+            "Term has a prefix not found in this instance. {}".format(term))
 
     def _getIdentifier(self, url):
         """
@@ -348,7 +348,7 @@ class G2PUtility(object):
             if namespace.toPython() == url or namespace == url:
                 return prefix
         raise exceptions.NotImplementedException(
-           "No namespace found for url {}".format(url))
+            "No namespace found for url {}".format(url))
 
     def _getPrefixURL(self, url):
         """
@@ -394,7 +394,7 @@ class G2PUtility(object):
             association['environment_label'],
             self._getIdentifier(association['evidence']),
             association['sources']
-            )
+        )
 
         # 2) map a GA4GH Evidence
         # from the association's phenotype & evidence
@@ -551,8 +551,7 @@ class RdfPhenotypeAssociationSet(G2PUtility, AbstractPhenotypeAssociationSet):
             for featureId in request.feature_ids:
                 for featureSet in featureSets:
                     try:
-                        compoundId = datamodel.FeatureCompoundId. \
-                                                parse(featureId)
+                        compoundId = datamodel.FeatureCompoundId.parse(featureId)
                         # we have a compoundId, so use it to lookup
                         # import ipdb; ipdb.set_trace()
                         if compoundId.feature_set == self.getLocalId():

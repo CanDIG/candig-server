@@ -64,7 +64,7 @@ class Biosample(datamodel.DatamodelObject):
             tumor_biopsy_anatomical_site = self.getTumorBiopsyAnatomicalSite(),
             biopsy_type = self.getBiopsyType(),
             sample_shipment_date = self.getSampleShipmentDate(),
-            )
+        )
         self.serializeAttributes(biosample)
         return biosample
 
@@ -77,7 +77,7 @@ class Biosample(datamodel.DatamodelObject):
         self._individualId = biosampleRecord.individualid
         self.setAttributesJson(biosampleRecord.attributes)
         self._individualAgeAtCollection = json.loads(
-                                biosampleRecord.individualAgeAtCollection)
+            biosampleRecord.individualAgeAtCollection)
         self._estimated_tumor_content = biosampleRecord.estimated_tumor_content
         self._normal_sample_source = biosampleRecord.normal_sample_source
         self._biopsy_data = biosampleRecord.biopsy_data
@@ -97,7 +97,7 @@ class Biosample(datamodel.DatamodelObject):
         self._disease = protocol.toJsonDict(parsed.disease)
         self._individualId = parsed.individual_id
         self._individualAgeAtCollection = protocol.toJsonDict(
-                                           parsed.individual_age_at_collection)
+            parsed.individual_age_at_collection)
         attributes = {}
         for key in parsed.attributes.attr:
             attributes[key] = {
@@ -159,6 +159,7 @@ class Biosample(datamodel.DatamodelObject):
     def getSampleShipmentDate(self):
         return self._sample_shipment_date
 
+
 class Experiment(datamodel.DatamodelObject):
     """
     This class represents an abstract Experiment object.
@@ -219,7 +220,7 @@ class Experiment(datamodel.DatamodelObject):
             rna_library_construction_method = self.getRnaLibraryConstructionMethod(),
             rna_sequencing_completion_date = self.getRnaSequencingCompletionDate(),
             panel_completion_date = self.getPanelCompletionDate(),
-            )
+        )
         self.serializeAttributes(experiment)
         return experiment
 
@@ -387,7 +388,7 @@ class Analysis(datamodel.DatamodelObject):
             experiment_id = self.getExperimentId(),
             other_analysis_descriptor = self.getOtherAnalysisDescriptor(),
             other_analysis_completition_date = self.getOtherAnalysisCompletitionDate(),
-            )
+        )
         analysis.software.extend(self.getSoftware())
         self.serializeAttributes(analysis)
         return analysis
@@ -461,6 +462,7 @@ class Analysis(datamodel.DatamodelObject):
 
     def getPlatformUnit(self):
         return self._platform_unit
+
     def getExperimentId(self):
         return self._experiment_id
 
@@ -530,7 +532,7 @@ class Individual(datamodel.DatamodelObject):
             date_of_upload_to_sFTP = self.getDateOfUploadToSftp(),
             tumor_board_presentation_date_and_analyses = self.getTumorBoardPresentationDateAndAnalyses(),
             comments = self.getComments(),
-            )
+        )
         self.serializeAttributes(gaIndividual)
         return gaIndividual
 
@@ -598,6 +600,7 @@ class Individual(datamodel.DatamodelObject):
 
     def getName(self):
         return self._name
+        
     def getPatientId(self):
         return self._patient_id
 

@@ -139,7 +139,6 @@ class Dataset(datamodel.DatamodelObject):
         self._individualIds.append(id_)
         self._individualNameMap[individual.getName()] = individual
 
-
     def addPatient(self, patient):
         """
         Adds the specified patient to this dataset.
@@ -220,7 +219,6 @@ class Dataset(datamodel.DatamodelObject):
         self._tumourboardIdMap[id_] = tumourboard
         self._tumourboardIds.append(id_)
         self._tumourboardNameMap[tumourboard.getName()] = tumourboard
-
 
     def addFeatureSet(self, featureSet):
         """
@@ -458,7 +456,6 @@ class Dataset(datamodel.DatamodelObject):
             raise exceptions.IndividualNotFoundException(id_)
         return self._individualIdMap[id_]
 
-
     def getPatients(self):
         """
         Returns the list of patients in this dataset
@@ -674,7 +671,6 @@ class Dataset(datamodel.DatamodelObject):
         if id_ not in self._tumourboardIdMap:
             raise exceptions.TumourboardNotFoundException(id_)
         return self._tumourboardIdMap[id_]
-
 
     def getNumReadGroupSets(self):
         """

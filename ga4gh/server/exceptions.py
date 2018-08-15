@@ -78,6 +78,7 @@ class BaseServerException(Exception):
 
 # Exceptions that occur in the normal operation of the server
 
+
 class RuntimeException(BaseServerException):
     """
     exceptions that can occur during the processing of a client request
@@ -706,6 +707,7 @@ class MultipleReferenceSetsInReadGroupSet(MalformedException):
 
 # Internal errors. These are exceptions that we regard as bugs.
 
+
 class ServerError(RuntimeException):
     """
     Superclass of all exceptions that indicate a bug has occured.
@@ -714,6 +716,7 @@ class ServerError(RuntimeException):
     message = "Internal Server Error"
 
 # Repo manager exceptions
+
 
 class RepoManagerException(Exception):
     """

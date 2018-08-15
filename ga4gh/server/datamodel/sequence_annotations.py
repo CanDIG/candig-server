@@ -381,7 +381,7 @@ class Gff3DbFeatureSet(AbstractFeatureSet):
         gaFeature.id = self.getCompoundIdForFeatureId(feature['id'])
         if feature.get('parent_id'):
             gaFeature.parent_id = self.getCompoundIdForFeatureId(
-                    feature['parent_id'])
+                feature['parent_id'])
         else:
             gaFeature.parent_id = ""
         gaFeature.feature_set_id = self.getId()
@@ -395,8 +395,8 @@ class Gff3DbFeatureSet(AbstractFeatureSet):
             # default to positive strand
             gaFeature.strand = protocol.POS_STRAND
         gaFeature.child_ids.extend(map(
-                self.getCompoundIdForFeatureId,
-                json.loads(feature['child_ids'])))
+            self.getCompoundIdForFeatureId,
+            json.loads(feature['child_ids'])))
         gaFeature.feature_type.CopyFrom(
             self._ontology.getGaTermByName(feature['type']))
         attributes = json.loads(feature['attributes'])
