@@ -550,20 +550,14 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                     # TODO: Raise error
                     pass
 
-                print('  >> peer call: {0} - {1}'.format(
-                    uri,
-                    response.status_code,
-                    ))
+                print('  >> peer call: {0} - {1}'.format(uri, response.status_code))
 
             except (requests.exceptions.ConnectionError,
                     requests.exceptions.Timeout,
                     requests.exceptions.HTTPError):
                 responseObject['status'].append(503)
 
-                print('  >> peer call: {0} - {1}'.format(
-                    uri,
-                    'SERVER IS DOWN OR DID NOT RESPONSE!',
-                    ))
+                print('  >> peer call: {0} - {1}'.format(uri, 'SERVER IS DOWN OR DID NOT RESPONSE!'))
             else:
                 responseObject['status'].append(response.status_code)
                 # If the call was successful append the results
@@ -593,22 +587,20 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     # Reformat the status response
     responseObject['status'] = {
-        'Known peers': \
-            # All the peers plus self
-            len(app.serverStatus.getPeers()) + 1,
-        'Queried peers': \
-            # Queried means http status code 200 and 404
-            responseObject['status'].count(200) + \
-            responseObject['status'].count(404),
-        # Successful means http status code 200
-        'Successful communications': \
-            # Successful means http status code 200
-            responseObject['status'].count(200),
-        'Valid response': \
-            # Invalid by default
-            False
-        }
 
+        # All the peers plus self
+        'Known peers': len(app.serverStatus.getPeers()) + 1,
+
+        # Queried means http status code 200 and 404
+        'Queried peers': responseObject['status'].count(200) + responseObject['status'].count(404),
+
+        # Successful means http status code 200
+        'Successful communications': responseObject['status'].count(200),
+
+        # Invalid by default
+        'Valid response': False
+    }
+    
     # Decide on valid response
     if responseObject['status']['Known peers'] == \
             responseObject['status']['Queried peers']:
@@ -744,8 +736,8 @@ def handleException(exception):
     if flask.request and 'Accept' in flask.request.headers and \
             flask.request.headers['Accept'].find('text/html') != -1:
         message = "<h1>Error {}</h1><pre>{}</pre>".format(
-                    serverException.httpStatus,
-                    protocol.toJson(error))
+            serverException.httpStatus,
+            protocol.toJson(error))
         if serverException.httpStatus == 401 \
                 or serverException.httpStatus == 403:
             message += "Please try <a href=\"" + app.config.get('TYK_LISTEN_PATH') + "login_oidc\">logging in</a>."
