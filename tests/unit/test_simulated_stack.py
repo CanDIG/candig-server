@@ -93,7 +93,7 @@ class TestSimulatedStack(unittest.TestCase):
         Returns a list of IDs that should not exist in the server and should
         raise a 404 error.
         """
-        return ["1234:", "x"*100, ":", ":xx", "::", ":::", "::::"]
+        return ["1234:", "x" * 100, ":", ":xx", "::", ":::", "::::"]
 
     def sendJsonPostRequest(self, path, data):
         """
@@ -200,7 +200,7 @@ class TestSimulatedStack(unittest.TestCase):
         self.assertEqual(
             gaReferenceSet.md5checksum, referenceSet.getMd5Checksum())
         sp = protocol.fromJson(
-                json.dumps(referenceSet.getSpecies()), protocol.OntologyTerm)
+            json.dumps(referenceSet.getSpecies()), protocol.OntologyTerm)
         self.assertEqual(
             gaReferenceSet.species.term_id, sp.term_id)
         self.assertEqual(
@@ -242,7 +242,7 @@ class TestSimulatedStack(unittest.TestCase):
         self.assertEqual(gaReference.length, reference.getLength())
         self.assertEqual(gaReference.md5checksum, reference.getMd5Checksum())
         sp = protocol.fromJson(
-                json.dumps(reference.getSpecies()), protocol.OntologyTerm)
+            json.dumps(reference.getSpecies()), protocol.OntologyTerm)
         self.assertEqual(gaReference.species.term_id, sp.term_id)
         self.assertEqual(gaReference.species.term, sp.term)
         self.assertEqual(gaReference.source_uri, reference.getSourceUri())

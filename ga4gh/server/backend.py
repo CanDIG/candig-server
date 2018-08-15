@@ -129,7 +129,7 @@ class Backend(object):
             len(objectList),
             lambda index: objectList[index],
             tier=tier,
-            )
+        )
 
     def datasetsGenerator(self, request, access_map):
         """
@@ -511,7 +511,7 @@ class Backend(object):
         referenceSet = readGroupSet.getReferenceSet()
         if referenceSet is None:
             raise exceptions.ReadGroupSetNotMappedToReferenceSetException(
-                    readGroupSet.getId())
+                readGroupSet.getId())
         reference = referenceSet.getReference(request.reference_id)
         readGroup = readGroupSet.getReadGroup(compoundId.read_group_id)
         intervalIterator = paging.ReadsIntervalIterator(
@@ -526,7 +526,7 @@ class Backend(object):
         referenceSet = readGroupSet.getReferenceSet()
         if referenceSet is None:
             raise exceptions.ReadGroupSetNotMappedToReferenceSetException(
-                    readGroupSet.getId())
+                readGroupSet.getId())
         reference = referenceSet.getReference(request.reference_id)
         readGroupIds = readGroupSet.getReadGroupIds()
         if set(readGroupIds) != set(request.read_group_ids):
@@ -965,7 +965,7 @@ class Backend(object):
         # Validate the url before accepting the announcement
         peer = datamodel.peers.Peer(requestData.peer.url)
         peer.setAttributesJson(protocol.toJson(
-                requestData.peer.attributes))
+            requestData.peer.attributes))
         announcement['url'] = peer.getUrl()
         announcement['attributes'] = peer.getAttributes()
         try:
@@ -986,7 +986,7 @@ class Backend(object):
             protocol.ListPeersResponse,
             access_map,
             self.peersGenerator
-            )
+        )
 
     def runGetVariant(self, id_, access_map, return_mimetype="application/json"):
         """
@@ -1300,7 +1300,7 @@ class Backend(object):
             self.patientsGenerator,
             access_map,
             return_mimetype,
-            )
+        )
 
     def runSearchEnrollments(self, request, return_mimetype, access_map):
         """
@@ -1312,7 +1312,7 @@ class Backend(object):
             self.enrollmentsGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchConsents(self, request, return_mimetype, access_map):
         """
@@ -1324,7 +1324,7 @@ class Backend(object):
             self.consentsGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchDiagnoses(self, request, return_mimetype, access_map):
         """
@@ -1336,7 +1336,7 @@ class Backend(object):
             self.diagnosesGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchSamples(self, request, return_mimetype, access_map):
         """
@@ -1348,7 +1348,7 @@ class Backend(object):
             self.samplesGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchTreatments(self, request, return_mimetype, access_map):
         """
@@ -1360,7 +1360,7 @@ class Backend(object):
             self.treatmentsGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchOutcomes(self, request, return_mimetype, access_map):
         """
@@ -1372,7 +1372,7 @@ class Backend(object):
             self.outcomesGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchComplications(self, request, return_mimetype, access_map):
         """
@@ -1384,7 +1384,7 @@ class Backend(object):
             self.complicationsGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchTumourboards(self, request, return_mimetype, access_map):
         """
@@ -1396,7 +1396,7 @@ class Backend(object):
             self.tumourboardsGenerator,
             access_map,
             return_mimetype
-            )
+        )
 # METADATA END
 
     def runSearchBiosamples(self, request, return_mimetype, access_map):
@@ -1671,7 +1671,7 @@ class Backend(object):
                             referenceName=feature.reference_name.replace('chr', ''),
                             startPosition=feature.start,
                             endPosition=feature.end,
-                            ):
+                    ):
                         return_object.append(protocol.toJson(variant))
 
         # temp fix until generator is implemented and properly throw error

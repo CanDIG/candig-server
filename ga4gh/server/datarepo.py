@@ -952,10 +952,10 @@ class SqlDataRepository(AbstractDataRepository):
         """
         try:
             models.Ontology.create(
-                    id=ontology.getName(),
-                    name=ontology.getName(),
-                    dataurl=ontology.getDataUrl(),
-                    ontologyprefix=ontology.getOntologyPrefix())
+                id=ontology.getName(),
+                name=ontology.getName(),
+                dataurl=ontology.getDataUrl(),
+                ontologyprefix=ontology.getOntologyPrefix())
         except Exception:
             raise exceptions.DuplicateNameException(
                 ontology.getName())
@@ -1061,8 +1061,8 @@ class SqlDataRepository(AbstractDataRepository):
         a cascading removal of all items within this dataset.
         """
         for datasetRecord in models.Dataset.select().where(
-                        models.Dataset.id == dataset.getId()):
-            datasetRecord.delete_instance(recursive=True)
+                models.Dataset.id == dataset.getId()):
+                    datasetRecord.delete_instance(recursive=True)
 
     def removePhenotypeAssociationSet(self, phenotypeAssociationSet):
         """
@@ -1128,8 +1128,8 @@ class SqlDataRepository(AbstractDataRepository):
         a cascading removal of all items within this readGroupSet.
         """
         for readGroupSetRecord in models.Readgroupset.select().where(
-                        models.Readgroupset.id == readGroupSet.getId()):
-            readGroupSetRecord.delete_instance(recursive=True)
+                models.Readgroupset.id == readGroupSet.getId()):
+                    readGroupSetRecord.delete_instance(recursive=True)
 
     def removeVariantSet(self, variantSet):
         """
@@ -1137,8 +1137,8 @@ class SqlDataRepository(AbstractDataRepository):
         a cascading removal of all items within this variantSet.
         """
         for variantSetRecord in models.Variantset.select().where(
-                        models.Variantset.id == variantSet.getId()):
-            variantSetRecord.delete_instance(recursive=True)
+                models.Variantset.id == variantSet.getId()):
+                    variantSetRecord.delete_instance(recursive=True)
 
     def removeBiosample(self, biosample):
         """
@@ -1293,10 +1293,10 @@ class SqlDataRepository(AbstractDataRepository):
         """
         try:
             q = models.Reference.delete().where(
-                    models.Reference.referencesetid == referenceSet.getId())
+                models.Reference.referencesetid == referenceSet.getId())
             q.execute()
             q = models.Referenceset.delete().where(
-                    models.Referenceset.id == referenceSet.getId())
+                models.Referenceset.id == referenceSet.getId())
             q.execute()
         except Exception:
             msg = ("Unable to delete reference set.  "
@@ -1487,7 +1487,7 @@ class SqlDataRepository(AbstractDataRepository):
         for continuousSetRecord in models.ContinuousSet.select():
             dataset = self.getDataset(continuousSetRecord.datasetid.id)
             continuousSet = continuous.FileContinuousSet(
-                    dataset, continuousSetRecord.name)
+                dataset, continuousSetRecord.name)
             continuousSet.setReferenceSet(
                 self.getReferenceSet(
                     continuousSetRecord.referencesetid.id))
@@ -1517,14 +1517,14 @@ class SqlDataRepository(AbstractDataRepository):
                 individualid=biosample.getIndividualId(),
                 attributes=json.dumps(biosample.getAttributes()),
                 individualAgeAtCollection=json.dumps(
-                        biosample.getIndividualAgeAtCollection()),
+                    biosample.getIndividualAgeAtCollection()),
                 estimated_tumor_content = biosample.getEstimatedTumorContent(),
                 normal_sample_source = biosample.getNormalSampleSource(),
                 biopsy_data = biosample.getBiopsyData(),
                 tumor_biopsy_anatomical_site = biosample.getTumorBiopsyAnatomicalSite(),
                 biopsy_type = biosample.getBiopsyType(),
                 sample_shipment_date = biosample.getSampleShipmentDate(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 biosample.getLocalId(),
@@ -1568,7 +1568,7 @@ class SqlDataRepository(AbstractDataRepository):
                 rna_library_construction_method = experiment.getRnaLibraryConstructionMethod(),
                 rna_sequencing_completion_date = experiment.getRnaSequencingCompletionDate(),
                 panel_completion_date = experiment.getPanelCompletionDate(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 experiment.getLocalId(), None)
@@ -1602,7 +1602,7 @@ class SqlDataRepository(AbstractDataRepository):
                 experiment_id = analysis.getExperimentId(),
                 other_analysis_descriptor = analysis.getOtherAnalysisDescriptor(),
                 other_analysis_completition_date = analysis.getOtherAnalysisCompletitionDate(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 analysis.getLocalId(), None)
@@ -1668,7 +1668,7 @@ class SqlDataRepository(AbstractDataRepository):
                 otherGeneticConditionOrSignificantComorbidityTier = patient.getOtherGeneticConditionOrSignificantComorbidityTier(),
                 occupationalOrEnvironmentalExposure = patient.getOccupationalOrEnvironmentalExposure(),
                 occupationalOrEnvironmentalExposureTier = patient.getOccupationalOrEnvironmentalExposureTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 patient.getLocalId(),
@@ -1736,7 +1736,7 @@ class SqlDataRepository(AbstractDataRepository):
                 treatingCentreNameTier = enrollment.getTreatingCentreNameTier(),
                 treatingCentreProvince = enrollment.getTreatingCentreProvince(),
                 treatingCentreProvinceTier = enrollment.getTreatingCentreProvinceTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 enrollment.getLocalId(),
@@ -1812,7 +1812,7 @@ class SqlDataRepository(AbstractDataRepository):
                 reasonForConsentWithdrawalTier = consent.getReasonForConsentWithdrawalTier(),
                 consentFormComplete = consent.getConsentFormComplete(),
                 consentFormCompleteTier = consent.getConsentFormCompleteTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 consent.getLocalId(),
@@ -1906,7 +1906,7 @@ class SqlDataRepository(AbstractDataRepository):
                 additionalMolecularDiagnosticTestingPerformedTier = diagnosis.getAdditionalMolecularDiagnosticTestingPerformedTier(),
                 additionalTest = diagnosis.getAdditionalTest(),
                 additionalTestTier = diagnosis.getAdditionalTestTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 diagnosis.getLocalId(),
@@ -1990,7 +1990,7 @@ class SqlDataRepository(AbstractDataRepository):
                 sopFollowedTier = sample.getSopFollowedTier(),
                 ifNotExplainAnyDeviation = sample.getIfNotExplainAnyDeviation(),
                 ifNotExplainAnyDeviationTier = sample.getIfNotExplainAnyDeviationTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 sample.getLocalId(),
@@ -2068,7 +2068,7 @@ class SqlDataRepository(AbstractDataRepository):
                 drugListOrAgentTier = treatment.getDrugListOrAgentTier(),
                 drugIdNumbers = treatment.getDrugIdNumbers(),
                 drugIdNumbersTier = treatment.getDrugIdNumbersTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 treatment.getLocalId(),
@@ -2136,7 +2136,7 @@ class SqlDataRepository(AbstractDataRepository):
                 weightUnitsTier = outcome.getWeightUnitsTier(),
                 performanceStatus = outcome.getPerformanceStatus(),
                 performanceStatusTier = outcome.getPerformanceStatusTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 outcome.getLocalId(),
@@ -2184,7 +2184,7 @@ class SqlDataRepository(AbstractDataRepository):
                 suspectedTreatmentInducedNeoplasmDevelopedTier = complication.getSuspectedTreatmentInducedNeoplasmDevelopedTier(),
                 treatmentInducedNeoplasmDetails = complication.getTreatmentInducedNeoplasmDetails(),
                 treatmentInducedNeoplasmDetailsTier = complication.getTreatmentInducedNeoplasmDetailsTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 complication.getLocalId(),
@@ -2280,7 +2280,7 @@ class SqlDataRepository(AbstractDataRepository):
                 patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfilingTier = tumourboard.getPatientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfilingTier(),
                 summaryReport = tumourboard.getSummaryReport(),
                 summaryReportTier = tumourboard.getSummaryReportTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 tumourboard.getLocalId(),
@@ -2325,7 +2325,7 @@ class SqlDataRepository(AbstractDataRepository):
                 date_of_upload_to_sFTP = individual.getDateOfUploadToSftp(),
                 tumor_board_presentation_date_and_analyses = individual.getTumorBoardPresentationDateAndAnalyses(),
                 comments = individual.getComments(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 individual.getLocalId(),

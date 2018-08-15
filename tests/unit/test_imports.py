@@ -568,7 +568,7 @@ class SnakefoodScanner(object):
                 ERROR_UNUSED, info),
             ("Modules that could not be imported:",
                 ERROR_IMPORT, warning),
-            ]
+        ]
         if self.optsVerbose >= 2:
             reports.append(
                 ("Symbols that could not be imported as modules:",

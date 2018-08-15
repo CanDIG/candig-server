@@ -217,9 +217,9 @@ class TestG2P(unittest.TestCase):
         self.assertEqual(request.feature_id, feature.id)
         self.assertIsNotNone(feature.feature_type)
         self.assertIsNotNone(feature.feature_type.term_id)
-        self.assertEqual(feature.reference_name,  "chr10")
-        self.assertEqual(feature.start,  43617416)
-        self.assertEqual(feature.end,  43617416)
+        self.assertEqual(feature.reference_name, "chr10")
+        self.assertEqual(feature.start, 43617416)
+        self.assertEqual(feature.end, 43617416)
 
     def testGenotypesSearchByName(self):
         # setup phenotype query
@@ -239,11 +239,11 @@ class TestG2P(unittest.TestCase):
             datamodel.FeatureCompoundId
             .parse(response.features[0].id)
             .featureId
-            )
+        )
         self.assertEqual(
             request.name,
             response.features[0].name
-            )
+        )
 
     def testGenotypesSearchByNameKIT(self):
         request = protocol.SearchFeaturesRequest()

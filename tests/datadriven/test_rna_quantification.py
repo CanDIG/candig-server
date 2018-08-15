@@ -189,9 +189,7 @@ class RnaQuantificationTest(datadriven.DataDrivenTest):
         storeDb = rnaseq2ga.RnaSqliteStore(dbName)
         storeDb.createTables()
 
-        testTsvFile = os.path.join(
-                            paths.testDataDir,
-                            "datasets/dataset1/rnaQuant/rsem_test_data.tsv")
+        testTsvFile = os.path.join(paths.testDataDir, "datasets/dataset1/rnaQuant/rsem_test_data.tsv")
         rnaQuantId = "rqsId"
         rnaseq2ga.rnaseq2ga(testTsvFile, dbName, rnaQuantId,
                             'rsem', featureType="gene")

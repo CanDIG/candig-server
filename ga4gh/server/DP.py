@@ -27,7 +27,7 @@ class DP(object):
         if self._epsilon[server] == np.inf:
             return vec
 
-        scale = np.float64(sensitivity)/np.float64(self._epsilon[server])
+        scale = np.float64(sensitivity) / np.float64(self._epsilon[server])
 
         if type(vec) is dict:
             if not len(vec.keys()):

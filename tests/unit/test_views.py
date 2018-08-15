@@ -76,8 +76,7 @@ class TestFrontend(unittest.TestCase):
         cls.genotypePhenotypeId = cls.genotypePhenotype.id
         cls.rnaQuantificationSet = cls.dataset.getRnaQuantificationSets()[0]
         cls.rnaQuantificationSetId = cls.rnaQuantificationSet.getId()
-        cls.rnaQuantification = cls.rnaQuantificationSet.getRnaQuantifications(
-            )[0]
+        cls.rnaQuantification = cls.rnaQuantificationSet.getRnaQuantifications()[0]
         cls.rnaQuantificationId = cls.rnaQuantification.getId()
         cls.expressionLevel = cls.rnaQuantification.getExpressionLevels(
             1, 2)[0]
@@ -563,8 +562,8 @@ class TestFrontend(unittest.TestCase):
         # A bad mimetype should throw an exception
         with self.assertRaises(exceptions.UnsupportedMediaTypeException):
             response = frontend.handleHttpPost(
-                          request,
-                          lambda x, return_mimetype, access_map: x)
+                request,
+                lambda x, return_mimetype, access_map: x)
 
         request = Mock()
         request.mimetype = "application/json"
