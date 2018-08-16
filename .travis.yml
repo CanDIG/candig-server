@@ -20,10 +20,12 @@ install:
   - ga4gh_configtest --version
   - ga4gh_server --version
   - ga4gh_repo --version
+  - PROFYLE_ingest --version
 
 before_script:
   - pip install -r dev-requirements.txt
-  - python scripts/build_test_data.py 
+  - python scripts/build_test_data.py
+  - PROFYLE_ingest tests/data/registry.db dataset1 tests/data/sample_clin_metadata.json
     
 before_install:
     - bash tools/travis-install-protoc.sh 3.3.2

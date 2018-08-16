@@ -24,3 +24,4 @@
 #git+git://github.com/ga4gh/ga4gh-common.git@master#egg=ga4gh_common
 git+git://github.com/CanDIG/ga4gh-schemas.git@authz#egg=ga4gh_schemas
 git+git://github.com/CanDIG/ga4gh-client.git@authz#egg=ga4gh_client
+git+git://github.com/CanDIG/PROFYLE_ingest.git@authz#egg=PROFYLE_ingest
