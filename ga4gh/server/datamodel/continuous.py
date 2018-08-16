@@ -131,7 +131,7 @@ class WiggleReader:
         # read data lines
         fields = line.split()
         if self._mode == self._VARIABLE_STEP:
-            start = int(fields[0])-1  # to 0-based
+            start = int(fields[0]) - 1  # to 0-based
             val = float(fields[1])
         else:
             start = self._start
@@ -272,8 +272,8 @@ class BigWigDataSource:
                 reference, start, end)
             # TODO: CHECK IF QUERY IS BEYOND END
 
-        cmd = ["bigWigToWig", self._sourceFile, "stdout", "-chrom="+reference,
-               "-start="+str(start), "-end="+str(end)]
+        cmd = ["bigWigToWig", self._sourceFile, "stdout", "-chrom=" + reference,
+               "-start=" + str(start), "-end=" + str(end)]
         wiggleReader = WiggleReader(reference, start, end)
         try:
             # run command and grab output simultaneously
@@ -330,7 +330,7 @@ class AbstractContinuousSet(datamodel.DatamodelObject):
         gaContinuousSet.id = self.getId()
         gaContinuousSet.dataset_id = self.getParentContainer().getId()
         gaContinuousSet.reference_set_id = pb.string(
-                                            self._referenceSet.getId())
+            self._referenceSet.getId())
         gaContinuousSet.name = self._name
         gaContinuousSet.source_uri = self._sourceUri
         attributes = self.getAttributes()
@@ -380,8 +380,7 @@ class FileContinuousSet(AbstractContinuousSet):
         :return: yields a protocol.Continuous at a time
         """
         bigWigReader = BigWigDataSource(self._filePath)
-        for continuousObj in bigWigReader.bigWigToProtocol(
-                                            referenceName, start, end):
+        for continuousObj in bigWigReader.bigWigToProtocol(referenceName, start, end):
             yield continuousObj
 
 
@@ -411,7 +410,7 @@ class SimulatedContinuousSet(AbstractContinuousSet):
         randomNumberGenerator.seed(self._randomSeed)
         for i in range(100):
             gaContinuous = self._generateSimulatedContinuous(
-                                    randomNumberGenerator)
+                randomNumberGenerator)
             match = (
                 gaContinuous.start < end and
                 gaContinuous.end > start and

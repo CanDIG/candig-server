@@ -218,7 +218,7 @@ class Gff3Set(object):
 
         :param file fh: file handle for file to write to
         """
-        fh.write(GFF3_HEADER+"\n")
+        fh.write(GFF3_HEADER + "\n")
         for root in sorted(self.roots, key=self._recSortKey):
             self._writeRec(fh, root)
 

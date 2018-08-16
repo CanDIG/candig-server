@@ -13,13 +13,7 @@ import ga4gh.server.response_builder as response_builder
 
 import ga4gh.schemas.protocol as protocol
 
-### ======================================================================= ###
-### FRONT END
-### ======================================================================= ###
 import json
-### ======================================================================= ###
-### FRONT END END
-### ======================================================================= ###
 
 
 class Backend(object):
@@ -71,13 +65,9 @@ class Backend(object):
         """
         pass
 
-    ###########################################################
-    #
     # Iterators over the data hierarchy. These methods help to
     # implement the search endpoints by providing iterators
     # over the objects to be returned to the client.
-    #
-    ###########################################################
 
     def _topLevelObjectGenerator(self, request, numObjects, getByIndexMethod, tier=0):
         """
@@ -139,7 +129,7 @@ class Backend(object):
             len(objectList),
             lambda index: objectList[index],
             tier=tier,
-            )
+        )
 
     def datasetsGenerator(self, request, access_map):
         """
@@ -199,9 +189,6 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results)
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
     def patientsGenerator(self, request, access_map):
         """
         """
@@ -212,7 +199,7 @@ class Backend(object):
             include = True
             if request.name:
                 if obj.getLocalId() not in request.name.split(','):
-#                if request.name != obj.getLocalId():
+                    # if request.name != obj.getLocalId():
                     include = False
 
             if include:
@@ -233,7 +220,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -253,7 +240,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -273,7 +260,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -293,7 +280,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -313,7 +300,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -333,7 +320,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -353,7 +340,7 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
@@ -373,14 +360,11 @@ class Backend(object):
             # Search table by patient id
             if request.patient_id:
                 if obj.getPatientId() not in request.patient_id.split(','):
-#                if request.patient_id != obj.getPatientId():
+                    # if request.patient_id != obj.getPatientId():
                     include = False
             if include:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
 
     def phenotypeAssociationSetsGenerator(self, request, access_map):
         """
@@ -526,7 +510,7 @@ class Backend(object):
         referenceSet = readGroupSet.getReferenceSet()
         if referenceSet is None:
             raise exceptions.ReadGroupSetNotMappedToReferenceSetException(
-                    readGroupSet.getId())
+                readGroupSet.getId())
         reference = referenceSet.getReference(request.reference_id)
         readGroup = readGroupSet.getReadGroup(compoundId.read_group_id)
         intervalIterator = paging.ReadsIntervalIterator(
@@ -541,7 +525,7 @@ class Backend(object):
         referenceSet = readGroupSet.getReferenceSet()
         if referenceSet is None:
             raise exceptions.ReadGroupSetNotMappedToReferenceSetException(
-                    readGroupSet.getId())
+                readGroupSet.getId())
         reference = referenceSet.getReference(request.reference_id)
         readGroupIds = readGroupSet.getReadGroupIds()
         if set(readGroupIds) != set(request.read_group_ids):
@@ -787,14 +771,12 @@ class Backend(object):
             request,
             self.getDataRepository())
 
-    ###########################################################
-    #
+    #    #
     # Public API methods. Each of these methods implements the
     # corresponding API end point, and return data ready to be
     # written to the wire.
     #
-    ###########################################################
-
+    #
     def runGetRequest(self, obj, return_mimetype="application/json", tier=0):
         """
         Runs a get request by converting the specified datamodel
@@ -982,7 +964,7 @@ class Backend(object):
         # Validate the url before accepting the announcement
         peer = datamodel.peers.Peer(requestData.peer.url)
         peer.setAttributesJson(protocol.toJson(
-                requestData.peer.attributes))
+            requestData.peer.attributes))
         announcement['url'] = peer.getUrl()
         announcement['attributes'] = peer.getAttributes()
         try:
@@ -1003,14 +985,15 @@ class Backend(object):
             protocol.ListPeersResponse,
             access_map,
             self.peersGenerator
-            )
+        )
 
-    def runGetVariant(self, id_, return_mimetype="application/json", tier=0):
+    def runGetVariant(self, id_, access_map, return_mimetype="application/json"):
         """
         Returns a variant with the given id
         """
         compoundId = datamodel.VariantCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        # tier = self.getUserAccessTier(dataset, access_map)
         variantSet = dataset.getVariantSet(compoundId.variant_set_id)
         gaVariant = variantSet.getVariant(compoundId)
         # TODO variant is a special case here, as it's returning a
@@ -1019,27 +1002,26 @@ class Backend(object):
         data = protocol.serialize(gaVariant, return_mimetype)
         return data
 
-    def runGetBiosample(self, id_, return_mimetype="application/json", tier=0):
+    def runGetBiosample(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getBiosample request for the specified ID.
         """
         compoundId = datamodel.BiosampleCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         biosample = dataset.getBiosample(id_)
         return self.runGetRequest(biosample, return_mimetype, tier=tier)
 
-    def runGetIndividual(self, id_, return_mimetype="application/json", tier=0):
+    def runGetIndividual(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getIndividual request for the specified ID.
         """
         compoundId = datamodel.BiosampleCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
         individual = dataset.getIndividual(id_)
         return self.runGetRequest(individual, return_mimetype, tier=tier)
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
     def runGetPatient(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getPatient request for the specified ID.
@@ -1129,17 +1111,15 @@ class Backend(object):
         tier = self.getUserAccessTier(dataset, access_map)
         tumourboard = dataset.getTumourboard(id_)
         return self.runGetRequest(tumourboard, return_mimetype, tier=tier)
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
 
-    def runGetFeature(self, id_, return_mimetype="application/json", tier=0):
+    def runGetFeature(self, id_, access_map, return_mimetype="application/json"):
         """
         Returns JSON string of the feature object corresponding to
         the feature compoundID passed in.
         """
         compoundId = datamodel.FeatureCompoundId.parse(id_)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        # tier = self.getUserAccessTier(dataset, access_map)
         featureSet = dataset.getFeatureSet(compoundId.feature_set_id)
         gaFeature = featureSet.getFeature(compoundId)
         data = protocol.serialize(gaFeature, return_mimetype)
@@ -1307,9 +1287,6 @@ class Backend(object):
             self.individualsGenerator,
             return_mimetype)
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
     def runSearchPatients(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchPatientsRequest.
@@ -1320,7 +1297,7 @@ class Backend(object):
             self.patientsGenerator,
             access_map,
             return_mimetype,
-            )
+        )
 
     def runSearchEnrollments(self, request, return_mimetype, access_map):
         """
@@ -1332,7 +1309,7 @@ class Backend(object):
             self.enrollmentsGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchConsents(self, request, return_mimetype, access_map):
         """
@@ -1344,7 +1321,7 @@ class Backend(object):
             self.consentsGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchDiagnoses(self, request, return_mimetype, access_map):
         """
@@ -1356,7 +1333,7 @@ class Backend(object):
             self.diagnosesGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchSamples(self, request, return_mimetype, access_map):
         """
@@ -1368,7 +1345,7 @@ class Backend(object):
             self.samplesGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchTreatments(self, request, return_mimetype, access_map):
         """
@@ -1380,7 +1357,7 @@ class Backend(object):
             self.treatmentsGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchOutcomes(self, request, return_mimetype, access_map):
         """
@@ -1392,7 +1369,7 @@ class Backend(object):
             self.outcomesGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchComplications(self, request, return_mimetype, access_map):
         """
@@ -1404,7 +1381,7 @@ class Backend(object):
             self.complicationsGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchTumourboards(self, request, return_mimetype, access_map):
         """
@@ -1416,10 +1393,7 @@ class Backend(object):
             self.tumourboardsGenerator,
             access_map,
             return_mimetype
-            )
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
+        )
 
     def runSearchBiosamples(self, request, return_mimetype, access_map):
         """
@@ -1673,13 +1647,10 @@ class Backend(object):
             access_map,
             return_mimetype)
 
-### ======================================================================= ###
-### FRONT END
-### ======================================================================= ###
     def runSearchVariantsByGeneName(self, request, return_mimetype, access_map):
         """
         """
-        #TODO put request object into protocol and make this function a generator
+        # TODO put request object into protocol and make this function a generator
         request = json.loads(request)
         return_object = []
         result_object = {"variants": return_object}
@@ -1696,7 +1667,7 @@ class Backend(object):
                             referenceName=feature.reference_name.replace('chr', ''),
                             startPosition=feature.start,
                             endPosition=feature.end,
-                            ):
+                    ):
                         return_object.append(protocol.toJson(variant))
 
         # temp fix until generator is implemented and properly throw error
@@ -1704,13 +1675,7 @@ class Backend(object):
             raise exceptions.NotFoundException
 
         return json.dumps(result_object)
-### ======================================================================= ###
-### FRONT END END
-### ======================================================================= ###
 
-### ======================================================================= ###
-### AUTHORIZATION START
-### ======================================================================= ###
     def getUserAccessTier(self, dataset, access_map):
         """
         :param dataset: dataset object
@@ -1740,7 +1705,3 @@ class Backend(object):
                 if currentIndex < numObjects:
                     nextPageToken = str(currentIndex)
                 yield object_.toProtocolElement(tier), nextPageToken
-
-### ======================================================================= ###
-### AUTHORIZATION END
-### ======================================================================= ###

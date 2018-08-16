@@ -187,7 +187,7 @@ class TestTopLevelObjectGenerator(unittest.TestCase):
             pass
 
         class FakeTopLevelObject(object):
-            def toProtocolElement(self):
+            def toProtocolElement(self, tier=0):
                 return self
 
         self.request = FakeRequest()

@@ -143,7 +143,7 @@ class TestSimulatedVariantAnnotationSet(unittest.TestCase):
         simulatedVariantAnnotationSet = variants.SimulatedVariantAnnotationSet(
             simulatedVariantSet, localId, self.randomSeed)
         annotations = simulatedVariantAnnotationSet.getVariantAnnotations(
-                    self.referenceName, self.startPosition, self.endPosition)
+            self.referenceName, self.startPosition, self.endPosition)
         self.assertEquals(
             simulatedVariantSet.toProtocolElement().id,
             simulatedVariantAnnotationSet.toProtocolElement().variant_set_id,

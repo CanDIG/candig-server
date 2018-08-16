@@ -83,7 +83,7 @@ def buildTestData(
             datasetName, dataFile, "-n {}".format(name))
         run(
             "add-featureset", repoFile, datasetName, useRelativePath,
-            dataFile, "-R NCBI37",  "-O", sequenceOntologyName,
+            dataFile, "-R NCBI37", "-O", sequenceOntologyName,
             "-C ga4gh.datamodel.genotype_phenotype_featureset."
             "PhenotypeAssociationFeatureSet")
 

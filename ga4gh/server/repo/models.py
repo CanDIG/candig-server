@@ -76,18 +76,12 @@ class Biosample(BaseModel):
     name = pw.TextField()
     updated = pw.TextField(null=True)
     individualAgeAtCollection = pw.TextField(null=True)
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
     estimated_tumor_content = pw.TextField(null=True)
     normal_sample_source = pw.TextField(null=True)
     biopsy_data = pw.TextField(null=True)
     tumor_biopsy_anatomical_site = pw.TextField(null=True)
     biopsy_type = pw.TextField(null=True)
     sample_shipment_date = pw.TextField(null=True)
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
 
     class Meta:
         indexes = (
@@ -111,9 +105,6 @@ class Experiment(BaseModel):
     instrumentDataFile = pw.TextField(null=True)
     sequencingCenter = pw.TextField(null=True)
     platformUnit = pw.TextField(null=True)
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
     datasetid = pw.ForeignKeyField(
         db_column='datasetId', rel_model=Dataset, to_field='id')
     biosample_id = pw.TextField(db_column='biosampleId', null=True)
@@ -122,9 +113,7 @@ class Experiment(BaseModel):
     rna_library_construction_method = pw.TextField(null=True)
     rna_sequencing_completion_date = pw.TextField(null=True)
     panel_completion_date = pw.TextField(null=True)
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
+
     class Meta:
         indexes = (
             (('name'), True),
@@ -139,17 +128,12 @@ class Analysis(BaseModel):
     updated = pw.TextField(null=True)
     analysistype = pw.TextField(null=True)
     software = pw.TextField(null=True)
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
     datasetid = pw.ForeignKeyField(
         db_column='datasetId', rel_model=Dataset, to_field='id')
     experiment_id = pw.TextField(db_column='experimentId', null=True)
     other_analysis_descriptor = pw.TextField(null=True)
     other_analysis_completition_date = pw.TextField(null=True)
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
+
     class Meta:
         indexes = (
             (('name'), True),
@@ -244,9 +228,7 @@ class ContinuousSet(BaseModel):
             (('datasetid', 'name'), True),
         )
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
+
 class Patient(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
@@ -293,7 +275,6 @@ class Patient(BaseModel):
     otherGeneticConditionOrSignificantComorbidityTier = pw.IntegerField(null=True)
     occupationalOrEnvironmentalExposure = pw.TextField(null=True)
     occupationalOrEnvironmentalExposureTier = pw.IntegerField(null=True)
-
 
     class Meta:
         indexes = (
@@ -759,9 +740,6 @@ class Tumourboard(BaseModel):
         indexes = (
             (('datasetid', 'name'), True),
         )
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
 
 
 class Individual(BaseModel):
@@ -775,9 +753,6 @@ class Individual(BaseModel):
     sex = pw.TextField(null=True)
     species = pw.TextField(null=True)
     updated = pw.TextField(null=True)
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
     patient_id = pw.TextField(null=True)
     regional_profiling_centre = pw.TextField(null=True)
     diagnosis = pw.TextField(null=True)
@@ -787,9 +762,6 @@ class Individual(BaseModel):
     date_of_upload_to_sFTP = pw.TextField(null=True)
     tumor_board_presentation_date_and_analyses = pw.TextField(null=True)
     comments = pw.TextField(null=True)
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
 
     class Meta:
         indexes = (

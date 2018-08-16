@@ -18,7 +18,7 @@ import json
 import flask
 import flask.ext.cors as cors
 # from flask.ext.oidc import OpenIDConnect
-from flask import Flask, jsonify, render_template, request
+from flask import jsonify, render_template, request  # Flask
 import humanize
 import werkzeug
 import oic
@@ -26,7 +26,7 @@ import oic
 import oic.oauth2
 import oic.oic.message as message
 # from oic.utils.http_util import Redirect
-from oauth2client.client import OAuth2Credentials
+# from oauth2client.client import OAuth2Credentials
 import requests
 import logging
 from logging import StreamHandler
@@ -39,7 +39,7 @@ import ga4gh.server.exceptions as exceptions
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.auth as auth
 import ga4gh.server.network as network
-import ga4gh.server.DP as DP
+# import ga4gh.server.DP as DP
 import ga4gh.server.NCIT as NCIT
 
 import ga4gh.schemas.protocol as protocol
@@ -57,6 +57,7 @@ app.urls = []
 app.url_map.strict_slashes = False
 
 requires_auth = auth.auth_decorator(app)
+
 
 class NoConverter(werkzeug.routing.BaseConverter):
     """
@@ -80,7 +81,9 @@ class NoConverter(werkzeug.routing.BaseConverter):
             raise werkzeug.routing.ValidationError()
         return value
 
+
 app.url_map.converters['no'] = NoConverter
+
 
 class ServerStatus(object):
     """
@@ -232,6 +235,7 @@ class ServerStatus(object):
         Returns the list of ontologies.
         """
         return app.backend.getDataRepository().getOntologyByName(name)
+
 
 def reset():
     """
@@ -408,9 +412,6 @@ def getFlaskResponse(responseString, httpStatus=200,
     return flask.Response(responseString, status=httpStatus, mimetype=mimetype)
 
 
-### ======================================================================= ###
-### FEDERATION
-### ======================================================================= ###
 def federation(endpoint, request, return_mimetype, request_type='POST'):
     """
     Federate the queries by iterating through the peer list and merging the
@@ -465,7 +466,6 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         authz_token = ''
         access_map = getAccessMap(authz_token)
 
-
     # Self query
     responseObject = {}
     responseObject['results'] = {}
@@ -477,19 +477,19 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 request,
                 return_mimetype=return_mimetype,
                 access_map=access_map
-                )
             )
+        )
 
         responseObject['status'].append(200)
 
-    except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException) as error:
+    except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException):
         responseObject['status'].append(404)
 
     try:
         nextToken = responseObject['results'].get('nextPageToken')
 
     # response object not properly formed
-    except (IndexError, AttributeError) as error:
+    except (IndexError, AttributeError):
         nextToken = None
 
     while nextToken:
@@ -499,25 +499,24 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         request = json.dumps(request)
 
         nextPageRequest = json.loads(
-                endpoint(
-                    request,
-                    return_mimetype=return_mimetype,
-                    access_map=access_map
-                )
+            endpoint(
+                request,
+                return_mimetype=return_mimetype,
+                access_map=access_map
             )
+        )
 
         for key in nextPageRequest:
             if key in responseObject['results']:
-                responseObject['results'][key]+=nextPageRequest[key]
+                responseObject['results'][key] += nextPageRequest[key]
             else:
-                responseObject['results'][key]=nextPageRequest[key]
+                responseObject['results'][key] = nextPageRequest[key]
 
         nextToken = responseObject['results'].get('nextPageToken')
 
     # Peer queries
     # Apply federation by default or if it was specifically requested
-    if ('Federation' not in request_dictionary.headers or \
-            request_dictionary.headers['Federation'] == 'True'):
+    if ('Federation' not in request_dictionary.headers or request_dictionary.headers.get('Federation') == 'True'):
 
         # Iterate through all peers
         for peer in app.serverStatus.getPeers():
@@ -525,7 +524,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
             uri = request_dictionary.url.replace(
                 request_dictionary.host_url,
                 peer.getUrl(),
-                )
+            )
             # federation field must be set to False to avoid infinite loop
             header = {
                 'Content-Type': return_mimetype,
@@ -540,48 +539,44 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                     response = requests.Session().get(
                         uri,
                         headers=header,
-                        )
+                    )
                 elif request_type == 'POST':
                     response = requests.Session().post(
                         uri,
                         json=json.loads(request),
                         headers=header,
-                        )
+                    )
                 else:
-                    #TODO: Raise error
+                    # TODO: Raise error
                     pass
 
-                print('  >> peer call: {0} - {1}'.format(
-                    uri,
-                    response.status_code,
-                    ))
+                print('  >> peer call: {0} - {1}'.format(uri, response.status_code))
 
             except (requests.exceptions.ConnectionError,
                     requests.exceptions.Timeout,
                     requests.exceptions.HTTPError):
                 responseObject['status'].append(503)
 
-                print('  >> peer call: {0} - {1}'.format(
-                    uri,
-                    'SERVER IS DOWN OR DID NOT RESPONSE!',
-                    ))
+                print('  >> peer call: {0} - {1}'.format(uri, 'SERVER IS DOWN OR DID NOT RESPONSE!'))
             else:
                 responseObject['status'].append(response.status_code)
                 # If the call was successful append the results
                 if response.status_code == 200:
+                    try:
+                        if request_type == 'GET':
+                            responseObject['results'] = response.json()['results']
 
-                    if request_type == 'GET':
-                        responseObject['results'] = response.json()['results']
+                        elif request_type == 'POST':
+                            peer_response = response.json()['results']
 
-                    elif request_type == 'POST':
-                        peer_response = response.json()['results']
-
-                        if not responseObject['results']:
-                            responseObject['results'] = peer_response
-                        else:
-                            for key in peer_response:
-                                for record in peer_response[key]:
-                                    responseObject['results'][key].append(record)
+                            if not responseObject['results']:
+                                responseObject['results'] = peer_response
+                            else:
+                                for key in peer_response:
+                                    for record in peer_response[key]:
+                                        responseObject['results'][key].append(record)
+                    except ValueError:
+                        pass
 
     # If no result has been found on any of the servers raise an error
     if not responseObject['results'] or not responseObject['results']:
@@ -592,22 +587,20 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     # Reformat the status response
     responseObject['status'] = {
-        'Known peers': \
-            # All the peers plus self
-            len(app.serverStatus.getPeers()) + 1,
-        'Queried peers': \
-            # Queried means http status code 200 and 404
-            responseObject['status'].count(200) + \
-            responseObject['status'].count(404),
-        # Successful means http status code 200
-        'Successful communications': \
-            # Successful means http status code 200
-            responseObject['status'].count(200),
-        'Valid response': \
-            # Invalid by default
-            False
-        }
 
+        # All the peers plus self
+        'Known peers': len(app.serverStatus.getPeers()) + 1,
+
+        # Queried means http status code 200 and 404
+        'Queried peers': responseObject['status'].count(200) + responseObject['status'].count(404),
+
+        # Successful means http status code 200
+        'Successful communications': responseObject['status'].count(200),
+
+        # Invalid by default
+        'Valid response': False
+    }
+    
     # Decide on valid response
     if responseObject['status']['Known peers'] == \
             responseObject['status']['Queried peers']:
@@ -620,6 +613,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                 responseObject['status']['Valid response'] = True
 
     return json.dumps(responseObject)
+
 
 # testing method for access roles through tokens
 def getAccessMap(token):
@@ -653,6 +647,7 @@ def getAccessMap(token):
 
     return access_map
 
+
 def _parseTokenPayload(token):
 
     try:
@@ -669,9 +664,6 @@ def _parseTokenPayload(token):
 
     return json.loads(decoded_payload)
 
-### ======================================================================= ###
-### FEDERATION ENDS
-### ======================================================================= ###
 
 def handleHttpPost(request, endpoint):
     """
@@ -684,18 +676,12 @@ def handleHttpPost(request, endpoint):
     request = request.get_data()
     if request == '' or request is None:
         request = '{}'
-### ======================================================================= ###
-### FEDERATION
-### ======================================================================= ###
     responseStr = federation(
         endpoint,
         request,
         return_mimetype=return_mimetype,
         request_type='POST'
-        )
-### ======================================================================= ###
-### FEDERATION ENDS
-### ======================================================================= ###
+    )
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
@@ -715,18 +701,12 @@ def handleHttpGet(id_, endpoint):
     """
     request = flask.request
     return_mimetype = chooseReturnMimetype(request)
-### ======================================================================= ###
-### FEDERATION
-### ======================================================================= ###
     responseStr = federation(
         endpoint,
         id_,
         return_mimetype=return_mimetype,
         request_type='GET'
-        )
-### ======================================================================= ###
-### FEDERATION ENDS
-### ======================================================================= ###
+    )
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
@@ -756,11 +736,11 @@ def handleException(exception):
     if flask.request and 'Accept' in flask.request.headers and \
             flask.request.headers['Accept'].find('text/html') != -1:
         message = "<h1>Error {}</h1><pre>{}</pre>".format(
-                    serverException.httpStatus,
-                    protocol.toJson(error))
+            serverException.httpStatus,
+            protocol.toJson(error))
         if serverException.httpStatus == 401 \
                 or serverException.httpStatus == 403:
-            message += "Please try <a href=\""+app.config.get('TYK_LISTEN_PATH')+"login_oidc\">logging in</a>."
+            message += "Please try <a href=\"" + app.config.get('TYK_LISTEN_PATH') + "login_oidc\">logging in</a>."
         return message
     else:
         # Errors aren't well defined enough to use protobuf, even if requested
@@ -768,6 +748,7 @@ def handleException(exception):
         responseStr = protocol.serialize(error, return_mimetype)
         return getFlaskResponse(responseStr, serverException.httpStatus,
                                 mimetype=return_mimetype)
+
 
 def requires_session(f):
     """
@@ -786,6 +767,7 @@ def requires_session(f):
 
         return f(*args, **kargs)
     return decorated
+
 
 def startLogin():
     """
@@ -914,19 +896,12 @@ class DisplayedRoute(object):
 @requires_session
 def index():
     return flask.render_template('spa.html',
-                                 session_id=flask.session.get('id_token',''),
+                                 session_id=flask.session.get('id_token', ''),
                                  refresh=flask.session.get('refresh_token', ''),
                                  access=flask.session.get('access_token', ''),
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
-@app.route('/login')
-def candig_login():
-    return flask.render_template('login.html',prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
-
-### ======================================================================= ###
-### FRONT END
-### ======================================================================= ###
 @app.route('/candig')
 @requires_session
 def candig():
@@ -936,6 +911,7 @@ def candig():
                                  refresh=flask.session["refresh_token"],
                                  access=flask.session["access_token"],
                                  datasetId=datasetId)
+
 
 @app.route('/info')
 @requires_session
@@ -956,10 +932,12 @@ def index_info():
     else:
         return response
 
+
 @app.route('/candig_patients')
 @requires_session
 def candig_patients():
     return flask.render_template('candig_patients.html', session_id=flask.session["id_token"])
+
 
 @app.route('/igv')
 @requires_session
@@ -967,24 +945,18 @@ def candig_igv():
     return flask.render_template('candig_igv.html', session_id=flask.session["id_token"],
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
+
 @app.route('/gene_search')
 def candig_gene_search():
     return flask.render_template('gene_search.html', session_id=flask.session["id_token"])
+
 
 @DisplayedRoute('/variantsbygenesearch', postMethod=True)
 def search_variant_by_gene_name():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchVariantsByGeneName)
 
-### ======================================================================= ###
-### FRONT END END
-### ======================================================================= ###
 
-### ======================================================================= ###
-### Start TYK
-### ======================================================================= ###
-
-# proxy to oidc login
 @app.route('/login_oidc', methods=LOGIN_ENDPOINT_METHODS)
 def login_oidc():
     """
@@ -1014,7 +986,6 @@ def login_oidc():
                 return getFlaskResponse(json.dumps({'error': 'Key not authorised'}), 403)
 
             return flask.redirect(_generate_login_url())
-
 
     # POST request: successful keycloak authentication else Tyk blocks request
     elif flask.request.method == "POST":
@@ -1050,7 +1021,7 @@ def gateway_logout():
     End flask login sessions. Tyk will handle remote keycloak session
     :return: redirect to the keycloak login
     """
-    #response = flask.redirect(_generate_base_url()+'/login_oidc')
+    # response = flask.redirect(_generate_base_url()+'/login_oidc')
     if not flask.request.cookies.get("session_id"):
         raise exceptions.NotAuthenticatedException
 
@@ -1065,17 +1036,20 @@ def gateway_logout():
 
     return response
 
+
 def _generate_login_url():
     '''
     :return: formatted url for keycloak login
     '''
     return '{0}{1}'.format(app.config.get('KC_SERVER'), app.config.get('KC_LOGIN_REDIRECT'))
 
+
 def _generate_base_url():
     '''
     :return: formatted url for TYK proxied dashboard homepage
     '''
     return '{0}{1}'.format(app.config.get('TYK_SERVER'), app.config.get('TYK_LISTEN_PATH'))
+
 
 @DisplayedRoute('/token', postMethod=True)
 def token():
@@ -1110,9 +1084,6 @@ def token():
 
     return flask.Response(json.dumps(response), status=status, mimetype=mimetype)
 
-### ======================================================================= ###
-### END TYK
-### ======================================================================= ###
 
 @app.route('/concordance')
 def concordance():
@@ -1123,7 +1094,8 @@ def concordance():
         ServerStatus().getPeers()).get_concordance(gene)
     abnormality = NCIT.NCIT().get_genetic_abnormalities(gene)
     disease = NCIT.NCIT().get_diseases(gene)
-    return jsonify(result=render_template('concordance.html',
+    return jsonify(result=render_template(
+        'concordance.html',
         concordance=concordance,
         freq=freq,
         uniq=uniq,
@@ -1331,14 +1303,13 @@ def searchIndividuals():
         flask.request, app.backend.runSearchIndividuals)
 
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
+# METADATA
 @DisplayedRoute('/patients/search', postMethod=True)
 @requires_auth
 def searchPatients():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchPatients)
+
 
 @DisplayedRoute('/enrollments/search', postMethod=True)
 @requires_auth
@@ -1346,11 +1317,13 @@ def searchEnrollments():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchEnrollments)
 
+
 @DisplayedRoute('/consents/search', postMethod=True)
 @requires_auth
 def searchConsents():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchConsents)
+
 
 @DisplayedRoute('/diagnoses/search', postMethod=True)
 @requires_auth
@@ -1358,11 +1331,13 @@ def searchDiagnoses():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchDiagnoses)
 
+
 @DisplayedRoute('/samples/search', postMethod=True)
 @requires_auth
 def searchSamples():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchSamples)
+
 
 @DisplayedRoute('/treatments/search', postMethod=True)
 @requires_auth
@@ -1370,11 +1345,13 @@ def searchTreatments():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchTreatments)
 
+
 @DisplayedRoute('/outcomes/search', postMethod=True)
 @requires_auth
 def searchOutcomes():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchOutcomes)
+
 
 @DisplayedRoute('/complications/search', postMethod=True)
 @requires_auth
@@ -1382,14 +1359,13 @@ def searchComplications():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchComplications)
 
+
 @DisplayedRoute('/tumourboards/search', postMethod=True)
 @requires_auth
 def searchTumourboards():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchTumourboards)
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
+# METADATA END
 
 
 @DisplayedRoute('/peers/list', postMethod=True)
@@ -1424,9 +1400,8 @@ def getIndividual(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetIndividual)
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
+
+# METADATA
 @DisplayedRoute(
     '/patients/<no(search):id>',
     pathDisplay='/patients/<id>')
@@ -1434,6 +1409,7 @@ def getIndividual(id):
 def getPatient(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetPatient)
+
 
 @DisplayedRoute(
     '/enrollments/<no(search):id>',
@@ -1443,6 +1419,7 @@ def getEnrollment(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetEnrollment)
 
+
 @DisplayedRoute(
     '/consents/<no(search):id>',
     pathDisplay='/consents/<id>')
@@ -1450,6 +1427,7 @@ def getEnrollment(id):
 def getConsent(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetConsent)
+
 
 @DisplayedRoute(
     '/diagnoses/<no(search):id>',
@@ -1459,6 +1437,7 @@ def getDiagnosis(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetDiagnosis)
 
+
 @DisplayedRoute(
     '/samples/<no(search):id>',
     pathDisplay='/samples/<id>')
@@ -1466,6 +1445,7 @@ def getDiagnosis(id):
 def getSample(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetSample)
+
 
 @DisplayedRoute(
     '/treatments/<no(search):id>',
@@ -1475,6 +1455,7 @@ def getTreatment(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetTreatment)
 
+
 @DisplayedRoute(
     '/outcomes/<no(search):id>',
     pathDisplay='/outcomes/<id>')
@@ -1482,6 +1463,7 @@ def getTreatment(id):
 def getOutcome(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetOutcome)
+
 
 @DisplayedRoute(
     '/complications/<no(search):id>',
@@ -1491,6 +1473,7 @@ def getComplication(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetComplication)
 
+
 @DisplayedRoute(
     '/tumourboards/<no(search):id>',
     pathDisplay='/tumourboards/<id>')
@@ -1498,9 +1481,7 @@ def getComplication(id):
 def getTumourboard(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetTumourboard)
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
+# METADATA END
 
 
 @DisplayedRoute('/rnaquantificationsets/search', postMethod=True)

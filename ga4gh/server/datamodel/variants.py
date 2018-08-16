@@ -990,7 +990,7 @@ class AbstractVariantAnnotationSet(datamodel.DatamodelObject):
                 gaTranscriptEffect.alternate_bases,
                 gaTranscriptEffect.feature_id,
                 effs, gaTranscriptEffect.hgvs_annotation)
-            ).hexdigest()
+        ).hexdigest()
 
     def hashVariantAnnotation(cls, gaVariant, gaVariantAnnotation):
         """
@@ -1001,7 +1001,7 @@ class AbstractVariantAnnotationSet(datamodel.DatamodelObject):
             "{}\t{}\t{}\t".format(
                 gaVariant.reference_bases, tuple(gaVariant.alternate_bases),
                 treffs)
-            ).hexdigest()
+        ).hexdigest()
 
     def getVariantAnnotationId(self, gaVariant, gaAnnotation):
         """

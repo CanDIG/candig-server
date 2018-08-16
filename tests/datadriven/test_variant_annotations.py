@@ -256,11 +256,11 @@ class VariantAnnotationSetTest(datadriven.DataDrivenTest):
             mini = localVariants[0].start
             # NOTE, the end of the last variant may not reflect the END
             maxi = max([v.end for v in localVariants])
-            seglen = (maxi-mini) // 3
+            seglen = (maxi - mini) // 3
             seg1 = mini + seglen
             seg2 = seg1 + seglen
             self._assertEmptyVariant(referenceName, -1, mini)
-            self._assertEmptyVariant(referenceName, maxi, maxi+100)
+            self._assertEmptyVariant(referenceName, maxi, maxi + 100)
             self._assertVariantsEqualInRange(referenceName, mini, seg1)
             self._assertVariantsEqualInRange(referenceName, seg1, seg2)
             self._assertVariantsEqualInRange(referenceName, seg2, maxi)
@@ -294,17 +294,17 @@ class VariantAnnotationSetTest(datadriven.DataDrivenTest):
 
             self.assertFalse(
                 self._pyvcfVariantAnnotationIsInGaVariantAnnotations(
-                    variant, variantStart-2, variantStart-1))
+                    variant, variantStart - 2, variantStart - 1))
             self.assertFalse(
                 self._pyvcfVariantAnnotationIsInGaVariantAnnotations(
-                    variant, variantStart-1, variantStart))
+                    variant, variantStart - 1, variantStart))
             # interval on the right
             self.assertFalse(
                 self._pyvcfVariantAnnotationIsInGaVariantAnnotations(
-                    variant, variantEnd, variantEnd+1))
+                    variant, variantEnd, variantEnd + 1))
             self.assertFalse(
                 self._pyvcfVariantAnnotationIsInGaVariantAnnotations(
-                    variant, variantEnd+1, variantEnd+2))
+                    variant, variantEnd + 1, variantEnd + 2))
             # case of search interval is within variant
 
             self.assertTrue(
@@ -313,25 +313,25 @@ class VariantAnnotationSetTest(datadriven.DataDrivenTest):
             if (variantEnd - variantStart) != 1:
                 self.assertTrue(
                     self._pyvcfVariantAnnotationIsInGaVariantAnnotations(
-                        variant, variantStart, variantEnd-1))
+                        variant, variantStart, variantEnd - 1))
                 self.assertTrue(
                     self._pyvcfVariantAnnotationIsInGaVariantAnnotations(
-                        variant, variantStart+1, variantEnd))
+                        variant, variantStart + 1, variantEnd))
 
             # case of search interval contains variant
             self.assertTrue(
                 self._pyvcfVariantAnnotationIsInGaVariantAnnotations(
-                    variant, variantStart-1, variantEnd+1))
+                    variant, variantStart - 1, variantEnd + 1))
             # cases of search interval intersec with variant
             self.assertTrue(
                 self._pyvcfVariantAnnotationIsInGaVariantAnnotations(
-                    variant, variantStart-1, variantStart+1))
+                    variant, variantStart - 1, variantStart + 1))
             self.assertTrue(
                 self._pyvcfVariantAnnotationIsInGaVariantAnnotations(
-                    variant, variantStart, variantStart+1))
+                    variant, variantStart, variantStart + 1))
             self.assertTrue(
                 self._pyvcfVariantAnnotationIsInGaVariantAnnotations(
-                    variant, variantEnd-1, variantEnd))
+                    variant, variantEnd - 1, variantEnd))
             self.assertTrue(
                 self._pyvcfVariantAnnotationIsInGaVariantAnnotations(
-                    variant, variantEnd-1, variantEnd+1))
+                    variant, variantEnd - 1, variantEnd + 1))

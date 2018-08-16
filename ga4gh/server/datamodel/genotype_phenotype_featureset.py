@@ -267,8 +267,8 @@ class PhenotypeAssociationFeatureSet(
                     faldoBegin = {}
                     faldoBegin["_id"] = _id
                     for subj, predicate, obj in triples(
-                                                (Ref(faldoBegin["_id"]),
-                                                    None, None)):
+                        (Ref(faldoBegin["_id"]),
+                            None, None)):
                         faldoBegin[predicate.toPython()] = obj.toPython()
                     faldoBegins.append(faldoBegin)
 
@@ -277,8 +277,8 @@ class PhenotypeAssociationFeatureSet(
                     faldoReference = {}
                     faldoReference["_id"] = faldoBegin[FALDO_REFERENCE]
                     for subj, predicate, obj in triples(
-                                                (Ref(faldoReference["_id"]),
-                                                    None, None)):
+                        (Ref(faldoReference["_id"]),
+                            None, None)):
                         faldoReference[predicate.toPython()] = obj.toPython()
                     faldoReferences.append(faldoReference)
 

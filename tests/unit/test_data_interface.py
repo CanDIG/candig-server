@@ -15,6 +15,7 @@ import ga4gh.client.client as client
 import ga4gh.common.utils as utils
 
 
+@unittest.skip('Disabling, client not used')
 class TestInterfacingLayer(unittest.TestCase):
     """
     Test fetching objects via the db and via the client return
@@ -94,8 +95,7 @@ class TestInterfacingLayer(unittest.TestCase):
 
     def testGetVariant(self):
         repoVariantSets = self._repo.allVariantSets()
-        referenceName = self._repo.getReferenceSets(
-            )[0].getReferences()[0].getName()
+        referenceName = self._repo.getReferenceSets()[0].getReferences()[0].getName()
         for variantSet in repoVariantSets:
             repoVariants = variantSet.getVariants(referenceName, 0, 2**32)
             for repoVariant in repoVariants:
