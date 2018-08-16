@@ -189,7 +189,6 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results)
 
-# METADATA
     def patientsGenerator(self, request, access_map):
         """
         """
@@ -1112,7 +1111,6 @@ class Backend(object):
         tier = self.getUserAccessTier(dataset, access_map)
         tumourboard = dataset.getTumourboard(id_)
         return self.runGetRequest(tumourboard, return_mimetype, tier=tier)
-# METADATA END
 
     def runGetFeature(self, id_, access_map, return_mimetype="application/json"):
         """
@@ -1289,7 +1287,6 @@ class Backend(object):
             self.individualsGenerator,
             return_mimetype)
 
-# METADATA
     def runSearchPatients(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchPatientsRequest.
@@ -1397,7 +1394,6 @@ class Backend(object):
             access_map,
             return_mimetype
         )
-# METADATA END
 
     def runSearchBiosamples(self, request, return_mimetype, access_map):
         """
@@ -1680,7 +1676,6 @@ class Backend(object):
 
         return json.dumps(result_object)
 
-# AUTHORIZATION START
     def getUserAccessTier(self, dataset, access_map):
         """
         :param dataset: dataset object
@@ -1710,5 +1705,3 @@ class Backend(object):
                 if currentIndex < numObjects:
                     nextPageToken = str(currentIndex)
                 yield object_.toProtocolElement(tier), nextPageToken
-
-# AUTHORIZATION END

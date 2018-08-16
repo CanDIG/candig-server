@@ -62,10 +62,8 @@ class TestPatients(unittest.TestCase):
             occupationalOrEnvironmentalExposureTier = 0,
         )
 
-
         validPatient.attributes.attr['test']. \
             values.add().string_value = 'test-info'
-
 
         # pass through protocol creation
         patient = clinMetadata.Patient(
@@ -133,7 +131,6 @@ class TestEnrollment(unittest.TestCase):
             treatingCentreProvince = "n/a",
             treatingCentreProvinceTier = 0
         )
-
 
         validEnrollment.attributes.attr['test']. \
             values.add().string_value = 'test-info'
@@ -213,10 +210,8 @@ class TestConsent(unittest.TestCase):
             consentFormCompleteTier = 0
         )
 
-
         validConsent.attributes.attr['test']. \
             values.add().string_value = 'test-info'
-
 
         # pass through protocol creation
         consent = clinMetadata.Consent(
@@ -311,7 +306,6 @@ class TestDiagnosis(unittest.TestCase):
             additionalTestTier = 0
         )
 
-
         validDiagnosis.attributes.attr['test']. \
             values.add().string_value = 'test-info'
 
@@ -398,7 +392,6 @@ class TestSample(unittest.TestCase):
             ifNotExplainAnyDeviationTier = 0
         )
 
-
         validSample.attributes.attr['test']. \
             values.add().string_value = 'test-info'
 
@@ -479,7 +472,6 @@ class TestTreatment(unittest.TestCase):
             drugIdNumbersTier = 0
         )
 
-
         validTreatment.attributes.attr['test']. \
             values.add().string_value = 'test-info'
 
@@ -548,8 +540,7 @@ class TestOutcome(unittest.TestCase):
             weightUnitsTier = 0,
             performanceStatus = "n/a",
             performanceStatusTier = 0
-            )
-
+        )
 
         validOutcome.attributes.attr['test']. \
             values.add().string_value = 'test-info'
@@ -599,8 +590,7 @@ class TestComplication(unittest.TestCase):
             suspectedTreatmentInducedNeoplasmDevelopedTier = 0,
             treatmentInducedNeoplasmDetails = "n/a",
             treatmentInducedNeoplasmDetailsTier = 0
-            )
-
+        )
 
         validComplication.attributes.attr['test']. \
             values.add().string_value = 'test-info'
@@ -616,7 +606,7 @@ class TestComplication(unittest.TestCase):
         self.assertEqual(gaComplication.patientId, validComplication.patientId)
         self.assertEqual(gaComplication.date, validComplication.date)
         self.assertEqual(gaComplication.lateToxicityDetail, validComplication.lateToxicityDetail)
-        self.assertEqual(gaComplication.treatmentInducedNeoplasmDetailsTier , validComplication.treatmentInducedNeoplasmDetailsTier)
+        self.assertEqual(gaComplication.treatmentInducedNeoplasmDetailsTier, validComplication.treatmentInducedNeoplasmDetailsTier)
 
         # Invalid input
         invalidComplication = '{"bad:", "json"}'
@@ -698,8 +688,7 @@ class TestTumourboard(unittest.TestCase):
             patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfilingTier = 0,
             summaryReport = "n/a",
             summaryReportTier = 0
-            )
-
+        )
 
         validTumourboard.attributes.attr['test']. \
             values.add().string_value = 'test-info'
@@ -715,7 +704,7 @@ class TestTumourboard(unittest.TestCase):
         self.assertEqual(gaTumourboard.patientId, validTumourboard.patientId)
         self.assertEqual(gaTumourboard.dateOfMolecularTumorBoard, validTumourboard.dateOfMolecularTumorBoard)
         self.assertEqual(gaTumourboard.typeOfValidation, validTumourboard.typeOfValidation)
-        self.assertEqual(gaTumourboard.summaryReportTier , validTumourboard.summaryReportTier)
+        self.assertEqual(gaTumourboard.summaryReportTier, validTumourboard.summaryReportTier)
 
         # Invalid input
         invalidTumourboard = '{"bad:", "json"}'
