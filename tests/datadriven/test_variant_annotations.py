@@ -20,13 +20,17 @@ import tests.paths as paths
 
 import ga4gh.schemas.protocol as protocol
 
+import unittest
 
+
+@unittest.skip("Disabled")
 def testVariantAnnotationSets():
     testDataDir = "tests/data/datasets/dataset1/variants"
     for test in datadriven.makeTests(testDataDir, VariantAnnotationSetTest):
         yield test
 
 
+@unittest.skip("Disabled")
 class VariantAnnotationSetTest(datadriven.DataDrivenTest):
     """
     Data driven test class for variant annotation sets. Builds an
