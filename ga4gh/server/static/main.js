@@ -810,7 +810,7 @@ function readGroupFetcher(geneRequest, geneDataset) {
                 }
 
                 for (var j = 0; j < 1; j++) {
-                    let tempCurrData = JSON.parse(geneDataset[j]);
+                    let tempCurrData = geneDataset[j];
                     let tempChrId = tempCurrData['referenceName'];
 
                     if (tempChrId.includes('chr')) {
@@ -820,7 +820,7 @@ function readGroupFetcher(geneRequest, geneDataset) {
                     }
 
                     // if (parseInt(tempChrId) != NaN) {
-                    //     finalChrId = parseInt(tempChrId) 
+                    //     finalChrId = parseInt(tempChrId)
                     // }
 
                     // else if (tempChrId == "X") {
@@ -1019,7 +1019,7 @@ function tableMaker(geneDataset) {
     var simplifiedObjArray = []
 
     for (var j = 0; j < geneDataset.length; j++) {
-        var tempCurrData = JSON.parse(geneDataset[j]);
+        var tempCurrData = geneDataset[j];
 
         var tempObj = {
             'referenceName': tempCurrData['referenceName'],
