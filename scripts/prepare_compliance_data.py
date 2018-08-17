@@ -34,7 +34,7 @@ import ga4gh.server.datamodel.variants as variants  # NOQA
 import ga4gh.server.datamodel.reads as reads  # NOQA
 import ga4gh.server.datamodel.ontologies as ontologies  # NOQA
 import ga4gh.server.datamodel.sequence_annotations as sequence_annotations  # NOQA
-#import ga4gh.server.datamodel.continuous as continuous # NOQA
+import ga4gh.server.datamodel.continuous as continuous # NOQA
 import ga4gh.server.datamodel.bio_metadata as biodata  # NOQA
 import ga4gh.server.datamodel.genotype_phenotype_featureset as g2p_featureset  # NOQA
 import ga4gh.server.datamodel.genotype_phenotype as g2p_associationset  # NOQA
@@ -309,11 +309,11 @@ class ComplianceDataMunger(object):
             dataset=dataset,
             featureSetNames="gencodev19",
             biosampleId=hg00096Biosample.getId())
-#        rnaQuantificationSet = rna_quantification.SqliteRnaQuantificationSet(
-#            dataset, "rnaseq")
-#        rnaQuantificationSet.setReferenceSet(referenceSet)
-#        rnaQuantificationSet.populateFromFile(os.path.abspath(rnaDbName))
-#        self.repo.insertRnaQuantificationSet(rnaQuantificationSet)
+        rnaQuantificationSet = rna_quantification.SqliteRnaQuantificationSet(
+            dataset, "rnaseq")
+        rnaQuantificationSet.setReferenceSet(referenceSet)
+        rnaQuantificationSet.populateFromFile(os.path.abspath(rnaDbName))
+        self.repo.insertRnaQuantificationSet(rnaQuantificationSet)
 
     def addVariantSet(
             self, variantFileName, dataset, referenceSet,

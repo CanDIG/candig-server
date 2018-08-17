@@ -167,7 +167,6 @@ class TestSequenceAnnotations(unittest.TestCase):
             path, request, protocol.SearchContinuousSetsResponse)
         return responseData.continuous_sets
 
-    @unittest.skip("Disabled")
     def testSearchContinuous(self):
         continuousSets = self.getAllContinuousSets()
         for continuousSet in continuousSets:

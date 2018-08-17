@@ -6,7 +6,7 @@ sudo: false
 cache:
   directories:
     - $HOME/.cache/pip
-    - /tmp/proto3.1.0
+    - /tmp/proto3.3.2
 
 install:
   - pip install pip --upgrade
@@ -42,6 +42,9 @@ script:
               --with-coverage --cover-package ga4gh.server
               --cover-inclusive --cover-min-percentage 75
               --cover-branches --cover-erase
+  - make clean -C docs
+  - make -C docs
 
-#   - make clean -C docs
-#   - make -C docs
+after_success:
+# run codecov
+  - bash <(curl -s https://codecov.io/bash)

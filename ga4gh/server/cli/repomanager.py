@@ -20,14 +20,14 @@ import ga4gh.server.datamodel.genotype_phenotype as genotype_phenotype
 import ga4gh.server.datamodel.ontologies as ontologies
 import ga4gh.server.datamodel.reads as reads
 import ga4gh.server.datamodel.references as references
-# import ga4gh.server.datamodel.rna_quantification as rna_quantification
+import ga4gh.server.datamodel.rna_quantification as rna_quantification
 import ga4gh.server.datamodel.sequence_annotations as sequence_annotations
-# import ga4gh.server.datamodel.continuous as continuous
+import ga4gh.server.datamodel.continuous as continuous
 import ga4gh.server.datamodel.variants as variants
 import ga4gh.server.datamodel.peers as peers
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.exceptions as exceptions
-# import ga4gh.server.repo.rnaseq2ga as rnaseq2ga
+import ga4gh.server.repo.rnaseq2ga as rnaseq2ga
 
 import ga4gh.common.cli as common_cli
 
@@ -449,21 +449,20 @@ class RepoManager(object):
         """
         Adds a new continuous set into this repo
         """
-        pass
-        # self._openRepo()
-        # dataset = self._repo.getDatasetByName(self._args.datasetName)
-        # filePath = self._getFilePath(self._args.filePath,
-        #                              self._args.relativePath)
-        # name = getNameFromPath(self._args.filePath)
-        # continuousSet = continuous.FileContinuousSet(dataset, name)
-        # referenceSetName = self._args.referenceSetName
-        # if referenceSetName is None:
-        #     raise exceptions.RepoManagerException(
-        #         "A reference set name must be provided")
-        # referenceSet = self._repo.getReferenceSetByName(referenceSetName)
-        # continuousSet.setReferenceSet(referenceSet)
-        # continuousSet.populateFromFile(filePath)
-        # self._updateRepo(self._repo.insertContinuousSet, continuousSet)
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        filePath = self._getFilePath(self._args.filePath,
+                                     self._args.relativePath)
+        name = getNameFromPath(self._args.filePath)
+        continuousSet = continuous.FileContinuousSet(dataset, name)
+        referenceSetName = self._args.referenceSetName
+        if referenceSetName is None:
+            raise exceptions.RepoManagerException(
+                "A reference set name must be provided")
+        referenceSet = self._repo.getReferenceSetByName(referenceSetName)
+        continuousSet.setReferenceSet(referenceSet)
+        continuousSet.populateFromFile(filePath)
+        self._updateRepo(self._repo.insertContinuousSet, continuousSet)
 
     def removeContinuousSet(self):
         """
@@ -800,33 +799,6 @@ class RepoManager(object):
             self._updateRepo(self._repo.removeAnalysis, analysis)
         self._confirmDelete("Analysis", analysis.getLocalId(), func)
 
-    def addPeer(self):
-        """
-        Adds a new peer into this repo
-        """
-        self._openRepo()
-        try:
-            peer = peers.Peer(
-                self._args.url, json.loads(self._args.attributes))
-        except exceptions.BadUrlException:
-            raise exceptions.RepoManagerException("The URL for the peer was "
-                                                  "malformed.")
-        except ValueError as e:
-            raise exceptions.RepoManagerException(
-                "The attributes message "
-                "was malformed. {}".format(e))
-        self._updateRepo(self._repo.insertPeer, peer)
-
-    def removePeer(self):
-        """
-        Removes a peer by URL from this repo
-        """
-        self._openRepo()
-
-        def func():
-            self._updateRepo(self._repo.removePeer, self._args.url)
-        self._confirmDelete("Peer", self._args.url, func)
-
     def removeOntology(self):
         """
         Removes an ontology from the repo.
@@ -842,77 +814,73 @@ class RepoManager(object):
         """
         Adds an rnaQuantification into this repo
         """
-        pass
-        # self._openRepo()
-        # dataset = self._repo.getDatasetByName(self._args.datasetName)
-        # biosampleId = ""
-        # if self._args.biosampleName:
-        #     biosample = dataset.getBiosampleByName(self._args.biosampleName)
-        #     biosampleId = biosample.getId()
-        # if self._args.name is None:
-        #     name = getNameFromPath(self._args.quantificationFilePath)
-        # else:
-        #     name = self._args.name
-        # # TODO: programs not fully supported by GA4GH yet
-        # programs = ""
-        # featureType = "gene"
-        # if self._args.transcript:
-        #     featureType = "transcript"
-        # rnaseq2ga.rnaseq2ga(
-        #     self._args.quantificationFilePath, self._args.filePath, name,
-        #     self._args.format, dataset=dataset, featureType=featureType,
-        #     description=self._args.description, programs=programs,
-        #     featureSetNames=self._args.featureSetNames,
-        #     readGroupSetNames=self._args.readGroupSetName,
-        #     biosampleId=biosampleId)
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        biosampleId = ""
+        if self._args.biosampleName:
+            biosample = dataset.getBiosampleByName(self._args.biosampleName)
+            biosampleId = biosample.getId()
+        if self._args.name is None:
+            name = getNameFromPath(self._args.quantificationFilePath)
+        else:
+            name = self._args.name
+        # TODO: programs not fully supported by GA4GH yet
+        programs = ""
+        featureType = "gene"
+        if self._args.transcript:
+            featureType = "transcript"
+        rnaseq2ga.rnaseq2ga(
+            self._args.quantificationFilePath, self._args.filePath, name,
+            self._args.format, dataset=dataset, featureType=featureType,
+            description=self._args.description, programs=programs,
+            featureSetNames=self._args.featureSetNames,
+            readGroupSetNames=self._args.readGroupSetName,
+            biosampleId=biosampleId)
 
     def initRnaQuantificationSet(self):
         """
         Initialize an empty RNA quantification set
         """
-        pass
-        # store = rnaseq2ga.RnaSqliteStore(self._args.filePath)
-        # store.createTables()
+        store = rnaseq2ga.RnaSqliteStore(self._args.filePath)
+        store.createTables()
 
     def addRnaQuantificationSet(self):
         """
         Adds an rnaQuantificationSet into this repo
         """
-        pass
-        # self._openRepo()
-        # dataset = self._repo.getDatasetByName(self._args.datasetName)
-        # if self._args.name is None:
-        #     name = getNameFromPath(self._args.filePath)
-        # else:
-        #     name = self._args.name
-        # rnaQuantificationSet = rna_quantification.SqliteRnaQuantificationSet(
-        #     dataset, name)
-        # referenceSetName = self._args.referenceSetName
-        # if referenceSetName is None:
-        #     raise exceptions.RepoManagerException(
-        #         "A reference set name must be provided")
-        # referenceSet = self._repo.getReferenceSetByName(referenceSetName)
-        # rnaQuantificationSet.setReferenceSet(referenceSet)
-        # rnaQuantificationSet.populateFromFile(self._args.filePath)
-        # rnaQuantificationSet.setAttributes(json.loads(self._args.attributes))
-        # self._updateRepo(
-        #     self._repo.insertRnaQuantificationSet, rnaQuantificationSet)
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        if self._args.name is None:
+            name = getNameFromPath(self._args.filePath)
+        else:
+            name = self._args.name
+        rnaQuantificationSet = rna_quantification.SqliteRnaQuantificationSet(
+            dataset, name)
+        referenceSetName = self._args.referenceSetName
+        if referenceSetName is None:
+            raise exceptions.RepoManagerException(
+                "A reference set name must be provided")
+        referenceSet = self._repo.getReferenceSetByName(referenceSetName)
+        rnaQuantificationSet.setReferenceSet(referenceSet)
+        rnaQuantificationSet.populateFromFile(self._args.filePath)
+        rnaQuantificationSet.setAttributes(json.loads(self._args.attributes))
+        self._updateRepo(
+            self._repo.insertRnaQuantificationSet, rnaQuantificationSet)
 
     def removeRnaQuantificationSet(self):
         """
         Removes an rnaQuantificationSet from this repo
         """
-        pass
-        # self._openRepo()
-        # dataset = self._repo.getDatasetByName(self._args.datasetName)
-        # rnaQuantSet = dataset.getRnaQuantificationSetByName(
-        #     self._args.rnaQuantificationSetName)
-        #
-        # def func():
-        #     self._updateRepo(self._repo.removeRnaQuantificationSet,
-        #                      rnaQuantSet)
-        # self._confirmDelete(
-        #     "RnaQuantificationSet", rnaQuantSet.getLocalId(), func)
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        rnaQuantSet = dataset.getRnaQuantificationSetByName(
+            self._args.rnaQuantificationSetName)
+
+        def func():
+            self._updateRepo(self._repo.removeRnaQuantificationSet,
+                             rnaQuantSet)
+        self._confirmDelete(
+            "RnaQuantificationSet", rnaQuantSet.getLocalId(), func)
 
     #
     # Methods to simplify adding common arguments to the parser.
@@ -1001,11 +969,11 @@ class RepoManager(object):
             "featureSetName",
             help="the name of the feature set")
 
-    # @classmethod
-    # def addContinuousSetNameArgument(cls, subparser):
-    #     subparser.add_argument(
-    #         "continuousSetName",
-    #         help="the name of the continuous set")
+    @classmethod
+    def addContinuousSetNameArgument(cls, subparser):
+        subparser.add_argument(
+            "continuousSetName",
+            help="the name of the continuous set")
 
     @classmethod
     def addIndividualNameArgument(cls, subparser):
@@ -1485,28 +1453,27 @@ class RepoManager(object):
         cls.addFeatureSetNameArgument(removeFeatureSetParser)
         cls.addForceOption(removeFeatureSetParser)
 
-        # addContinuousSetParser = common_cli.addSubparser(
-        #     subparsers, "add-continuousset",
-        #     "Add a continuous set to the data repo")
-        # addContinuousSetParser.set_defaults(runner="addContinuousSet")
-        # cls.addRepoArgument(addContinuousSetParser)
-        # cls.addDatasetNameArgument(addContinuousSetParser)
-        # cls.addRelativePathOption(addContinuousSetParser)
-        # cls.addFilePathArgument(
-        #     addContinuousSetParser,
-        #     "The path to the file contianing the continuous data ")
-        # cls.addReferenceSetNameOption(addContinuousSetParser,
-        #                               "continuous set")
-        # cls.addClassNameOption(addContinuousSetParser, "continuous set")
+        addContinuousSetParser = common_cli.addSubparser(
+            subparsers, "add-continuousset",
+            "Add a continuous set to the data repo")
+        addContinuousSetParser.set_defaults(runner="addContinuousSet")
+        cls.addRepoArgument(addContinuousSetParser)
+        cls.addDatasetNameArgument(addContinuousSetParser)
+        cls.addRelativePathOption(addContinuousSetParser)
+        cls.addFilePathArgument(
+            addContinuousSetParser,
+            "The path to the file contianing the continuous data ")
+        cls.addReferenceSetNameOption(addContinuousSetParser, "continuous set")
+        cls.addClassNameOption(addContinuousSetParser, "continuous set")
 
-        # removeContinuousSetParser = common_cli.addSubparser(
-        #     subparsers, "remove-continuousset",
-        #     "Remove a continuous set from the repo")
-        # removeContinuousSetParser.set_defaults(runner="removeContinuousSet")
-        # cls.addRepoArgument(removeContinuousSetParser)
-        # cls.addDatasetNameArgument(removeContinuousSetParser)
-        # cls.addContinuousSetNameArgument(removeContinuousSetParser)
-        # cls.addForceOption(removeContinuousSetParser)
+        removeContinuousSetParser = common_cli.addSubparser(
+            subparsers, "remove-continuousset",
+            "Remove a continuous set from the repo")
+        removeContinuousSetParser.set_defaults(runner="removeContinuousSet")
+        cls.addRepoArgument(removeContinuousSetParser)
+        cls.addDatasetNameArgument(removeContinuousSetParser)
+        cls.addContinuousSetNameArgument(removeContinuousSetParser)
+        cls.addForceOption(removeContinuousSetParser)
 
         addBiosampleParser = common_cli.addSubparser(
             subparsers, "add-biosample", "Add a Biosample to the dataset")

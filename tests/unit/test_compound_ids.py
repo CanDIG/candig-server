@@ -457,7 +457,6 @@ class TestCompoundIds(unittest.TestCase):
         self.assertEqual(cid.feature_set, "b")
         self.verifyParseFailure(idStr, datamodel.FeatureSetCompoundId)
 
-    @unittest.skip("Disabled")
     def testContinuousSet(self):
         continuousSet = self.getContinuousSet()
         dataset = continuousSet.getParentContainer()
@@ -472,7 +471,6 @@ class TestCompoundIds(unittest.TestCase):
         self.assertEqual(cid.dataset_id, dataset.getId())
         self.assertEqual(cid.continuous_set_id, continuousSet.getId())
 
-    @unittest.skip("Disabled")
     def testContinuous(self):
         idStr = '["a","b"]'
         obfuscated = datamodel.CompoundId.obfuscate(idStr)
@@ -481,7 +479,6 @@ class TestCompoundIds(unittest.TestCase):
         self.assertEqual(cid.continuous_set, "b")
         self.verifyParseFailure(idStr, datamodel.ContinuousSetCompoundId)
 
-    @unittest.skip("Disabled")
     def testRnaQuantification(self):
         rnaQuantification = self.getRnaQuantification()
         rnaQuantificationSet = rnaQuantification.getParentContainer()
@@ -499,7 +496,6 @@ class TestCompoundIds(unittest.TestCase):
             cid.rna_quantification_set_id, rnaQuantificationSet.getId())
         self.assertEqual(cid.rna_quantification_id, rnaQuantification.getId())
 
-    @unittest.skip("Disabled")
     def testRnaQuantificationParse(self):
         idStr = '["a","b","c"]'
         obfuscated = datamodel.CompoundId.obfuscate(idStr)
@@ -509,7 +505,6 @@ class TestCompoundIds(unittest.TestCase):
         self.assertEqual(cid.rna_quantification, "c")
         self.verifyParseFailure(idStr, datamodel.RnaQuantificationCompoundId)
 
-    @unittest.skip("Disabled")
     def testExpressionLevel(self):
         expressionLevel = self.getExpressionLevel()
         rnaQuantification = expressionLevel.getParentContainer()
@@ -529,7 +524,6 @@ class TestCompoundIds(unittest.TestCase):
         self.assertEqual(
             cid.expression_level_id, expressionLevel.getLocalId())
 
-    @unittest.skip("Disabled")
     def testExpressionLevelParse(self):
         idStr = '["a","b","c","d"]'
         obfuscated = datamodel.CompoundId.obfuscate(idStr)

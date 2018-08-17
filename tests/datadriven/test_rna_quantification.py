@@ -20,8 +20,6 @@ import tests.paths as paths
 
 import ga4gh.schemas.protocol as protocol
 
-import unittest
-
 
 _datasetName = "ds"
 
@@ -83,7 +81,6 @@ def testRnaQuantification():
         yield test
 
 
-@unittest.skip("Disabled")
 class RnaQuantificationTest(datadriven.DataDrivenTest):
     """
     Data driven test class for rna quantification. Builds an alternative model
