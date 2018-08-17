@@ -13,8 +13,6 @@ import ga4gh.server.response_builder as response_builder
 
 import ga4gh.schemas.protocol as protocol
 
-import json
-
 
 class Backend(object):
     """
@@ -1649,32 +1647,36 @@ class Backend(object):
 
     def runSearchVariantsByGeneName(self, request, return_mimetype, access_map):
         """
+        Returns a SearchVariantsByGeneNameResponse for the specified
+        SearchVariantsByGeneNameRequest object.
         """
-        # TODO put request object into protocol and make this function a generator
-        request = json.loads(request)
-        return_object = []
-        result_object = {"variants": return_object}
+        return self.runSearchRequest(
+            request, protocol.SearchVariantsByGeneNameRequest,
+            protocol.SearchVariantsByGeneNameResponse,
+            self.runSearchVariantsByGeneNameGenerator,
+            access_map,
+            return_mimetype)
 
-        dataset = self.getDataRepository().getDataset(request['datasetId'])
-        #
+    def runSearchVariantsByGeneNameGenerator(self, request, access_map):
+        """
+        Returns a generator over the geneName
+        defined by the specified request.
+        """
+        results = []
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
         variantsets = dataset.getVariantSets()
-        #
+
         for featureset in dataset.getFeatureSets():
-            for feature in featureset.getFeatures(geneSymbol=request['gene']):
-                #
+            for feature in featureset.getFeatures(geneSymbol=request.gene):
                 for variantset in variantsets:
                     for variant in variantset.getVariants(
                             referenceName=feature.reference_name.replace('chr', ''),
                             startPosition=feature.start,
                             endPosition=feature.end,
                     ):
-                        return_object.append(protocol.toJson(variant))
+                        results.append(variant)
 
-        # temp fix until generator is implemented and properly throw error
-        if not return_object:
-            raise exceptions.NotFoundException
-
-        return json.dumps(result_object)
+        return self._protocolListGenerator(request, results)
 
     def getUserAccessTier(self, dataset, access_map):
         """
