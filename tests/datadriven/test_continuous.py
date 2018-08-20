@@ -19,7 +19,6 @@ import ga4gh.server.exceptions as exceptions
 import tests.paths as paths
 
 
-@unittest.skip("Disabled")
 class TestContinuous(unittest.TestCase):
     """
     Unit tests for continuous data
@@ -41,8 +40,7 @@ class TestContinuous(unittest.TestCase):
         self._bigWigFile = dataDir + "/bigwig_1.bw"
 
     def testReadWiggle(self):
-        continuousObj = continuous.WiggleReader(
-                            'chr19', 49307698, 49308020)
+        continuousObj = continuous.WiggleReader('chr19', 49307698, 49308020)
         obj = continuousObj.wiggleFileToProtocol(self._wiggleFile)
         self.assertEqual(obj.start, 49307700)
         self.assertEqual(obj.values[0], 900)
@@ -58,7 +56,7 @@ class TestContinuous(unittest.TestCase):
         for obj in generator:
             for i, value in enumerate(obj.values):
                 if not math.isnan(value):
-                    tuples.append((obj.start+i, value))
+                    tuples.append((obj.start + i, value))
         return tuples
 
     def testReadBigWig(self):
@@ -73,22 +71,19 @@ class TestContinuous(unittest.TestCase):
 
     def testReadBigWigAllNan(self):
         continuousObj = continuous.BigWigDataSource(self._bigWigFile)
-        generator = continuousObj.bigWigToProtocol(
-                                        "chr19", 49305927, 49305997)
+        generator = continuousObj.bigWigToProtocol("chr19", 49305927, 49305997)
         tuples = self.getTuples(generator)
         self.assertEqual(len(tuples), 0)
 
     @raises(exceptions.ReferenceRangeErrorException)
     def testReadBigWigInvalidRange(self):
         continuousObj = continuous.BigWigDataSource(self._bigWigFile)
-        generator = continuousObj.bigWigToProtocol(
-                                        "chr19", 493059030, 49305934)
+        generator = continuousObj.bigWigToProtocol("chr19", 493059030, 49305934)
         next(generator)
 
     def testReadBigWigOutsideReferenceRange(self):
         continuousObj = continuous.BigWigDataSource(self._bigWigFile)
-        generator = continuousObj.bigWigToProtocol(
-                                    "chr19", 49306897, 493059304)
+        generator = continuousObj.bigWigToProtocol("chr19", 49306897, 493059304)
         tuples = self.getTuples(generator)
         self.assertEqual(len(tuples), 5)
 
@@ -104,6 +99,5 @@ class TestContinuous(unittest.TestCase):
         Test for catching bad chromosome names.
         """
         continuousObj = continuous.BigWigDataSource(self._bigWigFile)
-        generator = continuousObj.bigWigToProtocol(
-                                            "chr&19", 49305602, 49308000)
+        generator = continuousObj.bigWigToProtocol("chr&19", 49305602, 49308000)
         next(generator)

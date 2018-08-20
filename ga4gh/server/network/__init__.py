@@ -32,7 +32,6 @@ def getInitialPeerList(filePath, logger=None):
             ret = textFile.readlines()
     except:
         pass
-
     if len(ret) == 0:
         if logger:
             logger.warn("Couldn't load the initial "

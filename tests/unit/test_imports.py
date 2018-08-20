@@ -170,6 +170,8 @@ class ImportGraphLayerChecker(object):
             'ga4gh/server/datarepo.py',
             'ga4gh/server/paging.py',
             'ga4gh/server/response_builder.py',
+            'ga4gh/server/DP.py',
+            'ga4gh/server/NCIT.py'
         ],
         'exceptions': [
             'ga4gh/server/exceptions.py',
@@ -187,9 +189,10 @@ class ImportGraphLayerChecker(object):
             'ga4gh/server/datamodel/continuous.py',
             'ga4gh/server/datamodel/genotype_phenotype.py',
             'ga4gh/server/datamodel/genotype_phenotype_featureset.py',
-            'ga4gh/server/datamodel/peers.py',
             'ga4gh/server/gff3.py',
             'ga4gh/server/sqlite_backend.py',
+            'ga4gh/server/datamodel/peers.py',
+            'ga4gh/server/datamodel/clinical_metadata.py'
         ],
         'libraries': [
             'ga4gh/server/converters.py',
@@ -565,7 +568,7 @@ class SnakefoodScanner(object):
                 ERROR_UNUSED, info),
             ("Modules that could not be imported:",
                 ERROR_IMPORT, warning),
-            ]
+        ]
         if self.optsVerbose >= 2:
             reports.append(
                 ("Symbols that could not be imported as modules:",

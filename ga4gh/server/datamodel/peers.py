@@ -61,7 +61,11 @@ class Peer(object):
         return self
 
     def getUrl(self):
-        return self._url
+        # Make sure that url ends with "/"
+        url = self._url
+        if not url.endswith('/'):
+            url = ''.join((url, '/'))
+        return url
 
     def setAttributes(self, attributes):
         """
@@ -96,7 +100,7 @@ class Peer(object):
         """
         return self._attributes
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         peer = protocol.Peer()
         peer.url = self._url
         self.serializeAttributes(peer)

@@ -20,8 +20,6 @@ import tests.paths as paths
 
 import ga4gh.schemas.protocol as protocol
 
-import unittest
-
 
 _datasetName = "ds"
 
@@ -83,7 +81,6 @@ def testRnaQuantification():
         yield test
 
 
-@unittest.skip("Disabled")
 class RnaQuantificationTest(datadriven.DataDrivenTest):
     """
     Data driven test class for rna quantification. Builds an alternative model
@@ -192,9 +189,7 @@ class RnaQuantificationTest(datadriven.DataDrivenTest):
         storeDb = rnaseq2ga.RnaSqliteStore(dbName)
         storeDb.createTables()
 
-        testTsvFile = os.path.join(
-                            paths.testDataDir,
-                            "datasets/dataset1/rnaQuant/rsem_test_data.tsv")
+        testTsvFile = os.path.join(paths.testDataDir, "datasets/dataset1/rnaQuant/rsem_test_data.tsv")
         rnaQuantId = "rqsId"
         rnaseq2ga.rnaseq2ga(testTsvFile, dbName, rnaQuantId,
                             'rsem', featureType="gene")

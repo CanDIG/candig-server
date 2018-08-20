@@ -347,8 +347,8 @@ class AbstractFileDownloader(object):
         referenceSet.populateFromFile(self.fastaFilePath)
         referenceSet.setDescription("Subset of GRCh37 used for demonstration")
         referenceSet.setSpeciesFromJson(
-                '{"id": "9606",'
-                + '"term": "Homo sapiens", "source_name": "NCBI"}')
+            '{"id": "9606",'
+            + '"term": "Homo sapiens", "source_name": "NCBI"}')
         for reference in referenceSet.getReferences():
             reference.setSpeciesFromJson(
                 '{"id": "9606",'

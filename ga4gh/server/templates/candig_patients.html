@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>CanDIG - Patients</title>
+      <link rel=stylesheet type=text/css href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+      <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+      <script src="https://code.highcharts.com/highcharts.js"></script>
+      <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+      <link rel=stylesheet type=text/css href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+      <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+      <style>
+         .single {
+         background-color: olive;
+         }
+         .double {
+         background-color: aqua;
+         }
+         tr:nth-child(even) {
+         background-color: #dddddd !important;
+         }
+         #backButton {
+         border-radius: 4px;
+         padding: 8px;
+         border: none;
+         font-size: 16px;
+         background-color: #2eacd1;
+         color: white;
+         position: absolute;
+         top: 10px;
+         right: 10px;
+         cursor: pointer;
+         }
+         .invisible {
+         display: none;
+         }
+         #patientTable_wrapper{
+            margin-top: 10px;
+/*            border: solid;
+            border-width: 1px;*/
+         }
+         #patientTable_length{
+            display: none;
+         }
+         #patientTable_filter {
+            display: none;
+         }
+         #patientTable_info {
+            display: none;
+         }
+         #patientTable_paginate {
+            display: none;
+         }
+/*         #mytable_wrapper {
+            border: solid;
+            border-width: 1px;
+         }*/
+         .card {
+            border: solid;
+            border-width: 1px;
+            height: 15rem;
+            margin-bottom: 3px;
+         }
+      </style>
+   </head>
+   <body>
+      <!-- A grey horizontal navbar that becomes vertical on small screens -->
+      <nav class="navbar navbar-expand-sm bg-light">
+         <!-- Links -->
+         <ul class="navbar-nav">
+            <li class="nav-item">
+               <a class="nav-link" href="candig">Homepage</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="gene_search">Gene search</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="candig_patients">Patient overview</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="logout_oidc">Logout</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="igv">IGV</a>
+            </li>
+         </ul>
+      </nav>
+      <div class="container-fluid">
+         <h2 style="margin-bottom: 10px">CanDIG 0.07 - Overview of Patients</h2>
+         <div class="row" style="margin-top:50px; margin-bottom:50px">
+            <div class="col-sm-3">
+               <div class="card">
+                  <div id="genderGraph" style="max-width: 100%; height: 250px; auto;"></div>
+               </div>
+               <div class="card">
+                  <div id="provinceGraph" style="max-width: 100%; height: 250px; auto;"></div>
+               </div>
+               <div class="card">
+                  <div id="raceGraph" style="max-width: 100%; height: 250px; auto;"></div>
+               </div>
+            </div>
+            <div class="col-sm-9">
+                <table id="mytable"></table>
+                <table id="patientTable"></table>
+            </div>
+         </div>
+
+      </div>
+   </body>
+   <script type="text/javascript">
+      var statusCode = 0;
+      var listOfRace = [];
+      var listOfProvinces = [];
+      var listOfGenders = [];
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "patients/search", true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('Authorization', 'Bearer '+'{{ session_id }}');
+      xhr.send(JSON.stringify({
+          'datasetId': 'WyJNRVRBREFUQSJd'
+      }));
+      xhr.onload = function() {
+          var data = JSON.parse(this.responseText);
+      
+          var patientsDataset = data['results'][0]['patients'];
+      
+          var tbl = $('<table/>').attr("id", "mytable");
+      
+          var th = '<thead><tr><th scope="col">Patient ID</th><th scope="col">Gender</th><th scope="col">Date of Death</th><th scope="col">Province of Residence</th> <th scope="col">Date of Birth</th><th scope="col">Race</th><th scope="col">OEE</th></tr></thead><tbody>';
+      
+          $("#mytable").append(th);
+      
+          for (var i = 0; i < patientsDataset.length; i++) {
+              listOfRace.push(patientsDataset[i]["race"]);
+              listOfProvinces.push(patientsDataset[i]["provinceOfResidence"]);
+              listOfGenders.push(patientsDataset[i]["gender"]);
+      
+              var tr = "<tr>";
+              var td0 = '<td scope="col">' + patientsDataset[i]["patientId"] + "</td>";
+              var tdGender = '<td scope="col">' + patientsDataset[i]["gender"] + "</td>";
+              var td1 = '<td scope="col">' + patientsDataset[i]["dateOfDeath"] + "</td>";
+              var td2 = '<td scope="col">' + patientsDataset[i]["provinceOfResidence"] + "</td>";
+              var td3 = '<td scope="col">' + patientsDataset[i]["dateOfBirth"] + "</td>";
+              var td4 = '<td scope="col">' + patientsDataset[i]["race"] + "</td>";
+              var td5 = '<td scope="col">' + patientsDataset[i]["occupationalOrEnvironmentalExposure"] + "</td>";
+              var td6 = "</tr>";
+      
+              $("#mytable").append(tr + td0 + tdGender + td1 + td2 + td3 + td4 + td5 + td6);
+          }
+      
+          categoriesDrawer("raceGraph", "Ethnic Groups", listOfRace);
+          categoriesDrawer("provinceGraph", "Provinces", listOfProvinces);
+          categoriesDrawer("genderGraph", "Genders", listOfGenders);
+      
+          $("#mytable").append('</tbody><tfoot><tr><th scope="col">Patient ID</th><th scope="col">Gender</th><th scope="col">Date of Death</th><th scope="col">Province of Residence</th> <th scope="col">Date of Birth</th><th scope="col">Race</th><th scope="col">OEE</th></tr></tfoot>');
+      
+          $(document).ready(function() {
+              $('#mytable').DataTable({
+                  initComplete: function () {
+                      this.api().columns().every( function () {
+                          var column = this;
+                          var select = $('<select><option value=""></option></select>')
+                              .appendTo( $(column.footer()).empty() )
+                              .on( 'change', function () {
+                                  var val = $.fn.dataTable.util.escapeRegex(
+                                      $(this).val()
+                                  );
+           
+                                  column
+                                      .search( val ? '^'+val+'$' : '', true, false )
+                                      .draw();
+                              } );
+           
+                          column.data().unique().sort().each( function ( d, j ) {
+                              select.append( '<option value="'+d+'">'+d+'</option>' )
+                          } );
+                      } );
+                  }
+              });
+          });
+      
+          $('#mytable tbody').on('click', 'tr', function () {
+              var table = $("#mytable").DataTable();
+              var tempData = table.row( this ).data()[0];
+              patientInfoFetcher(tempData);
+          });
+      
+      }
+
+      function highChartSeriesObjectMaker(nameArray, dataArray){
+        var tempObj = {};
+        var seriesObjList = [];
+        var tempDataArray = [];
+            for (var i = 0; i < nameArray.length; i++){
+                tempObj = {};
+                //tempDataArray = [];
+                tempObj['name'] = nameArray[i];
+                //tempDataArray.push(dataArray[i]);
+                tempObj['y'] = dataArray[i];
+                seriesObjList.push(tempObj);
+            }
+            return seriesObjList;
+      }
+
+      function categoriesDrawer(elementId, titleText, arrayToDraw) {
+          var tempCats = Object.keys(categoriesCounter(arrayToDraw));
+          var tempVals = Object.values(categoriesCounter(arrayToDraw));
+          var tempObjList = highChartSeriesObjectMaker(tempCats, tempVals);
+          drillDownDrawer(elementId, titleText, tempCats, "", tempObjList, []);
+      }
+      
+      function categoriesCounter(arrayToCount) {
+          var result = {};
+          for (var j = 0; j < arrayToCount.length; j++) {
+              if (!result[arrayToCount[j]]) {
+                  result[arrayToCount[j]] = 0;
+              }
+              result[arrayToCount[j]]++;
+          }
+          return result;
+      }
+      
+      function drillDownDrawer(elementId, titleText, categories, seriesName, seriesList, drillDownList) {
+        var lastSearch = "";
+          Highcharts.chart(elementId, {
+              chart: {
+                  type: 'pie'
+              },
+              title: {
+                  text: titleText
+              },
+              credits: {
+                  enabled: false
+              },
+              xAxis: {
+                  categories: categories
+              },
+      
+              legend: {
+                  enabled: false
+              },
+      
+              plotOptions: {
+                  pie: {
+                      allowPointSelect: true,
+                      depth: 35,
+                      dataLabels: {
+                          enabled: true
+                      },
+                      point: {
+                          events: {
+                            click: function () {
+                                if (lastSearch != this.name){
+                                    $('#mytable').DataTable().search( this.name ).draw();
+                                    lastSearch = this.name;
+                                }
+                                else if (lastSearch == this.name) {
+                                    $('#mytable').DataTable().search( "" ).draw();
+                                    lastSearch = "";
+                                }
+                            }
+                          }
+                      }
+                  }
+              },
+      
+              series: [{
+                  // type: 'pie',
+                  name: seriesName,
+                  colorByPoint: true,
+                  data: seriesList
+              }],
+              drilldown: {
+                  series: drillDownList
+              }
+          });
+      }
+      
+      function patientInfoFetcher(patientId) {
+      
+          if (statusCode == 1) {
+              var table = $("#patientTable").DataTable();
+              table.destroy();
+              document.getElementById("patientTable").innerHTML = "";
+          }
+      
+              xhr.open("POST", "samples/search", true);
+              xhr.setRequestHeader('Content-Type', 'application/json');
+              xhr.setRequestHeader('Accept', 'application/json');
+              xhr.send(JSON.stringify({
+                  'datasetId': 'WyJNRVRBREFUQSJd',
+                  'patientId': patientId
+              }));
+              xhr.onload = function() {
+                  var data = JSON.parse(this.responseText);
+                  var sampleDataset = data['results'][0]['samples'];
+      
+                  xhr.open("POST", "treatments/search", true);
+                  xhr.setRequestHeader('Content-Type', 'application/json');
+                  xhr.setRequestHeader('Accept', 'application/json');
+                  xhr.send(JSON.stringify({
+                      'datasetId': 'WyJNRVRBREFUQSJd',
+                      'patientId': patientId
+                  }));
+                  xhr.onload = function() {
+                      var tempRes = JSON.parse(this.responseText);
+                      var treatmentDataset = tempRes['results'][0]['treatments'];
+      
+                      var tbl = $('<table/>').attr("id", "patientTable");
+                      var th = '<thead><tr><th scope="col">Patient ID</th><th scope="col">Collection Hospital</th><th scope="col">Collection Date</th><th scope="col">Cancer Type</th><th scope="col">Response to treatment</th><th scope="col">Drug list</th><th scope="col">Therapeutic Modality </th></tr></thead><tbody>';
+                      
+                      $("#patientTable").append(th);
+      
+                      for (var i = 0; i < sampleDataset.length; i++) {
+      
+                          var tr = "<tr>";
+                          var td0 = '<td scope="col">' + sampleDataset[i]["patientId"] + "</td>";
+                          var td1 = '<td scope="col">' + sampleDataset[i]["collectionHospital"] + "</td>";
+                          var td2 = '<td scope="col">' + sampleDataset[i]["collectionDate"] + "</td>";
+                          var td7 = '<td scope="col">' + sampleDataset[i]["cancerType"] + "</td>";
+      
+                          var td3 = '<td scope="col">' + treatmentDataset[i]["responseToTreatment"] + "</td>";
+                          var td4 = '<td scope="col">' + treatmentDataset[i]["drugListOrAgent"] + "</td>";
+                          var td5 = '<td scope="col">' + treatmentDataset[i]["therapeuticModality"] + "</td>";
+                          var td6 = "</tr>";
+      
+                          $("#patientTable").append(tr + td0 + td1 + td2 + td7 + td3 + td4 + td5 + td6);                
+                      }
+      
+                      $("#patientTable").append('</tbody>')
+      
+                      $(document).ready(function() {
+                          $("#patientTable").DataTable();
+                          statusCode = 1;
+                      });
+      
+                  }
+              }
+      
+      }
+      
+   </script>
+</html>

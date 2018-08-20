@@ -9,6 +9,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import datetime
+# import socket
 
 
 class BaseConfig(object):
@@ -18,7 +19,7 @@ class BaseConfig(object):
     MAX_CONTENT_LENGTH = 2 * 1024 * 1024  # 2MB
     MAX_RESPONSE_LENGTH = 1024 * 1024  # 1MB
     REQUEST_VALIDATION = True
-    DEFAULT_PAGE_SIZE = 100
+    DEFAULT_PAGE_SIZE = 300
     DATA_SOURCE = "empty://"
 
     # Options for the simulated backend.
@@ -38,7 +39,6 @@ class BaseConfig(object):
     FILE_HANDLE_CACHE_MAX_SIZE = 50
 
     LANDING_MESSAGE_HTML = "landing_message.html"
-    INITIAL_PEERS = "ga4gh/server/templates/initial_peers.txt"
 
 
 class ComplianceConfig(BaseConfig):
@@ -54,15 +54,28 @@ class DevelopmentConfig(BaseConfig):
     Configuration used for development.
     """
     DATA_SOURCE = "ga4gh-example-data/registry.db"
+    # DATA_SOURCE = "1000genomes_partition/registry.db"
     DEBUG = True
+    # INITIAL_PEERS =
+    #   "/srv/ga4gh/server/ga4gh/server/templates/initial_peers.txt"
+    INITIAL_PEERS = "ga4gh/server/templates/initial_peers.txt"
 
 
 class LocalOidConfig(DevelopmentConfig):
     """
     Configuration used for developing against a local OIDC server
     """
-    SECRET_KEY = "super_secret"
-    OIDC_PROVIDER = "https://localhost:8443"
+    SECRET_KEY = "key"
+    OIDC_PROVIDER = "http://localhost:8080"
+
+
+class KeycloakOidConfig(DevelopmentConfig):
+    """
+    Configuration used for OIDC with Keycloak server
+    """
+    # Unsure what this does, but it is needed.
+    SECRET_KEY = "key"
+    KEYCLOAK = True
 
 
 class SimulatedConfig(BaseConfig):
@@ -106,8 +119,9 @@ class TestAuth0Config(DevelopmentConfig):
     AUTH0_CALLBACK_URL = "http://localhost:8000/callback"
     AUTH0_HOST = "david4096.auth0.com"
     AUTH0_CLIENT_ID = "r99hdj5hhkazgePB5oMYK9Sv4NaUwwYp"
-    AUTH0_CLIENT_SECRET = \
-        "KeV2tMyGaSgLeOhpoGs_XLH65Tfw43yBjT8DIpaTxXAKmd_bguJwXA6T7D0iYfgB"
+    AUTH0_CLIENT_SECRET = (
+        "KeV2tMyGaSgLeOhpoGs_XLH65Tfw43yBjT8DIpaTxXAKmd_bg",
+        "uJwXA6T7D0iYfgB")
     AUTH0_AUTHORIZED_EMAILS = "davidcs@ucsc.edu,your@email.com"
 
 
@@ -117,16 +131,24 @@ class TestConfig(BaseConfig):
     """
     TESTING = True
     REQUEST_VALIDATION = True
+    TYK_ENABLED = False
+    TYK_SERVER = TYK_LISTEN_PATH = KC_SERVER = KC_LOGIN_REDIRECT = ''
 
 
 class TestOidcConfig(TestConfig):
     SECRET_KEY = "super_secret"
-    OIDC_PROVIDER = "https://accounts.example.com"
-    OIDC_CLIENT_ID = "XXX"
-    OIDC_CLIENT_SECRET = "XXX"
-    OIDC_AUTHZ_ENDPOINT = "https://accounts.example.com/auth"
-    OIDC_TOKEN_ENDPOINT = "https://accounts.example.com/token"
-    OIDC_TOKEN_REV_ENDPOINT = "https://accounts.example.com/revoke"
+    OIDC_PROVIDER = "http://localhost:8080/auth/realms/demo"
+    OIDC_CLIENT_ID = "demo"
+    OIDC_CLIENT_SECRET = "xxx"
+    OIDC_AUTHZ_ENDPOINT = (
+        "http://localhost:8080/auth/realms/demo/protocol/",
+        "openid-connect/auth")
+    OIDC_TOKEN_ENDPOINT = (
+        "http://localhost:8080/auth/realms/demo/protocol/",
+        "openid-connect/token")
+    OIDC_TOKEN_REV_ENDPOINT = (
+        "http://localhost:8080/auth/realms/demo/",
+        "protocol/openid-connect/token/introspect")
 
 
 class FlaskDefaultConfig(object):
@@ -157,3 +179,40 @@ class FlaskDefaultConfig(object):
     TRAP_BAD_REQUEST_ERRORS = False
     TRAP_HTTP_EXCEPTIONS = False
     USE_X_SENDFILE = False
+
+
+class TykConfig(KeycloakOidConfig):
+    """
+    Configuration to use when forwarding requests through the API gateway.
+    This also requires that keycloak config is being used and is set up properly.
+
+    To start a dev flask server using this config add in launch option, -c TykConfig
+    """
+
+    TYK_ENABLED = True
+    TYK_SERVER = 'http://ga4ghdev01.bcgsc.ca:8008'
+    TYK_LISTEN_PATH = '/candig-dev'
+
+    # Keycloak settings with redirection through tyk
+    KC_REALM = 'CanDIG'
+    KC_SERVER = 'http://ga4ghdev01.bcgsc.ca:8080'
+    KC_SCOPE = 'openid+email'
+    KC_RTYPE = 'code'
+    KC_CLIENT_ID = 'ga4gh'
+    KC_RMODE = 'form_post'
+    KC_REDIRECT = TYK_SERVER + TYK_LISTEN_PATH + '/login_oidc'
+    KC_LOGIN_REDIRECT = '/auth/realms/{0}/protocol/openid-connect/auth?scope={1}&response_type={2}&client_id={3}&response_mode={4}&redirect_uri={5}'.format(
+        KC_REALM, KC_SCOPE, KC_RTYPE, KC_CLIENT_ID, KC_RMODE, KC_REDIRECT
+    )
+
+
+class NoAuth(DevelopmentConfig):
+    """
+    Configuration to use when not using API gateway to forward requests.
+    This means requests do not need to be authenticated. For dev only.
+
+    To start a dev flask server using this config add in launch option, -c NoAuth
+    """
+
+    TYK_ENABLED = False
+    TYK_SERVER = TYK_LISTEN_PATH = KC_SERVER = KC_LOGIN_REDIRECT = ''

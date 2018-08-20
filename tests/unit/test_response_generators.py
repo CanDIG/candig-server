@@ -49,18 +49,18 @@ class TestVariantsGenerator(unittest.TestCase):
             self.dataset, 'notFound')
         self.request.variant_set_id = variantSet.getId()
         with self.assertRaises(exceptions.VariantSetNotFoundException):
-            self.backend.variantsGenerator(self.request)
+            self.backend.variantsGenerator(self.request, {})
 
     def testVariantSetEmpty(self):
         # a variant set with no variants should return none
         self._initVariantSet(0)
-        iterator = self.backend.variantsGenerator(self.request)
+        iterator = self.backend.variantsGenerator(self.request, {})
         self.assertIsNone(next(iterator, None))
 
     def testVariantSetOneVariant(self):
         # a variant set with one variant should return it and a null pageToken
         self._initVariantSet(1)
-        iterator = self.backend.variantsGenerator(self.request)
+        iterator = self.backend.variantsGenerator(self.request, {})
         variant, nextPageToken = next(iterator)
         self.assertIsNotNone(variant)
         self.assertIsNone(nextPageToken)
@@ -70,7 +70,7 @@ class TestVariantsGenerator(unittest.TestCase):
         # a variant set with two variants should return the first with
         # a non-null pageToken and the second with a null pageToken
         self._initVariantSet(2)
-        iterator = self.backend.variantsGenerator(self.request)
+        iterator = self.backend.variantsGenerator(self.request, {})
         variant, nextPageToken = next(iterator)
         self.assertIsNotNone(variant)
         self.assertIsNotNone(nextPageToken)
@@ -123,25 +123,25 @@ class TestReadsGenerator(unittest.TestCase):
     def testNoReadGroupsNotSupported(self):
         # a request for no read groups should throw an exception
         with self.assertRaises(exceptions.BadRequestException):
-            self.backend.readsGenerator(self.request)
+            self.backend.readsGenerator(self.request, {})
 
     def testNonexistentReadGroup(self):
         # a request for a readGroup that doesn't exist should throw an error
         readGroup = reads.AbstractReadGroup(self.readGroupSet, 'notFound')
         self.request.read_group_ids.extend([readGroup.getId()])
         with self.assertRaises(exceptions.ReadGroupNotFoundException):
-            self.backend.readsGenerator(self.request)
+            self.backend.readsGenerator(self.request, {})
 
     def testReadGroupEmpty(self):
         # a readGroup with no reads should return none
         self._initReadGroup(0)
-        iterator = self.backend.readsGenerator(self.request)
+        iterator = self.backend.readsGenerator(self.request, {})
         self.assertIsNone(next(iterator, None))
 
     def testReadGroupOneRead(self):
         # a readGroup with one read should return it and a null nextPageToken
         self._initReadGroup(1)
-        iterator = self.backend.readsGenerator(self.request)
+        iterator = self.backend.readsGenerator(self.request, {})
         alignment, nextPageToken = next(iterator)
         self.assertIsNotNone(alignment)
         self.assertIsNone(nextPageToken)
@@ -151,7 +151,7 @@ class TestReadsGenerator(unittest.TestCase):
         # a readGroup with two reads should return the first with
         # a non-null pageToken and the second with a null pageToken
         self._initReadGroup(2)
-        iterator = self.backend.readsGenerator(self.request)
+        iterator = self.backend.readsGenerator(self.request, {})
         alignment, nextPageToken = next(iterator)
         self.assertIsNotNone(alignment)
         self.assertIsNotNone(nextPageToken)

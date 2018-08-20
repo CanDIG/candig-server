@@ -15,6 +15,7 @@ import ga4gh.client.client as client
 import ga4gh.common.utils as utils
 
 
+@unittest.skip('Disabling, client not used')
 class TestInterfacingLayer(unittest.TestCase):
     """
     Test fetching objects via the db and via the client return
@@ -94,8 +95,7 @@ class TestInterfacingLayer(unittest.TestCase):
 
     def testGetVariant(self):
         repoVariantSets = self._repo.allVariantSets()
-        referenceName = self._repo.getReferenceSets(
-            )[0].getReferences()[0].getName()
+        referenceName = self._repo.getReferenceSets()[0].getReferences()[0].getName()
         for variantSet in repoVariantSets:
             repoVariants = variantSet.getVariants(referenceName, 0, 2**32)
             for repoVariant in repoVariants:
@@ -123,7 +123,6 @@ class TestInterfacingLayer(unittest.TestCase):
             feature = self._client.get_feature(featureId)
             self.assertEqual(repoFeature, feature)
 
-    @unittest.skip("Disabled")
     def testGetContinuousSet(self):
         self._testGetMethod(
             self._repo.allContinuousSets, self._client.get_continuous_set)
@@ -136,19 +135,16 @@ class TestInterfacingLayer(unittest.TestCase):
         self._testGetMethod(
             self._repo.allReferences, self._client.get_reference)
 
-    @unittest.skip("Disabled")
     def testGetRnaQuantificationSet(self):
         self._testGetMethod(
             self._repo.allRnaQuantificationSets,
             self._client.get_rna_quantification_set)
 
-    @unittest.skip("Disabled")
     def testGetRnaQuantification(self):
         self._testGetMethod(
             self._repo.allRnaQuantifications,
             self._client.get_rna_quantification)
 
-    @unittest.skip("Disabled")
     def testGetExpressionLevel(self):
         self._testGetMethod(
             self._repo.allExpressionLevels,
@@ -224,7 +220,6 @@ class TestInterfacingLayer(unittest.TestCase):
             self._client.search_feature_sets,
             self._repo.getDatasets())
 
-    @unittest.skip("Disabled")
     def testSearchContinuousSets(self):
         self._testSearchMethodInContainer(
             'getContinuousSets',
@@ -324,21 +319,18 @@ class TestInterfacingLayer(unittest.TestCase):
             self._repo.allPhenotypeAssociationSets(),
             equalMethod='assertEqual')
 
-    @unittest.skip("Disabled")
     def testSearchRnaQuantificationSets(self):
         self._testSearchMethodInContainer(
             'getRnaQuantificationSets',
             self._client.search_rna_quantification_sets,
             self._repo.getDatasets())
 
-    @unittest.skip("Disabled")
     def testSearchRnaQuantifications(self):
         self._testSearchMethodInContainer(
             'getRnaQuantifications',
             self._client.search_rna_quantifications,
             self._repo.allRnaQuantificationSets())
 
-    @unittest.skip("Disabled")
     def testSearchExpressionLevels(self):
         self._testSearchMethodInContainer(
             'getExpressionLevels',

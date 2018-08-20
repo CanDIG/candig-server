@@ -277,7 +277,7 @@ class AbstractReadGroupSet(datamodel.DatamodelObject):
         """
         return self._referenceSet
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         """
         Returns the GA4GH protocol representation of this ReadGroupSet.
         """
@@ -493,7 +493,7 @@ class AbstractReadGroup(datamodel.DatamodelObject):
         self._updateTime = now
         self._biosampleId = None
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         """
         Returns the GA4GH protocol representation of this ReadGroup.
         """
@@ -629,7 +629,8 @@ class AbstractReadGroup(datamodel.DatamodelObject):
         """
         Returns the id of the experiment used for this read group
         """
-        return str(datamodel.ExperimentCompoundId(None, 'experiment'))
+        return str(random.randint(1, 2000000))
+#        return str(datamodel.ExperimentCompoundId(None, 'experiment'))
 
 
 class SimulatedReadGroup(AbstractReadGroup):

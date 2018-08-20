@@ -76,12 +76,7 @@ class BaseServerException(Exception):
     def __str__(self):
         return self.getMessage()
 
-
-#####################################################################
-#
 # Exceptions that occur in the normal operation of the server
-#
-#####################################################################
 
 
 class RuntimeException(BaseServerException):
@@ -252,6 +247,60 @@ class IndividualNotFoundException(NotFoundException):
     def __init__(self, individualId):
         self.message = "The requested Individual '{}' was not found".format(
             individualId)
+
+
+class PatientNotFoundException(NotFoundException):
+    def __init__(self, patientId):
+        self.message = "The requested Patient '{}' was not found".format(
+            patientId)
+
+
+class EnrollmentNotFoundException(NotFoundException):
+    def __init__(self, enrollmentId):
+        self.message = "The requested Enrollment '{}' was not found".format(
+            enrollmentId)
+
+
+class ConsentNotFoundException(NotFoundException):
+    def __init__(self, consentId):
+        self.message = "The requested Consent '{}' was not found".format(
+            consentId)
+
+
+class DiagnosisNotFoundException(NotFoundException):
+    def __init__(self, diagnosisId):
+        self.message = "The requested Diagnosis '{}' was not found".format(
+            diagnosisId)
+
+
+class SampleNotFoundException(NotFoundException):
+    def __init__(self, sampleId):
+        self.message = "The requested Sample '{}' was not found".format(
+            sampleId)
+
+
+class TreatmentNotFoundException(NotFoundException):
+    def __init__(self, treatmentId):
+        self.message = "The requested Treatment '{}' was not found".format(
+            treatmentId)
+
+
+class OutcomeNotFoundException(NotFoundException):
+    def __init__(self, outcomeId):
+        self.message = "The requested Outcome '{}' was not found".format(
+            outcomeId)
+
+
+class ComplicationNotFoundException(NotFoundException):
+    def __init__(self, complicationId):
+        self.message = "The requested Complication '{}' was not found".format(
+            complicationId)
+
+
+class TumourboardNotFoundException(NotFoundException):
+    def __init__(self, tumourboardId):
+        self.message = "The requested Tumourboard '{}' was not found".format(
+            tumourboardId)
 
 
 class AnnotationSetNotFoundException(NotFoundException):
@@ -656,12 +705,7 @@ class MultipleReferenceSetsInReadGroupSet(MalformedException):
             "'{}'; at most one referenceSet per file is allowed.".format(
                 fileName, referenceSetName, otherReferenceSetName))
 
-
-###############################################################
-#
 # Internal errors. These are exceptions that we regard as bugs.
-#
-###############################################################
 
 
 class ServerError(RuntimeException):
@@ -671,12 +715,7 @@ class ServerError(RuntimeException):
     httpStatus = 500
     message = "Internal Server Error"
 
-
-#####################################################################
-#
 # Repo manager exceptions
-#
-#####################################################################
 
 
 class RepoManagerException(Exception):

@@ -198,7 +198,7 @@ class AbstractReferenceSet(datamodel.DatamodelObject):
         else:
             return None
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         """
         Returns the GA4GH protocol representation of this ReferenceSet.
         """
@@ -341,7 +341,7 @@ class AbstractReference(datamodel.DatamodelObject):
         """
         return self._md5checksum
 
-    def toProtocolElement(self):
+    def toProtocolElement(self, tier=0):
         """
         Returns the GA4GH protocol representation of this Reference.
         """
@@ -401,7 +401,7 @@ class SimulatedReferenceSet(AbstractReferenceSet):
         self._assemblyId = str(random.randint(0, 2**32))
         self._isDerived = bool(random.randint(0, 1))
         self._species = json.loads(
-                    '{"term": "Homo sapiens", "termId": "9606"}')
+            '{"term": "Homo sapiens", "termId": "9606"}')
         self._sourceAccessions = []
         for i in range(random.randint(1, 3)):
                 self._sourceAccessions.append("sim_accession_{}".format(
@@ -434,7 +434,7 @@ class SimulatedReference(AbstractReference):
         if self._isDerived:
             self._sourceDivergence = rng.uniform(0, 0.1)
         self._species = json.loads(
-                            '{"term": "Homo sapiens", "termId": "9606"}')
+            '{"term": "Homo sapiens", "termId": "9606"}')
         self._sourceAccessions = []
         for i in range(random.randint(1, 3)):
                 self._sourceAccessions.append("sim_accession_{}".format(

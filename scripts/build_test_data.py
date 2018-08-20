@@ -34,8 +34,6 @@ def buildTestData(
     useRelativePath = '-r' if relativePaths else ''
     run("init", "-f", repoFile)
 
-    run("add-peer", repoFile, useRelativePath, "http://example.ga4gh.org")
-
     pattern = os.path.join(prefix, "referenceSets", "*.fa.gz")
     for dataFile in glob.glob(pattern):
         run("add-referenceset", repoFile, useRelativePath, dataFile,
@@ -69,12 +67,12 @@ def buildTestData(
             dataFile, "-R NCBI37", "-O", sequenceOntologyName,
             "-C ga4gh.datamodel.sequence_annotations.Gff3DbFeatureSet")
 
-    # pattern = os.path.join(
-    #     prefix, "datasets/dataset1/continuous", "*.bw")
-    # for dataFile in glob.glob(pattern):
-    #     run("add-continuousset", repoFile, datasetName, useRelativePath,
-    #         dataFile, "-R NCBI37",
-    #         "-C ga4gh.datamodel.continuous.FileContinuousSet")
+    pattern = os.path.join(
+        prefix, "datasets/dataset1/continuous", "*.bw")
+    for dataFile in glob.glob(pattern):
+        run("add-continuousset", repoFile, datasetName, useRelativePath,
+            dataFile, "-R NCBI37",
+            "-C ga4gh.datamodel.continuous.FileContinuousSet")
 
     pattern = os.path.join(prefix, "datasets/dataset1/phenotypes", "*")
     for dataFile in glob.glob(pattern):
@@ -85,17 +83,17 @@ def buildTestData(
             datasetName, dataFile, "-n {}".format(name))
         run(
             "add-featureset", repoFile, datasetName, useRelativePath,
-            dataFile, "-R NCBI37",  "-O", sequenceOntologyName,
+            dataFile, "-R NCBI37", "-O", sequenceOntologyName,
             "-C ga4gh.datamodel.genotype_phenotype_featureset."
             "PhenotypeAssociationFeatureSet")
 
-    # pattern = os.path.join(
-    #     prefix, "datasets/dataset1/rnaQuant", "*.db")
-    # for j, dataFile in enumerate(glob.glob(pattern)):
-    #     name = "rnaseq_{}".format(j)
-    #     run(
-    #         "add-rnaquantificationset", repoFile, datasetName, dataFile,
-    #         "-R NCBI37", "-n ", name)
+    pattern = os.path.join(
+        prefix, "datasets/dataset1/rnaQuant", "*.db")
+    for j, dataFile in enumerate(glob.glob(pattern)):
+        name = "rnaseq_{}".format(j)
+        run(
+            "add-rnaquantificationset", repoFile, datasetName, dataFile,
+            "-R NCBI37", "-n ", name)
 
 
 def parseArgs():

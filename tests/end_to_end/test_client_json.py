@@ -60,6 +60,7 @@ class TestClientOutput(unittest.TestCase):
         return stdout
 
 
+@unittest.skip("Disabling, client not used")
 class TestClientFasta(TestClientOutput):
     """
     Tests client FASTA output
@@ -86,6 +87,7 @@ class TestClientFasta(TestClientOutput):
         self.assertEqual(cliBases, bases)
 
 
+@unittest.skip("Disabling, client not used")
 class TestClientJson(TestClientOutput):
     """
     Tests that the JSON output by the client on the command line for
@@ -424,30 +426,25 @@ class TestClientJson(TestClientOutput):
                 iterator, "featuresets-search",
                 "--datasetId {}".format(dataset.id))
 
-    @unittest.skip("Disabled")
     def testSearchContinuous(self):
         for dataset in self._client.search_datasets():
             datasetId = dataset.id
-            for continuousSet in self._client.search_continuous_sets(
-                                                datasetId):
+            for continuousSet in self._client.search_continuous_sets(datasetId):
                 iterator = self._client.search_continuous(
-                                continuousSet.id, 'chr19', 49305897, 49306090)
+                    continuousSet.id, 'chr19', 49305897, 49306090)
                 self.verifyParsedOutputsEqual(
                     iterator, "continuous-search",
                     "--continuousSetId {} --referenceName {}"
                     " --start {} --end {}".format(
                         continuousSet.id, 'chr19', 49305897, 49306090))
 
-    @unittest.skip("Disabled")
     def testGetContinuousSets(self):
         for dataset in self._client.search_datasets():
             datasetId = dataset.id
-            for continuousSet in self._client.search_continuous_sets(
-                                                datasetId):
+            for continuousSet in self._client.search_continuous_sets(datasetId):
                 self.verifyParsedOutputsEqual(
                     [continuousSet], "continuoussets-get", continuousSet.id)
 
-    @unittest.skip("Disabled")
     def testSearchContinuousSets(self):
         for dataset in self._client.search_datasets():
             iterator = self._client.search_continuous_sets(dataset.id)
@@ -460,17 +457,16 @@ class TestClientJson(TestClientOutput):
         test_executed = 0
         for dataset in self._client.search_datasets():
             # pas = phenotype_association_set
-            for pas in \
-              self._client.search_phenotype_association_sets(dataset.id):
-                    iterator = self._client.search_genotype_phenotype(
-                        phenotype_association_set_id=pas.id,
-                        phenotype_ids=[phenotype_id])
-                    args = (
-                        "--phenotype_association_set_id {}"
-                        " --phenotype_ids {} ").format(
-                        pas.id, phenotype_id)
-                    test_executed += self.verifyParsedOutputsEqual(
-                        iterator, "genotypephenotype-search", args)
+            for pas in self._client.search_phenotype_association_sets(dataset.id):
+                iterator = self._client.search_genotype_phenotype(
+                    phenotype_association_set_id=pas.id,
+                    phenotype_ids=[phenotype_id])
+                args = (
+                    "--phenotype_association_set_id {}"
+                    " --phenotype_ids {} ").format(
+                    pas.id, phenotype_id)
+                test_executed += self.verifyParsedOutputsEqual(
+                    iterator, "genotypephenotype-search", args)
         self.assertGreater(test_executed, 0)
 
     def testSearchPhenotype(self):
@@ -478,17 +474,16 @@ class TestClientJson(TestClientOutput):
         test_executed = 0
         for dataset in self._client.search_datasets():
             # pas = phenotype_association_set
-            for pas in \
-              self._client.search_phenotype_association_sets(dataset.id):
-                    iterator = self._client.search_phenotype(
-                        phenotype_association_set_id=pas.id,
-                        phenotype_id=phenotype_id)
-                    args = (
-                        "--phenotype_association_set_id {}"
-                        " --phenotype_id {} ").format(
-                        pas.id, phenotype_id)
-                    test_executed += self.verifyParsedOutputsEqual(
-                        iterator, "phenotype-search", args)
+            for pas in self._client.search_phenotype_association_sets(dataset.id):
+                iterator = self._client.search_phenotype(
+                    phenotype_association_set_id=pas.id,
+                    phenotype_id=phenotype_id)
+                args = (
+                    "--phenotype_association_set_id {}"
+                    " --phenotype_id {} ").format(
+                    pas.id, phenotype_id)
+                test_executed += self.verifyParsedOutputsEqual(
+                    iterator, "phenotype-search", args)
         self.assertGreater(test_executed, 0)
 
     def testSearchSearchPhenotypeAssociationSets(self):
@@ -501,14 +496,12 @@ class TestClientJson(TestClientOutput):
                 iterator, "phenotypeassociationsets-search", args)
         self.assertGreater(test_executed, 0)
 
-    @unittest.skip("Disabled")
     def testSearchExpressionLevels(self):
         for dataset in self._client.search_datasets():
             for rnaQuantificationSet in \
                     self._client.search_rna_quantification_sets(dataset.id):
                 for rnaQuantification in \
-                        self._client.search_rna_quantifications(
-                                rnaQuantificationSet.id):
+                        self._client.search_rna_quantifications(rnaQuantificationSet.id):
                     iterator = self._client.search_expression_levels(
                         rnaQuantification.id)
                     cliString = (
@@ -517,7 +510,6 @@ class TestClientJson(TestClientOutput):
                             rnaQuantification.id))
                     self.verifyParsedOutputsEqual(iterator, cliString)
 
-    @unittest.skip("Disabled")
     def testSearchRnaQuantifications(self):
         for dataset in self._client.search_datasets():
             for rnaQuantificationSet in \
@@ -530,7 +522,6 @@ class TestClientJson(TestClientOutput):
                         rnaQuantificationSet.id))
                 self.verifyParsedOutputsEqual(iterator, cliString)
 
-    @unittest.skip("Disabled")
     def testSearchRnaQuantificationSets(self):
         for dataset in self._client.search_datasets():
             iterator = self._client.search_rna_quantification_sets(dataset.id)
@@ -539,7 +530,6 @@ class TestClientJson(TestClientOutput):
                     dataset.id))
             self.verifyParsedOutputsEqual(iterator, cliString)
 
-    @unittest.skip("Disabled")
     def testGetExpressionLevel(self):
         for dataset in self._client.search_datasets():
             for rnaQuantificationSet in \
@@ -555,7 +545,6 @@ class TestClientJson(TestClientOutput):
                                     "expressionlevels-get",
                                     expressionLevel.id)
 
-    @unittest.skip("Disabled")
     def testGetRnaQuantification(self):
         for dataset in self._client.search_datasets():
             for rnaQuantificationSet in \
@@ -568,7 +557,6 @@ class TestClientJson(TestClientOutput):
                         "rnaquantifications-get",
                         rnaQuantification.id)
 
-    @unittest.skip("Disabled")
     def testGetRnaQuantificationSet(self):
         for dataset in self._client.search_datasets():
             for rnaQuantificationSet in \
@@ -577,19 +565,3 @@ class TestClientJson(TestClientOutput):
                     [rnaQuantificationSet],
                     "rnaquantificationsets-get",
                     rnaQuantificationSet.id)
-
-    def testListPeers(self):
-        iterator = self._client.list_peers()
-        cliString = "list-peers"
-        self.verifyParsedOutputsEqual(iterator, cliString)
-
-    def testInfo(self):
-        info = self._client.get_info()
-        cliString = "get-info"
-        self.verifyParsedOutputsEqual([info], cliString)
-
-    def testAnnounce(self):
-        url = "http://1kgenomes.ga4gh.org"
-        response = self._client.announce(url)
-        cliString = "announce"
-        self.verifyParsedOutputsEqual([response], cliString, url)

@@ -55,4 +55,4 @@ def server_main(args=None):
     frontend.app.run(
         host=parsedArgs.host, port=parsedArgs.port,
         use_reloader=not parsedArgs.dont_use_reloader,
-        ssl_context=sslContext)
+        ssl_context=sslContext, threaded=True)

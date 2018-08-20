@@ -9,17 +9,24 @@ from __future__ import unicode_literals
 
 import os
 import datetime
+import time
 import socket
 import urlparse
 import functools
+import json
 
 import flask
 import flask.ext.cors as cors
+# from flask.ext.oidc import OpenIDConnect
+from flask import jsonify, render_template, request  # Flask
 import humanize
 import werkzeug
 import oic
+# from oic.oic import AuthorizationRequest, Client
 import oic.oauth2
 import oic.oic.message as message
+# from oic.utils.http_util import Redirect
+# from oauth2client.client import OAuth2Credentials
 import requests
 import logging
 from logging import StreamHandler
@@ -32,15 +39,22 @@ import ga4gh.server.exceptions as exceptions
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.auth as auth
 import ga4gh.server.network as network
+# import ga4gh.server.DP as DP
+import ga4gh.server.NCIT as NCIT
 
 import ga4gh.schemas.protocol as protocol
 
+from ga4gh.client import client
+import base64
+
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
+LOGIN_ENDPOINT_METHODS = ['GET', 'POST']
 
 app = flask.Flask(__name__)
 assert not hasattr(app, 'urls')
 app.urls = []
+app.url_map.strict_slashes = False
 
 requires_auth = auth.auth_decorator(app)
 
@@ -167,13 +181,13 @@ class ServerStatus(object):
         return app.backend.getDataRepository().getDataset(
             datasetId).getFeatureSets()
 
-#    def getContinuousSets(self, datasetId):
-#        """
-#        Returns the list of continuous sets for the dataset
-#        """
-#        return app.backend.getDataRepository().getDataset(
-#            datasetId).getContinuousSets()
-#
+    def getContinuousSets(self, datasetId):
+        """
+        Returns the list of continuous sets for the dataset
+        """
+        return app.backend.getDataRepository().getDataset(
+            datasetId).getContinuousSets()
+
     def getReadGroupSets(self, datasetId):
         """
         Returns the list of ReadGroupSets for the dataset
@@ -203,12 +217,24 @@ class ServerStatus(object):
         return app.backend.getDataRepository().getDataset(
             datasetId).getPhenotypeAssociationSets()
 
-#    def getRnaQuantificationSets(self, datasetId):
-#        """
-#        Returns the list of RnaQuantificationSets for this server.
-#        """
-#        return app.backend.getDataRepository().getDataset(
-#            datasetId).getRnaQuantificationSets()
+    def getRnaQuantificationSets(self, datasetId):
+        """
+        Returns the list of RnaQuantificationSets for this server.
+        """
+        return app.backend.getDataRepository().getDataset(
+            datasetId).getRnaQuantificationSets()
+
+    def getPeers(self):
+        """
+        Returns the list of peers.
+        """
+        return app.backend.getDataRepository().getPeers()
+
+    def getOntologyByName(self, name):
+        """
+        Returns the list of ontologies.
+        """
+        return app.backend.getDataRepository().getOntologyByName(name)
 
 
 def reset():
@@ -386,6 +412,259 @@ def getFlaskResponse(responseString, httpStatus=200,
     return flask.Response(responseString, status=httpStatus, mimetype=mimetype)
 
 
+def federation(endpoint, request, return_mimetype, request_type='POST'):
+    """
+    Federate the queries by iterating through the peer list and merging the
+    result.
+
+    Parameters:
+    ===========
+    endpoint: method
+        Method of a datamodel object that populates the response
+    request: string
+        Request send along with the query, like: id for GET requests
+    return_mimetype: string
+        'http/json or application/json'
+    request_type: string
+        Specify whether the request is a "GET" or a "POST" request
+
+    Returns:
+    ========
+    responseObject: json string
+        Merged responses from the servers. responseObject structure:
+
+    {
+    "status": {
+        "Successful communications": <number>,
+        "Known peers": <number>,
+        "Valid response": <true|false>,
+        "Queried peers": <number>
+        },
+    "results": [
+            {
+            "datasets": [
+                    {record1},
+                    {record2},
+                    ...
+                    {recordN},
+                ]
+            }
+        ]
+    }
+
+    """
+    request_dictionary = flask.request
+
+    if app.config.get("TYK_ENABLED"):
+        # Check authorization if using gateway
+        if 'Authorization' in request_dictionary.headers:
+            authz_token = request_dictionary.headers['Authorization']
+            access_map = getAccessMap(authz_token[7:])
+        else:
+            raise exceptions.NotAuthenticatedException
+    else:
+        authz_token = ''
+        access_map = getAccessMap(authz_token)
+
+    # Self query
+    responseObject = {}
+    responseObject['results'] = {}
+    responseObject['status'] = list()
+
+    try:
+        responseObject['results'] = json.loads(
+            endpoint(
+                request,
+                return_mimetype=return_mimetype,
+                access_map=access_map
+            )
+        )
+
+        responseObject['status'].append(200)
+
+    except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException):
+        responseObject['status'].append(404)
+
+    try:
+        nextToken = responseObject['results'].get('nextPageToken')
+
+    # response object not properly formed
+    except (IndexError, AttributeError):
+        nextToken = None
+
+    while nextToken:
+        request = json.loads(request)
+        request["page_token"] = responseObject['results']['nextPageToken']
+        responseObject['results'].pop('nextPageToken', None)
+        request = json.dumps(request)
+
+        nextPageRequest = json.loads(
+            endpoint(
+                request,
+                return_mimetype=return_mimetype,
+                access_map=access_map
+            )
+        )
+
+        for key in nextPageRequest:
+            if key in responseObject['results']:
+                responseObject['results'][key] += nextPageRequest[key]
+            else:
+                responseObject['results'][key] = nextPageRequest[key]
+
+        nextToken = responseObject['results'].get('nextPageToken')
+
+    # Peer queries
+    # Apply federation by default or if it was specifically requested
+    if ('Federation' not in request_dictionary.headers or request_dictionary.headers.get('Federation') == 'True'):
+
+        # Iterate through all peers
+        for peer in app.serverStatus.getPeers():
+            # Generate the same call on the peer
+            uri = request_dictionary.url.replace(
+                request_dictionary.host_url,
+                peer.getUrl(),
+            )
+            # federation field must be set to False to avoid infinite loop
+            header = {
+                'Content-Type': return_mimetype,
+                'Accept': return_mimetype,
+                'Federation': 'False',
+                'Authorization': authz_token,
+            }
+
+            # Make the call
+            try:
+                if request_type == 'GET':
+                    response = requests.Session().get(
+                        uri,
+                        headers=header,
+                    )
+                elif request_type == 'POST':
+                    response = requests.Session().post(
+                        uri,
+                        json=json.loads(request),
+                        headers=header,
+                    )
+                else:
+                    # TODO: Raise error
+                    pass
+
+                print('  >> peer call: {0} - {1}'.format(uri, response.status_code))
+
+            except (requests.exceptions.ConnectionError,
+                    requests.exceptions.Timeout,
+                    requests.exceptions.HTTPError):
+                responseObject['status'].append(503)
+
+                print('  >> peer call: {0} - {1}'.format(uri, 'SERVER IS DOWN OR DID NOT RESPONSE!'))
+            else:
+                responseObject['status'].append(response.status_code)
+                # If the call was successful append the results
+                if response.status_code == 200:
+                    try:
+                        if request_type == 'GET':
+                            responseObject['results'] = response.json()['results']
+
+                        elif request_type == 'POST':
+                            peer_response = response.json()['results']
+
+                            if not responseObject['results']:
+                                responseObject['results'] = peer_response
+                            else:
+                                for key in peer_response:
+                                    for record in peer_response[key]:
+                                        responseObject['results'][key].append(record)
+                    except ValueError:
+                        pass
+
+    # If no result has been found on any of the servers raise an error
+    if not responseObject['results'] or not responseObject['results']:
+        if request_type == 'GET':
+            raise exceptions.ObjectWithIdNotFoundException(request)
+        elif request_type == 'POST':
+            raise exceptions.ObjectWithIdNotFoundException(json.loads(request))
+
+    # Reformat the status response
+    responseObject['status'] = {
+
+        # All the peers plus self
+        'Known peers': len(app.serverStatus.getPeers()) + 1,
+
+        # Queried means http status code 200 and 404
+        'Queried peers': responseObject['status'].count(200) + responseObject['status'].count(404),
+
+        # Successful means http status code 200
+        'Successful communications': responseObject['status'].count(200),
+
+        # Invalid by default
+        'Valid response': False
+    }
+    
+    # Decide on valid response
+    if responseObject['status']['Known peers'] == \
+            responseObject['status']['Queried peers']:
+        if request_type == 'GET':
+            if responseObject['status']['Successful communications'] >= 1:
+                responseObject['status']['Valid response'] = True
+        elif request_type == 'POST':
+            if responseObject['status']['Successful communications'] == \
+                    responseObject['status']['Queried peers']:
+                responseObject['status']['Valid response'] = True
+
+    return json.dumps(responseObject)
+
+
+# testing method for access roles through tokens
+def getAccessMap(token):
+    """
+    user roles are defined in the local keycloak server as client roles
+    string formatted as follows: project:tier
+
+    if running NoAuth config, user has full access to local dataset
+
+    :param token: raw keycloak oidc id_token containing roles as claims
+    :return: python dict in the form {"project" : "access tier", ...}
+    """
+
+    access_map = {}
+
+    if app.config.get("TYK_ENABLED"):
+        # assign access based on token
+        parsed_payload = _parseTokenPayload(token)
+        access_levels = []
+
+        if 'access_levels' in parsed_payload:
+            access_levels = parsed_payload["access_levels"]
+
+        for role in access_levels:
+            split_role = role.split(':')
+            access_map[split_role[0]] = split_role[1]
+    else:
+        # mock full access to local dataset
+        for dataset in app.serverStatus.getDatasets():
+            access_map[dataset.getLocalId()] = 4
+
+    return access_map
+
+
+def _parseTokenPayload(token):
+
+    try:
+        token_payload = token.split(".")[1]
+
+        # make sure token is padded properly for b64 decoding
+        padding = len(token_payload) % 4
+        if padding != 0:
+            token_payload += '=' * (4 - padding)
+        decoded_payload = base64.b64decode(token_payload)
+
+    except IndexError:
+        decoded_payload = '{}'
+
+    return json.loads(decoded_payload)
+
+
 def handleHttpPost(request, endpoint):
     """
     Handles the specified HTTP POST request, which maps to the specified
@@ -397,7 +676,12 @@ def handleHttpPost(request, endpoint):
     request = request.get_data()
     if request == '' or request is None:
         request = '{}'
-    responseStr = endpoint(request, return_mimetype=return_mimetype)
+    responseStr = federation(
+        endpoint,
+        request,
+        return_mimetype=return_mimetype,
+        request_type='POST'
+    )
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
@@ -417,7 +701,12 @@ def handleHttpGet(id_, endpoint):
     """
     request = flask.request
     return_mimetype = chooseReturnMimetype(request)
-    responseStr = endpoint(id_, return_mimetype=return_mimetype)
+    responseStr = federation(
+        endpoint,
+        id_,
+        return_mimetype=return_mimetype,
+        request_type='GET'
+    )
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
@@ -447,11 +736,11 @@ def handleException(exception):
     if flask.request and 'Accept' in flask.request.headers and \
             flask.request.headers['Accept'].find('text/html') != -1:
         message = "<h1>Error {}</h1><pre>{}</pre>".format(
-                    serverException.httpStatus,
-                    protocol.toJson(error))
+            serverException.httpStatus,
+            protocol.toJson(error))
         if serverException.httpStatus == 401 \
                 or serverException.httpStatus == 403:
-            message += "Please try <a href=\"/login\">logging in</a>."
+            message += "Please try <a href=\"" + app.config.get('TYK_LISTEN_PATH') + "login_oidc\">logging in</a>."
         return message
     else:
         # Errors aren't well defined enough to use protobuf, even if requested
@@ -459,6 +748,25 @@ def handleException(exception):
         responseStr = protocol.serialize(error, return_mimetype)
         return getFlaskResponse(responseStr, serverException.httpStatus,
                                 mimetype=return_mimetype)
+
+
+def requires_session(f):
+    """
+    Decorator for browser session routes. Inspects tokens and ensures client sessions + server
+    sessions are aligned.
+    """
+
+    @functools.wraps(f)
+    def decorated(*args, **kargs):
+        if app.config.get("TYK_ENABLED"):
+
+            # TODO: CSRF check / checksum
+            if not flask.request.cookies.get("session_id"):
+                flask.session.clear()
+                return flask.redirect(_generate_login_url())
+
+        return f(*args, **kargs)
+    return decorated
 
 
 def startLogin():
@@ -509,6 +817,15 @@ def checkAuthentication():
             raise exceptions.NotAuthenticatedException()
         else:
             return startLogin()
+
+
+@app.after_request
+def prevent_cache(response):
+    """
+    Disable response caching for dashboard
+    """
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return response
 
 
 def handleFlaskGetRequest(id_, flaskRequest, endpoint):
@@ -576,7 +893,29 @@ class DisplayedRoute(object):
 
 
 @app.route('/')
+@requires_session
 def index():
+    return flask.render_template('spa.html',
+                                 session_id=flask.session.get('id_token', ''),
+                                 refresh=flask.session.get('refresh_token', ''),
+                                 access=flask.session.get('access_token', ''),
+                                 prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
+
+
+@app.route('/candig')
+@requires_session
+def candig():
+    datasetId = "WyJNRVRBREFUQSJd"
+    return flask.render_template('candig.html',
+                                 session_id=flask.session["id_token"],
+                                 refresh=flask.session["refresh_token"],
+                                 access=flask.session["access_token"],
+                                 datasetId=datasetId)
+
+
+@app.route('/info')
+@requires_session
+def index_info():
     response = flask.render_template('index.html',
                                      info=app.serverStatus)
     if app.config.get('AUTH0_ENABLED'):
@@ -594,6 +933,177 @@ def index():
         return response
 
 
+@app.route('/candig_patients')
+@requires_session
+def candig_patients():
+    return flask.render_template('candig_patients.html', session_id=flask.session["id_token"])
+
+
+@app.route('/igv')
+@requires_session
+def candig_igv():
+    return flask.render_template('candig_igv.html', session_id=flask.session["id_token"],
+                                 prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
+
+
+@app.route('/gene_search')
+def candig_gene_search():
+    return flask.render_template('gene_search.html', session_id=flask.session["id_token"])
+
+
+@DisplayedRoute('/variantsbygenesearch', postMethod=True)
+def search_variant_by_gene_name():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchVariantsByGeneName)
+
+
+@app.route('/login_oidc', methods=LOGIN_ENDPOINT_METHODS)
+def login_oidc():
+    """
+    *** GETs to this endpoint should be set to 'ignore' in Tyk Endpoint settings ***
+
+    All GET requests without an Authorization header should be proxied through
+    this endpoint (except for API token request).
+
+    :return: redirect call to the identity provider authentication point
+    """
+
+    base_url = _generate_base_url()
+    redirect_from = flask.request.args.get('redirectUri', '', type=str).replace(base_url, '')
+
+    # GET request: check if authenticated and redirect root page, otherwise render template
+    if flask.request.method == "GET":
+
+        # check for valid flask session
+        if flask.request.cookies.get("session_id"):
+            return flask.redirect(base_url)
+
+        # not logged in, redirect to keycloak (browser) or raise error (API)
+        else:
+            get_endpoints = [x[1].replace('<id>', '') for x in app.serverStatus.getUrls() if x[0] == 'GET']
+
+            if redirect_from.startswith(tuple(get_endpoints)):
+                return getFlaskResponse(json.dumps({'error': 'Key not authorised'}), 403)
+
+            return flask.redirect(_generate_login_url())
+
+    # POST request: successful keycloak authentication else Tyk blocks request
+    elif flask.request.method == "POST":
+
+        if flask.request.headers.get('KC-Access'):
+
+            # save tokens in server session
+            flask.session["access_token"] = flask.request.headers["KC-Access"]
+            flask.session["refresh_token"] = flask.request.headers["KC-Refresh"]
+            flask.session["id_token"] = flask.request.headers["Authorization"][7:]
+
+            response = flask.redirect(base_url)
+            response.set_cookie('session_id', flask.session["id_token"], max_age=600,
+                                path=app.config.get('TYK_LISTEN_PATH', '/'), httponly=True)
+            return response
+
+        # refresh/back POST
+        elif flask.session.get("access_token"):
+            return flask.redirect(base_url)
+
+        # keycloak error
+        else:
+            raise exceptions.NotAuthenticatedException()
+
+    # Invalid method
+    else:
+        raise exceptions.MethodNotAllowedException()
+
+
+@app.route('/logout_oidc', methods=["POST"])
+def gateway_logout():
+    """
+    End flask login sessions. Tyk will handle remote keycloak session
+    :return: redirect to the keycloak login
+    """
+    # response = flask.redirect(_generate_base_url()+'/login_oidc')
+    if not flask.request.cookies.get("session_id"):
+        raise exceptions.NotAuthenticatedException
+
+    data = {"redirect": _generate_login_url()}
+    response = flask.Response(json.dumps(data))
+
+    # delete browser cookie
+    response.set_cookie('session_id', '', expires=0, path=app.config.get('TYK_LISTEN_PATH', '/'), httponly=True)
+
+    # delete server/client sessions
+    flask.session.clear()
+
+    return response
+
+
+def _generate_login_url():
+    '''
+    :return: formatted url for keycloak login
+    '''
+    return '{0}{1}'.format(app.config.get('KC_SERVER'), app.config.get('KC_LOGIN_REDIRECT'))
+
+
+def _generate_base_url():
+    '''
+    :return: formatted url for TYK proxied dashboard homepage
+    '''
+    return '{0}{1}'.format(app.config.get('TYK_SERVER'), app.config.get('TYK_LISTEN_PATH'))
+
+
+@DisplayedRoute('/token', postMethod=True)
+def token():
+    """
+        :return: an oidc id token to attach to subsequent request headers in the following format:
+
+            Authorization: Bearer <token>
+
+        As of now, the tyk 'pre-auth' js middleware handles the token
+        grant API calls and unless there was an authentication error,
+        the token should already be in the request header
+
+        Allows token retrieval without having to use a flask session (ie. for REST API calls)
+    """
+
+    response = {}
+    mimetype = "application/json"
+
+    try:
+        token = flask.request.headers["Authorization"][7:]
+        parsed_payload = _parseTokenPayload(token)
+        token_expires = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(parsed_payload["exp"]))
+
+        response["token"] = token
+        response["expires"] = token_expires
+        status = 200
+
+    except:
+        # get error details from the request
+        response["error"] = flask.request.data
+        status = 401
+
+    return flask.Response(json.dumps(response), status=status, mimetype=mimetype)
+
+
+@app.route('/concordance')
+def concordance():
+    gene = request.args.get('gene', '', type=str)
+    if gene == '':
+        return jsonify(result = 'Gene symbol is missing')
+    concordance, freq, uniq = client.FederatedClient(
+        ServerStatus().getPeers()).get_concordance(gene)
+    abnormality = NCIT.NCIT().get_genetic_abnormalities(gene)
+    disease = NCIT.NCIT().get_diseases(gene)
+    return jsonify(result=render_template(
+        'concordance.html',
+        concordance=concordance,
+        freq=freq,
+        uniq=uniq,
+        abnormality=abnormality,
+        disease=disease))
+
+
+# New configuration added by Kevin Chan
 @app.route("/login")
 def login():
     if app.config.get('AUTH0_ENABLED'):
@@ -642,12 +1152,6 @@ def logout():
 def robots():
     return flask.send_from_directory(
         app.static_folder, flask.request.path[1:])
-
-
-@DisplayedRoute('/test')
-def getTest():
-    return handleFlaskGetRequest(
-        None, flask.request, app.backend.runGetTest)
 
 
 @DisplayedRoute('/info')
@@ -727,13 +1231,13 @@ def searchGenotypes():
 @DisplayedRoute('/variantannotationsets/search', postMethod=True)
 def searchVariantAnnotationSets():
     return handleFlaskPostRequest(
-       flask.request, app.backend.runSearchVariantAnnotationSets)
+        flask.request, app.backend.runSearchVariantAnnotationSets)
 
 
 @DisplayedRoute('/variantannotations/search', postMethod=True)
 def searchVariantAnnotations():
     return handleFlaskPostRequest(
-       flask.request, app.backend.runSearchVariantAnnotations)
+        flask.request, app.backend.runSearchVariantAnnotations)
 
 
 @DisplayedRoute('/datasets/search', postMethod=True)
@@ -761,28 +1265,28 @@ def searchAnalyses():
 @requires_auth
 def searchFeatureSets():
     return handleFlaskPostRequest(
-       flask.request, app.backend.runSearchFeatureSets)
+        flask.request, app.backend.runSearchFeatureSets)
 
 
 @DisplayedRoute('/features/search', postMethod=True)
 @requires_auth
 def searchFeatures():
     return handleFlaskPostRequest(
-       flask.request, app.backend.runSearchFeatures)
+        flask.request, app.backend.runSearchFeatures)
 
 
-# @DisplayedRoute('/continuoussets/search', postMethod=True)
-# @requires_auth
-# def searchContinuousSets():
-#    return handleFlaskPostRequest(
-#        flask.request, app.backend.runSearchContinuousSets)
-#
-#
-# @DisplayedRoute('/continuous/search', postMethod=True)
-# @requires_auth
-# def searchContinuous():
-#    return handleFlaskPostRequest(
-#        flask.request, app.backend.runSearchContinuous)
+@DisplayedRoute('/continuoussets/search', postMethod=True)
+@requires_auth
+def searchContinuousSets():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchContinuousSets)
+
+
+@DisplayedRoute('/continuous/search', postMethod=True)
+@requires_auth
+def searchContinuous():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchContinuous)
 
 
 @DisplayedRoute('/biosamples/search', postMethod=True)
@@ -797,6 +1301,71 @@ def searchBiosamples():
 def searchIndividuals():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchIndividuals)
+
+
+# METADATA
+@DisplayedRoute('/patients/search', postMethod=True)
+@requires_auth
+def searchPatients():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchPatients)
+
+
+@DisplayedRoute('/enrollments/search', postMethod=True)
+@requires_auth
+def searchEnrollments():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchEnrollments)
+
+
+@DisplayedRoute('/consents/search', postMethod=True)
+@requires_auth
+def searchConsents():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchConsents)
+
+
+@DisplayedRoute('/diagnoses/search', postMethod=True)
+@requires_auth
+def searchDiagnoses():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchDiagnoses)
+
+
+@DisplayedRoute('/samples/search', postMethod=True)
+@requires_auth
+def searchSamples():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchSamples)
+
+
+@DisplayedRoute('/treatments/search', postMethod=True)
+@requires_auth
+def searchTreatments():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchTreatments)
+
+
+@DisplayedRoute('/outcomes/search', postMethod=True)
+@requires_auth
+def searchOutcomes():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchOutcomes)
+
+
+@DisplayedRoute('/complications/search', postMethod=True)
+@requires_auth
+def searchComplications():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchComplications)
+
+
+@DisplayedRoute('/tumourboards/search', postMethod=True)
+@requires_auth
+def searchTumourboards():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchTumourboards)
+# METADATA END
 
 
 @DisplayedRoute('/peers/list', postMethod=True)
@@ -832,25 +1401,108 @@ def getIndividual(id):
         id, flask.request, app.backend.runGetIndividual)
 
 
-# @DisplayedRoute('/rnaquantificationsets/search', postMethod=True)
-# @requires_auth
-# def searchRnaQuantificationSets():
-#    return handleFlaskPostRequest(
-#        flask.request, app.backend.runSearchRnaQuantificationSets)
+# METADATA
+@DisplayedRoute(
+    '/patients/<no(search):id>',
+    pathDisplay='/patients/<id>')
+@requires_auth
+def getPatient(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetPatient)
 
 
-# @DisplayedRoute('/rnaquantifications/search', postMethod=True)
-# @requires_auth
-# def searchRnaQuantifications():
-#    return handleFlaskPostRequest(
-#        flask.request, app.backend.runSearchRnaQuantifications)
+@DisplayedRoute(
+    '/enrollments/<no(search):id>',
+    pathDisplay='/enrollments/<id>')
+@requires_auth
+def getEnrollment(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetEnrollment)
 
 
-# @DisplayedRoute('/expressionlevels/search', postMethod=True)
-# @requires_auth
-# def searchExpressionLevels():
-#    return handleFlaskPostRequest(
-#        flask.request, app.backend.runSearchExpressionLevels)
+@DisplayedRoute(
+    '/consents/<no(search):id>',
+    pathDisplay='/consents/<id>')
+@requires_auth
+def getConsent(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetConsent)
+
+
+@DisplayedRoute(
+    '/diagnoses/<no(search):id>',
+    pathDisplay='/diagnoses/<id>')
+@requires_auth
+def getDiagnosis(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetDiagnosis)
+
+
+@DisplayedRoute(
+    '/samples/<no(search):id>',
+    pathDisplay='/samples/<id>')
+@requires_auth
+def getSample(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetSample)
+
+
+@DisplayedRoute(
+    '/treatments/<no(search):id>',
+    pathDisplay='/treatments/<id>')
+@requires_auth
+def getTreatment(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetTreatment)
+
+
+@DisplayedRoute(
+    '/outcomes/<no(search):id>',
+    pathDisplay='/outcomes/<id>')
+@requires_auth
+def getOutcome(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetOutcome)
+
+
+@DisplayedRoute(
+    '/complications/<no(search):id>',
+    pathDisplay='/complications/<id>')
+@requires_auth
+def getComplication(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetComplication)
+
+
+@DisplayedRoute(
+    '/tumourboards/<no(search):id>',
+    pathDisplay='/tumourboards/<id>')
+@requires_auth
+def getTumourboard(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetTumourboard)
+# METADATA END
+
+
+@DisplayedRoute('/rnaquantificationsets/search', postMethod=True)
+@requires_auth
+def searchRnaQuantificationSets():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchRnaQuantificationSets)
+
+
+@DisplayedRoute('/rnaquantifications/search', postMethod=True)
+@requires_auth
+def searchRnaQuantifications():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchRnaQuantifications)
+
+
+@DisplayedRoute('/expressionlevels/search', postMethod=True)
+@requires_auth
+def searchExpressionLevels():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchExpressionLevels)
 
 
 @DisplayedRoute(
@@ -897,8 +1549,8 @@ def getCallSet(id):
 
 
 @DisplayedRoute(
-   '/featuresets/<no(search):id>',
-   pathDisplay='/featuresets/<id>')
+    '/featuresets/<no(search):id>',
+    pathDisplay='/featuresets/<id>')
 @requires_auth
 def getFeatureSet(id):
     return handleFlaskGetRequest(
@@ -906,49 +1558,49 @@ def getFeatureSet(id):
 
 
 @DisplayedRoute(
-   '/features/<no(search):id>',
-   pathDisplay='/features/<id>')
+    '/features/<no(search):id>',
+    pathDisplay='/features/<id>')
 @requires_auth
 def getFeature(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetFeature)
 
 
-# @DisplayedRoute(
-#    '/continuoussets/<no(search):id>',
-#    pathDisplay='/continuoussets/<id>')
-# @requires_auth
-# def getcontinuousSet(id):
-#    return handleFlaskGetRequest(
-#        id, flask.request, app.backend.runGetContinuousSet)
+@DisplayedRoute(
+    '/continuoussets/<no(search):id>',
+    pathDisplay='/continuoussets/<id>')
+@requires_auth
+def getcontinuousSet(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetContinuousSet)
 
 
-# @DisplayedRoute(
-#    '/rnaquantificationsets/<no(search):id>',
-#    pathDisplay='/rnaquantificationsets/<id>')
-# @requires_auth
-# def getRnaQuantificationSet(id):
-#    return handleFlaskGetRequest(
-#        id, flask.request, app.backend.runGetRnaQuantificationSet)
+@DisplayedRoute(
+    '/rnaquantificationsets/<no(search):id>',
+    pathDisplay='/rnaquantificationsets/<id>')
+@requires_auth
+def getRnaQuantificationSet(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetRnaQuantificationSet)
 
 
-# @DisplayedRoute(
-#    '/rnaquantifications/<no(search):id>',
-#    pathDisplay='/rnaquantifications/<id>')
-# @requires_auth
-# def getRnaQuantification(id):
-#    return handleFlaskGetRequest(
-#        id, flask.request, app.backend.runGetRnaQuantification)
-#
+@DisplayedRoute(
+    '/rnaquantifications/<no(search):id>',
+    pathDisplay='/rnaquantifications/<id>')
+@requires_auth
+def getRnaQuantification(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetRnaQuantification)
 
-# @DisplayedRoute(
-#    '/expressionlevels/<no(search):id>',
-#    pathDisplay='/expressionlevels/<id>')
-# @requires_auth
-# def getExpressionLevel(id):
-#    return handleFlaskGetRequest(
-#        id, flask.request, app.backend.runGetExpressionLevel)
-#
+
+@DisplayedRoute(
+    '/expressionlevels/<no(search):id>',
+    pathDisplay='/expressionlevels/<id>')
+@requires_auth
+def getExpressionLevel(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetExpressionLevel)
+
 
 @app.route('/oauth2callback', methods=['GET'])
 def oidcCallback():
@@ -1039,8 +1691,8 @@ def getAnalysis(id):
 
 
 @DisplayedRoute(
-   '/variantannotationsets/<no(search):id>',
-   pathDisplay='/variantannotationsets/<id>')
+    '/variantannotationsets/<no(search):id>',
+    pathDisplay='/variantannotationsets/<id>')
 @requires_auth
 def getVariantAnnotationSet(id):
     return handleFlaskGetRequest(
