@@ -1,6 +1,8 @@
+"use strict";
+
 /*Retrieve a list of datasets and initialize the page*/
 $(window).load(function() {
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open("POST", prepend_path + "/datasets/search", true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('Accept', 'application/json');
@@ -9,8 +11,6 @@ $(window).load(function() {
     xhr.onload = function() {
 
         if (xhr.status != 200) {
-            //alert("It looks like we cannot connect to the server at the moment, please try again later.")
-            //$('warningMsg').html("It looks like we cannot connect to the server at the moment, please try again later.")
             let warningMsg = document.getElementById('warningMsg');
             warningMsg.style.display = "block";
             document.getElementById('tab-content').style.display = "none";
@@ -22,8 +22,8 @@ $(window).load(function() {
             if (listOfDatasetId.length == 0) {
                 $('warningMsg').html("Sorry, but it seems like no data is available at the moment..")
             } else {
-                finalDatasetName = [];
-                finalDatasetId = [];
+                let finalDatasetName = [];
+                let finalDatasetId = [];
                 let dropdown = document.getElementById("dropdown-menu");
 
                 for (let i = 0; i < listOfDatasetId.length; i++) {
@@ -65,18 +65,6 @@ $("a[href='#gene_search']").on('shown.bs.tab', function(e) {
         statusCode = 0;
     }
 
-    // if (document.getElementById('mytable').innerHTML != ""){
-    //       var table = $("#mytable").DataTable();
-    //       table.destroy();
-    //       document.getElementById("mytable").innerHTML = "";          
-    // }
-
-    // if (document.getElementById('patientTable').innerHTML != ""){
-    //       var table = $("#patientTable").DataTable();
-    //       table.destroy();
-    //       document.getElementById("patientTable").innerHTML = "";          
-    // }
-
 })
 
 /*
@@ -89,8 +77,6 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
     var treatments;
     var objectDrugList = [];
     var drugList = Array(18).join(".").split("."); //Initialize an emptry string array that has 18 empty strings.
-
-    //var datasetId = '{{ datasetId }}';
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", prepend_path + "/treatments/search", true);
@@ -108,7 +94,6 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
         var queryStatusSeriesArray = highChartSeriesObjectMaker(["Known Peers", "Queried Peers", "Successful Communications"], [knownPeers, queriedPeers, success]);
         singleLayerDrawer("queryStatus", 'bar', 'Server status', queryStatusSeriesArray);
 
-
         samplesFetcher();
 
         cancerTypeDruglistFetcher();
@@ -123,9 +108,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
         var tempDataArray = [];
         for (var i = 0; i < nameArray.length; i++) {
             tempObj = {};
-            //tempDataArray = [];
             tempObj['name'] = nameArray[i];
-            //tempDataArray.push(dataArray[i]);
             tempObj['y'] = dataArray[i];
             seriesObjList.push(tempObj);
         }
@@ -133,7 +116,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
     }
 
     function freqCounter(arrayToCount) {
-        result = {};
+        let result = {};
 
         for (var j = 0; j < arrayToCount.length; j++) {
             if (!result[arrayToCount[j]]) {
@@ -210,8 +193,9 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
             }
 
             tempObj = freqCounter(tempArray);
-            var listOfHospitals = Object.keys(result);
-            var listOfHospitalNumber = Object.values(result);
+
+            var listOfHospitals = Object.keys(tempObj);
+            var listOfHospitalNumber = Object.values(tempObj);
 
             var tempIndex = listOfHospitals.indexOf("undefined");
             if (tempIndex !== -1) {
@@ -448,8 +432,6 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
         });
         //Highcharts.setOptions(theme);
     }
-
-    //TODO: Get rid of function therapeuticTypeDrawer
 });
 
 
@@ -472,12 +454,6 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
             table.destroy();
             document.getElementById("patientTable").innerHTML = "";
         }
-
-        // if (document.getElementById('myTable').innerHTML != ""){
-        //       var table = $("#myTable").DataTable();
-        //       table.destroy();
-        //       document.getElementById("myTable").innerHTML = "";          
-        // }
 
 
         var listOfRace = [];
@@ -735,6 +711,8 @@ function submit() {
 
     document.getElementById("loader").style.display = "block";
     document.getElementById("myTable").innerHTML = "";
+
+    document.getElementById("readGroupSelector").style.display = "none"
     var geneRequest = document.getElementById("request").value;
 
     var xhr = new XMLHttpRequest();
@@ -777,6 +755,8 @@ function freqCounter(arrayToCount) {
     return result;
 }
 
+let readGroupDict = {}
+
 function readGroupFetcher(geneRequest, geneDataset) {
     console.log("inside readgroup request")
     var xhr = new XMLHttpRequest();
@@ -795,18 +775,17 @@ function readGroupFetcher(geneRequest, geneDataset) {
         if (xhr.status == 200) {
             //console.log("xhr status okay")
             try {
-                //console.log("inside the try block")
                 let finalChrId;
                 let tempBody = data['results']["readGroupSets"]; //an array of readgroupsets
-                //let readGroups = tempBody["readGroupSets"][0]["readGroups"];
                 let readGroupSetId = [];
+                let readGroupSetName = []
 
-                //console.log("printing out the tempBody: " + readGroupSetId)
 
                 for (let i = 0; i < tempBody.length; i++) {
                     readGroupSetId.push(tempBody[i]["id"]);
                     readGroupIds.push(tempBody[i]["readGroups"][0]["id"]);
                     referenceSetIds.push(tempBody[i]["readGroups"][0]["referenceSetId"])
+                    readGroupSetName.push(tempBody[i]["name"])
                 }
 
                 for (var j = 0; j < 1; j++) {
@@ -819,51 +798,90 @@ function readGroupFetcher(geneRequest, geneDataset) {
                         finalChrId = tempChrId;
                     }
 
-                    // if (parseInt(tempChrId) != NaN) {
-                    //     finalChrId = parseInt(tempChrId)
-                    // }
-
-                    // else if (tempChrId == "X") {
-                    //     finalChrId = 23;
-                    // }
-
-                    // else if (tempChrId == "Y") {
-                    //     finalChrId = 24;
-                    // }
-
-                    // else if (tempChrId == "MT") {
-                    //     finalChrId = 25;
-                    // }
                     else {
                         let warningMsg = document.getElementById('warningMsg');
                         warningMsg.style.display = "block";
                         warningMsg.innerHTML += "We are sorry, but some parts of IGV may not work correctly.";
                     }
 
-                    console.log(finalChrId);
-                    console.log(typeof(finalChrId))
                 }
 
-                console.log(readGroupIds);
-                console.log(referenceSetIds);
+                readGroupDict["geneRequest"] = geneRequest
+                readGroupDict["referenceSetIds"] = referenceSetIds[0]
+                readGroupDict["chromesomeId"] = finalChrId
+                readGroupDict["readGroupIds"] = readGroupIds
+                readGroupDict["readGroupSetId"] = readGroupSetId
+                readGroupDict["readGroupName"] = readGroupSetName
 
+                let selectRG1 = document.getElementById("firstRG");
+                let selectRG2 = document.getElementById("secondRG");
 
-                // For now, only pass on the first element of the array
-                referenceIdFetcher(geneRequest, referenceSetIds[0], readGroupIds, readGroupSetId, finalChrId);
+                for (let i = 0; i < readGroupSetId.length; i++){
+                    selectRG1.options[selectRG1.options.length] = new Option(readGroupSetName[i], readGroupSetId[i])
+                    selectRG2.options[selectRG2.options.length] = new Option(readGroupSetName[i], readGroupSetId[i])
+                }
 
-                //igvSearch(geneRequest, readGroupSetId)
+                document.getElementById("readGroupSelector").style.display = "block"
+
             } catch (err) {
-                // do nothing
+                let warningMsg = document.getElementById('warningMsg');
+                warningMsg.style.display = "block";
+                warningMsg.innerHTML += "We are sorry, but the IGV browser cannot be rendered.";
             }
-
-
         } else {
-            // do nothing for now
+            let warningMsg = document.getElementById('warningMsg');
+            warningMsg.style.display = "block";
+            warningMsg.innerHTML += "We are sorry, but the IGV browser cannot be rendered.";
         }
     }
 }
 
-function referenceIdFetcher(geneRequest, referenceSetIds, readGroupIds, readGroupSetId, chromesomeId) {
+function rg_submit() {
+
+    var secondRgObj;
+
+    try {
+        let firstRG = document.getElementById("firstRG").value
+        let secondRG = document.getElementById("secondRG").value
+
+        if (firstRG == secondRG) {
+            secondRgObj = ""
+        }
+
+        else secondRgObj = {
+            sourceType: "ga4gh",
+            type: "alignment",
+            url: prepend_path + "",
+            referenceId: "",
+            readGroupIds: "",
+            readGroupSetIds: "",
+            name: ""
+        }
+
+        let firstRgReadGroupId = readGroupDict["readGroupIds"][readGroupDict["readGroupSetId"].indexOf(firstRG)]
+        let firstRgReadGroupName = readGroupDict["readGroupName"][readGroupDict["readGroupSetId"].indexOf(firstRG)]
+
+        let secondRgReadGroupId = readGroupDict["readGroupIds"][readGroupDict["readGroupSetId"].indexOf(secondRG)]
+        let secondRgReadGroupName = readGroupDict["readGroupName"][readGroupDict["readGroupSetId"].indexOf(secondRG)]
+
+        let firstRgObj = {"readGroupSetId": firstRG, "readGroupIds": firstRgReadGroupId, "name": firstRgReadGroupName}
+
+        if (secondRgObj != ""){
+            secondRgObj["readGroupIds"] = secondRgReadGroupId
+            secondRgObj["readGroupSetIds"] = secondRG
+            secondRgObj["name"] = secondRgReadGroupName
+        }
+
+        referenceIdFetcher(readGroupDict["geneRequest"], readGroupDict["referenceSetIds"], firstRgObj, secondRgObj, readGroupDict["chromesomeId"])
+    }
+
+    catch (err) {
+        console.log("we are having problems fetching info")
+    }
+
+}
+
+function referenceIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgObj, chromesomeId) {
 
     console.log("inside reference id fetcher")
     var xhr = new XMLHttpRequest();
@@ -878,27 +896,26 @@ function referenceIdFetcher(geneRequest, referenceSetIds, readGroupIds, readGrou
         let data = JSON.parse(this.responseText);
         let referenceId = "";
 
-        //var readGroupSetIds = [];
-        //var referenceSetIds = [];
         if (xhr.status == 200) {
             try {
                 let referencesList = data['results']["references"];
-                //console.log(referencesList);
 
                 for (let i = 0; i < referencesList.length; i++) {
                     if (referencesList[i]["name"] == chromesomeId) {
                         referenceId = referencesList[i]["id"];
                     }
                 }
-                console.log("this is the reference id " + referenceId);
 
-                variantSetIdFetcher(geneRequest, referenceSetIds, readGroupIds, readGroupSetId, referenceId, chromesomeId);
+                if (secondRgObj != "") {
+                    secondRgObj["referenceId"] = referenceId
+                }
+
+                variantSetIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgObj, referenceId, chromesomeId);
             } catch (err) {
                 let warningMsg = document.getElementById('warningMsg');
                 warningMsg.style.display = "block";
                 warningMsg.innerHTML += "We are sorry, but some parts of IGV may not work correctly.";
             }
-
 
         } else {
             // do nothing for now
@@ -906,7 +923,7 @@ function referenceIdFetcher(geneRequest, referenceSetIds, readGroupIds, readGrou
     }
 }
 
-function variantSetIdFetcher(geneRequest, referenceSetIds, readGroupIds, readGroupSetId, referenceId, chromesomeId) {
+function variantSetIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgObj, referenceId, chromesomeId) {
     var xhr = new XMLHttpRequest();
     xhr.open("POST", prepend_path + "/variantsets/search", true);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -921,13 +938,13 @@ function variantSetIdFetcher(geneRequest, referenceSetIds, readGroupIds, readGro
         if (data['results']["variantSets"][0]["id"] != undefined) {
             variantsetId = data['results']["variantSets"][0]["id"];
 
-            igvSearch(variantsetId, geneRequest, referenceSetIds, readGroupIds, readGroupSetId, referenceId, chromesomeId);
+            igvSearch(variantsetId, geneRequest, referenceSetIds, firstRgObj, secondRgObj, referenceId, chromesomeId);
         }
     }
 }
 
 
-function igvSearch(variantsetId, geneRequest, referenceSetIds, readGroupIds, readGroupSetId, referenceId, chromesomeId) {
+function igvSearch(variantsetId, geneRequest, referenceSetIds, firstRgObj, secondRgObj, referenceId, chromesomeId) {
     var div = document.getElementById('igvSample')
 
     var options = {
@@ -940,8 +957,6 @@ function igvSearch(variantsetId, geneRequest, referenceSetIds, readGroupIds, rea
         },
         oauthToken: session_id,
         showRuler: true,
-        // Insert your applications api key here,  or use OAuth
-        //apiKey: 'AIzaSyDUUAUFpQEN4mumeMNIRWXSiTh5cPtUAD0',
         tracks: [{
                 sourceType: "ga4gh",
                 type: "variant",
@@ -956,35 +971,12 @@ function igvSearch(variantsetId, geneRequest, referenceSetIds, readGroupIds, rea
                 sourceType: "ga4gh",
                 type: "alignment",
                 url: prepend_path + "",
-                //referenceSetId: "WyJHUkNoMzctbGl0ZSJd",
                 referenceId: referenceId,
-                //referenceName: chromesomeId,
-                readGroupIds: readGroupIds[0],
-                readGroupSetIds: readGroupSetId[0],
-                name: "Alignments 1"
+                readGroupIds: firstRgObj["readGroupIds"],
+                readGroupSetIds: firstRgObj["readGroupSetId"],
+                name: firstRgObj["name"]
             },
-            // {
-            //     sourceType: "ga4gh",
-            //     type: "alignment",
-            //     url: prepend_path + "",
-            //     //referenceSetId: "WyJHUkNoMzctbGl0ZSJd",
-            //     referenceId: referenceId,
-            //     //referenceName: chromesomeId,
-            //     readGroupIds: readGroupIds[1],
-            //     readGroupSetIds: readGroupSetId[1],
-            //     name: "Alignments 2"
-            // },
-            // {
-            //     sourceType: "ga4gh",
-            //     type: "alignment",
-            //     url: prepend_path + "",
-            //     //referenceSetId: "WyJHUkNoMzctbGl0ZSJd",
-            //     referenceId: referenceId,
-            //     //referenceName: chromesomeId,
-            //     readGroupIds: readGroupIds[2],
-            //     readGroupSetIds: readGroupSetId[2],
-            //     name: "Alignments 3"
-            // },
+            secondRgObj,
             {
                 name: "Genes",
                 type: "annotation",
@@ -1001,7 +993,11 @@ function igvSearch(variantsetId, geneRequest, referenceSetIds, readGroupIds, rea
         ]
     };
 
-    browser = igv.createBrowser(div, options);
+    if (secondRgObj == "") {
+        options["tracks"].splice(2, 1)
+    }
+
+    let browser = igv.createBrowser(div, options);
 }
 
 
