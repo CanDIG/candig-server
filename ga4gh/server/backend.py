@@ -10,8 +10,10 @@ import ga4gh.server.datamodel as datamodel
 import ga4gh.server.exceptions as exceptions
 import ga4gh.server.paging as paging
 import ga4gh.server.response_builder as response_builder
-
 import ga4gh.schemas.protocol as protocol
+import operator
+from google.protobuf.json_format import MessageToJson
+import json
 
 
 class Backend(object):
@@ -24,6 +26,23 @@ class Backend(object):
         self._defaultPageSize = 300
         self._maxResponseLength = 2**20  # 1 MiB
         self._dataRepository = dataRepository
+
+        self.ops = {
+            ">": operator.gt,
+            "gt": operator.gt,
+            "<": operator.lt,
+            "lt": operator.lt,
+            ">=": operator.ge,
+            "ge": operator.ge,
+            "<=": operator.le,
+            "le": operator.le,
+            "eq": operator.eq,
+            "=": operator.eq,
+            "==": operator.eq,
+            "!=": operator.ne,
+            "ne": operator.ne,
+            "in": operator.contains
+        }
 
     def getDataRepository(self):
         """
@@ -138,13 +157,13 @@ class Backend(object):
             request, self.getDataRepository().getNumDatasets(),
             self.getDataRepository().getAuthzDatasetByIndex, access_map=access_map)
 
-    #SEARCH
+    # SEARCH
     def queryGenerator(self, request, access_map):
         """
         Generator object for advanced search queries
         """
         print(request)
-        
+
         results = {}
         tier = 0
 
@@ -214,21 +233,46 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results)
 
+    def comparisonGenerator(self, obj, request):
+        """
+        Apply the specified operator to determine if an object is valid for the request
+        :param obj: The candidate object
+        :param request: The request protobuf object
+        :return: True if the object is qualified, False otherwise.
+        """
+        qualified = True
+        filters = []
+
+        try:
+            filters = json.loads(MessageToJson(request))["filters"]
+
+            try:
+                for filter in filters:
+                    if not self.ops[filter["operator"].lower()](obj.mapper(filter["field"]), filter["value"]):
+                        qualified = False
+                        break
+            except (KeyError, AttributeError, TypeError):
+                qualified = False
+
+        # When the filter is not specified, don't perform any filter
+        except KeyError:
+            pass
+
+        return qualified
+
     def patientsGenerator(self, request, access_map):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
-        for obj in dataset.getPatients():
-            include = True
-            if request.name:
-                if obj.getLocalId() not in request.name.split(','):
-                    # if request.name != obj.getLocalId():
-                    include = False
 
-            if include:
+        for obj in dataset.getPatients():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
+
         return self._objectListGenerator(request, results, tier=tier)
 
     def enrollmentsGenerator(self, request, access_map):
@@ -237,18 +281,13 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getEnrollments():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
+
         return self._objectListGenerator(request, results, tier=tier)
 
     def consentsGenerator(self, request, access_map):
@@ -257,18 +296,13 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getConsents():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
+
         return self._objectListGenerator(request, results, tier=tier)
 
     def diagnosesGenerator(self, request, access_map):
@@ -277,18 +311,13 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getDiagnoses():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
+
         return self._objectListGenerator(request, results, tier=tier)
 
     def samplesGenerator(self, request, access_map):
@@ -297,17 +326,11 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getSamples():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -317,17 +340,11 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getTreatments():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -337,17 +354,11 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getOutcomes():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -357,17 +368,11 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getComplications():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -377,17 +382,11 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getTumourboards():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 

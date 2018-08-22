@@ -73,10 +73,42 @@ class Patient(datamodel.DatamodelObject):
         self._occupationalOrEnvironmentalExposure = None
         self._occupationalOrEnvironmentalExposureTier = None
 
+        self.objectAttr = {
+            "patientId": self.getPatientId,
+            "otherIds": self.getOtherIds,
+            "dateOfBirth": self.getDateOfBirth,
+            "gender": self.getGender,
+            "ethnicity": self.getEthnicity,
+            "race": self.getRace,
+            "provinceOfResidence": self.getProvinceOfResidence,
+            "dateOfDeath": self.getDateOfDeath,
+            "causeOfDeath": self.getCauseOfDeath,
+            "autopsyTissueForResearch": self.getAutopsyTissueForResearch,
+            "priorMalignancy": self.getPriorMalignancy,
+            "dateOfPriorMalignancy": self.getDateOfPriorMalignancy,
+            "familyHistoryAndRiskFactors": self.getFamilyHistoryAndRiskFactors,
+            "familyHistoryOfPredispositionSyndrome": self.getFamilyHistoryOfPredispositionSyndrome,
+            "detailsOfPredispositionSyndrome": self.getDetailsOfPredispositionSyndrome,
+            "geneticCancerSyndrome": self.getGeneticCancerSyndrome,
+            "otherGeneticConditionOrSignificantComorbidity": self.getOtherGeneticConditionOrSignificantComorbidity,
+            "occupationalOrEnvironmentalExposure": self.getOccupationalOrEnvironmentalExposure,
+        }
+
+    def mapper(self, field):
+        """
+        This function maps the requested field to the related Getter
+        :param field: specified in the request
+        :return: corresponding value of the field
+        """
+        try:
+            return self.objectAttr[field]()
+        except AttributeError:
+            pass
+
     def toProtocolElement(self, tier=0):
         """
         """
-        record = {      
+        record = {
             str('id'): str(self.getId()),
             str('dataset_id'): str(self._datasetId),
             str('created'): str(self.getCreated()),
@@ -84,7 +116,7 @@ class Patient(datamodel.DatamodelObject):
             str('name'): str(self.getName()),
             str('description'): str(self.getDescription()),
         }
-            
+
         # Unique fields
         if tier >= self.getPatientIdTier():
             record[str('patientId')] = str(self.getPatientId())
@@ -124,8 +156,8 @@ class Patient(datamodel.DatamodelObject):
             record[str('occupationalOrEnvironmentalExposure')] = str(self.getOccupationalOrEnvironmentalExposure())
 
         Patient = protocol.Patient(**record)
-        self.serializeAttributes(Patient)         
-        
+        self.serializeAttributes(Patient)
+
         return Patient
 
     def populateFromRow(self, PatientRecord):
@@ -411,10 +443,40 @@ class Enrollment(datamodel.DatamodelObject):
         self._treatingCentreProvince = None
         self._treatingCentreProvinceTier = None
 
+        self.objectAttr = {
+            "patientId": self.getPatientId,
+            "enrollmentInstitution": self.getEnrollmentInstitution,
+            "enrollmentApprovalDate": self.getEnrollmentApprovalDate,
+            "crossEnrollment": self.getCrossEnrollment,
+            "otherPersonalizedMedicineStudyName": self.getOtherPersonalizedMedicineStudyName,
+            "otherPersonalizedMedicineStudyId": self.getOtherPersonalizedMedicineStudyId,
+            "ageAtEnrollment": self.getAgeAtEnrollment,
+            "eligibilityCategory": self.getEligibilityCategory,
+            "statusAtEnrollment": self.getStatusAtEnrollment,
+            "primaryOncologistName": self.getPrimaryOncologistName,
+            "primaryOncologistContact": self.getPrimaryOncologistContact,
+            "referringPhysicianName": self.getReferringPhysicianName,
+            "referringPhysicianContact": self.getReferringPhysicianContact,
+            "summaryOfIdRequest": self.getSummaryOfIdRequest,
+            "treatingCentreName": self.getTreatingCentreName,
+            "treatingCentreProvince": self.getTreatingCentreProvince
+        }
+
+    def mapper(self, field):
+        """
+        This function maps the requested field to the related Getter
+        :param field: specified in the request
+        :return: corresponding value of the field
+        """
+        try:
+            return self.objectAttr[field]()
+        except AttributeError:
+            pass
+
     def toProtocolElement(self, tier=0):
         """
         """
-        record = {      
+        record = {
             str('id'): str(self.getId()),
             str('dataset_id'): str(self._datasetId),
             str('created'): str(self.getCreated()),
@@ -422,7 +484,7 @@ class Enrollment(datamodel.DatamodelObject):
             str('name'): str(self.getName()),
             str('description'): str(self.getDescription()),
         }
-            
+
         # Unique fields
         if tier >= self.getPatientIdTier():
             record[str('patientId')] = str(self.getPatientId())
@@ -456,7 +518,7 @@ class Enrollment(datamodel.DatamodelObject):
             record[str('treatingCentreName')] = str(self.getTreatingCentreName())
         if tier >= self.getTreatingCentreProvinceTier():
             record[str('treatingCentreProvince')] = str(self.getTreatingCentreProvince())
-           
+
         Enrollment = protocol.Enrollment(**record)
         self.serializeAttributes(Enrollment)
 
@@ -557,7 +619,7 @@ class Enrollment(datamodel.DatamodelObject):
         self._treatingCentreNameTier = parsed.treatingCentreNameTier
         self._treatingCentreProvince = parsed.treatingCentreProvince
         self._treatingCentreProvinceTier = parsed.treatingCentreProvinceTier
-        
+
         return self
 
     def getCreated(self):
@@ -734,6 +796,40 @@ class Consent(datamodel.DatamodelObject):
         self._consentFormComplete = None
         self._consentFormCompleteTier = None
 
+        self.objectAttr = {
+            "patientId": self.getPatientId,
+            "consentId": self.getConsentId,
+            "consentDate": self.getConsentDate,
+            "consentVersion": self.getConsentVersion,
+            "patientConsentedTo": self.getPatientConsentedTo,
+            "reasonForRejection": self.getReasonForRejection,
+            "wasAssentObtained": self.getWasAssentObtained,
+            "dateOfAssent": self.getDateOfAssent,
+            "assentFormVersion": self.getAssentFormVersion,
+            "ifAssentNotObtainedWhyNot": self.getIfAssentNotObtainedWhyNot,
+            "reconsentDate": self.getReconsentDate,
+            "reconsentVersion": self.getReconsentVersion,
+            "consentingCoordinatorName": self.getConsentingCoordinatorName,
+            "previouslyConsented": self.getPreviouslyConsented,
+            "nameOfOtherBiobank": self.getNameOfOtherBiobank,
+            "hasConsentBeenWithdrawn": self.getHasConsentBeenWithdrawn,
+            "dateOfConsentWithdrawal": self.getDateOfConsentWithdrawal,
+            "typeOfConsentWithdrawal": self.getTypeOfConsentWithdrawal,
+            "reasonForConsentWithdrawal": self.getReasonForConsentWithdrawal,
+            "consentFormComplete": self.getConsentFormComplete
+        }
+
+    def mapper(self, field):
+        """
+        This function maps the requested field to the related Getter
+        :param field: specified in the request
+        :return: corresponding value of the field
+        """
+        try:
+            return self.objectAttr[field]()
+        except AttributeError:
+            pass
+
     def toProtocolElement(self, tier=0):
         """
         """
@@ -790,7 +886,7 @@ class Consent(datamodel.DatamodelObject):
 
         Consent = protocol.Consent(**record)
         self.serializeAttributes(Consent)
-        
+
         return Consent
 
     def populateFromRow(self, ConsentRecord):
@@ -1123,6 +1219,49 @@ class Diagnosis(datamodel.DatamodelObject):
         self._additionalTest = None
         self._additionalTestTier = None
 
+        self.objectAttr = {
+            "patientId": self.getPatientId,
+            "diagnosisId": self.getDiagnosisId,
+            "diagnosisDate": self.getDiagnosisDate,
+            "ageAtDiagnosis": self.getAgeAtDiagnosis,
+            "cancerType": self.getCancerType,
+            "classification": self.getClassification,
+            "cancerSite": self.getCancerSite,
+            "histology": self.getHistology,
+            "methodOfDefinitiveDiagnosis": self.getMethodOfDefinitiveDiagnosis,
+            "sampleType": self.getSampleType,
+            "sampleSite": self.getSampleSite,
+            "tumorGrade": self.getTumorGrade,
+            "gradingSystemUsed": self.getGradingSystemUsed,
+            "sitesOfMetastases": self.getSitesOfMetastases,
+            "stagingSystem": self.getStagingSystem,
+            "versionOrEditionOfTheStagingSystem": self.getVersionOrEditionOfTheStagingSystem,
+            "specificTumorStageAtDiagnosis": self.getSpecificTumorStageAtDiagnosis,
+            "prognosticBiomarkers": self.getPrognosticBiomarkers,
+            "biomarkerQuantification": self.getBiomarkerQuantification,
+            "additionalMolecularTesting": self.getAdditionalMolecularTesting,
+            "additionalTestType": self.getAdditionalTestType,
+            "laboratoryName": self.getLaboratoryName,
+            "laboratoryAddress": self.getLaboratoryAddress,
+            "siteOfMetastases": self.getSiteOfMetastases,
+            "stagingSystemVersion": self.getStagingSystemVersion,
+            "specificStage": self.getSpecificStage,
+            "cancerSpecificBiomarkers": self.getCancerSpecificBiomarkers,
+            "additionalMolecularDiagnosticTestingPerformed": self.getAdditionalMolecularDiagnosticTestingPerformed,
+            "additionalTest": self.getAdditionalTest
+        }
+
+    def mapper(self, field):
+        """
+        This function maps the requested field to the related Getter
+        :param field: specified in the request
+        :return: corresponding value of the field
+        """
+        try:
+            return self.objectAttr[field]()
+        except AttributeError:
+            pass
+
     def toProtocolElement(self, tier=0):
         """
         """
@@ -1197,7 +1336,7 @@ class Diagnosis(datamodel.DatamodelObject):
 
         Diagnosis = protocol.Diagnosis(**record)
         self.serializeAttributes(Diagnosis)
-        
+
         return Diagnosis
 
     def populateFromRow(self, DiagnosisRecord):
@@ -1610,6 +1749,44 @@ class Sample(datamodel.DatamodelObject):
         self._ifNotExplainAnyDeviation = None
         self._ifNotExplainAnyDeviationTier = None
 
+        self.objectAttr = {
+            "patientId": self.getPatientId,
+            "sampleId": self.getSampleId,
+            "diagnosisId": self.getDiagnosisId,
+            "localBiobankId": self.getLocalBiobankId,
+            "collectionDate": self.getCollectionDate,
+            "collectionHospital": self.getCollectionHospital,
+            "sampleType": self.getSampleType,
+            "tissueDiseaseState": self.getTissueDiseaseState,
+            "anatomicSiteTheSampleObtainedFrom": self.getAnatomicSiteTheSampleObtainedFrom,
+            "cancerType": self.getCancerType,
+            "cancerSubtype": self.getCancerSubtype,
+            "pathologyReportId": self.getPathologyReportId,
+            "morphologicalCode": self.getMorphologicalCode,
+            "topologicalCode": self.getTopologicalCode,
+            "shippingDate": self.getShippingDate,
+            "receivedDate": self.getReceivedDate,
+            "qualityControlPerformed": self.getQualityControlPerformed,
+            "estimatedTumorContent": self.getEstimatedTumorContent,
+            "quantity": self.getQuantity,
+            "units": self.getUnits,
+            "associatedBiobank": self.getAssociatedBiobank,
+            "otherBiobank": self.getOtherBiobank,
+            "sopFollowed": self.getSopFollowed,
+            "ifNotExplainAnyDeviation": self.getIfNotExplainAnyDeviation,
+        }
+
+    def mapper(self, field):
+        """
+        This function maps the requested field to the related Getter
+        :param field: specified in the request
+        :return: corresponding value of the field
+        """
+        try:
+            return self.objectAttr[field]()
+        except AttributeError:
+            pass
+
     def toProtocolElement(self, tier=0):
         """
         """
@@ -1674,7 +1851,7 @@ class Sample(datamodel.DatamodelObject):
 
         Sample = protocol.Sample(**record)
         self.serializeAttributes(Sample)
-        
+
         return Sample
 
     def populateFromRow(self, SampleRecord):
@@ -2031,6 +2208,41 @@ class Treatment(datamodel.DatamodelObject):
         self._drugIdNumbers = None
         self._drugIdNumbersTier = None
 
+        self.objectAttr = {
+            "patientId": self.getPatientId,
+            "courseNumber": self.getCourseNumber,
+            "therapeuticModality": self.getTherapeuticModality,
+            "systematicTherapyAgentName": self.getSystematicTherapyAgentName,
+            "treatmentPlanType": self.getTreatmentPlanType,
+            "treatmentIntent": self.getTreatmentIntent,
+            "startDate": self.getStartDate,
+            "stopDate": self.getStopDate,
+            "reasonForEndingTheTreatment": self.getReasonForEndingTheTreatment,
+            "protocolNumberOrCode": self.getProtocolNumberOrCode,
+            "surgeryDetails": self.getSurgeryDetails,
+            "radiotherapyDetails": self.getRadiotherapyDetails,
+            "chemotherapyDetails": self.getChemotherapyDetails,
+            "hematopoieticCellTransplant": self.getHematopoieticCellTransplant,
+            "immunotherapyDetails": self.getImmunotherapyDetails,
+            "responseToTreatment": self.getResponseToTreatment,
+            "responseCriteriaUsed": self.getResponseCriteriaUsed,
+            "dateOfRecurrenceOrProgressionAfterThisTreatment": self.getDateOfRecurrenceOrProgressionAfterThisTreatment,
+            'unexpectedOrUnusualToxicityDuringTreatment': self.getUnexpectedOrUnusualToxicityDuringTreatment,
+            "drugListOrAgent": self.getDrugListOrAgent,
+            "drugIdNumbers": self.getDrugIdNumbers,
+        }
+
+    def mapper(self, field):
+        """
+        This function maps the requested field to the related Getter
+        :param field: specified in the request
+        :return: corresponding value of the field
+        """
+        try:
+            return self.objectAttr[field]()
+        except AttributeError:
+            pass
+
     def toProtocolElement(self, tier=0):
         """
         """
@@ -2089,7 +2301,7 @@ class Treatment(datamodel.DatamodelObject):
 
         Treatment = protocol.Treatment(**record)
         self.serializeAttributes(Treatment)
-        
+
         return Treatment
 
     def populateFromRow(self, TreatmentRecord):
@@ -2406,6 +2618,36 @@ class Outcome(datamodel.DatamodelObject):
         self._performanceStatus = None
         self._performanceStatusTier = None
 
+        self.objectAttr = {
+            "patientId": self.getPatientId,
+            "physicalExamId": self.getPhysicalExamId,
+            "dateOfAssessment": self.getDateOfAssessment,
+            "diseaseResponseOrStatus": self.getDiseaseResponseOrStatus,
+            "otherResponseClassification": self.getOtherResponseClassification,
+            "minimalResidualDiseaseAssessment": self.getMinimalResidualDiseaseAssessment,
+            "methodOfResponseEvaluation": self.getMethodOfResponseEvaluation,
+            "responseCriteriaUsed": self.getResponseCriteriaUsed,
+            "summaryStage": self.getSummaryStage,
+            "sitesOfAnyProgressionOrRecurrence": self.getSitesOfAnyProgressionOrRecurrence,
+            "vitalStatus": self.getVitalStatus,
+            "height": self.getHeight,
+            "weight": self.getWeight,
+            "heightUnits": self.getHeightUnits,
+            "weightUnits": self.getWeightUnits,
+            "performanceStatus": self.getPerformanceStatus
+        }
+
+    def mapper(self, field):
+        """
+        This function maps the requested field to the related Getter
+        :param field: specified in the request
+        :return: corresponding value of the field
+        """
+        try:
+            return self.objectAttr[field]()
+        except AttributeError:
+            pass
+
     def toProtocolElement(self, tier=0):
         """
         """
@@ -2454,7 +2696,7 @@ class Outcome(datamodel.DatamodelObject):
 
         Outcome = protocol.Outcome(**record)
         self.serializeAttributes(Outcome)
-        
+
         return Outcome
 
     def populateFromRow(self, OutcomeRecord):
@@ -2701,6 +2943,26 @@ class Complication(datamodel.DatamodelObject):
         self._treatmentInducedNeoplasmDetails = None
         self._treatmentInducedNeoplasmDetailsTier = None
 
+        self.objectAttr = {
+            "patientId": self.getPatientId,
+            "date": self.getDate,
+            "lateComplicationOfTherapyDeveloped": self.getLateComplicationOfTherapyDeveloped,
+            "lateToxicityDetail": self.getLateToxicityDetail,
+            "suspectedTreatmentInducedNeoplasmDeveloped": self.getSuspectedTreatmentInducedNeoplasmDeveloped,
+            "treatmentInducedNeoplasmDetails": self.getTreatmentInducedNeoplasmDetails
+        }
+
+    def mapper(self, field):
+        """
+        This function maps the requested field to the related Getter
+        :param field: specified in the request
+        :return: corresponding value of the field
+        """
+        try:
+            return self.objectAttr[field]()
+        except AttributeError:
+            pass
+
     def toProtocolElement(self, tier=0):
         """
         """
@@ -2729,7 +2991,7 @@ class Complication(datamodel.DatamodelObject):
 
         Complication = protocol.Complication(**record)
         self.serializeAttributes(Complication)
-        
+
         return Complication
 
     def populateFromRow(self, ComplicationRecord):
@@ -2923,6 +3185,50 @@ class Tumourboard(datamodel.DatamodelObject):
         self._patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfilingTier = None
         self._summaryReport = None
         self._summaryReportTier = None
+
+        self.objectAttr = {
+            "patientId": self.getPatientId,
+            "dateOfMolecularTumorBoard": self.getDateOfMolecularTumorBoard,
+            "typeOfSampleAnalyzed": self.getTypeOfSampleAnalyzed,
+            "typeOfTumourSampleAnalyzed": self.getTypeOfTumourSampleAnalyzed,
+            "analysesDiscussed": self.getAnalysesDiscussed,
+            "somaticSampleType": self.getSomaticSampleType,
+            "normalExpressionComparator": self.getNormalExpressionComparator,
+            "diseaseExpressionComparator": self.getDiseaseExpressionComparator,
+            "hasAGermlineVariantBeenIdentifiedByProfilingThatMayPredisposeToCancer": self.getHasAGermlineVariantBeenIdentifiedByProfilingThatMayPredisposeToCancer,
+            "actionableTargetFound": self.getActionableTargetFound,
+            "molecularTumorBoardRecommendation": self.getMolecularTumorBoardRecommendation,
+            "germlineDnaSampleId": self.getGermlineDnaSampleId,
+            "tumorDnaSampleId": self.getTumorDnaSampleId,
+            "tumorRnaSampleId": self.getTumorRnaSampleId,
+            "germlineSnvDiscussed": self.getGermlineSnvDiscussed,
+            "somaticSnvDiscussed": self.getSomaticSnvDiscussed,
+            "cnvsDiscussed": self.getCnvsDiscussed,
+            "structuralVariantDiscussed": self.getStructuralVariantDiscussed,
+            "classificationOfVariants": self.getClassificationOfVariants,
+            "clinicalValidationProgress": self.getClinicalValidationProgress,
+            "typeOfValidation": self.getTypeOfValidation,
+            "agentOrDrugClass": self.getAgentOrDrugClass,
+            "levelOfEvidenceForExpressionTargetAgentMatch": self.getLevelOfEvidenceForExpressionTargetAgentMatch,
+            "didTreatmentPlanChangeBasedOnProfilingResult": self.getDidTreatmentPlanChangeBasedOnProfilingResult,
+            "howTreatmentHasAlteredBasedOnProfiling": self.getHowTreatmentHasAlteredBasedOnProfiling,
+            "reasonTreatmentPlanDidNotChangeBasedOnProfiling": self.getReasonTreatmentPlanDidNotChangeBasedOnProfiling,
+            "detailsOfTreatmentPlanImpact": self.getDetailsOfTreatmentPlanImpact,
+            "patientOrFamilyInformedOfGermlineVariant": self.getPatientOrFamilyInformedOfGermlineVariant,
+            "patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling": self.getPatientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling,
+            "summaryReport": self.getSummaryReport
+        }
+
+    def mapper(self, field):
+        """
+        This function maps the requested field to the related Getter
+        :param field: specified in the request
+        :return: corresponding value of the field
+        """
+        try:
+            return self.objectAttr[field]()
+        except AttributeError:
+            pass
 
     def toProtocolElement(self, tier=0):
         """
