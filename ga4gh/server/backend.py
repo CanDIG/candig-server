@@ -138,6 +138,33 @@ class Backend(object):
             request, self.getDataRepository().getNumDatasets(),
             self.getDataRepository().getAuthzDatasetByIndex, access_map=access_map)
 
+    #SEARCH
+    def queryGenerator(self, request, access_map):
+        """
+        Generator object for advanced search queries
+        """
+        print(request)
+        
+        results = {}
+        tier = 0
+
+#        dataset = self.getDataRepository().getDataset(request.dataset_id)
+#        tier = self.getUserAccessTier(dataset, access_map)
+#
+#
+#        results = []
+#        for obj in dataset.getPatients():
+#            include = True
+#            if request.name:
+#                if obj.getLocalId() not in request.name.split(','):
+#                    # if request.name != obj.getLocalId():
+#                    include = False
+#
+#            if include:
+#                results.append(obj)
+
+        return self._objectListGenerator(request, results, tier=tier)
+
     def experimentsGenerator(self, request, tier=0):
         """
         Returns a generator over the (experiment, nextPageToken) pairs
@@ -1284,6 +1311,19 @@ class Backend(object):
             protocol.SearchIndividualsResponse,
             self.individualsGenerator,
             return_mimetype)
+
+    # Search requests
+    def runSearchQuery(self, request, return_mimetype, access_map):
+        """
+        Runs advanced SearchRequest
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchQueryRequest,
+            protocol.SearchQueryResponse,
+            self.queryGenerator,
+            access_map,
+            return_mimetype,
+        )
 
     def runSearchPatients(self, request, return_mimetype, access_map):
         """

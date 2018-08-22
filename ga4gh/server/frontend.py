@@ -933,6 +933,14 @@ def index_info():
         return response
 
 
+# SEARCH
+@DisplayedRoute('/search', postMethod=True)
+@requires_auth
+def searchQuery():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchQuery)
+
+
 @app.route('/candig_patients')
 @requires_session
 def candig_patients():
