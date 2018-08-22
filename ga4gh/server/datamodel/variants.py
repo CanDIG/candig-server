@@ -126,6 +126,8 @@ class AbstractVariantSet(datamodel.DatamodelObject):
         self._metadata = []
         self._variantAnnotationSetIds = []
         self._variantAnnotationSetIdMap = {}
+        self._patientId = None
+        self._sampleId = None
 
     def addVariantAnnotationSet(self, variantAnnotationSet):
         """
@@ -260,6 +262,8 @@ class AbstractVariantSet(datamodel.DatamodelObject):
         protocolElement.dataset_id = self.getParentContainer().getId()
         protocolElement.reference_set_id = self._referenceSet.getId()
         protocolElement.name = self.getLocalId()
+        protocolElement.patient_id = self.getPatientId()
+        protocolElement.sample_id = self.getSampleId()
         self.serializeAttributes(protocolElement)
         return protocolElement
 
@@ -301,6 +305,30 @@ class AbstractVariantSet(datamodel.DatamodelObject):
         compoundId = datamodel.CallSetCompoundId(
             self.getCompoundId(), sampleName)
         return str(compoundId)
+
+    def setPatientId(self, patientId):
+        """
+        Sets the patientId for this VariantSet to the specified value.
+        """
+        self._patientId = patientId
+
+    def getPatientId(self):
+        """
+        Returns the patientId associated with this VariantSet.
+        """
+        return self._patientId
+
+    def setSampleId(self, sampleId):
+        """
+        Sets the sampleId for this VariantSet to the specified value.
+        """
+        self._sampleId = sampleId
+
+    def getSampleId(self):
+        """
+        Returns the sampleId associated with this VariantSet.
+        """
+        return self._sampleId
 
     @classmethod
     def hashVariant(cls, gaVariant):

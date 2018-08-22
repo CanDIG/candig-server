@@ -300,6 +300,18 @@ class RepoManager(object):
                 "VariantSet using the --referenceSetName option")
         referenceSet = self._repo.getReferenceSetByName(referenceSetName)
         variantSet.setReferenceSet(referenceSet)
+        patientId = self._args.patientId
+        if patientId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding patient ID"
+            )
+        sampleId = self._args.sampleId
+        if sampleId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding sample ID"
+            )
+        variantSet.setPatientId(patientId)
+        variantSet.setSampleId(sampleId)
         variantSet.setAttributes(json.loads(self._args.attributes))
         # Now check for annotations
         annotationSets = []
@@ -988,6 +1000,12 @@ class RepoManager(object):
             help="the name of the patient")
 
     @classmethod
+    def addPatientIdArgument(cls, subparser):
+        subparser.add_argument(
+            "patientId",
+            help="the ID of the patient")
+
+    @classmethod
     def addPatientArgument(cls, subparser):
         subparser.add_argument(
             "patient",
@@ -1034,6 +1052,12 @@ class RepoManager(object):
         subparser.add_argument(
             "sampleName",
             help="the name of the sample")
+
+    @classmethod
+    def addSampleIdArgument(cls, subparser):
+        subparser.add_argument(
+            "sampleId",
+            help="the ID of the sample")
 
     @classmethod
     def addSampleArgument(cls, subparser):
@@ -1390,6 +1414,8 @@ class RepoManager(object):
         addVariantSetParser.set_defaults(runner="addVariantSet")
         cls.addRepoArgument(addVariantSetParser)
         cls.addDatasetNameArgument(addVariantSetParser)
+        cls.addPatientIdArgument(addVariantSetParser)
+        cls.addSampleIdArgument(addVariantSetParser)
         cls.addRelativePathOption(addVariantSetParser)
         addVariantSetParser.add_argument(
             "dataFiles", nargs="+",
