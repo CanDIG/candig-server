@@ -64,7 +64,7 @@ class RepoManagerEndToEndTest(unittest.TestCase):
                      self.individualName,
                      self.individual)
         self._runCmd(
-            "add-readgroupset", self.datasetName, paths.bamPath,
+            "add-readgroupset", self.datasetName, "patient1", "sample1", paths.bamPath,
             '-R', paths.referenceSetName, '-n', paths.readGroupSetName,
             '-A', json.dumps(self.attributes))
         self._runCmd(

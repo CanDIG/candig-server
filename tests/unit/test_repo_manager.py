@@ -101,7 +101,7 @@ class AbstractRepoManagerTest(unittest.TestCase):
         bamFile = paths.bamPath
         self._readGroupSetName = "test_rgs"
         cmd = (
-            "add-readgroupset {} {} {} --referenceSetName={} "
+            "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={} "
             "--name={}").format(
             self._repoPath, self._datasetName, bamFile,
             self._referenceSetName, self._readGroupSetName)
@@ -682,7 +682,7 @@ class TestAddReadGroupSet(AbstractRepoManagerTest):
     def testDefaultsLocalFile(self):
         bamFile = paths.bamPath
         name = os.path.split(bamFile)[1].split(".")[0]
-        cmd = "add-readgroupset {} {} {} --referenceSetName={}".format(
+        cmd = "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={}".format(
             self._repoPath, self._datasetName, bamFile,
             self._referenceSetName)
         self.runCommand(cmd)
@@ -695,7 +695,7 @@ class TestAddReadGroupSet(AbstractRepoManagerTest):
             indexFile = temp.name
             shutil.copyfile(bamFile + ".bai", indexFile)
             cmd = (
-                "add-readgroupset {} {} {} -I {} "
+                "add-readgroupset {} {} patient1 sample1 {} -I {} "
                 "--referenceSetName={}").format(
                     self._repoPath, self._datasetName, bamFile,
                     indexFile, self._referenceSetName)
@@ -706,7 +706,7 @@ class TestAddReadGroupSet(AbstractRepoManagerTest):
         bamFile = paths.bamPath
         name = "test_rgs"
         cmd = (
-            "add-readgroupset {} {} {} --referenceSetName={} "
+            "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={} "
             "--name={}").format(
             self._repoPath, self._datasetName, bamFile,
             self._referenceSetName, name)
@@ -717,7 +717,7 @@ class TestAddReadGroupSet(AbstractRepoManagerTest):
         # Default name
         bamFile = paths.bamPath
         name = os.path.split(bamFile)[1].split(".")[0]
-        cmd = "add-readgroupset {} {} {} --referenceSetName={}".format(
+        cmd = "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={}".format(
             self._repoPath, self._datasetName, bamFile,
             self._referenceSetName)
         self.runCommand(cmd)
@@ -726,7 +726,7 @@ class TestAddReadGroupSet(AbstractRepoManagerTest):
         # Specified name
         name = "test_rgs"
         cmd = (
-            "add-readgroupset {} {} {} --referenceSetName={} "
+            "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={} "
             "--name={}").format(
             self._repoPath, self._datasetName, bamFile,
             self._referenceSetName, name)
@@ -736,7 +736,7 @@ class TestAddReadGroupSet(AbstractRepoManagerTest):
 
     def testUrlWithMissingIndex(self):
         bamFile = "http://example.com/example.bam"
-        cmd = "add-readgroupset {} {} {} --referenceSetName={}".format(
+        cmd = "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={}".format(
             self._repoPath, self._datasetName, bamFile,
             self._referenceSetName)
         self.assertRaises(
@@ -744,7 +744,7 @@ class TestAddReadGroupSet(AbstractRepoManagerTest):
 
     def testMissingDataset(self):
         bamFile = paths.bamPath
-        cmd = "add-readgroupset {} {} {} --referenceSetName={}".format(
+        cmd = "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={}".format(
             self._repoPath, "not_a_dataset_name", bamFile,
             self._referenceSetName)
         self.assertRaises(
@@ -752,7 +752,7 @@ class TestAddReadGroupSet(AbstractRepoManagerTest):
 
     def testMissingReferenceSet(self):
         bamFile = paths.bamPath
-        cmd = "add-readgroupset {} {} {} --referenceSetName={}".format(
+        cmd = "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={}".format(
             self._repoPath, self._datasetName, bamFile,
             "not_a_referenceset_name")
         self.assertRaises(
@@ -941,7 +941,7 @@ class TestDuplicateNameDelete(AbstractRepoManagerTest):
     def testReadGroupSetDelete(self):
         readGroupSetName = "test_rgs"
         cmdString = (
-            "add-readgroupset {} {} {} --referenceSetName={} "
+            "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={} "
             "--name={}")
         addReadGroupSetCmd1 = cmdString.format(
             self._repoPath, self.dataset1Name, paths.bamPath,
@@ -1066,7 +1066,7 @@ class TestInvalidReadGroupSetIndexFile(AbstractRepoManagerTest):
 
     def _testWithIndexPath(self, indexPath):
         cmd = (
-            "add-readgroupset {} {} {} --referenceSetName={} "
+            "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={} "
             "-I {}").format(
                 self._repoPath, self._datasetName, paths.bamPath,
                 self._referenceSetName, indexPath)

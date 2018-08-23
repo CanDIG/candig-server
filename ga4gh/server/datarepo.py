@@ -1273,6 +1273,8 @@ class SqlDataRepository(AbstractDataRepository):
                 datasetid=readGroupSet.getParentContainer().getId(),
                 referencesetid=readGroupSet.getReferenceSet().getId(),
                 name=readGroupSet.getLocalId(),
+                patientId=readGroupSet.getPatientId(),
+                sampleId=readGroupSet.getSampleId(),
                 programs=programsJson,
                 stats=statsJson,
                 dataurl=readGroupSet.getDataUrl(),

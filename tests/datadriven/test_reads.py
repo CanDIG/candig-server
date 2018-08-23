@@ -144,6 +144,8 @@ class ReadGroupSetTest(datadriven.DataDrivenTest):
     def getDataModelInstance(self, localId, dataPath):
         readGroupSet = reads.HtslibReadGroupSet(self._dataset, localId)
         readGroupSet.populateFromFile(dataPath)
+        readGroupSet.setPatientId("patient1")
+        readGroupSet.setSampleId("sample1")
         return readGroupSet
 
     def getProtocolClass(self):

@@ -795,6 +795,8 @@ class Readgroupset(BaseModel):
     referencesetid = pw.ForeignKeyField(
         db_column='referenceSetId', rel_model=Referenceset, to_field='id')
     stats = pw.TextField()
+    patientId = pw.TextField(db_column='patientId', null=False)
+    sampleId = pw.TextField(db_column='sampleId', null=False)
 
     class Meta:
         indexes = (

@@ -231,6 +231,18 @@ class RepoManager(object):
             referenceSetName = readGroupSet.getBamHeaderReferenceSetName()
         referenceSet = self._repo.getReferenceSetByName(referenceSetName)
         readGroupSet.setReferenceSet(referenceSet)
+        patientId = self._args.patientId
+        if patientId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding patient ID"
+            )
+        sampleId = self._args.sampleId
+        if sampleId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding sample ID"
+            )
+        readGroupSet.setPatientId(patientId)
+        readGroupSet.setSampleId(sampleId)
         readGroupSet.setAttributes(json.loads(self._args.attributes))
         self._updateRepo(self._repo.insertReadGroupSet, readGroupSet)
 
@@ -1358,6 +1370,8 @@ class RepoManager(object):
         addReadGroupSetParser.set_defaults(runner="addReadGroupSet")
         cls.addRepoArgument(addReadGroupSetParser)
         cls.addDatasetNameArgument(addReadGroupSetParser)
+        cls.addPatientIdArgument(addReadGroupSetParser)
+        cls.addSampleIdArgument(addReadGroupSetParser)
         cls.addNameOption(addReadGroupSetParser, objectType)
         cls.addReferenceSetNameOption(addReadGroupSetParser, "ReadGroupSet")
         cls.addAttributesArgument(addReadGroupSetParser)

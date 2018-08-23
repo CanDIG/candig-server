@@ -119,7 +119,7 @@ class TestRepoManagerCli(unittest.TestCase):
         self.assertEquals(args.force, True)
 
     def testAddReadGroupSet(self):
-        cliInput = "add-readgroupset {} {} {} ".format(
+        cliInput = "add-readgroupset {} {} patient1 sample1 {} ".format(
             self.registryPath, self.datasetName, self.filePath)
         args = self.parser.parse_args(cliInput.split())
         self.assertEquals(args.registryPath, self.registryPath)
@@ -130,7 +130,7 @@ class TestRepoManagerCli(unittest.TestCase):
 
     def testAddReadGroupSetWithIndexFile(self):
         indexPath = self.filePath + ".bai"
-        cliInput = "add-readgroupset {} {} {} -I {}".format(
+        cliInput = "add-readgroupset {} {} patient1 sample1 {} -I {}".format(
             self.registryPath, self.datasetName, self.filePath,
             indexPath)
         args = self.parser.parse_args(cliInput.split())

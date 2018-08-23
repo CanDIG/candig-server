@@ -49,8 +49,8 @@ def buildTestData(
 
     pattern = os.path.join(prefix, "datasets/dataset1/reads", "*.bam")
     for dataFile in glob.glob(pattern):
-        run("add-readgroupset", repoFile, datasetName, useRelativePath,
-            dataFile)
+        run("add-readgroupset", repoFile, datasetName, "patient1", "sample1",
+            useRelativePath, dataFile)
 
     pattern = os.path.join(prefix, "datasets/dataset1/variants", "*")
     for j, dataFile in enumerate(glob.glob(pattern)):
