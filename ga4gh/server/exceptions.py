@@ -105,6 +105,29 @@ class BadRequestException(RuntimeException):
     message = "Bad request"
 
 
+class BadFilterKeyException(BadRequestException):
+    """
+    A request that includes one or more invalid filter keys
+    """
+    def __init__(self):
+        self.message = "One or more filter keys or operators are invalid."
+
+
+class BadFieldNameException(BadRequestException):
+    def __init__(self, field, closeMatch):
+        self.message = field + " is not a valid field name, are you looking for " + closeMatch + "?"
+
+
+class BadFieldNameNoCloseMatchException(BadRequestException):
+    def __init__(self, field):
+        self.message = field + " is not a valid field name."
+
+
+class BadInputTypeException(BadRequestException):
+    def __init__(self):
+        self.message = "One or more input values have incorrect types"
+
+
 class BadRequestIntegerException(BadRequestException):
     def __init__(self, attrName, intString):
         self.message = \

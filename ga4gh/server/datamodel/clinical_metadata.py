@@ -16,6 +16,8 @@ import ga4gh.server.exceptions as exceptions
 
 import ga4gh.schemas.protocol as protocol
 
+import difflib as difflab
+
 
 class Patient(datamodel.DatamodelObject):
     """
@@ -102,8 +104,12 @@ class Patient(datamodel.DatamodelObject):
         """
         try:
             return self.objectAttr[field]()
-        except AttributeError:
-            pass
+        except (AttributeError, KeyError):
+            try:
+                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
+                raise exceptions.BadFieldNameException(field, closeMatch)
+            except IndexError:
+                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -470,8 +476,12 @@ class Enrollment(datamodel.DatamodelObject):
         """
         try:
             return self.objectAttr[field]()
-        except AttributeError:
-            pass
+        except (AttributeError, KeyError):
+            try:
+                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
+                raise exceptions.BadFieldNameException(field, closeMatch)
+            except IndexError:
+                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -827,8 +837,12 @@ class Consent(datamodel.DatamodelObject):
         """
         try:
             return self.objectAttr[field]()
-        except AttributeError:
-            pass
+        except (AttributeError, KeyError):
+            try:
+                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
+                raise exceptions.BadFieldNameException(field, closeMatch)
+            except IndexError:
+                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -1259,8 +1273,12 @@ class Diagnosis(datamodel.DatamodelObject):
         """
         try:
             return self.objectAttr[field]()
-        except AttributeError:
-            pass
+        except (AttributeError, KeyError):
+            try:
+                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
+                raise exceptions.BadFieldNameException(field, closeMatch)
+            except IndexError:
+                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -1784,8 +1802,12 @@ class Sample(datamodel.DatamodelObject):
         """
         try:
             return self.objectAttr[field]()
-        except AttributeError:
-            pass
+        except (AttributeError, KeyError):
+            try:
+                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
+                raise exceptions.BadFieldNameException(field, closeMatch)
+            except IndexError:
+                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -2240,8 +2262,12 @@ class Treatment(datamodel.DatamodelObject):
         """
         try:
             return self.objectAttr[field]()
-        except AttributeError:
-            pass
+        except (AttributeError, KeyError):
+            try:
+                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
+                raise exceptions.BadFieldNameException(field, closeMatch)
+            except IndexError:
+                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -2645,8 +2671,12 @@ class Outcome(datamodel.DatamodelObject):
         """
         try:
             return self.objectAttr[field]()
-        except AttributeError:
-            pass
+        except (AttributeError, KeyError):
+            try:
+                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
+                raise exceptions.BadFieldNameException(field, closeMatch)
+            except IndexError:
+                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -2960,8 +2990,12 @@ class Complication(datamodel.DatamodelObject):
         """
         try:
             return self.objectAttr[field]()
-        except AttributeError:
-            pass
+        except (AttributeError, KeyError):
+            try:
+                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
+                raise exceptions.BadFieldNameException(field, closeMatch)
+            except IndexError:
+                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -3227,8 +3261,12 @@ class Tumourboard(datamodel.DatamodelObject):
         """
         try:
             return self.objectAttr[field]()
-        except AttributeError:
-            pass
+        except (AttributeError, KeyError):
+            try:
+                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
+                raise exceptions.BadFieldNameException(field, closeMatch)
+            except IndexError:
+                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """

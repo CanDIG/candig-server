@@ -12,8 +12,7 @@ import ga4gh.server.paging as paging
 import ga4gh.server.response_builder as response_builder
 import ga4gh.schemas.protocol as protocol
 import operator
-from google.protobuf.json_format import MessageToJson
-import json
+from google.protobuf.json_format import MessageToDict
 
 
 class Backend(object):
@@ -241,22 +240,17 @@ class Backend(object):
         :return: True if the object is qualified, False otherwise.
         """
         qualified = True
-        filters = []
+        filters = MessageToDict(request).get("filters", [])
 
         try:
-            filters = json.loads(MessageToJson(request))["filters"]
-
-            try:
-                for filter in filters:
-                    if not self.ops[filter["operator"].lower()](obj.mapper(filter["field"]), filter["value"]):
-                        qualified = False
-                        break
-            except (KeyError, AttributeError, TypeError):
-                qualified = False
-
-        # When the filter is not specified, don't perform any filter
-        except KeyError:
-            pass
+            for filter in filters:
+                if not self.ops[filter["operator"].lower()](obj.mapper(filter["field"]), filter["value"]):
+                    qualified = False
+                    break
+        except TypeError:
+            raise exceptions.BadInputTypeException
+        except (KeyError, AttributeError):
+            raise exceptions.BadFilterKeyException
 
         return qualified
 
