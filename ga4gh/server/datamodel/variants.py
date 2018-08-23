@@ -259,8 +259,6 @@ class AbstractVariantSet(datamodel.DatamodelObject):
         protocolElement.dataset_id = self.getParentContainer().getId()
         protocolElement.reference_set_id = self._referenceSet.getId()
         protocolElement.metadata.extend(self.getMetadata())
-        protocolElement.dataset_id = self.getParentContainer().getId()
-        protocolElement.reference_set_id = self._referenceSet.getId()
         protocolElement.name = self.getLocalId()
         protocolElement.patient_id = self.getPatientId()
         protocolElement.sample_id = self.getSampleId()
@@ -497,6 +495,8 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         """
         self._created = variantSetRecord.created
         self._updated = variantSetRecord.updated
+        self._patientId =  variantSetRecord.patientId
+        self._sampleId = variantSetRecord.sampleId
         self.setAttributesJson(variantSetRecord.attributes)
         self._chromFileMap = {}
         # We can't load directly as we want tuples to be stored

@@ -1404,6 +1404,8 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=datetime.datetime.now(),
                 metadata=metadataJson,
                 dataurlindexmap=urlMapJson,
+                patientId = variantSet.getPatientId(),
+                sampleId = variantSet.getSampleId(),
                 attributes=json.dumps(variantSet.getAttributes()))
         except Exception as e:
             raise exceptions.RepoManagerException(e)
