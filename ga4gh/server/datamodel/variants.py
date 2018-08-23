@@ -363,6 +363,8 @@ class SimulatedVariantSet(AbstractVariantSet):
         now = protocol.convertDatetime(datetime.datetime.now())
         self._creationTime = now
         self._updatedTime = now
+        self._patientId = "SIMULATED_PATIENT"
+        self._sampleId = "SIMULATED_SAMPLE"
 
     def _createMetaData(self):
         metadata_1 = protocol.VariantSetMetadata()
@@ -495,7 +497,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         """
         self._created = variantSetRecord.created
         self._updated = variantSetRecord.updated
-        self._patientId =  variantSetRecord.patientId
+        self._patientId = variantSetRecord.patientId
         self._sampleId = variantSetRecord.sampleId
         self.setAttributesJson(variantSetRecord.attributes)
         self._chromFileMap = {}

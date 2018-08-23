@@ -111,7 +111,7 @@ class AbstractRepoManagerTest(unittest.TestCase):
         vcfDir = paths.vcfDirPath
         self._variantSetName = "test_vs"
         cmd = (
-            "add-variantset {} {} {} --referenceSetName={} "
+            "add-variantset {} {} patient1 sample1 {} --referenceSetName={} "
             "--name={}").format(
             self._repoPath, self._datasetName, vcfDir,
             self._referenceSetName, self._variantSetName)
@@ -785,7 +785,7 @@ class TestAddVariantSet(AbstractRepoManagerTest):
     def testDefaultsLocalFiles(self):
         dataFiles = self.vcfFiles
         name = "test_name"
-        cmd = "add-variantset {} {} {} --name={} --referenceSetName={}".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} --name={} --referenceSetName={}".format(
             self._repoPath, self._datasetName, " ".join(dataFiles),
             name, self._referenceSetName)
         self.runCommand(cmd)
@@ -794,7 +794,7 @@ class TestAddVariantSet(AbstractRepoManagerTest):
     def testDefaultsLocalDirectory(self):
         vcfDir = self.vcfDir
         name = os.path.split(vcfDir)[1]
-        cmd = "add-variantset {} {} {} --referenceSetName={}".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} --referenceSetName={}".format(
             self._repoPath, self._datasetName, vcfDir,
             self._referenceSetName)
         self.runCommand(cmd)
@@ -812,7 +812,7 @@ class TestAddVariantSet(AbstractRepoManagerTest):
                 shutil.copyfile(indexFile, indexFileCopy)
                 indexFiles.append(indexFileCopy)
             cmd = (
-                "add-variantset {} {} {} -I {} --name={} "
+                "add-variantset {} {} patient1 sample1 {} -I {} --name={} "
                 "--referenceSetName={}".format(
                     self._repoPath, self._datasetName, " ".join(dataFiles),
                     " ".join(indexFiles), name, self._referenceSetName))
@@ -825,7 +825,7 @@ class TestAddVariantSet(AbstractRepoManagerTest):
         # Default name
         vcfDir = self.vcfDir
         name = os.path.split(vcfDir)[1]
-        cmd = "add-variantset {} {} {} --referenceSetName={}".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} --referenceSetName={}".format(
             self._repoPath, self._datasetName, vcfDir,
             self._referenceSetName)
         self.runCommand(cmd)
@@ -834,7 +834,7 @@ class TestAddVariantSet(AbstractRepoManagerTest):
         # Specified name
         name = "test_vs"
         cmd = (
-            "add-variantset {} {} {} --referenceSetName={} "
+            "add-variantset {} {} patient1 sample1 {} --referenceSetName={} "
             "--name={}").format(
             self._repoPath, self._datasetName, vcfDir,
             self._referenceSetName, name)
@@ -844,21 +844,21 @@ class TestAddVariantSet(AbstractRepoManagerTest):
 
     def testUrlWithMissingIndex(self):
         dataFile = "http://example.com/example.vcf.gz"
-        cmd = "add-variantset {} {} {} --referenceSetName={}".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} --referenceSetName={}".format(
             self._repoPath, self._datasetName, dataFile,
             self._referenceSetName)
         self.assertRaises(
             exceptions.MissingIndexException, self.runCommand, cmd)
 
     def testMissingDataset(self):
-        cmd = "add-variantset {} {} {} --referenceSetName={}".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} --referenceSetName={}".format(
             self._repoPath, "not_a_dataset_name", self.vcfDir,
             self._referenceSetName)
         self.assertRaises(
             exceptions.DatasetNameNotFoundException, self.runCommand, cmd)
 
     def testMissingReferenceSet(self):
-        cmd = "add-variantset {} {} {} --referenceSetName={}".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} --referenceSetName={}".format(
             self._repoPath, self._datasetName, self.vcfDir,
             "not_a_referenceset_name")
         self.assertRaises(
@@ -881,7 +881,7 @@ class TestAddAnnotatedVariantSet(AbstractRepoManagerTest):
 
     def testNoAnnotations(self):
         name = "test_vs_no_annotations"
-        cmd = "add-variantset {} {} {} -R {} -n {}".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} -R {} -n {}".format(
             self._repoPath, self._datasetName, self.vcfDir,
             self._referenceSetName, name)
         self.runCommand(cmd)
@@ -892,7 +892,7 @@ class TestAddAnnotatedVariantSet(AbstractRepoManagerTest):
 
     def testAnnotations(self):
         name = "test_vs_annotations"
-        cmd = "add-variantset {} {} {} -R {} -n {} -aO {}".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} -R {} -n {} -aO {}".format(
             self._repoPath, self._datasetName, self.vcfDir,
             self._referenceSetName, name, self._ontologyName)
         self.runCommand(cmd)
@@ -903,7 +903,7 @@ class TestAddAnnotatedVariantSet(AbstractRepoManagerTest):
 
     def testAnnotationsNoOntology(self):
         name = "test_vs_annotations"
-        cmd = "add-variantset {} {} {} -R {} -n {} -a".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} -R {} -n {} -a".format(
             self._repoPath, self._datasetName, self.vcfDir,
             self._referenceSetName, name)
         self.assertRaises(
@@ -911,7 +911,7 @@ class TestAddAnnotatedVariantSet(AbstractRepoManagerTest):
 
     def testAnnotationsBadOntology(self):
         name = "test_vs_annotations"
-        cmd = "add-variantset {} {} {} -R {} -n {} -aO {}".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} -R {} -n {} -aO {}".format(
             self._repoPath, self._datasetName, self.vcfDir,
             self._referenceSetName, name, "not_an_ontology")
         self.assertRaises(
@@ -961,7 +961,7 @@ class TestDuplicateNameDelete(AbstractRepoManagerTest):
     def testVariantSetDelete(self):
         vcfDir = paths.vcfDirPath
         variantSetName = "test_vs"
-        cmdString = "add-variantset {} {} {} --referenceSetName={} --name={}"
+        cmdString = "add-variantset {} {} patient1 sample1 {} --referenceSetName={} --name={}"
         addVariantSetCmd1 = cmdString.format(
             self._repoPath, self.dataset1Name, vcfDir,
             self._referenceSetName, variantSetName)
@@ -1024,7 +1024,7 @@ class TestInvalidVariantIndexFile(AbstractRepoManagerTest):
 
     def _testWithIndexPath(self, indexPath):
         cmd = (
-            "add-variantset {} {} {} --referenceSetName={} -I {}").format(
+            "add-variantset {} {} patient1 sample1 {} --referenceSetName={} -I {}").format(
                 self._repoPath, self._datasetName, paths.vcfPath1,
                 self._referenceSetName, indexPath)
         with self.assertRaises(exceptions.NotIndexedException):

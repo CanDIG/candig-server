@@ -152,7 +152,7 @@ class TestRepoManagerCli(unittest.TestCase):
         self.assertEquals(args.force, True)
 
     def testAddVariantSet(self):
-        cliInput = "add-variantset {} {} {} ".format(
+        cliInput = "add-variantset {} {} patient1 sample1 {} ".format(
             self.registryPath, self.datasetName, self.filePath)
         args = self.parser.parse_args(cliInput.split())
         self.assertEquals(args.registryPath, self.registryPath)
@@ -166,7 +166,7 @@ class TestRepoManagerCli(unittest.TestCase):
         file2 = "file2"
         indexFile1 = file1 + ".tbi"
         indexFile2 = file2 + ".tbi"
-        cliInput = "add-variantset {} {} {} {} -I {} {}".format(
+        cliInput = "add-variantset {} {} patient1 sample1 {} {} -I {} {}".format(
             self.registryPath, self.datasetName, file1, file2,
             indexFile1, indexFile2)
         args = self.parser.parse_args(cliInput.split())

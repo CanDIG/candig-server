@@ -75,11 +75,13 @@ class RepoManagerEndToEndTest(unittest.TestCase):
         vcfPath = paths.vcfDirPath + '/'
         self._runCmd(
             "add-variantset", self.datasetName,
+            'patient1', 'sample1',
             vcfPath, '-R', paths.referenceSetName,
             '-A', json.dumps(self.attributes))
         variantAnnotationSetName = "vas"
         self._runCmd(
             "add-variantset", self.datasetName,
+            'patient1', 'sample1',
             paths.annotatedVcfPath, '-R', paths.referenceSetName,
             "-aO", paths.ontologyName, "-n", variantAnnotationSetName,
             '-A', json.dumps(self.attributes))
