@@ -238,7 +238,11 @@ class Backend(object):
         for key in requests:
             requestStr = json.dumps(requests[key])
             responseStr = endpointMapper[idMapper[key]](requestStr, "application/json", access_map)
-            responses[key] = json.loads(responseStr)[idMapper[key]]
+
+            try:
+                responses[key] = json.loads(responseStr)[idMapper[key]]
+            except KeyError:
+                responses[key] = []
 
         return responses
 
