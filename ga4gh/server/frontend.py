@@ -998,7 +998,9 @@ def login_oidc():
             flask.session["id_token"] = flask.request.headers["Authorization"][7:]
 
             response = flask.redirect(base_url)
-            response.set_cookie('session_id', flask.session["id_token"], max_age=600,
+            parsed_payload = _parseTokenPayload(flask.session["id_token"])
+            max_cookie_age = parsed_payload["exp"]-parsed_payload["iat"]
+            response.set_cookie('session_id', flask.session["id_token"], max_age=max_cookie_age,
                                 path=app.config.get('TYK_LISTEN_PATH', '/'), httponly=True)
             return response
 
@@ -1025,7 +1027,7 @@ def gateway_logout():
     if not flask.request.cookies.get("session_id"):
         raise exceptions.NotAuthenticatedException
 
-    data = {"redirect": _generate_login_url()}
+    data = {"redirect": _generate_logout_url()}
     response = flask.Response(json.dumps(data))
 
     # delete browser cookie
@@ -1049,6 +1051,14 @@ def _generate_base_url():
     :return: formatted url for TYK proxied dashboard homepage
     '''
     return '{0}{1}'.format(app.config.get('TYK_SERVER'), app.config.get('TYK_LISTEN_PATH'))
+
+
+def _generate_logout_url():
+    '''
+    :return: formatted url for keycloak logout
+    '''
+    return '{0}/auth/realms/{1}/protocol/openid-connect/logout?redirect_uri={2}'.format(
+        app.config.get('KC_SERVER'), app.config.get('KC_REALM'), app.config.get('KC_REDIRECT'))
 
 
 @DisplayedRoute('/token', postMethod=True)
