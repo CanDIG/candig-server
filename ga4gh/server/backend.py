@@ -13,6 +13,7 @@ import ga4gh.server.response_builder as response_builder
 import ga4gh.schemas.protocol as protocol
 import operator
 from google.protobuf.json_format import MessageToDict
+import json
 
 
 class Backend(object):
@@ -161,27 +162,88 @@ class Backend(object):
         """
         Generator object for advanced search queries
         """
-        print(request)
+        parsedRequest = MessageToDict(request)
+
+        dataset_id = parsedRequest["datasetId"]
+        logic = parsedRequest["logic"]
+        components = parsedRequest["components"]
+        # results = parsedRequest["results"]
+
+        if dataset_id == "":
+            raise exceptions.BadRequestException
+
+        responses = self.componentsHandler(dataset_id, components, access_map)
+        self.logicHandler(logic, responses)
 
         results = {}
         tier = 0
 
-#        dataset = self.getDataRepository().getDataset(request.dataset_id)
-#        tier = self.getUserAccessTier(dataset, access_map)
-#
-#
-#        results = []
-#        for obj in dataset.getPatients():
-#            include = True
-#            if request.name:
-#                if obj.getLocalId() not in request.name.split(','):
-#                    # if request.name != obj.getLocalId():
-#                    include = False
-#
-#            if include:
-#                results.append(obj)
-
         return self._objectListGenerator(request, results, tier=tier)
+
+    def logicHandler(self, logic, responses):
+        """
+        TODO: parse out the logic information and merge the responses object
+        :param logic:
+        :return:
+        """
+
+    def componentsHandler(self, datasetId, components, access_map):
+        """
+        Parse the component portion of incoming request
+        :param datasetId;
+        :param components:
+        :param access_map
+        :return: None
+        """
+        requests = {}
+        idMapper = {}
+
+        for component in components:
+            keyList = list(component.keys())
+            keyList.remove('id')
+            endpoint = keyList[0]
+            filters = component[endpoint]["filters"]
+
+            request = {}
+            request["datasetId"] = datasetId
+            request["filters"] = filters
+
+            idMapper[component["id"]] = endpoint
+            requests[component["id"]] = request
+
+        self.endpointCaller(requests, idMapper, access_map)
+
+    def endpointCaller(self, requests, idMapper, access_map):
+        """
+        Call all endpoints returned by componentsHandler
+        :param requests:
+        :return responses object with key being the id, and the value being the response from corresponding endpoints
+        """
+        responses = {}
+        endpointMapper = {
+            "patient": self.runSearchPatients,
+            "enrollment": self.runSearchEnrollments,
+            "consent": self.runSearchConsents,
+            "diagnosis": self.runSearchDiagnoses,
+            "sample": self.runSearchSamples,
+            "treatment": self.runSearchTreatments,
+            "outcome": self.runSearchOutcomes,
+            "complication": self.runSearchComplications,
+            "tumourboard": self.runSearchTumourboards
+        }
+
+        for key in requests:
+            requestStr = json.dumps(requests[key])
+            responses[key] = endpointMapper[idMapper[key]](requestStr, "application/json", access_map)
+
+        return responses
+
+    def resultsHandler(self, results):
+        """
+        TODO: process the results
+        :param results:
+        :return:
+        """
 
     def experimentsGenerator(self, request, tier=0):
         """
