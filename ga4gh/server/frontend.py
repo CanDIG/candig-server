@@ -999,7 +999,7 @@ def login_oidc():
 
             response = flask.redirect(base_url)
             parsed_payload = _parseTokenPayload(flask.session["id_token"])
-            max_cookie_age = parsed_payload["exp"]-parsed_payload["iat"]
+            max_cookie_age = parsed_payload["exp"] - parsed_payload["iat"]
             response.set_cookie('session_id', flask.session["id_token"], max_age=max_cookie_age,
                                 path=app.config.get('TYK_LISTEN_PATH', '/'), httponly=True)
             return response
