@@ -314,9 +314,13 @@ class Backend(object):
 
         try:
             for filter in filters:
-                if not self.ops[filter["operator"].lower()](obj.mapper(filter["field"]), filter["value"]):
-                    qualified = False
-                    break
+                if "values" in filter:
+                    if not obj.mapper(filter["field"]) in filter["values"]:
+                        qualified = False
+                        break
+                elif not self.ops[filter["operator"].lower()](obj.mapper(filter["field"]), filter["value"]):
+                        qualified = False
+                        break
         except TypeError:
             raise exceptions.BadInputTypeException
         except (KeyError, AttributeError):
