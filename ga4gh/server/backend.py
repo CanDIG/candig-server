@@ -173,6 +173,9 @@ class Backend(object):
             raise exceptions.BadRequestException
 
         responses = self.componentsHandler(dataset_id, components, access_map)
+
+        print(responses)
+
         self.logicHandler(logic, responses)
 
         results = {}
@@ -211,7 +214,7 @@ class Backend(object):
             idMapper[component["id"]] = endpoint
             requests[component["id"]] = request
 
-        self.endpointCaller(requests, idMapper, access_map)
+        return self.endpointCaller(requests, idMapper, access_map)
 
     def endpointCaller(self, requests, idMapper, access_map):
         """
@@ -221,20 +224,21 @@ class Backend(object):
         """
         responses = {}
         endpointMapper = {
-            "patient": self.runSearchPatients,
-            "enrollment": self.runSearchEnrollments,
-            "consent": self.runSearchConsents,
-            "diagnosis": self.runSearchDiagnoses,
-            "sample": self.runSearchSamples,
-            "treatment": self.runSearchTreatments,
-            "outcome": self.runSearchOutcomes,
-            "complication": self.runSearchComplications,
-            "tumourboard": self.runSearchTumourboards
+            "patients": self.runSearchPatients,
+            "enrollments": self.runSearchEnrollments,
+            "consents": self.runSearchConsents,
+            "diagnoses": self.runSearchDiagnoses,
+            "samples": self.runSearchSamples,
+            "treatments": self.runSearchTreatments,
+            "outcomes": self.runSearchOutcomes,
+            "complications": self.runSearchComplications,
+            "tumourboards": self.runSearchTumourboards
         }
 
         for key in requests:
             requestStr = json.dumps(requests[key])
-            responses[key] = endpointMapper[idMapper[key]](requestStr, "application/json", access_map)
+            responseStr = endpointMapper[idMapper[key]](requestStr, "application/json", access_map)
+            responses[key] = json.loads(responseStr)[idMapper[key]]
 
         return responses
 
