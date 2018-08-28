@@ -162,6 +162,13 @@ class InvalidJsonException(BadRequestException):
     def __init__(self, jsonString):
         self.message = "Cannot parse JSON: '{}'".format(jsonString)
 
+class MissingFieldNameException(BadRequestException):
+    def __init__(self, field):
+        self.message = "Missing a required field: " + field
+
+class InvalidLogicException(BadRequestException):
+    def __init__(self, field):
+        self.message = "Invalid logic formatting: " + field
 
 class Validator(object):
     """

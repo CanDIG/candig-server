@@ -53,7 +53,9 @@ class Backend(object):
             "treatments": self.runSearchTreatments,
             "outcomes": self.runSearchOutcomes,
             "complications": self.runSearchComplications,
-            "tumourboards": self.runSearchTumourboards
+            "tumourboards": self.runSearchTumourboards,
+            "variantsByGene": self.runSearchVariantsByGeneName,
+            "variants": self.runSearchVariants
         }
 
     def getDataRepository(self):
@@ -176,21 +178,18 @@ class Backend(object):
         """
         parsedRequest = MessageToDict(request)
 
-        dataset_id = parsedRequest["datasetId"]
-        logic = parsedRequest["logic"]
-        components = parsedRequest["components"]
-        results = parsedRequest["results"]
-
-        if dataset_id == "":
-            raise exceptions.BadRequestException
+        try:
+            dataset_id = parsedRequest["datasetId"]
+            logic = parsedRequest["logic"]
+            components = parsedRequest["components"]
+            results = parsedRequest["results"]
+        except KeyError as error:
+            raise exceptions.MissingFieldNameException(error.message)
 
         responses = self.componentsHandler(dataset_id, components, return_mimetype, access_map)
-
         patient_list = self.logicHandler(logic, responses)
 
         return self.resultsHandler(results, patient_list, dataset_id, return_mimetype, access_map)
-
-        # return self._objectListGenerator(request, results, tier=tier)
 
     def logicHandler(self, logic, responses):
         """
@@ -201,14 +200,11 @@ class Backend(object):
 
         op_keys = ['and', 'or']
 
-        try:
+        if len(logic.keys()) == 1:
             logic_key = logic.keys()[0]
-        except:
-            # TODO: type of exceptions to catch?
-            raise exceptions.BadRequestException
-
-        if len(logic.keys()) != 1:
-            raise exceptions.BadRequestException
+        else:
+            # too many logic keys
+            raise exceptions.InvalidLogicException('Invalid number of keys')
 
         if logic_key in op_keys:
             results_arr = []
@@ -239,7 +235,8 @@ class Backend(object):
             return id_list
 
         else:
-            raise exceptions.BadRequestException
+            # invalid logic key
+            raise exceptions.InvalidLogicException("Invalid key used")
 
     def componentsHandler(self, datasetId, components, return_mimetype, access_map):
         """
@@ -319,7 +316,9 @@ class Backend(object):
         # parse table name
         table = results[0].get("table")
         if table is None:
-            raise exceptions.BadRequestException
+            raise exceptions.MissingFieldNameException("table")
+
+        # TODO: Handle returning other table types e.g. variants
 
         request = {
             "datasetId": dataset_id,
@@ -397,10 +396,14 @@ class Backend(object):
 
         try:
             for filter in filters:
-                if "values" in filter:
-                    if not obj.mapper(filter["field"]) in filter["values"]:
+                if "value" not in filter:
+                    if "values" not in filter:
                         qualified = False
                         break
+                    else:
+                        if not obj.mapper(filter["field"]) in filter["values"]:
+                            qualified = False
+                            break
                 elif not self.ops[filter["operator"].lower()](obj.mapper(filter["field"]), filter["value"]):
                         qualified = False
                         break
@@ -1467,7 +1470,10 @@ class Backend(object):
         """
         Runs advanced SearchRequest
         """
-        request = protocol.fromJson(request, protocol.SearchQueryRequest)
+        try:
+            request = protocol.fromJson(request, protocol.SearchQueryRequest)
+        except protocol.json_format.ParseError:
+            raise exceptions.InvalidJsonException(request)
         return self.queryGenerator(request, return_mimetype, access_map)
 
     def runSearchPatients(self, request, return_mimetype, access_map):
