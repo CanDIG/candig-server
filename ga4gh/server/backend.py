@@ -44,6 +44,18 @@ class Backend(object):
             "in": operator.contains
         }
 
+        self.endpointMapper = {
+            "patients": self.runSearchPatients,
+            "enrollments": self.runSearchEnrollments,
+            "consents": self.runSearchConsents,
+            "diagnoses": self.runSearchDiagnoses,
+            "samples": self.runSearchSamples,
+            "treatments": self.runSearchTreatments,
+            "outcomes": self.runSearchOutcomes,
+            "complications": self.runSearchComplications,
+            "tumourboards": self.runSearchTumourboards
+        }
+
     def getDataRepository(self):
         """
         Get the data repository used by this backend
@@ -158,7 +170,7 @@ class Backend(object):
             self.getDataRepository().getAuthzDatasetByIndex, access_map=access_map)
 
     # SEARCH
-    def queryGenerator(self, request, access_map):
+    def queryGenerator(self, request, return_mimetype, access_map):
         """
         Generator object for advanced search queries
         """
@@ -167,36 +179,75 @@ class Backend(object):
         dataset_id = parsedRequest["datasetId"]
         logic = parsedRequest["logic"]
         components = parsedRequest["components"]
-        # results = parsedRequest["results"]
+        results = parsedRequest["results"]
 
         if dataset_id == "":
             raise exceptions.BadRequestException
 
-        responses = self.componentsHandler(dataset_id, components, access_map)
+        responses = self.componentsHandler(dataset_id, components, return_mimetype, access_map)
 
-        print(responses)
+        patient_list = self.logicHandler(logic, responses)
 
-        self.logicHandler(logic, responses)
+        return self.resultsHandler(results, patient_list, dataset_id, return_mimetype, access_map)
 
-        results = {}
-        tier = 0
-
-        return self._objectListGenerator(request, results, tier=tier)
+        # return self._objectListGenerator(request, results, tier=tier)
 
     def logicHandler(self, logic, responses):
         """
-        TODO: parse out the logic information and merge the responses object
-        :param logic:
-        :return:
+        :param  logic: dict parsed from query containing logic statement keys or component id keys
+                responses: object with key being the id, and the value being the response from corresponding endpoints
+        :return: list of patient_id filtered based on join logic
         """
 
-    def componentsHandler(self, datasetId, components, access_map):
+        op_keys = ['and', 'or']
+
+        try:
+            logic_key = logic.keys()[0]
+        except:
+            # TODO: type of exceptions to catch?
+            raise exceptions.BadRequestException
+
+        if len(logic.keys()) != 1:
+            raise exceptions.BadRequestException
+
+        if logic_key in op_keys:
+            results_arr = []
+            patient_array = []
+
+            for logic_obj in logic[logic_key]:
+                results_arr.append(self.logicHandler(logic_obj, responses))
+
+            if logic_key == 'or':
+                for id_list in results_arr:
+                    for id in id_list:
+                        if id not in patient_array:
+                            patient_array.append(id)
+            elif logic_key == 'and':
+                results_arr.sort(key=len)
+                for id in results_arr[0]:
+                    if all(id in results_arr[x] for x in range(1, len(results_arr))):
+                        patient_array.append(id)
+
+            return patient_array
+
+        elif logic_key == 'id':
+            id_list = []
+            for response in responses[logic[logic_key]]:
+                if response['patientId'] not in id_list:
+                    id_list.append(response['patientId'])
+
+            return id_list
+
+        else:
+            raise exceptions.BadRequestException
+
+    def componentsHandler(self, datasetId, components, return_mimetype, access_map):
         """
         Parse the component portion of incoming request
         :param datasetId;
         :param components:
         :param access_map
-        :return: None
+        :return: responses object with key being the id, and the value being the response from corresponding endpoints
         """
         requests = {}
         idMapper = {}
@@ -214,30 +265,19 @@ class Backend(object):
             idMapper[component["id"]] = endpoint
             requests[component["id"]] = request
 
-        return self.endpointCaller(requests, idMapper, access_map)
+        return self.endpointCaller(requests, idMapper, return_mimetype, access_map)
 
-    def endpointCaller(self, requests, idMapper, access_map):
+    def endpointCaller(self, requests, idMapper, return_mimetype, access_map):
         """
         Call all endpoints returned by componentsHandler
         :param requests:
         :return responses object with key being the id, and the value being the response from corresponding endpoints
         """
         responses = {}
-        endpointMapper = {
-            "patients": self.runSearchPatients,
-            "enrollments": self.runSearchEnrollments,
-            "consents": self.runSearchConsents,
-            "diagnoses": self.runSearchDiagnoses,
-            "samples": self.runSearchSamples,
-            "treatments": self.runSearchTreatments,
-            "outcomes": self.runSearchOutcomes,
-            "complications": self.runSearchComplications,
-            "tumourboards": self.runSearchTumourboards
-        }
 
         for key in requests:
             requestStr = json.dumps(requests[key])
-            responseStr = endpointMapper[idMapper[key]](requestStr, "application/json", access_map)
+            responseStr = self.endpointMapper[idMapper[key]](requestStr, return_mimetype, access_map)
 
             try:
                 responses[key] = json.loads(responseStr)[idMapper[key]]
@@ -246,12 +286,55 @@ class Backend(object):
 
         return responses
 
-    def resultsHandler(self, results):
+    def resultsHandler(self, results, patient_list, dataset_id, return_mimetype, access_map):
         """
-        TODO: process the results
         :param results:
         :return:
         """
+
+        # generatorMapper = {
+        #     "patients": self.patientsGenerator,
+        #     "enrollments": self.enrollmentsGenerator,
+        #     "consents": self.consentsGenerator,
+        #     "diagnoses": self.diagnosesGenerator,
+        #     "samples": self.samplesGenerator,
+        #     "treatments": self.treatmentsGenerator,
+        #     "outcomes": self.outcomesGenerator,
+        #     "complications": self.complicationsGenerator,
+        #     "tumourboards": self.tumourboardsGenerator
+        # }
+
+        # protocolMapper = {
+        #     "patients": protocol.SearchPatientsRequest,
+        #     "enrollments": protocol.SearchEnrollmentsRequest,
+        #     "consents": protocol.SearchConsentsRequest,
+        #     "diagnoses": protocol.SearchDiagnosesRequest,
+        #     "samples": protocol.SearchSamplesRequest,
+        #     "treatments": protocol.SearchTreatmentsRequest,
+        #     "outcomes": protocol.SearchOutcomesRequest,
+        #     "complications": protocol.SearchComplicationsRequest,
+        #     "tumourboards": protocol.SearchTumourboardsRequest
+        # }
+
+        # parse table name
+        table = results[0].get("table")
+        if table is None:
+            raise exceptions.BadRequestException
+
+        request = {
+            "datasetId": dataset_id,
+            "filters": [{
+                "field": "patientId",
+                "operator": "in",
+                "values": patient_list
+            }]
+        }
+
+        requestStr = json.dumps(request)
+        # request = protocol.fromJson(requestStr, protocolMapper[table])
+
+        # return generatorMapper[table](request, access_map)
+        return self.endpointMapper[table](requestStr, return_mimetype, access_map)
 
     def experimentsGenerator(self, request, tier=0):
         """
@@ -1384,13 +1467,8 @@ class Backend(object):
         """
         Runs advanced SearchRequest
         """
-        return self.runSearchRequest(
-            request, protocol.SearchQueryRequest,
-            protocol.SearchQueryResponse,
-            self.queryGenerator,
-            access_map,
-            return_mimetype,
-        )
+        request = protocol.fromJson(request, protocol.SearchQueryRequest)
+        return self.queryGenerator(request, return_mimetype, access_map)
 
     def runSearchPatients(self, request, return_mimetype, access_map):
         """
