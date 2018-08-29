@@ -1857,17 +1857,28 @@ class Backend(object):
         defined by the specified request.
         """
         results = []
+        processedVariantsets = []
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         variantsets = dataset.getVariantSets()
+        patientList = MessageToDict(request).get("patientList", None)
+
+        if patientList is None:
+            processedVariantsets = variantsets
+        else:
+            for variantset in variantsets:
+                if variantset.getPatientId() in patientList:
+                    processedVariantsets.append(variantset)
 
         for featureset in dataset.getFeatureSets():
             for feature in featureset.getFeatures(geneSymbol=request.gene):
-                for variantset in variantsets:
+                for variantset in processedVariantsets:
                     for variant in variantset.getVariants(
                             referenceName=feature.reference_name.replace('chr', ''),
                             startPosition=feature.start,
                             endPosition=feature.end,
                     ):
+                        if patientList is not None:
+                            setattr(variant, "patientId", variantset.getPatientId())
                         results.append(variant)
 
         return self._protocolListGenerator(request, results)
