@@ -313,7 +313,10 @@ class Backend(object):
         #     "tumourboards": protocol.SearchTumourboardsRequest
         # }
 
-        # parse table name
+        # no valid patient id's means no results
+        if not patient_list:
+            return '{}'
+
         table = results[0].get("table")
         if table is None:
             raise exceptions.MissingFieldNameException("table")
