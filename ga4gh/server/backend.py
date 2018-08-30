@@ -187,11 +187,11 @@ class Backend(object):
             raise exceptions.MissingFieldNameException(error.message)
 
         responses = self.componentsHandler(dataset_id, components, return_mimetype, access_map)
-        patient_list = self.logicHandler(logic, responses)
+        patient_list = self.logicHandler(logic, responses, dataset_id)
 
         return self.resultsHandler(results, patient_list, dataset_id, return_mimetype, access_map)
 
-    def logicHandler(self, logic, responses):
+    def logicHandler(self, logic, responses, dataset_id):
         """
         :param  logic: dict parsed from query containing logic statement keys or component id keys
                 responses: object with key being the id, and the value being the response from corresponding endpoints
@@ -211,7 +211,7 @@ class Backend(object):
             patient_array = []
 
             for logic_obj in logic[logic_key]:
-                results_arr.append(self.logicHandler(logic_obj, responses))
+                results_arr.append(self.logicHandler(logic_obj, responses, dataset_id))
 
             if logic_key == 'or':
                 for id_list in results_arr:
@@ -229,14 +229,31 @@ class Backend(object):
         elif logic_key == 'id':
             id_list = []
             for response in responses[logic[logic_key]]:
-                if response['patientId'] not in id_list:
-                    id_list.append(response['patientId'])
+                patient_id = self.getResponsePatientId(response, dataset_id)
+                if patient_id not in id_list:
+                    id_list.append(patient_id)
 
             return id_list
 
         else:
             # invalid logic key
             raise exceptions.InvalidLogicException("Invalid key used")
+
+    def getResponsePatientId(self, response, dataset_id):
+        """
+        Gets the patientId from the response for object joins, otherwise throw error
+        :param response:
+        :param dataset_id:
+        :return: patient id string
+        """
+        if 'patientId' in response:
+            return response['patientId']
+        elif 'variantSetId' in response:
+            dataset = self.getDataRepository().getDataset(dataset_id)
+            variantSet = dataset.getVariantSet(response['variantSetId'])
+            return variantSet.getPatientId()
+        else:
+            raise exceptions.BadRequestException
 
     def componentsHandler(self, datasetId, components, return_mimetype, access_map):
         """
@@ -253,11 +270,24 @@ class Backend(object):
             keyList = list(component.keys())
             keyList.remove('id')
             endpoint = keyList[0]
-            filters = component[endpoint]["filters"]
 
-            request = {}
-            request["datasetId"] = datasetId
-            request["filters"] = filters
+            request = {"datasetId": datasetId}
+
+            try:
+                if endpoint == "variants":
+                    request["start"] = component[endpoint]["start"]
+                    request["end"] = component[endpoint]["end"]
+                    request["referenceName"] = component[endpoint]["referenceName"]
+                    request["variantSetId"] = component[endpoint]["variantSetId"]
+
+                elif endpoint == "variantsByGene":
+                    request["gene"] = component[endpoint]["gene"]
+
+                else:
+                    request["filters"] = component[endpoint]["filters"]
+
+            except KeyError as error:
+                raise exceptions.MissingFieldNameException(error.message)
 
             idMapper[component["id"]] = endpoint
             requests[component["id"]] = request
@@ -277,6 +307,9 @@ class Backend(object):
             responseStr = self.endpointMapper[idMapper[key]](requestStr, return_mimetype, access_map)
 
             try:
+                # TODO: this work around could probably be improved
+                if idMapper[key] == "variantsByGene":
+                    idMapper[key] = "variants"
                 responses[key] = json.loads(responseStr)[idMapper[key]]
             except KeyError:
                 responses[key] = []
@@ -333,9 +366,7 @@ class Backend(object):
         }
 
         requestStr = json.dumps(request)
-        # request = protocol.fromJson(requestStr, protocolMapper[table])
 
-        # return generatorMapper[table](request, access_map)
         return self.endpointMapper[table](requestStr, return_mimetype, access_map)
 
     def experimentsGenerator(self, request, tier=0):
