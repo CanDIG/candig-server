@@ -304,15 +304,32 @@ class Backend(object):
 
         for key in requests:
             requestStr = json.dumps(requests[key])
-            responseStr = self.endpointMapper[idMapper[key]](requestStr, return_mimetype, access_map)
+
+            responseObj = json.loads(
+                self.endpointMapper[idMapper[key]](requestStr, return_mimetype, access_map)
+            )
 
             try:
                 # TODO: this work around could probably be improved
                 if idMapper[key] == "variantsByGene":
                     idMapper[key] = "variants"
-                responses[key] = json.loads(responseStr)[idMapper[key]]
+                responses[key] = responseObj[idMapper[key]]
             except KeyError:
                 responses[key] = []
+
+            nextToken = responseObj.get('nextPageToken')
+
+            while nextToken:
+                request = json.loads(requestStr)
+                request["page_token"] = nextToken
+                requestStr = json.dumps(request)
+
+                nextPageRequest = json.loads(
+                    self.endpointMapper[idMapper[key]](requestStr, return_mimetype, access_map)
+                )
+
+                responses[key] += nextPageRequest[idMapper[key]]
+                nextToken = nextPageRequest.get('nextPageToken')
 
         return responses
 

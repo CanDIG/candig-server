@@ -485,35 +485,6 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException):
         responseObject['status'].append(404)
 
-    try:
-        nextToken = responseObject['results'].get('nextPageToken')
-
-    # response object not properly formed
-    except (IndexError, AttributeError):
-        nextToken = None
-
-    while nextToken:
-        request = json.loads(request)
-        request["page_token"] = responseObject['results']['nextPageToken']
-        responseObject['results'].pop('nextPageToken', None)
-        request = json.dumps(request)
-
-        nextPageRequest = json.loads(
-            endpoint(
-                request,
-                return_mimetype=return_mimetype,
-                access_map=access_map
-            )
-        )
-
-        for key in nextPageRequest:
-            if key in responseObject['results']:
-                responseObject['results'][key] += nextPageRequest[key]
-            else:
-                responseObject['results'][key] = nextPageRequest[key]
-
-        nextToken = responseObject['results'].get('nextPageToken')
-
     # Peer queries
     # Apply federation by default or if it was specifically requested
     if ('Federation' not in request_dictionary.headers or request_dictionary.headers.get('Federation') == 'True'):
@@ -573,6 +544,10 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                                 responseObject['results'] = peer_response
                             else:
                                 for key in peer_response:
+                                    if key == 'nextPageToken':
+                                        if 'nextPageToken' not in responseObject['results']:
+                                            responseObject['results'][key] = peer_response[key]
+                                        continue
                                     for record in peer_response[key]:
                                         responseObject['results'][key].append(record)
                     except ValueError:
@@ -600,7 +575,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         # Invalid by default
         'Valid response': False
     }
-    
+
     # Decide on valid response
     if responseObject['status']['Known peers'] == \
             responseObject['status']['Queried peers']:
