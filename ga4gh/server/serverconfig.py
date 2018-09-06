@@ -188,6 +188,7 @@ class TykConfig(KeycloakOidConfig):
 
     To start a dev flask server using this config add in launch option, -c TykConfig
     """
+    ACCESS_LIST = "access_list.txt"
 
     TYK_ENABLED = True
     TYK_SERVER = 'http://ga4ghdev01.bcgsc.ca:8008'
