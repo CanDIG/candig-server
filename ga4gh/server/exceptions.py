@@ -168,6 +168,16 @@ class MissingFieldNameException(BadRequestException):
         self.message = "Missing a required field: " + field
 
 
+class MissingGeneNameException(BadRequestException):
+    def __init__(self):
+        self.message = "Gene is required to query the variantsByGene endpoint"
+
+
+class MissingVariantKeysException(BadRequestException):
+    def __init__(self):
+        self.message = "All of start, end and referenceName are required to query variants endpoint"
+
+
 class InvalidLogicException(BadRequestException):
     def __init__(self, field):
         self.message = "Invalid logic formatting: " + field

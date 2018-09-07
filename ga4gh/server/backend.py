@@ -14,6 +14,7 @@ import ga4gh.schemas.protocol as protocol
 import operator
 from google.protobuf.json_format import MessageToDict
 import json
+import itertools
 
 
 class Backend(object):
@@ -363,6 +364,8 @@ class Backend(object):
         #     "tumourboards": protocol.SearchTumourboardsRequest
         # }
 
+        request = {}
+
         # no valid patient id's means no results
         if not patient_list:
             return '{}'
@@ -373,18 +376,59 @@ class Backend(object):
 
         # TODO: Handle returning other table types e.g. variants
 
-        request = {
-            "datasetId": dataset_id,
-            "filters": [{
-                "field": "patientId",
-                "operator": "in",
-                "values": patient_list
-            }]
-        }
+        if table == "variantsByGene" or table == "variants":
+            return self.variantsResultsHandler(table, results, patient_list, dataset_id, return_mimetype, access_map)
+
+        else:
+            request = {
+                "datasetId": dataset_id,
+                "filters": [{
+                    "field": "patientId",
+                    "operator": "in",
+                    "values": patient_list
+                }]
+            }
+            requestStr = json.dumps(request)
+
+            return self.endpointMapper[table](requestStr, return_mimetype, access_map)
+
+    def variantsResultsHandler(self, table, results, patient_list, dataset_id, return_mimetype, access_map):
+
+        request = {}
+
+        if table == "variantsByGene":
+            gene = results[0].get("gene")
+
+            if gene is None:
+                raise exceptions.MissingGeneNameException
+
+            else:
+                request = {
+                    "datasetId": dataset_id,
+                    "patientList": patient_list,
+                    "gene": gene
+                }
+
+        elif table == "variants":
+            start = results[0].get("start")
+            end = results[0].get("end")
+            referenceName = results[0].get("referenceName")
+
+            if start is None or end is None or referenceName is None:
+                raise exceptions.MissingVariantKeysException
+
+            else:
+                request = {
+                    "datasetId": dataset_id,
+                    "patientList": patient_list,
+                    "start": start,
+                    "end": end,
+                    "referenceName": referenceName
+                }
 
         requestStr = json.dumps(request)
 
-        return self.endpointMapper[table](requestStr, return_mimetype, access_map)
+        return self.runSearchVariantsByGeneName(requestStr, return_mimetype, access_map)
 
     def experimentsGenerator(self, request, tier=0):
         """
@@ -770,13 +814,28 @@ class Backend(object):
         Returns a generator over the (variant, nextPageToken) pairs defined
         by the specified request.
         """
-        compoundId = datamodel.VariantSetCompoundId \
-            .parse(request.variant_set_id)
-        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
-        variantSet = dataset.getVariantSet(compoundId.variant_set_id)
-        intervalIterator = paging.VariantsIntervalIterator(
-            request, variantSet)
-        return intervalIterator
+        if request.variant_set_ids == []:
+            compoundId = datamodel.VariantSetCompoundId \
+                .parse(request.variant_set_id)
+            dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+            variantSet = dataset.getVariantSet(compoundId.variant_set_id)
+            intervalIterator = paging.VariantsIntervalIterator(request, variantSet)
+            return intervalIterator
+
+        else:
+            variantSets = []
+            for variantsetId in request.variant_set_ids:
+                compoundId = datamodel.VariantSetCompoundId \
+                    .parse(variantsetId)
+                dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+                item = dataset.getVariantSet(variantsetId)
+                variantSets.append(item)
+
+            iterators = []
+            for item in variantSets:
+                iterators.append(paging.VariantsIntervalIterator(request, item))
+
+            return itertools.chain.from_iterable(iterators)
 
     def genotypeMatrixGenerator(self, request, access_map):
         """
@@ -1917,17 +1976,28 @@ class Backend(object):
                 if variantset.getPatientId() in patientList:
                     processedVariantsets.append(variantset)
 
-        for featureset in dataset.getFeatureSets():
-            for feature in featureset.getFeatures(geneSymbol=request.gene):
-                for variantset in processedVariantsets:
-                    for variant in variantset.getVariants(
-                            referenceName=feature.reference_name.replace('chr', ''),
-                            startPosition=feature.start,
-                            endPosition=feature.end,
-                    ):
-                        if patientList is not None:
-                            setattr(variant, "patientId", variantset.getPatientId())
-                        results.append(variant)
+        if request.gene == "" and request.start == "":
+            raise exceptions.BadRequestException
+
+        if request.gene != "":
+            for featureset in dataset.getFeatureSets():
+                for feature in featureset.getFeatures(geneSymbol=request.gene):
+                    for variantset in processedVariantsets:
+                        for variant in variantset.getVariants(
+                                referenceName=feature.reference_name.replace('chr', ''),
+                                startPosition=feature.start,
+                                endPosition=feature.end,
+                        ):
+                            if patientList is not None:
+                                setattr(variant, "patientId", variantset.getPatientId())
+                            results.append(variant)
+
+        elif request.start != "":
+            iterators = []
+            for item in processedVariantsets:
+                iterators.append(paging.VariantsIntervalIterator(request, item))
+
+            return itertools.chain.from_iterable(iterators)
 
         return self._protocolListGenerator(request, results)
 
