@@ -422,6 +422,50 @@ class ExtractionCompoundId(DatasetCompoundId):
     containerIds = DatasetCompoundId.containerIds + [('extraction_id', 3)]
     differentiator = 'ext'
 
+class SequencingCompoundId(DatasetCompoundId):
+    """
+    The compound id for sequencing metadata
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'sequencing']
+    containerIds = DatasetCompoundId.containerIds + [('sequencing_id', 3)]
+    differentiator = 'seq'
+
+class AlignmentCompoundId(DatasetCompoundId):
+    """
+    The compound id for alignment tool metadata
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'alignment']
+    containerIds = DatasetCompoundId.containerIds + [('alignment_id', 3)]
+    differentiator = 'aln'
+
+class VariantCallingCompoundId(DatasetCompoundId):
+    """
+    The compound id for variant calling metadata
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'variant_calling']
+    containerIds = DatasetCompoundId.containerIds + [('variant_calling_id', 3)]
+    differentiator = 'vac'
+
+class FusionDetectionCompoundId(DatasetCompoundId):
+    """
+    The compound id for fusion detection metadata
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'fusion_detection']
+    containerIds = DatasetCompoundId.containerIds + [('fusion_detection_id', 3)]
+    differentiator = 'fdn'
+
+class ExpressionAnalysisCompoundId(DatasetCompoundId):
+    """
+    The compound id for expression analysis metadata
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'expression_analysis']
+    containerIds = DatasetCompoundId.containerIds + [('expression_analysis_id', 3)]
+    differentiator = 'exa'
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ### 
