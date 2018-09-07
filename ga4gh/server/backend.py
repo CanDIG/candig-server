@@ -814,7 +814,9 @@ class Backend(object):
         Returns a generator over the (variant, nextPageToken) pairs defined
         by the specified request.
         """
-        if request.variant_set_ids == []:
+        variantSetIds = MessageToDict(request).get("variantSetIds", None)
+
+        if variantSetIds is None:
             compoundId = datamodel.VariantSetCompoundId \
                 .parse(request.variant_set_id)
             dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
@@ -824,7 +826,7 @@ class Backend(object):
 
         else:
             variantSets = []
-            for variantsetId in request.variant_set_ids:
+            for variantsetId in variantSetIds:
                 compoundId = datamodel.VariantSetCompoundId \
                     .parse(variantsetId)
                 dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
