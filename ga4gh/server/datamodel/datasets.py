@@ -99,6 +99,36 @@ class Dataset(datamodel.DatamodelObject):
         self._tumourboardIds = []
         self._tumourboardIdMap = {}
         self._tumourboardNameMap = {}
+
+        # Extraction
+        self._extractionIds = []
+        self._extractionIdMap = {}
+        self._extractionNameMap = {}
+
+        # Sequencing
+        self._sequencingIds = []
+        self._sequencingIdMap = {}
+        self._sequencingNameMap = {}
+
+        # Alignment
+        self._alignmentIds = []
+        self._alignmentIdMap = {}
+        self._alignmentNameMap = {}
+
+        # VariantCalling
+        self._variantCallingIds = []
+        self._variantCallingIdMap = {}
+        self._variantCallingNameMap = {}
+
+        # FusionDetection
+        self._fusionDetectionIds = []
+        self._fusionDetectionIdMap = {}
+        self._fusionDetectionNameMap = {}
+
+        # Extraction
+        self._expressionAnalysisIds = []
+        self._expressionAnalysisIdMap = {}
+        self._expressionAnalysisNameMap = {}
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ###
@@ -227,6 +257,61 @@ class Dataset(datamodel.DatamodelObject):
         self._tumourboardIdMap[id_] = tumourboard
         self._tumourboardIds.append(id_)
         self._tumourboardNameMap[tumourboard.getName()] = tumourboard
+
+    def addExtraction(self, extraction):
+        """
+        Adds the specified extraction to this dataset.
+        """
+        id_ = extraction.getId()
+        self._extractionIdMap[id_] = extraction
+        self._extractionIds.append(id_)
+        self._extractionNameMap[extraction.getName()] = extraction
+
+    def addSequencing(self, sequencing):
+        """
+        Adds the specified extraction to this dataset.
+        """
+        id_ = sequencing.getId()
+        self._extractionIdMap[id_] = sequencing
+        self._extractionIds.append(id_)
+        self._extractionNameMap[sequencing.getName()] = sequencing
+
+    def addAlignment(self, alignment):
+        """
+        Adds the specified extraction to this dataset.
+        """
+        id_ = alignment.getId()
+        self._extractionIdMap[id_] = alignment
+        self._extractionIds.append(id_)
+        self._extractionNameMap[alignment.getName()] = alignment
+
+    def addVariantCalling(self, variantCalling):
+        """
+        Adds the specified extraction to this dataset.
+        """
+        id_ = variantCalling.getId()
+        self._extractionIdMap[id_] = variantCalling
+        self._extractionIds.append(id_)
+        self._extractionNameMap[variantCalling.getName()] = variantCalling
+
+    def addFusionDetection(self, fusionDetection):
+        """
+        Adds the specified extraction to this dataset.
+        """
+        id_ = fusionDetection.getId()
+        self._extractionIdMap[id_] = fusionDetection
+        self._extractionIds.append(id_)
+        self._extractionNameMap[fusionDetection.getName()] = fusionDetection
+
+    def addExpressionAnalysis(self, expressionAnalysis):
+        """
+        Adds the specified extraction to this dataset.
+        """
+        id_ = expressionAnalysis.getId()
+        self._extractionIdMap[id_] = expressionAnalysis
+        self._extractionIds.append(id_)
+        self._extractionNameMap[expressionAnalysis.getName()] = expressionAnalysis
+
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ###
@@ -685,6 +770,150 @@ class Dataset(datamodel.DatamodelObject):
         if id_ not in self._tumourboardIdMap:
             raise exceptions.TumourboardNotFoundException(id_)
         return self._tumourboardIdMap[id_]
+
+    def getExtractions(self):
+        """
+        Returns the list of extractions in this dataset
+        """
+        return [self._extractionIdMap[id_] for id_ in self._extractionIds]
+
+    def getExtractionByName(self, name):
+        """
+        Returns an extraction with the specified name, or raises a
+        extractionNameNotFoundException if it does not exist.
+        """
+        if name not in self._extractionNameMap:
+            raise exceptions.ObjectNameNotFoundException(name)
+        return self._extractionNameMap[name]
+
+    def getExtraction(self, id_):
+        """
+        Returns the extraction with the specified id, or raises
+        a extractionNotFoundException otherwise.
+        """
+        if id_ not in self._extractionIdMap:
+            raise exceptions.ObjectNotFoundException(id_)
+        return self._extractionIdMap[id_]
+
+    def getSequencings(self):
+        """
+        Returns the list of sequencings in this dataset
+        """
+        return [self._sequencingIdMap[id_] for id_ in self._sequencingIds]
+
+    def getSequencingByName(self, name):
+        """
+        Returns an sequencing with the specified name, or raises a
+        sequencingNameNotFoundException if it does not exist.
+        """
+        if name not in self._sequencingNameMap:
+            raise exceptions.ObjectNameNotFoundException(name)
+        return self._sequencingNameMap[name]
+
+    def getSequencing(self, id_):
+        """
+        Returns the sequencing with the specified id, or raises
+        a sequencingNotFoundException otherwise.
+        """
+        if id_ not in self._sequencingIdMap:
+            raise exceptions.ObjectNotFoundException(id_)
+        return self._sequencingIdMap[id_]
+
+    def getAlignments(self):
+        """
+        Returns the list of alignments in this dataset
+        """
+        return [self._alignmentIdMap[id_] for id_ in self._alignmentIds]
+
+    def getAlignmentByName(self, name):
+        """
+        Returns an alignment with the specified name, or raises a
+        alignmentNameNotFoundException if it does not exist.
+        """
+        if name not in self._alignmentNameMap:
+            raise exceptions.ObjectNameNotFoundException(name)
+        return self._alignmentNameMap[name]
+
+    def getAlignment(self, id_):
+        """
+        Returns the alignment with the specified id, or raises
+        a alignmentNotFoundException otherwise.
+        """
+        if id_ not in self._alignmentIdMap:
+            raise exceptions.ObjectNotFoundException(id_)
+        return self._alignmentIdMap[id_]
+
+    def getVariantCallings(self):
+        """
+        Returns the list of variantCallings in this dataset
+        """
+        return [self._variantCallingIdMap[id_] for id_ in self._variantCallingIds]
+
+    def getVariantCallingByName(self, name):
+        """
+        Returns an variantCalling with the specified name, or raises a
+        variantCallingNameNotFoundException if it does not exist.
+        """
+        if name not in self._variantCallingNameMap:
+            raise exceptions.ObjectNameNotFoundException(name)
+        return self._variantCallingNameMap[name]
+
+    def getVariantCalling(self, id_):
+        """
+        Returns the variantCalling with the specified id, or raises
+        a variantCallingNotFoundException otherwise.
+        """
+        if id_ not in self._variantCallingIdMap:
+            raise exceptions.ObjectNotFoundException(id_)
+        return self._variantCallingIdMap[id_]
+
+    def getFusionDetections(self):
+        """
+        Returns the list of fusionDetections in this dataset
+        """
+        return [self._fusionDetectionIdMap[id_] for id_ in self._fusionDetectionIds]
+
+    def getFusionDetectionByName(self, name):
+        """
+        Returns an fusionDetection with the specified name, or raises a
+        fusionDetectionNameNotFoundException if it does not exist.
+        """
+        if name not in self._fusionDetectionNameMap:
+            raise exceptions.ObjectNameNotFoundException(name)
+        return self._fusionDetectionNameMap[name]
+
+    def getFusionDetection(self, id_):
+        """
+        Returns the fusionDetection with the specified id, or raises
+        a fusionDetectionNotFoundException otherwise.
+        """
+        if id_ not in self._fusionDetectionIdMap:
+            raise exceptions.ObjectNotFoundException(id_)
+        return self._fusionDetectionIdMap[id_]
+
+    def getExpressionAnalyses(self):
+        """
+        Returns the list of expressionAnalyses in this dataset
+        """
+        return [self._expressionAnalysisIdMap[id_] for id_ in self._expressionAnalysisIds]
+
+    def getExpressionAnalysisByName(self, name):
+        """
+        Returns an expressionAnalysis with the specified name, or raises a
+        expressionAnalysisNameNotFoundException if it does not exist.
+        """
+        if name not in self._expressionAnalysisNameMap:
+            raise exceptions.ObjectNameNotFoundException(name)
+        return self._expressionAnalysisNameMap[name]
+
+    def getExpressionAnalysis(self, id_):
+        """
+        Returns the expressionAnalysis with the specified id, or raises
+        a expressionAnalysisNotFoundException otherwise.
+        """
+        if id_ not in self._expressionAnalysisIdMap:
+            raise exceptions.ObjectNotFoundException(id_)
+        return self._expressionAnalysisIdMap[id_]
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ###

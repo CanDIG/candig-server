@@ -428,10 +428,10 @@ class Alignment(datamodel.DatamodelObject):
         self._sampleIdTier = None
         self._inHousePipeline = None
         self._inHousePipelineTier = None
-        self._alignment= None
-        self._alignmentTier = None
-        self._merge = None
-        self._mergeTier = None
+        self._alignmentTool= None
+        self._alignmentToolTier = None
+        self._mergeTool = None
+        self._mergeToolTier = None
         self._markDuplicates = None
         self._markDuplicatesTier = None
         self._realignerTarget = None
@@ -474,10 +474,10 @@ class Alignment(datamodel.DatamodelObject):
             record[str('sampleId')] = str(self.getSampleId())
         if tier >= self.getInHousePipelineTier():
             record[str('inHousePipeline')] = str(self.getInHousePipeline())
-        if tier >= self.getAlignmentTier():
-            record[str('alignment')] = str(self.getAlignment())
-        if tier >= self.getMergeTier():
-            record[str('merge')] = str(self.getMerge())
+        if tier >= self.getAlignmentToolTier():
+            record[str('alignmentTool')] = str(self.getAlignmentTool())
+        if tier >= self.getMergeToolTier():
+            record[str('mergeTool')] = str(self.getMergeTool())
         if tier >= self.getMarkDuplicatesTier():
             record[str('markDuplicates')] = str(self.getMarkDuplicates())
         if tier >= self.getRealignerTargetTier():
@@ -522,10 +522,10 @@ class Alignment(datamodel.DatamodelObject):
         self._sampleIdTier = AlignmentRecord.sampleIdTier
         self._inHousePipeline = AlignmentRecord.inHousePipeline
         self._inHousePipelineTier = AlignmentRecord.inHousePipelineTier
-        self._alignment = AlignmentRecord.alignment
-        self._alignmentTier = AlignmentRecord.alignmentTier
-        self._merge = AlignmentRecord.merge
-        self._mergeTier = AlignmentRecord.mergeTier
+        self._alignmentTool = AlignmentRecord.alignmentTool
+        self._alignmentToolTier = AlignmentRecord.alignmentToolTier
+        self._mergeTool = AlignmentRecord.mergeTool
+        self._mergeToolTier = AlignmentRecord.mergeToolTier
         self._markDuplicates = AlignmentRecord.markDuplicates
         self._markDuplicatesTier = AlignmentRecord.markDuplicatesTier
         self._realignerTarget = AlignmentRecord.realignerTarget
@@ -576,10 +576,10 @@ class Alignment(datamodel.DatamodelObject):
         self._sampleIdTier = parsed.sampleIdTier
         self._inHousePipeline = parsed.inHousePipeline
         self._inHousePipelineTier = parsed.inHousePipelineTier
-        self._alignment = parsed.alignment
-        self._alignmentTier = parsed.alignmentTier
-        self._merge = parsed.merge
-        self._mergeTier = parsed.mergeTier
+        self._alignmentTool = parsed.alignmentTool
+        self._alignmentToolTier = parsed.alignmentToolTier
+        self._mergeTool = parsed.mergeTool
+        self._mergeTierTool = parsed.mergeToolTier
         self._markDuplicates = parsed.markDuplicates
         self._markDuplicatesTier = parsed.markDuplicatesTier
         self._realignerTarget = parsed.realignerTarget
@@ -638,17 +638,17 @@ class Alignment(datamodel.DatamodelObject):
     def getInHousePipelineTier(self):
         return self._inHousePipelineTier
 
-    def getAlignment(self):
-        return self._alignment
+    def getAlignmentTool(self):
+        return self._alignmentTool
 
-    def getAlignmentTier(self):
-        return self._alignmentTier
+    def getAlignmentToolTier(self):
+        return self._alignmentToolTier
 
-    def getMerge(self):
-        return self._merge
+    def getMergeTool(self):
+        return self._mergeTool
 
-    def getMergeTier(self):
-        return self._mergeTier
+    def getMergeToolTier(self):
+        return self._mergeToolTier
 
     def getMarkDuplicates(self):
         return self._markDuplicates
@@ -746,8 +746,8 @@ class VariantCalling(datamodel.DatamodelObject):
         self._tabulateTier = None
         self._annotation = None
         self._annotationTier = None
-        self._merge = None
-        self._mergeTier = None
+        self._mergeTool = None
+        self._mergeToolTier = None
         self._rdaToTab = None
         self._rdaToTabTier = None
         self._delly = None
@@ -786,8 +786,8 @@ class VariantCalling(datamodel.DatamodelObject):
             record[str('tabulate')] = str(self.getTabulate())
         if tier >= self.getAnnotationTier():
             record[str('annotation')] = str(self.getAnnotation())
-        if tier >= self.getMergeTier():
-            record[str('merge')] = str(self.getMerge())
+        if tier >= self.getMergeToolTier():
+            record[str('mergeTool')] = str(self.getMergeTool())
         if tier >= self.getRdaToTabTier():
             record[str('rdaToTab')] = str(self.getRdaToTab())
         if tier >= self.getDellyTier():
@@ -828,8 +828,8 @@ class VariantCalling(datamodel.DatamodelObject):
         self._tabulateTier = VariantCallingRecord.tabulateTier
         self._annotation = VariantCallingRecord.annotation
         self._annotationTier = VariantCallingRecord.annotationTier
-        self._merge = VariantCallingRecord.merge
-        self._mergeTier = VariantCallingRecord.mergeTier
+        self._mergeTool = VariantCallingRecord.mergeTool
+        self._mergeToolTier = VariantCallingRecord.mergeToolTier
         self._rdaToTab = VariantCallingRecord.rdaToTab
         self._rdaToTabTier = VariantCallingRecord.rdaToTabTier
         self._delly = VariantCallingRecord.delly
@@ -875,8 +875,8 @@ class VariantCalling(datamodel.DatamodelObject):
         self._tabulateTier = parsed.tabulateTier
         self._annotation = parsed.annotation
         self._annotationTier = parsed.annotationTier
-        self._merge = parsed.merge
-        self._mergeTier = parsed.mergeTier
+        self._mergeTool = parsed.mergeTool
+        self._mergeToolTier = parsed.mergeToolTier
         self._rdaToTab = parsed.rdaToTab
         self._rdaToTabTier = parsed.rdaToTabTier
         self._delly = parsed.delly
@@ -943,11 +943,11 @@ class VariantCalling(datamodel.DatamodelObject):
     def getAnnotationTier(self):
         return self._annotationTier
 
-    def getMerge(self):
-        return self._merge
+    def getMergeTool(self):
+        return self._mergeTool
 
-    def getMergeTier(self):
-        return self._mergeTier
+    def getMergeToolTier(self):
+        return self._mergeToolTier
 
     def getRdaToTab(self):
         return self._rdaToTab
@@ -1362,6 +1362,12 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
 
     def getReadLengthTier(self):
         return self._readLengthTier
+
+    def getReference(self):
+        return self._reference
+
+    def getReferenceTier(self):
+        return self._referenceTier
 
     def getAlignment(self):
         return self._alignment
