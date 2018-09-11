@@ -49,15 +49,16 @@ def buildTestData(
 
     pattern = os.path.join(prefix, "datasets/dataset1/reads", "*.bam")
     for dataFile in glob.glob(pattern):
-        run("add-readgroupset", repoFile, datasetName, useRelativePath,
-            dataFile)
+        run("add-readgroupset", repoFile, datasetName, "patient1", "sample1",
+            useRelativePath, dataFile)
 
     pattern = os.path.join(prefix, "datasets/dataset1/variants", "*")
     for j, dataFile in enumerate(glob.glob(pattern)):
         name = "vs_{}".format(j)
         run(
-            "add-variantset", repoFile, datasetName, useRelativePath,
-            dataFile, "-R NCBI37", "-n ", name, "-aO", sequenceOntologyName)
+            "add-variantset", repoFile, datasetName, "patient1", "sample1",
+            useRelativePath, dataFile, "-R NCBI37", "-n ", name,
+            "-aO", sequenceOntologyName)
 
     pattern = os.path.join(
         prefix, "datasets/dataset1/sequenceAnnotations", "*.db")
@@ -83,7 +84,7 @@ def buildTestData(
             datasetName, dataFile, "-n {}".format(name))
         run(
             "add-featureset", repoFile, datasetName, useRelativePath,
-            dataFile, "-R NCBI37",  "-O", sequenceOntologyName,
+            dataFile, "-R NCBI37", "-O", sequenceOntologyName,
             "-C ga4gh.datamodel.genotype_phenotype_featureset."
             "PhenotypeAssociationFeatureSet")
 

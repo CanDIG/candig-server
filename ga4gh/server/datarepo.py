@@ -24,14 +24,9 @@ import ga4gh.server.datamodel.rna_quantification as rna_quantification
 import ga4gh.server.datamodel.peers as peers
 import ga4gh.server.exceptions as exceptions
 import ga4gh.server.repo.models as models
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
 import ga4gh.server.datamodel.clinical_metadata as clinical_metadata
 import ga4gh.server.datamodel.pipeline_metadata as pipeline_metadata
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
+
 import ga4gh.schemas.protocol as protocol
 
 MODE_READ = 'r'
@@ -176,9 +171,6 @@ class AbstractDataRepository(object):
         """
         return self._datasetIdMap[self._datasetIds[index]]
 
-    ### ======================================================================= ###
-    ### Authorization
-    ### ======================================================================= ###
     def getAuthzDatasetByIndex(self, index, access_map):
         """
         Returns the dataset at the specified index if authorized to do so
@@ -187,10 +179,6 @@ class AbstractDataRepository(object):
         dataset_name = dataset.getLocalId()
 
         return dataset if dataset_name in access_map else None
-
-    ### ======================================================================= ###
-    ### Authorization End
-    ### ======================================================================= ###
 
     def getDatasetByName(self, name):
         """
@@ -453,9 +441,6 @@ class AbstractDataRepository(object):
             for individual in dataset.getIndividuals():
                 yield individual
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
     def allPatient(self):
         """
         Return an iterator over all Patient in the data repo
@@ -527,9 +512,6 @@ class AbstractDataRepository(object):
         for dataset in self.getDatasets():
             for tumourboard in dataset.getTumourboard():
                 yield tumourboard
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
 
     def allReadGroupSets(self):
         """
@@ -660,7 +642,7 @@ class SimulatedDataRepository(AbstractDataRepository):
             numPhenotypeAssociations=2,
             numPhenotypeAssociationSets=1,
             numAlignments=2, numRnaQuantSets=2, numExpressionLevels=2,
-            numPeers=200):
+            numPeers=1):
         super(SimulatedDataRepository, self).__init__()
         for i in xrange(numPeers):
             peer = peers.Peer("http://test{}.org".format(i))
@@ -972,10 +954,10 @@ class SqlDataRepository(AbstractDataRepository):
         """
         try:
             models.Ontology.create(
-                    id=ontology.getName(),
-                    name=ontology.getName(),
-                    dataurl=ontology.getDataUrl(),
-                    ontologyprefix=ontology.getOntologyPrefix())
+                id=ontology.getName(),
+                name=ontology.getName(),
+                dataurl=ontology.getDataUrl(),
+                ontologyprefix=ontology.getOntologyPrefix())
         except Exception:
             raise exceptions.DuplicateNameException(
                 ontology.getName())
@@ -1081,8 +1063,8 @@ class SqlDataRepository(AbstractDataRepository):
         a cascading removal of all items within this dataset.
         """
         for datasetRecord in models.Dataset.select().where(
-                        models.Dataset.id == dataset.getId()):
-            datasetRecord.delete_instance(recursive=True)
+                models.Dataset.id == dataset.getId()):
+                    datasetRecord.delete_instance(recursive=True)
 
     def removePhenotypeAssociationSet(self, phenotypeAssociationSet):
         """
@@ -1148,8 +1130,8 @@ class SqlDataRepository(AbstractDataRepository):
         a cascading removal of all items within this readGroupSet.
         """
         for readGroupSetRecord in models.Readgroupset.select().where(
-                        models.Readgroupset.id == readGroupSet.getId()):
-            readGroupSetRecord.delete_instance(recursive=True)
+                models.Readgroupset.id == readGroupSet.getId()):
+                    readGroupSetRecord.delete_instance(recursive=True)
 
     def removeVariantSet(self, variantSet):
         """
@@ -1157,8 +1139,8 @@ class SqlDataRepository(AbstractDataRepository):
         a cascading removal of all items within this variantSet.
         """
         for variantSetRecord in models.Variantset.select().where(
-                        models.Variantset.id == variantSet.getId()):
-            variantSetRecord.delete_instance(recursive=True)
+                models.Variantset.id == variantSet.getId()):
+                    variantSetRecord.delete_instance(recursive=True)
 
     def removeBiosample(self, biosample):
         """
@@ -1192,9 +1174,6 @@ class SqlDataRepository(AbstractDataRepository):
             models.Individual.id == individual.getId())
         q.execute()
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
     def removePatient(self, patient):
         """
         Removes the specified patient from this repository.
@@ -1314,9 +1293,6 @@ class SqlDataRepository(AbstractDataRepository):
         q = models.ExpressionAnalysis.delete().where(
             models.ExpressionAnalysis.id == expressionAnalysis.getId())
         q.execute()
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
 
     def _readReadGroupTable(self):
         for readGroupRecord in models.Readgroup.select():
@@ -1347,6 +1323,8 @@ class SqlDataRepository(AbstractDataRepository):
                 datasetid=readGroupSet.getParentContainer().getId(),
                 referencesetid=readGroupSet.getReferenceSet().getId(),
                 name=readGroupSet.getLocalId(),
+                patientId=readGroupSet.getPatientId(),
+                sampleId=readGroupSet.getSampleId(),
                 programs=programsJson,
                 stats=statsJson,
                 dataurl=readGroupSet.getDataUrl(),
@@ -1367,10 +1345,10 @@ class SqlDataRepository(AbstractDataRepository):
         """
         try:
             q = models.Reference.delete().where(
-                    models.Reference.referencesetid == referenceSet.getId())
+                models.Reference.referencesetid == referenceSet.getId())
             q.execute()
             q = models.Referenceset.delete().where(
-                    models.Referenceset.id == referenceSet.getId())
+                models.Referenceset.id == referenceSet.getId())
             q.execute()
         except Exception:
             msg = ("Unable to delete reference set.  "
@@ -1478,6 +1456,8 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=datetime.datetime.now(),
                 metadata=metadataJson,
                 dataurlindexmap=urlMapJson,
+                patientId = variantSet.getPatientId(),
+                sampleId = variantSet.getSampleId(),
                 attributes=json.dumps(variantSet.getAttributes()))
         except Exception as e:
             raise exceptions.RepoManagerException(e)
@@ -1561,7 +1541,7 @@ class SqlDataRepository(AbstractDataRepository):
         for continuousSetRecord in models.ContinuousSet.select():
             dataset = self.getDataset(continuousSetRecord.datasetid.id)
             continuousSet = continuous.FileContinuousSet(
-                    dataset, continuousSetRecord.name)
+                dataset, continuousSetRecord.name)
             continuousSet.setReferenceSet(
                 self.getReferenceSet(
                     continuousSetRecord.referencesetid.id))
@@ -1591,20 +1571,14 @@ class SqlDataRepository(AbstractDataRepository):
                 individualid=biosample.getIndividualId(),
                 attributes=json.dumps(biosample.getAttributes()),
                 individualAgeAtCollection=json.dumps(
-                        biosample.getIndividualAgeAtCollection()),
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
+                    biosample.getIndividualAgeAtCollection()),
                 estimated_tumor_content = biosample.getEstimatedTumorContent(),
                 normal_sample_source = biosample.getNormalSampleSource(),
                 biopsy_data = biosample.getBiopsyData(),
                 tumor_biopsy_anatomical_site = biosample.getTumorBiopsyAnatomicalSite(),
                 biopsy_type = biosample.getBiopsyType(),
                 sample_shipment_date = biosample.getSampleShipmentDate(),
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 biosample.getLocalId(),
@@ -1641,9 +1615,6 @@ class SqlDataRepository(AbstractDataRepository):
                 sequencingCenter=experiment.getSequencingCenter(),
                 platformUnit=experiment.getPlatformUnit(),
                 attributes=json.dumps(experiment.getAttributes()),
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
                 datasetId=experiment.getParentContainer().getId(),
                 biosample_id = experiment.getBiosampleId(),
                 dna_library_construction_method = experiment.getDnaLibraryConstructionMethod(),
@@ -1651,24 +1622,15 @@ class SqlDataRepository(AbstractDataRepository):
                 rna_library_construction_method = experiment.getRnaLibraryConstructionMethod(),
                 rna_sequencing_completion_date = experiment.getRnaSequencingCompletionDate(),
                 panel_completion_date = experiment.getPanelCompletionDate(),
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 experiment.getLocalId(), None)
 
     def _readExperimentTable(self):
         for experimentRecord in models.Experiment.select():
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
             dataset = self.getDataset(experimentRecord.datasetid.id)
             experiment = biodata.Experiment(dataset, experimentRecord.name)
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
             experiment.populateFromRow(experimentRecord)
             assert experiment.getId() == experimentRecord.id
             self.addExperiment(experiment)
@@ -1690,38 +1652,22 @@ class SqlDataRepository(AbstractDataRepository):
                 type=analysis.getAnalysisType(),
                 software=analysis.getSoftware(),
                 attributes=json.dumps(analysis.getAttributes()),
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
                 datasetId=analysis.getParentContainer().getId(),
                 experiment_id = analysis.getExperimentId(),
                 other_analysis_descriptor = analysis.getOtherAnalysisDescriptor(),
                 other_analysis_completition_date = analysis.getOtherAnalysisCompletitionDate(),
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 analysis.getLocalId(), None)
 
     def _readAnalysisTable(self):
         for analysisRecord in models.Analysis.select():
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
             dataset = self.getDataset(analysisRecord.datasetid.id)
             analysis = biodata.Analysis(dataset, analysisRecord.name)
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
             analysis.populateFromRow(analysisRecord)
             assert analysis.getId() == analysisRecord.id
             self.addAnalysis(analysis)
-
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
 
     def _createPatientTable(self):
         self.database.create_table(models.Patient)
@@ -1776,12 +1722,11 @@ class SqlDataRepository(AbstractDataRepository):
                 otherGeneticConditionOrSignificantComorbidityTier = patient.getOtherGeneticConditionOrSignificantComorbidityTier(),
                 occupationalOrEnvironmentalExposure = patient.getOccupationalOrEnvironmentalExposure(),
                 occupationalOrEnvironmentalExposureTier = patient.getOccupationalOrEnvironmentalExposureTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 patient.getLocalId(),
                 patient.getParentContainer().getLocalId())
-
 
     def _readPatientTable(self):
         """
@@ -1845,12 +1790,11 @@ class SqlDataRepository(AbstractDataRepository):
                 treatingCentreNameTier = enrollment.getTreatingCentreNameTier(),
                 treatingCentreProvince = enrollment.getTreatingCentreProvince(),
                 treatingCentreProvinceTier = enrollment.getTreatingCentreProvinceTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 enrollment.getLocalId(),
                 enrollment.getParentContainer().getLocalId())
-
 
     def _readEnrollmentTable(self):
         """
@@ -1922,12 +1866,11 @@ class SqlDataRepository(AbstractDataRepository):
                 reasonForConsentWithdrawalTier = consent.getReasonForConsentWithdrawalTier(),
                 consentFormComplete = consent.getConsentFormComplete(),
                 consentFormCompleteTier = consent.getConsentFormCompleteTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 consent.getLocalId(),
                 consent.getParentContainer().getLocalId())
-
 
     def _readConsentTable(self):
         """
@@ -2017,12 +1960,11 @@ class SqlDataRepository(AbstractDataRepository):
                 additionalMolecularDiagnosticTestingPerformedTier = diagnosis.getAdditionalMolecularDiagnosticTestingPerformedTier(),
                 additionalTest = diagnosis.getAdditionalTest(),
                 additionalTestTier = diagnosis.getAdditionalTestTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 diagnosis.getLocalId(),
                 diagnosis.getParentContainer().getLocalId())
-
 
     def _readDiagnosisTable(self):
         """
@@ -2102,12 +2044,11 @@ class SqlDataRepository(AbstractDataRepository):
                 sopFollowedTier = sample.getSopFollowedTier(),
                 ifNotExplainAnyDeviation = sample.getIfNotExplainAnyDeviation(),
                 ifNotExplainAnyDeviationTier = sample.getIfNotExplainAnyDeviationTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 sample.getLocalId(),
                 sample.getParentContainer().getLocalId())
-
 
     def _readSampleTable(self):
         """
@@ -2181,12 +2122,11 @@ class SqlDataRepository(AbstractDataRepository):
                 drugListOrAgentTier = treatment.getDrugListOrAgentTier(),
                 drugIdNumbers = treatment.getDrugIdNumbers(),
                 drugIdNumbersTier = treatment.getDrugIdNumbersTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 treatment.getLocalId(),
                 treatment.getParentContainer().getLocalId())
-
 
     def _readTreatmentTable(self):
         """
@@ -2250,12 +2190,11 @@ class SqlDataRepository(AbstractDataRepository):
                 weightUnitsTier = outcome.getWeightUnitsTier(),
                 performanceStatus = outcome.getPerformanceStatus(),
                 performanceStatusTier = outcome.getPerformanceStatusTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 outcome.getLocalId(),
                 outcome.getParentContainer().getLocalId())
-
 
     def _readOutcomeTable(self):
         """
@@ -2299,12 +2238,11 @@ class SqlDataRepository(AbstractDataRepository):
                 suspectedTreatmentInducedNeoplasmDevelopedTier = complication.getSuspectedTreatmentInducedNeoplasmDevelopedTier(),
                 treatmentInducedNeoplasmDetails = complication.getTreatmentInducedNeoplasmDetails(),
                 treatmentInducedNeoplasmDetailsTier = complication.getTreatmentInducedNeoplasmDetailsTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 complication.getLocalId(),
                 complication.getParentContainer().getLocalId())
-
 
     def _readComplicationTable(self):
         """
@@ -2396,7 +2334,7 @@ class SqlDataRepository(AbstractDataRepository):
                 patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfilingTier = tumourboard.getPatientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfilingTier(),
                 summaryReport = tumourboard.getSummaryReport(),
                 summaryReportTier = tumourboard.getSummaryReportTier(),
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 tumourboard.getLocalId(),
@@ -2741,9 +2679,6 @@ class SqlDataRepository(AbstractDataRepository):
             expressionAnalysis.populateFromRow(expressionAnalysisRecord)
             assert expressionAnalysis.getId() == expressionAnalysisRecord.id
             dataset.addExpressionAnalysis(expressionAnalysis)
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
 
     def _createIndividualTable(self):
         self.database.create_table(models.Individual)
@@ -2763,9 +2698,6 @@ class SqlDataRepository(AbstractDataRepository):
                 species=json.dumps(individual.getSpecies()),
                 sex=json.dumps(individual.getSex()),
                 attributes=json.dumps(individual.getAttributes()),
-### ======================================================================= ###
-# PROFYLE MODIFICATION BEGIN
-### ======================================================================= ###
                 patient_id = individual.getPatientId(),
                 regional_profiling_centre = individual.getRegionalProfilingCentre(),
                 diagnosis = individual.getDiagnosis(),
@@ -2775,10 +2707,7 @@ class SqlDataRepository(AbstractDataRepository):
                 date_of_upload_to_sFTP = individual.getDateOfUploadToSftp(),
                 tumor_board_presentation_date_and_analyses = individual.getTumorBoardPresentationDateAndAnalyses(),
                 comments = individual.getComments(),
-### ======================================================================= ###
-# PROFYLE MODIFICATION END
-### ======================================================================= ###
-                )
+            )
         except Exception:
             raise exceptions.DuplicateNameException(
                 individual.getLocalId(),
@@ -2915,9 +2844,6 @@ class SqlDataRepository(AbstractDataRepository):
         self._createIndividualTable()
         self._createPhenotypeAssociationSetTable()
         self._createRnaQuantificationSetTable()
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
         self._createPatientTable()
         self._createEnrollmentTable()
         self._createConsentTable()
@@ -2927,9 +2853,6 @@ class SqlDataRepository(AbstractDataRepository):
         self._createOutcomeTable()
         self._createComplicationTable()
         self._createTumourboardTable()
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
 
     def exists(self):
         """
@@ -2973,9 +2896,6 @@ class SqlDataRepository(AbstractDataRepository):
         self._readIndividualTable()
         self._readPhenotypeAssociationSetTable()
         self._readRnaQuantificationSetTable()
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
         self._readPatientTable()
         self._readEnrollmentTable()
         self._readConsentTable()
@@ -2985,6 +2905,3 @@ class SqlDataRepository(AbstractDataRepository):
         self._readOutcomeTable()
         self._readComplicationTable()
         self._readTumourboardTable()
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###

@@ -130,7 +130,7 @@ class AbstractWriter(object):
         except:
             if defaultNum is None:
                 raise exceptions.RepoManagerException(
-                       "Missing {} column in expression table.".format(name))
+                    "Missing {} column in expression table.".format(name))
         return colNum
 
     def writeExpression(self, rnaQuantificationId, quantfilename):
@@ -144,7 +144,7 @@ class AbstractWriter(object):
             quantificationReader = csv.reader(quantFile, delimiter=b"\t")
             header = next(quantificationReader)
             expressionLevelColNum = self.setColNum(
-                                        header, self._expressionLevelCol)
+                header, self._expressionLevelCol)
             nameColNum = self.setColNum(header, self._nameCol)
             countColNum = self.setColNum(header, self._countCol, -1)
             confColLowNum = self.setColNum(header, self._confColLow, -1)
@@ -162,7 +162,7 @@ class AbstractWriter(object):
                 if confColLowNum != -1 and confColHiNum != -1:
                     confidenceLow = float(expression[confColLowNum])
                     confidenceHi = float(expression[confColHiNum])
-                    score = (confidenceLow + confidenceHi)/2
+                    score = (confidenceLow + confidenceHi) / 2
 
                 datafields = (expressionId, rnaQuantificationId, name,
                               expressionLevel, isNormalized, rawCount, score,

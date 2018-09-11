@@ -76,12 +76,7 @@ class BaseServerException(Exception):
     def __str__(self):
         return self.getMessage()
 
-
-#####################################################################
-#
 # Exceptions that occur in the normal operation of the server
-#
-#####################################################################
 
 
 class RuntimeException(BaseServerException):
@@ -108,6 +103,29 @@ class BadRequestException(RuntimeException):
     """
     httpStatus = 400
     message = "Bad request"
+
+
+class BadFilterKeyException(BadRequestException):
+    """
+    A request that includes one or more invalid filter keys
+    """
+    def __init__(self):
+        self.message = "One or more filter keys or operators are invalid."
+
+
+class BadFieldNameException(BadRequestException):
+    def __init__(self, field, closeMatch):
+        self.message = field + " is not a valid field name, are you looking for " + closeMatch + "?"
+
+
+class BadFieldNameNoCloseMatchException(BadRequestException):
+    def __init__(self, field):
+        self.message = field + " is not a valid field name."
+
+
+class BadInputTypeException(BadRequestException):
+    def __init__(self):
+        self.message = "One or more input values have incorrect types"
 
 
 class BadRequestIntegerException(BadRequestException):
@@ -143,6 +161,26 @@ class BadIdentifierNotStringException(BadIdentifierException):
 class InvalidJsonException(BadRequestException):
     def __init__(self, jsonString):
         self.message = "Cannot parse JSON: '{}'".format(jsonString)
+
+
+class MissingFieldNameException(BadRequestException):
+    def __init__(self, field):
+        self.message = "Missing a required field: " + field
+
+
+class MissingGeneNameException(BadRequestException):
+    def __init__(self):
+        self.message = "Gene is required to query the variantsByGene endpoint"
+
+
+class MissingVariantKeysException(BadRequestException):
+    def __init__(self):
+        self.message = "All of start, end and referenceName are required to query variants endpoint"
+
+
+class InvalidLogicException(BadRequestException):
+    def __init__(self, field):
+        self.message = "Invalid logic formatting: " + field
 
 
 class Validator(object):
@@ -253,56 +291,60 @@ class IndividualNotFoundException(NotFoundException):
         self.message = "The requested Individual '{}' was not found".format(
             individualId)
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
+
 class PatientNotFoundException(NotFoundException):
     def __init__(self, patientId):
         self.message = "The requested Patient '{}' was not found".format(
             patientId)
+
 
 class EnrollmentNotFoundException(NotFoundException):
     def __init__(self, enrollmentId):
         self.message = "The requested Enrollment '{}' was not found".format(
             enrollmentId)
 
+
 class ConsentNotFoundException(NotFoundException):
     def __init__(self, consentId):
         self.message = "The requested Consent '{}' was not found".format(
             consentId)
+
 
 class DiagnosisNotFoundException(NotFoundException):
     def __init__(self, diagnosisId):
         self.message = "The requested Diagnosis '{}' was not found".format(
             diagnosisId)
 
+
 class SampleNotFoundException(NotFoundException):
     def __init__(self, sampleId):
         self.message = "The requested Sample '{}' was not found".format(
             sampleId)
+
 
 class TreatmentNotFoundException(NotFoundException):
     def __init__(self, treatmentId):
         self.message = "The requested Treatment '{}' was not found".format(
             treatmentId)
 
+
 class OutcomeNotFoundException(NotFoundException):
     def __init__(self, outcomeId):
         self.message = "The requested Outcome '{}' was not found".format(
             outcomeId)
+
 
 class ComplicationNotFoundException(NotFoundException):
     def __init__(self, complicationId):
         self.message = "The requested Complication '{}' was not found".format(
             complicationId)
 
+
 class TumourboardNotFoundException(NotFoundException):
     def __init__(self, tumourboardId):
         self.message = "The requested Tumourboard '{}' was not found".format(
             tumourboardId)
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
+
 
 class AnnotationSetNotFoundException(NotFoundException):
     def __init__(self, variantAnnotationSetId):
@@ -706,12 +748,7 @@ class MultipleReferenceSetsInReadGroupSet(MalformedException):
             "'{}'; at most one referenceSet per file is allowed.".format(
                 fileName, referenceSetName, otherReferenceSetName))
 
-
-###############################################################
-#
 # Internal errors. These are exceptions that we regard as bugs.
-#
-###############################################################
 
 
 class ServerError(RuntimeException):
@@ -721,12 +758,7 @@ class ServerError(RuntimeException):
     httpStatus = 500
     message = "Internal Server Error"
 
-
-#####################################################################
-#
 # Repo manager exceptions
-#
-#####################################################################
 
 
 class RepoManagerException(Exception):

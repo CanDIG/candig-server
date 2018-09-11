@@ -10,6 +10,7 @@ import requests
 import subprocess
 from urlparse import urlparse
 import shutil
+import unittest
 
 import lxml.html as html
 
@@ -52,6 +53,7 @@ def getClientKey(server_url, username, password):
     return sessionKey
 
 
+@unittest.skip("Disabled, tyk handles oidc flow")
 class TestOidc(server_test.ServerTestClass):
     """
     Tests the oidc flow

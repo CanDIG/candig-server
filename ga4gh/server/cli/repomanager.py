@@ -231,6 +231,18 @@ class RepoManager(object):
             referenceSetName = readGroupSet.getBamHeaderReferenceSetName()
         referenceSet = self._repo.getReferenceSetByName(referenceSetName)
         readGroupSet.setReferenceSet(referenceSet)
+        patientId = self._args.patientId
+        if patientId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding patient ID"
+            )
+        sampleId = self._args.sampleId
+        if sampleId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding sample ID"
+            )
+        readGroupSet.setPatientId(patientId)
+        readGroupSet.setSampleId(sampleId)
         readGroupSet.setAttributes(json.loads(self._args.attributes))
         self._updateRepo(self._repo.insertReadGroupSet, readGroupSet)
 
@@ -300,6 +312,18 @@ class RepoManager(object):
                 "VariantSet using the --referenceSetName option")
         referenceSet = self._repo.getReferenceSetByName(referenceSetName)
         variantSet.setReferenceSet(referenceSet)
+        patientId = self._args.patientId
+        if patientId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding patient ID"
+            )
+        sampleId = self._args.sampleId
+        if sampleId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding sample ID"
+            )
+        variantSet.setPatientId(patientId)
+        variantSet.setSampleId(sampleId)
         variantSet.setAttributes(json.loads(self._args.attributes))
         # Now check for annotations
         annotationSets = []
@@ -470,8 +494,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        continuousSet = dataset.getContinuousSetByName(
-                            self._args.continuousSetName)
+        continuousSet = dataset.getContinuousSetByName(self._args.continuousSetName)
 
         def func():
             self._updateRepo(self._repo.removeContinuousSet, continuousSet)
@@ -523,9 +546,6 @@ class RepoManager(object):
             self._updateRepo(self._repo.removeIndividual, individual)
         self._confirmDelete("Individual", individual.getLocalId(), func)
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
     def addPatient(self):
         """
         Adds a new patient into this repo
@@ -733,8 +753,6 @@ class RepoManager(object):
             self._updateRepo(self._repo.removeTumourboard, tumourboard)
         self._confirmDelete("Tumourboard", tumourboard.getLocalId(), func)
 
-        # Pipeline Start
-
     def addExtraction(self):
         """
         Adds a new extraction into this repo
@@ -878,10 +896,6 @@ class RepoManager(object):
             self._updateRepo(self._repo.removeExpressionAnalysis, expressionAnalysis)
 
         self._confirmDelete("ExpressionAnalysis", expressionAnalysis.getLocalId(), func)
-
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
 
     def addPeer(self):
         """
@@ -1135,14 +1149,17 @@ class RepoManager(object):
             "individualName",
             help="the name of the individual")
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
     @classmethod
     def addPatientNameArgument(cls, subparser):
         subparser.add_argument(
             "patientName",
             help="the name of the patient")
+
+    @classmethod
+    def addPatientIdArgument(cls, subparser):
+        subparser.add_argument(
+            "patientId",
+            help="the ID of the patient")
 
     @classmethod
     def addPatientArgument(cls, subparser):
@@ -1191,6 +1208,12 @@ class RepoManager(object):
         subparser.add_argument(
             "sampleName",
             help="the name of the sample")
+
+    @classmethod
+    def addSampleIdArgument(cls, subparser):
+        subparser.add_argument(
+            "sampleId",
+            help="the ID of the sample")
 
     @classmethod
     def addSampleArgument(cls, subparser):
@@ -1317,9 +1340,6 @@ class RepoManager(object):
         subparser.add_argument(
             "expressionAnalysis",
             help="the JSON of the expressionAnalysis")
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
 
     @classmethod
     def addBiosampleNameArgument(cls, subparser):
@@ -1566,6 +1586,8 @@ class RepoManager(object):
         addReadGroupSetParser.set_defaults(runner="addReadGroupSet")
         cls.addRepoArgument(addReadGroupSetParser)
         cls.addDatasetNameArgument(addReadGroupSetParser)
+        cls.addPatientIdArgument(addReadGroupSetParser)
+        cls.addSampleIdArgument(addReadGroupSetParser)
         cls.addNameOption(addReadGroupSetParser, objectType)
         cls.addReferenceSetNameOption(addReadGroupSetParser, "ReadGroupSet")
         cls.addAttributesArgument(addReadGroupSetParser)
@@ -1622,6 +1644,8 @@ class RepoManager(object):
         addVariantSetParser.set_defaults(runner="addVariantSet")
         cls.addRepoArgument(addVariantSetParser)
         cls.addDatasetNameArgument(addVariantSetParser)
+        cls.addPatientIdArgument(addVariantSetParser)
+        cls.addSampleIdArgument(addVariantSetParser)
         cls.addRelativePathOption(addVariantSetParser)
         addVariantSetParser.add_argument(
             "dataFiles", nargs="+",
@@ -1633,13 +1657,15 @@ class RepoManager(object):
                 "a single directory argument may be passed or a "
                 "list of file paths/URLS, but not a mixture of "
                 "directories and paths.")
-            )
+        )
         addVariantSetParser.add_argument(
             "-I", "--indexFiles", nargs="+", metavar="indexFiles",
             help=(
                 "The index files for the VCF/BCF files provided in "
                 "the dataFiles argument. These must be provided in the "
-                "same order as the data files."))
+                "same order as the data files."
+            )
+        )
         cls.addNameOption(addVariantSetParser, objectType)
         cls.addReferenceSetNameOption(addVariantSetParser, objectType)
         cls.addSequenceOntologyNameOption(addVariantSetParser, objectType)
@@ -1739,9 +1765,6 @@ class RepoManager(object):
         cls.addIndividualNameArgument(removeIndividualParser)
         cls.addForceOption(removeIndividualParser)
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###
         addPatientParser = common_cli.addSubparser(
             subparsers, "add-patient", "Add an Patient to the dataset")
         addPatientParser.set_defaults(runner="addPatient")
@@ -1996,9 +2019,6 @@ class RepoManager(object):
         cls.addDatasetNameArgument(removeExpressionAnalysisParser)
         cls.addExpressionAnalysisNameArgument(removeExpressionAnalysisParser)
         cls.addForceOption(removeExpressionAnalysisParser)
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ###
 
         objectType = "RnaQuantification"
         addRnaQuantificationParser = common_cli.addSubparser(

@@ -234,7 +234,7 @@ class TestCase(object):
         """
         Assert that a and b are equal within ndigits digits
         """
-        if round(a-b, ndigits) != 0:
+        if round(a - b, ndigits) != 0:
             message = "{} and {} not equal within {} digits".format(
                 a, b, ndigits)
             raise AssertionError(message)
@@ -243,7 +243,7 @@ class TestCase(object):
         """
         Assert that a and b are not equal within ndigits digits
         """
-        if round(a-b, ndigits) == 0:
+        if round(a - b, ndigits) == 0:
             message = "{} and {} equal within {} digits".format(
                 a, b, ndigits)
             raise AssertionError(message)

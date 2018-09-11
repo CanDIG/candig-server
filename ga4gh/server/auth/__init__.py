@@ -121,11 +121,11 @@ def callback_maker(
         # Get auth token
         token_url = "https://{domain}/oauth/token".format(domain=domain)
         token_payload = {
-            'client_id':     client_id,
+            'client_id': client_id,
             'client_secret': client_secret,
-            'redirect_uri':  redirect_uri,
-            'code':          code,
-            'grant_type':    'authorization_code'}
+            'redirect_uri': redirect_uri,
+            'code': code,
+            'grant_type': 'authorization_code'}
         try:
             token_info = requests.post(
                 token_url,
@@ -141,8 +141,8 @@ def callback_maker(
         # Get profile information
         try:
             user_url = \
-              "https://{domain}/userinfo?access_token={access_token}".format(
-                  domain=domain, access_token=access_token)
+                "https://{domain}/userinfo?access_token={access_token}".format(
+                    domain=domain, access_token=access_token)
             user_info = requests.get(user_url).json()
             email = user_info['email']
         except Exception as e:
@@ -230,7 +230,7 @@ def _has_token(auth_header):
     parts = auth_header.split()
     if len(parts) == 1:
         raise exceptions.NotAuthorizedException(
-           'Token not found in header.')
+            'Token not found in header.')
     return auth_header
 
 

@@ -101,7 +101,7 @@ class AbstractRepoManagerTest(unittest.TestCase):
         bamFile = paths.bamPath
         self._readGroupSetName = "test_rgs"
         cmd = (
-            "add-readgroupset {} {} {} --referenceSetName={} "
+            "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={} "
             "--name={}").format(
             self._repoPath, self._datasetName, bamFile,
             self._referenceSetName, self._readGroupSetName)
@@ -111,7 +111,7 @@ class AbstractRepoManagerTest(unittest.TestCase):
         vcfDir = paths.vcfDirPath
         self._variantSetName = "test_vs"
         cmd = (
-            "add-variantset {} {} {} --referenceSetName={} "
+            "add-variantset {} {} patient1 sample1 {} --referenceSetName={} "
             "--name={}").format(
             self._repoPath, self._datasetName, vcfDir,
             self._referenceSetName, self._variantSetName)
@@ -219,9 +219,9 @@ class TestRemoveRnaQuantificationSet(AbstractRepoManagerTest):
         repo = self.readRepo()
         dataset = repo.getDatasetByName(self._datasetName)
         self.assertRaises(
-                exceptions.RnaQuantificationSetNameNotFoundException,
-                dataset.getRnaQuantificationSetByName,
-                name)
+            exceptions.RnaQuantificationSetNameNotFoundException,
+            dataset.getRnaQuantificationSetByName,
+            name)
 
 
 class TestAddFeatureSet(AbstractRepoManagerTest):
@@ -332,7 +332,7 @@ class TestAddContinuousSet(AbstractRepoManagerTest):
         continuousPath = paths.continuousPath
         cmd = (
             "add-continuousset {} {} {} --referenceSetName=notafefset"
-            ).format(self._repoPath, self._datasetName, continuousPath)
+        ).format(self._repoPath, self._datasetName, continuousPath)
         self.assertRaises(
             exceptions.ReferenceSetNameNotFoundException,
             self.runCommand, cmd)
@@ -682,9 +682,9 @@ class TestAddReadGroupSet(AbstractRepoManagerTest):
     def testDefaultsLocalFile(self):
         bamFile = paths.bamPath
         name = os.path.split(bamFile)[1].split(".")[0]
-        cmd = "add-readgroupset {} {} {} --referenceSetName={}".format(
-                self._repoPath, self._datasetName, bamFile,
-                self._referenceSetName)
+        cmd = "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={}".format(
+            self._repoPath, self._datasetName, bamFile,
+            self._referenceSetName)
         self.runCommand(cmd)
         self.verifyReadGroupSet(name, bamFile, bamFile + ".bai")
 
@@ -695,7 +695,7 @@ class TestAddReadGroupSet(AbstractRepoManagerTest):
             indexFile = temp.name
             shutil.copyfile(bamFile + ".bai", indexFile)
             cmd = (
-                "add-readgroupset {} {} {} -I {} "
+                "add-readgroupset {} {} patient1 sample1 {} -I {} "
                 "--referenceSetName={}").format(
                     self._repoPath, self._datasetName, bamFile,
                     indexFile, self._referenceSetName)
@@ -706,7 +706,7 @@ class TestAddReadGroupSet(AbstractRepoManagerTest):
         bamFile = paths.bamPath
         name = "test_rgs"
         cmd = (
-            "add-readgroupset {} {} {} --referenceSetName={} "
+            "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={} "
             "--name={}").format(
             self._repoPath, self._datasetName, bamFile,
             self._referenceSetName, name)
@@ -717,16 +717,16 @@ class TestAddReadGroupSet(AbstractRepoManagerTest):
         # Default name
         bamFile = paths.bamPath
         name = os.path.split(bamFile)[1].split(".")[0]
-        cmd = "add-readgroupset {} {} {} --referenceSetName={}".format(
-                self._repoPath, self._datasetName, bamFile,
-                self._referenceSetName)
+        cmd = "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={}".format(
+            self._repoPath, self._datasetName, bamFile,
+            self._referenceSetName)
         self.runCommand(cmd)
         self.assertRaises(
             exceptions.RepoManagerException, self.runCommand, cmd)
         # Specified name
         name = "test_rgs"
         cmd = (
-            "add-readgroupset {} {} {} --referenceSetName={} "
+            "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={} "
             "--name={}").format(
             self._repoPath, self._datasetName, bamFile,
             self._referenceSetName, name)
@@ -736,25 +736,25 @@ class TestAddReadGroupSet(AbstractRepoManagerTest):
 
     def testUrlWithMissingIndex(self):
         bamFile = "http://example.com/example.bam"
-        cmd = "add-readgroupset {} {} {} --referenceSetName={}".format(
-                self._repoPath, self._datasetName, bamFile,
-                self._referenceSetName)
+        cmd = "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={}".format(
+            self._repoPath, self._datasetName, bamFile,
+            self._referenceSetName)
         self.assertRaises(
             exceptions.MissingIndexException, self.runCommand, cmd)
 
     def testMissingDataset(self):
         bamFile = paths.bamPath
-        cmd = "add-readgroupset {} {} {} --referenceSetName={}".format(
-                self._repoPath, "not_a_dataset_name", bamFile,
-                self._referenceSetName)
+        cmd = "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={}".format(
+            self._repoPath, "not_a_dataset_name", bamFile,
+            self._referenceSetName)
         self.assertRaises(
             exceptions.DatasetNameNotFoundException, self.runCommand, cmd)
 
     def testMissingReferenceSet(self):
         bamFile = paths.bamPath
-        cmd = "add-readgroupset {} {} {} --referenceSetName={}".format(
-                self._repoPath, self._datasetName, bamFile,
-                "not_a_referenceset_name")
+        cmd = "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={}".format(
+            self._repoPath, self._datasetName, bamFile,
+            "not_a_referenceset_name")
         self.assertRaises(
             exceptions.ReferenceSetNameNotFoundException, self.runCommand, cmd)
 
@@ -785,18 +785,18 @@ class TestAddVariantSet(AbstractRepoManagerTest):
     def testDefaultsLocalFiles(self):
         dataFiles = self.vcfFiles
         name = "test_name"
-        cmd = "add-variantset {} {} {} --name={} --referenceSetName={}".format(
-                self._repoPath, self._datasetName, " ".join(dataFiles),
-                name, self._referenceSetName)
+        cmd = "add-variantset {} {} patient1 sample1 {} --name={} --referenceSetName={}".format(
+            self._repoPath, self._datasetName, " ".join(dataFiles),
+            name, self._referenceSetName)
         self.runCommand(cmd)
         self.verifyVariantSet(name, dataFiles, self.indexFiles)
 
     def testDefaultsLocalDirectory(self):
         vcfDir = self.vcfDir
         name = os.path.split(vcfDir)[1]
-        cmd = "add-variantset {} {} {} --referenceSetName={}".format(
-                self._repoPath, self._datasetName, vcfDir,
-                self._referenceSetName)
+        cmd = "add-variantset {} {} patient1 sample1 {} --referenceSetName={}".format(
+            self._repoPath, self._datasetName, vcfDir,
+            self._referenceSetName)
         self.runCommand(cmd)
         self.verifyVariantSet(name, self.vcfFiles, self.indexFiles)
 
@@ -812,7 +812,7 @@ class TestAddVariantSet(AbstractRepoManagerTest):
                 shutil.copyfile(indexFile, indexFileCopy)
                 indexFiles.append(indexFileCopy)
             cmd = (
-                "add-variantset {} {} {} -I {} --name={} "
+                "add-variantset {} {} patient1 sample1 {} -I {} --name={} "
                 "--referenceSetName={}".format(
                     self._repoPath, self._datasetName, " ".join(dataFiles),
                     " ".join(indexFiles), name, self._referenceSetName))
@@ -825,16 +825,16 @@ class TestAddVariantSet(AbstractRepoManagerTest):
         # Default name
         vcfDir = self.vcfDir
         name = os.path.split(vcfDir)[1]
-        cmd = "add-variantset {} {} {} --referenceSetName={}".format(
-                self._repoPath, self._datasetName, vcfDir,
-                self._referenceSetName)
+        cmd = "add-variantset {} {} patient1 sample1 {} --referenceSetName={}".format(
+            self._repoPath, self._datasetName, vcfDir,
+            self._referenceSetName)
         self.runCommand(cmd)
         self.assertRaises(
             exceptions.RepoManagerException, self.runCommand, cmd)
         # Specified name
         name = "test_vs"
         cmd = (
-            "add-variantset {} {} {} --referenceSetName={} "
+            "add-variantset {} {} patient1 sample1 {} --referenceSetName={} "
             "--name={}").format(
             self._repoPath, self._datasetName, vcfDir,
             self._referenceSetName, name)
@@ -844,23 +844,23 @@ class TestAddVariantSet(AbstractRepoManagerTest):
 
     def testUrlWithMissingIndex(self):
         dataFile = "http://example.com/example.vcf.gz"
-        cmd = "add-variantset {} {} {} --referenceSetName={}".format(
-                self._repoPath, self._datasetName, dataFile,
-                self._referenceSetName)
+        cmd = "add-variantset {} {} patient1 sample1 {} --referenceSetName={}".format(
+            self._repoPath, self._datasetName, dataFile,
+            self._referenceSetName)
         self.assertRaises(
             exceptions.MissingIndexException, self.runCommand, cmd)
 
     def testMissingDataset(self):
-        cmd = "add-variantset {} {} {} --referenceSetName={}".format(
-                self._repoPath, "not_a_dataset_name", self.vcfDir,
-                self._referenceSetName)
+        cmd = "add-variantset {} {} patient1 sample1 {} --referenceSetName={}".format(
+            self._repoPath, "not_a_dataset_name", self.vcfDir,
+            self._referenceSetName)
         self.assertRaises(
             exceptions.DatasetNameNotFoundException, self.runCommand, cmd)
 
     def testMissingReferenceSet(self):
-        cmd = "add-variantset {} {} {} --referenceSetName={}".format(
-                self._repoPath, self._datasetName, self.vcfDir,
-                "not_a_referenceset_name")
+        cmd = "add-variantset {} {} patient1 sample1 {} --referenceSetName={}".format(
+            self._repoPath, self._datasetName, self.vcfDir,
+            "not_a_referenceset_name")
         self.assertRaises(
             exceptions.ReferenceSetNameNotFoundException, self.runCommand, cmd)
 
@@ -881,7 +881,7 @@ class TestAddAnnotatedVariantSet(AbstractRepoManagerTest):
 
     def testNoAnnotations(self):
         name = "test_vs_no_annotations"
-        cmd = "add-variantset {} {} {} -R {} -n {}".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} -R {} -n {}".format(
             self._repoPath, self._datasetName, self.vcfDir,
             self._referenceSetName, name)
         self.runCommand(cmd)
@@ -892,7 +892,7 @@ class TestAddAnnotatedVariantSet(AbstractRepoManagerTest):
 
     def testAnnotations(self):
         name = "test_vs_annotations"
-        cmd = "add-variantset {} {} {} -R {} -n {} -aO {}".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} -R {} -n {} -aO {}".format(
             self._repoPath, self._datasetName, self.vcfDir,
             self._referenceSetName, name, self._ontologyName)
         self.runCommand(cmd)
@@ -903,7 +903,7 @@ class TestAddAnnotatedVariantSet(AbstractRepoManagerTest):
 
     def testAnnotationsNoOntology(self):
         name = "test_vs_annotations"
-        cmd = "add-variantset {} {} {} -R {} -n {} -a".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} -R {} -n {} -a".format(
             self._repoPath, self._datasetName, self.vcfDir,
             self._referenceSetName, name)
         self.assertRaises(
@@ -911,7 +911,7 @@ class TestAddAnnotatedVariantSet(AbstractRepoManagerTest):
 
     def testAnnotationsBadOntology(self):
         name = "test_vs_annotations"
-        cmd = "add-variantset {} {} {} -R {} -n {} -aO {}".format(
+        cmd = "add-variantset {} {} patient1 sample1 {} -R {} -n {} -aO {}".format(
             self._repoPath, self._datasetName, self.vcfDir,
             self._referenceSetName, name, "not_an_ontology")
         self.assertRaises(
@@ -941,7 +941,7 @@ class TestDuplicateNameDelete(AbstractRepoManagerTest):
     def testReadGroupSetDelete(self):
         readGroupSetName = "test_rgs"
         cmdString = (
-            "add-readgroupset {} {} {} --referenceSetName={} "
+            "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={} "
             "--name={}")
         addReadGroupSetCmd1 = cmdString.format(
             self._repoPath, self.dataset1Name, paths.bamPath,
@@ -961,7 +961,7 @@ class TestDuplicateNameDelete(AbstractRepoManagerTest):
     def testVariantSetDelete(self):
         vcfDir = paths.vcfDirPath
         variantSetName = "test_vs"
-        cmdString = "add-variantset {} {} {} --referenceSetName={} --name={}"
+        cmdString = "add-variantset {} {} patient1 sample1 {} --referenceSetName={} --name={}"
         addVariantSetCmd1 = cmdString.format(
             self._repoPath, self.dataset1Name, vcfDir,
             self._referenceSetName, variantSetName)
@@ -1024,7 +1024,7 @@ class TestInvalidVariantIndexFile(AbstractRepoManagerTest):
 
     def _testWithIndexPath(self, indexPath):
         cmd = (
-            "add-variantset {} {} {} --referenceSetName={} -I {}").format(
+            "add-variantset {} {} patient1 sample1 {} --referenceSetName={} -I {}").format(
                 self._repoPath, self._datasetName, paths.vcfPath1,
                 self._referenceSetName, indexPath)
         with self.assertRaises(exceptions.NotIndexedException):
@@ -1066,7 +1066,7 @@ class TestInvalidReadGroupSetIndexFile(AbstractRepoManagerTest):
 
     def _testWithIndexPath(self, indexPath):
         cmd = (
-            "add-readgroupset {} {} {} --referenceSetName={} "
+            "add-readgroupset {} {} patient1 sample1 {} --referenceSetName={} "
             "-I {}").format(
                 self._repoPath, self._datasetName, paths.bamPath,
                 self._referenceSetName, indexPath)

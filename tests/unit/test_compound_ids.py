@@ -105,11 +105,11 @@ class TestCompoundIds(unittest.TestCase):
         unsafeCharacters = ['$', '&', '+', ',', '/', ':', ';', '=', '?', '@']
         for char in unsafeCharacters:
             self.assertNotIn(char, datamodel.CompoundId.obfuscate(
-                    hasSlashes))
+                hasSlashes))
             self.assertNotIn(char, datamodel.CompoundId.obfuscate(
-                    needsPadding))
+                needsPadding))
             self.assertNotIn(char, datamodel.CompoundId.obfuscate(
-                    realistic))
+                realistic))
         for idStr in [hasSlashes, needsPadding]:
             obfuscated = datamodel.CompoundId.obfuscate(idStr)
             deobfuscated = datamodel.CompoundId.deobfuscate(obfuscated)

@@ -33,3 +33,6 @@ sphinx_rtd_theme
 pyaml==15.03.1
 cherrypy==3.2.4
 yubico-client==1.9.1
+
+# For ingesting various metadata
+git+git://github.com/CanDIG/PROFYLE_ingest.git@authz#egg=PROFYLE_ingest

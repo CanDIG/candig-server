@@ -20,7 +20,7 @@ Werkzeug==0.11.5
 MarkupSafe==0.23
 itsdangerous==0.24
 six==1.10.0
-pycrypto==2.6.1
+pycryptodome==3.6.6
 Mako==1.0.4
 Beaker==1.8.0
 funcsigs==0.4
@@ -35,7 +35,7 @@ cffi==1.5.2
 pycparser==2.14
 Jinja2==2.7.3
 future==0.15.2
-pyjwkest==1.0.1
+pyjwkest==1.4.0
 PyJWT==1.4.2
 peewee==2.8.5
 

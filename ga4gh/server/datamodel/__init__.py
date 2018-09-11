@@ -329,9 +329,7 @@ class IndividualCompoundId(DatasetCompoundId):
     containerIds = DatasetCompoundId.containerIds + [('individual_id', 2)]
     differentiator = 'i'
 
-### ======================================================================= ###
-### METADATA
-### ======================================================================= ###   
+
 class PatientCompoundId(DatasetCompoundId):
     """
     The compound id for an patient
@@ -340,6 +338,7 @@ class PatientCompoundId(DatasetCompoundId):
         CompoundId.differentiatorFieldName, 'patient']
     containerIds = DatasetCompoundId.containerIds + [('patient_id', 3)]
     differentiator = 'pat'
+
 
 class EnrollmentCompoundId(DatasetCompoundId):
     """
@@ -350,6 +349,7 @@ class EnrollmentCompoundId(DatasetCompoundId):
     containerIds = DatasetCompoundId.containerIds + [('enrollment_id', 3)]
     differentiator = 'enr'
 
+
 class ConsentCompoundId(DatasetCompoundId):
     """
     The compound id for an consent
@@ -358,6 +358,7 @@ class ConsentCompoundId(DatasetCompoundId):
         CompoundId.differentiatorFieldName, 'consent']
     containerIds = DatasetCompoundId.containerIds + [('consent_id', 3)]
     differentiator = 'con'
+
 
 class DiagnosisCompoundId(DatasetCompoundId):
     """
@@ -368,6 +369,7 @@ class DiagnosisCompoundId(DatasetCompoundId):
     containerIds = DatasetCompoundId.containerIds + [('diagnosis_id', 3)]
     differentiator = 'dia'
 
+
 class SampleCompoundId(DatasetCompoundId):
     """
     The compound id for an sample
@@ -376,6 +378,7 @@ class SampleCompoundId(DatasetCompoundId):
         CompoundId.differentiatorFieldName, 'sample']
     containerIds = DatasetCompoundId.containerIds + [('sample_id', 3)]
     differentiator = 'sam'
+
 
 class TreatmentCompoundId(DatasetCompoundId):
     """
@@ -386,6 +389,7 @@ class TreatmentCompoundId(DatasetCompoundId):
     containerIds = DatasetCompoundId.containerIds + [('treatment_id', 3)]
     differentiator = 'tre'
 
+
 class OutcomeCompoundId(DatasetCompoundId):
     """
     The compound id for an outcome
@@ -395,6 +399,7 @@ class OutcomeCompoundId(DatasetCompoundId):
     containerIds = DatasetCompoundId.containerIds + [('outcome_id', 3)]
     differentiator = 'out'
 
+
 class ComplicationCompoundId(DatasetCompoundId):
     """
     The compound id for an complication
@@ -403,6 +408,7 @@ class ComplicationCompoundId(DatasetCompoundId):
         CompoundId.differentiatorFieldName, 'complication']
     containerIds = DatasetCompoundId.containerIds + [('complication_id', 3)]
     differentiator = 'com'
+
 
 class TumourboardCompoundId(DatasetCompoundId):
     """
@@ -466,9 +472,6 @@ class ExpressionAnalysisCompoundId(DatasetCompoundId):
         CompoundId.differentiatorFieldName, 'expression_analysis']
     containerIds = DatasetCompoundId.containerIds + [('expression_analysis_id', 3)]
     differentiator = 'exa'
-### ======================================================================= ###
-### METADATA END
-### ======================================================================= ### 
 
 class BiosampleCompoundId(DatasetCompoundId):
     """
@@ -484,24 +487,24 @@ class ExperimentCompoundId(CompoundId):
     """
     The compound id for an experiment
     """
-    fields = DatasetCompoundId.fields + [
-        CompoundId.differentiatorFieldName, 'experiment']
-    containerIds = DatasetCompoundId.containerIds + [('experiment_id', 2)]
-    differentiator = 'ex'
-#    fields = ['experiment']
-#    containerIds = [('experiment_id', 0)]
+#    fields = DatasetCompoundId.fields + [
+#        CompoundId.differentiatorFieldName, 'experiment']
+#    containerIds = DatasetCompoundId.containerIds + [('experiment_id', 2)]
+#    differentiator = 'ex'
+    fields = ['experiment']
+    containerIds = [('experiment_id', 0)]
 
 
 class AnalysisCompoundId(CompoundId):
     """
     The compound id for an analysis
     """
-    fields = DatasetCompoundId.fields + [
-        CompoundId.differentiatorFieldName, 'analysis']
-    containerIds = DatasetCompoundId.containerIds + [('analysis_id', 2)]
-    differentiator = 'an'
-#    fields = ['analysis']
-#    containerIds = [('analysis_id', 0)]
+#    fields = DatasetCompoundId.fields + [
+#        CompoundId.differentiatorFieldName, 'analysis']
+#    containerIds = DatasetCompoundId.containerIds + [('analysis_id', 2)]
+#    differentiator = 'an'
+    fields = ['analysis']
+    containerIds = [('analysis_id', 0)]
 
 
 class VariantAnnotationSetCompoundId(VariantSetCompoundId):

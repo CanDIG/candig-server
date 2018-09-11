@@ -15,6 +15,8 @@ import ga4gh.server.frontend as frontend
 import ga4gh.schemas.protocol as protocol
 import ga4gh.server.exceptions as exceptions
 
+import json
+
 
 class TestFrontend(unittest.TestCase):
     """
@@ -74,8 +76,7 @@ class TestFrontend(unittest.TestCase):
         cls.genotypePhenotypeId = cls.genotypePhenotype.id
         cls.rnaQuantificationSet = cls.dataset.getRnaQuantificationSets()[0]
         cls.rnaQuantificationSetId = cls.rnaQuantificationSet.getId()
-        cls.rnaQuantification = cls.rnaQuantificationSet.getRnaQuantifications(
-            )[0]
+        cls.rnaQuantification = cls.rnaQuantificationSet.getRnaQuantifications()[0]
         cls.rnaQuantificationId = cls.rnaQuantification.getId()
         cls.expressionLevel = cls.rnaQuantification.getExpressionLevels(
             1, 2)[0]
@@ -104,10 +105,12 @@ class TestFrontend(unittest.TestCase):
 
     def deserialize(self, response, responseClass):
         mimetype = self.serialization
+        response_data = json.loads(response.get_data())
+        results_string = json.dumps(response_data.get('results', {}))
         if hasattr(response, 'headers'):
             if 'Content-Type' in response.headers:
                 mimetype = response.headers['Content-Type']
-        return protocol.deserialize(response.get_data(),
+        return protocol.deserialize(results_string,
                                     mimetype,
                                     responseClass)
 
@@ -559,12 +562,13 @@ class TestFrontend(unittest.TestCase):
         # A bad mimetype should throw an exception
         with self.assertRaises(exceptions.UnsupportedMediaTypeException):
             response = frontend.handleHttpPost(
-                          request,
-                          lambda x, return_mimetype: x)
+                request,
+                lambda x, return_mimetype, access_map: x)
 
         request = Mock()
         request.mimetype = "application/json"
-        request.get_data = lambda: "data"
-        response = frontend.handleHttpPost(request,
-                                           lambda x, return_mimetype: x)
-        self.assertEquals(response.get_data(), "data")
+        request.get_data = lambda: '{"data":"test"}'
+        with frontend.app.test_request_context():
+            response = frontend.handleHttpPost(request, lambda x, return_mimetype, access_map: x)
+            results = json.loads(response.get_data())["results"]["data"]
+            self.assertEquals(results, "test")

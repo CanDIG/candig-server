@@ -23,7 +23,9 @@ install:
 
 before_script:
   - pip install -r dev-requirements.txt
-  - python scripts/build_test_data.py 
+  - python scripts/build_test_data.py
+  - PROFYLE_ingest --version
+  - PROFYLE_ingest tests/data/registry.db dataset1 tests/data/sample_clin_metadata.json
     
 before_install:
     - bash tools/travis-install-protoc.sh 3.3.2
@@ -38,7 +40,7 @@ script:
            tests ga4gh scripts
   - python -mnose tests 
               --with-coverage --cover-package ga4gh.server
-              --cover-inclusive --cover-min-percentage 80
+              --cover-inclusive --cover-min-percentage 75
               --cover-branches --cover-erase
   - make clean -C docs
   - make -C docs

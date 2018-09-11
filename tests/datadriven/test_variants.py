@@ -97,6 +97,8 @@ class VariantSetTest(datadriven.DataDrivenTest):
         variantSet.populateFromDirectory(dataPath)
         referenceSet = references.AbstractReferenceSet("test")
         variantSet.setReferenceSet(referenceSet)
+        variantSet.setPatientId("patient1")
+        variantSet.setSampleId("sample1")
         return variantSet
 
     def getProtocolClass(self):
@@ -223,8 +225,8 @@ class VariantSetTest(datadriven.DataDrivenTest):
                 self.assertEqual(len(pyvcfVariant.FILTER), 0)
             else:
                 self.assertEqual(
-                        len(gaVariant.filters_failed),
-                        len(pyvcfVariant.FILTER))
+                    len(gaVariant.filters_failed),
+                    len(pyvcfVariant.FILTER))
 
             pyvcfCallMap = {}
             for call in pyvcfVariant:
@@ -310,11 +312,11 @@ class VariantSetTest(datadriven.DataDrivenTest):
             mini = localVariants[0].start
             # NOTE, the end of the last variant may not reflect the END
             maxi = max([v.end for v in localVariants])
-            seglen = (maxi-mini) // 3
+            seglen = (maxi - mini) // 3
             seg1 = mini + seglen
             seg2 = seg1 + seglen
             self._assertEmptyVariant(reference_name, -1, mini)
-            self._assertEmptyVariant(reference_name, maxi, maxi+100)
+            self._assertEmptyVariant(reference_name, maxi, maxi + 100)
             self._assertVariantsEqualInRange(reference_name, mini, seg1)
             self._assertVariantsEqualInRange(reference_name, seg1, seg2)
             self._assertVariantsEqualInRange(reference_name, seg2, maxi)
@@ -353,36 +355,36 @@ class VariantSetTest(datadriven.DataDrivenTest):
             # interval on the left
 
             self.assertFalse(self._pyvcfVariantIsInGaVariants(
-                variant, variantStart-2, variantStart-1))
+                variant, variantStart - 2, variantStart - 1))
             self.assertFalse(self._pyvcfVariantIsInGaVariants(
-                variant, variantStart-1, variantStart))
+                variant, variantStart - 1, variantStart))
             # interval on the right
             self.assertFalse(self._pyvcfVariantIsInGaVariants(
-                variant, variantEnd, variantEnd+1))
+                variant, variantEnd, variantEnd + 1))
             self.assertFalse(self._pyvcfVariantIsInGaVariants(
-                variant, variantEnd+1, variantEnd+2))
+                variant, variantEnd + 1, variantEnd + 2))
             # case of search interval is within variant
 
             self.assertTrue(self._pyvcfVariantIsInGaVariants(
                 variant, variantStart, variantEnd))
             if (variantEnd - variantStart) != 1:
                 self.assertTrue(self._pyvcfVariantIsInGaVariants(
-                    variant, variantStart, variantEnd-1))
+                    variant, variantStart, variantEnd - 1))
                 self.assertTrue(self._pyvcfVariantIsInGaVariants(
-                    variant, variantStart+1, variantEnd))
+                    variant, variantStart + 1, variantEnd))
 
             # case of search interval contains variant
             self.assertTrue(self._pyvcfVariantIsInGaVariants(
-                variant, variantStart-1, variantEnd+1))
+                variant, variantStart - 1, variantEnd + 1))
             # cases of search interval intersec with variant
             self.assertTrue(self._pyvcfVariantIsInGaVariants(
-                variant, variantStart-1, variantStart+1))
+                variant, variantStart - 1, variantStart + 1))
             self.assertTrue(self._pyvcfVariantIsInGaVariants(
-                variant, variantStart, variantStart+1))
+                variant, variantStart, variantStart + 1))
             self.assertTrue(self._pyvcfVariantIsInGaVariants(
-                variant, variantEnd-1, variantEnd))
+                variant, variantEnd - 1, variantEnd))
             self.assertTrue(self._pyvcfVariantIsInGaVariants(
-                variant, variantEnd-1, variantEnd+1))
+                variant, variantEnd - 1, variantEnd + 1))
 
     def testVariantSetMetadata(self):
         def convertPyvcfNumber(number):
@@ -425,8 +427,8 @@ class VariantSetTest(datadriven.DataDrivenTest):
                         self.assertEqual(
                             keyMap[key].type, content[contentKey].type)
                         self.assertEqual(
-                                keyMap[key].number,
-                                convertPyvcfNumber(content[contentKey].num))
+                            keyMap[key].number,
+                            convertPyvcfNumber(content[contentKey].num))
         testMetaLength = (
             1 + len(self._formats) + len(self._infos) + len(self._filters)
             - gtCounter)

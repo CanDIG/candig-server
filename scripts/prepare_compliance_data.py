@@ -264,9 +264,9 @@ class ComplianceDataMunger(object):
         continuousFile = ("wgEncodeCaltechRnaSeqNhekR1x75dTh1014Ilna"
                           "MinusSignalRep1.bigWig")
         continuousFileSrc = os.path.join(
-                            self.inputDirectory, continuousFile)
+            self.inputDirectory, continuousFile)
         continuousFileDest = os.path.join(
-                            self.outputDirectory, continuousFile)
+            self.outputDirectory, continuousFile)
         shutil.copy(continuousFileSrc, continuousFileDest)
         signalData = continuous.FileContinuousSet(dataset, "signalData")
         signalData.populateFromFile(os.path.abspath(continuousFileDest))
