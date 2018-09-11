@@ -49,7 +49,7 @@ Flask-Cors==2.0.1
 Flask==0.10.1
 protobuf==3.3.0
 humanize==0.5.1
-pysam==0.9.0
+pysam==0.15.0
 requests==2.7.0
 oic==0.7.6
 pyOpenSSL==0.15.1
