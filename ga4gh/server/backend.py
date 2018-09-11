@@ -378,6 +378,126 @@ class Backend(object):
             if include:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
+
+    def extractionsGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+        for obj in dataset.getExtractions():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by sample id
+            if request.sample_id:
+                if obj.getSampleId() not in request.sample_id.split(','):
+                    #                if request.sample_id != obj.getSampleId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def sequencingGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+        for obj in dataset.getSequencings():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by sample id
+            if request.sample_id:
+                if obj.getSampleId() not in request.sample_id.split(','):
+                    #                if request.sample_id != obj.getSampleId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def alignmentsGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+        for obj in dataset.getAlignments():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by sample id
+            if request.sample_id:
+                if obj.getSampleId() not in request.sample_id.split(','):
+                    #                if request.sample_id != obj.getSampleId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def variantCallingGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+        for obj in dataset.getVariantCallings():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by sample id
+            if request.sample_id:
+                if obj.getSampleId() not in request.sample_id.split(','):
+                    #                if request.sample_id != obj.getSampleId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def fusionDetectionGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+        for obj in dataset.getFusionDetections():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by sample id
+            if request.sample_id:
+                if obj.getSampleId() not in request.sample_id.split(','):
+                    #                if request.sample_id != obj.getSampleId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def expressionAnalysisGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+        for obj in dataset.getExpressionAnalyses():
+            include = True
+            if request.name:
+                if request.name != obj.getLocalId():
+                    include = False
+            # Search table by patient id
+            if request.sample_id:
+                if obj.getSampleId() not in request.sample_id.split(','):
+                    #                if request.sample_id != obj.getSampleId():
+                    include = False
+            if include:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ###
@@ -1129,6 +1249,66 @@ class Backend(object):
         tier = self.getUserAccessTier(dataset, access_map)
         tumourboard = dataset.getTumourboard(id_)
         return self.runGetRequest(tumourboard, return_mimetype, tier=tier)
+
+    def runGetExtraction(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getExtraction request for the specified ID.
+        """
+        compoundId = datamodel.ExtractionCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        extraction = dataset.getExtraction(id_)
+        return self.runGetRequest(extraction, return_mimetype, tier=tier)
+
+    def runGetSequencing(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getSample request for the specified ID.
+        """
+        compoundId = datamodel.SequencingCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        sequencing = dataset.getSequencing(id_)
+        return self.runGetRequest(sequencing, return_mimetype, tier=tier)
+
+    def runGetAlignment(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getAlignment request for the specified ID.
+        """
+        compoundId = datamodel.AlignmentCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        alignment = dataset.getAlignment(id_)
+        return self.runGetRequest(alignment, return_mimetype, tier=tier)
+
+    def runGetVariantCalling(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getVariantCalling request for the specified ID.
+        """
+        compoundId = datamodel.VariantCallingCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        variantCalling = dataset.getVariantCalling(id_)
+        return self.runGetRequest(variantCalling, return_mimetype, tier=tier)
+
+    def runGetFusionDetection(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getFusionDetection request for the specified ID.
+        """
+        compoundId = datamodel.FusionDetectionCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        fusionDetection = dataset.getFusionDetection(id_)
+        return self.runGetRequest(fusionDetection, return_mimetype, tier=tier)
+
+    def runGetExpressionAnalysis(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getExpressionAnalyis request for the specified ID.
+        """
+        compoundId = datamodel.ExpressionAnalysisCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        expressionAnalysis = dataset.getExpressionAnalysis(id_)
+        return self.runGetRequest(expressionAnalysis, return_mimetype, tier=tier)
 ### ======================================================================= ###
 ### METADATA END
 ### ======================================================================= ###
@@ -1414,6 +1594,78 @@ class Backend(object):
             request, protocol.SearchTumourboardsRequest,
             protocol.SearchTumourboardsResponse,
             self.tumourboardsGenerator,
+            access_map,
+            return_mimetype
+            )
+
+    def runSearchExtractions(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchExtractionsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchExtractionsRequest,
+            protocol.SearchExtractionsResponse,
+            self.extractionsGenerator,
+            access_map,
+            return_mimetype
+            )
+
+    def runSearchSequencing(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchSequencingRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchSequencingRequest,
+            protocol.SearchSequencingResponse,
+            self.sequencingGenerator,
+            access_map,
+            return_mimetype
+            )
+
+    def runSearchAlignments(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchAlignmentsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchAlignmentsRequest,
+            protocol.SearchAlignmentsResponse,
+            self.alignmentsGenerator,
+            access_map,
+            return_mimetype
+            )
+
+    def runSearchVariantCalling(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchVariantCallingRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchVariantCallingRequest,
+            protocol.SearchVariantCallingResponse,
+            self.variantCallingGenerator,
+            access_map,
+            return_mimetype
+            )
+
+    def runSearchFusionDetection(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchFusionDetectionRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchFusionDetectionRequest,
+            protocol.SearchFusionDetectionResponse,
+            self.fusionDetectionGenerator,
+            access_map,
+            return_mimetype
+            )
+
+    def runSearchExpressionAnalysis(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchExpressionAnalysisRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchExpressionAnalysisRequest,
+            protocol.SearchExpressionAnalysisResponse,
+            self.expressionAnalysisGenerator,
             access_map,
             return_mimetype
             )
