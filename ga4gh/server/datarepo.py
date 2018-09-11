@@ -25,6 +25,8 @@ import ga4gh.server.datamodel.peers as peers
 import ga4gh.server.exceptions as exceptions
 import ga4gh.server.repo.models as models
 import ga4gh.server.datamodel.clinical_metadata as clinical_metadata
+import ga4gh.server.datamodel.pipeline_metadata as pipeline_metadata
+
 import ga4gh.schemas.protocol as protocol
 
 MODE_READ = 'r'
@@ -1244,6 +1246,54 @@ class SqlDataRepository(AbstractDataRepository):
             models.Tumourboard.id == tumourboard.getId())
         q.execute()
 
+    def removeExtraction(self, extraction):
+        """
+        Removes the specified diagnosis from this repository.
+        """
+        q = models.Extraction.delete().where(
+            models.Extraction.id == extraction.getId())
+        q.execute()
+
+    def removeSequencing(self, sequencing):
+        """
+        Removes the specified sample from this repository.
+        """
+        q = models.Sequencing.delete().where(
+            models.Sequencing.id == sequencing.getId())
+        q.execute()
+
+    def removeAlignment(self, alignment):
+        """
+        Removes the specified treatment from this repository.
+        """
+        q = models.Alignment.delete().where(
+            models.Alignment.id == alignment.getId())
+        q.execute()
+
+    def removeVariantCalling(self, variantCalling):
+        """
+        Removes the specified outcome from this repository.
+        """
+        q = models.VariantCalling.delete().where(
+            models.VariantCalling.id == variantCalling.getId())
+        q.execute()
+
+    def removeFusionDetection(self, fusionDetection):
+        """
+        Removes the specified complication from this repository.
+        """
+        q = models.FusionDetection.delete().where(
+            models.FusionDetection.id == fusionDetection.getId())
+        q.execute()
+
+    def removeExpressionAnalysis(self, expressionAnalysis):
+        """
+        Removes the specified tumourboard from this repository.
+        """
+        q = models.ExpressionAnalysis.delete().where(
+            models.ExpressionAnalysis.id == expressionAnalysis.getId())
+        q.execute()
+
     def _readReadGroupTable(self):
         for readGroupRecord in models.Readgroup.select():
             readGroupSet = self.getReadGroupSet(
@@ -2301,6 +2351,334 @@ class SqlDataRepository(AbstractDataRepository):
             tumourboard.populateFromRow(tumourboardRecord)
             assert tumourboard.getId() == tumourboardRecord.id
             dataset.addTumourboard(tumourboard)
+
+    def _createExtractionTable(self):
+        self.database.create_table(models.Extraction)
+
+    def insertExtraction(self, extraction):
+        """
+        Inserts the specified patient into this repository.
+        """
+        try:
+            models.Extraction.create(
+                # Common fields
+                id=extraction.getId(),
+                datasetId=extraction.getParentContainer().getId(),
+                created=extraction.getCreated(),
+                updated=extraction.getUpdated(),
+                name=extraction.getLocalId(),
+                description=extraction.getDescription(),
+                # Unique fields
+                extractionId=extraction.getExtractionId(),
+                extractionIdTier=extraction.getExtractionIdTier(),
+                sampleId=extraction.getSampleId(),
+                sampleIdTier=extraction.getSampleIdTier(),
+                rnaBlood=extraction.getRnaBlood(),
+                rnaBloodTier=extraction.getRnaBloodTier(),
+                dnaBlood=extraction.getDnaBlood(),
+                dnaBloodTier=extraction.getDnaBloodTier(),
+                rnaTissue=extraction.getRnaTissue(),
+                rnaTissueTier=extraction.getRnaTissueTier(),
+                dnaTissue=extraction.getDnaTissue(),
+                dnaTissueTier=extraction.getDnaTissueTier()
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                extraction.getLocalId(),
+                extraction.getParentContainer().getLocalId())
+
+    def _readExtractionTable(self):
+        """
+        Read the Extraction table upon load
+        """
+        for extractionRecord in models.Extraction.select():
+            dataset = self.getDataset(extractionRecord.datasetid.id)
+            extraction = pipeline_metadata.Extraction(
+                dataset, extractionRecord.name)
+            extraction.populateFromRow(extractionRecord)
+            assert extraction.getId() == extractionRecord.id
+            dataset.addExtraction(extraction)
+
+    def _createSequencingTable(self):
+        self.database.create_table(models.Sequencing)
+
+    def insertSequencing(self, sequencing):
+        """
+        Inserts the specified patient into this repository.
+        """
+        try:
+            models.Sequencing.create(
+                # Common fields
+                id=sequencing.getId(),
+                datasetId=sequencing.getParentContainer().getId(),
+                created=sequencing.getCreated(),
+                updated=sequencing.getUpdated(),
+                name=sequencing.getLocalId(),
+                description=sequencing.getDescription(),
+                # Unique fields
+                sequencingId=sequencing.getSequencingId(),
+                sequencingIdTier=sequencing.getSequencingIdTier(),
+                sampleId=sequencing.getSampleId(),
+                sampleIdTier=sequencing.getSampleIdTier(),
+                dnaLibraryKit=sequencing.getDnaLibraryKit(),
+                dnaLibraryKitTier=sequencing.getDnaLibraryKitTier(),
+                dnaSeqPlatform=sequencing.getDnaSeqPlatform(),
+                dnaSeqPlatformTier=sequencing.getDnaSeqPlatformTier(),
+                dnaReadLength=sequencing.getDnaReadLength(),
+                dnaReadLengthTier=sequencing.getDnaReadLengthTier(),
+                rnaLibraryKit=sequencing.getRnaLibraryKit(),
+                rnaLibraryKitTier=sequencing.getRnaLibraryKitTier(),
+                rnaSeqPlatform=sequencing.getRnaSeqPlatform(),
+                rnaSeqPlatformTier=sequencing.getRnaSeqPlatformTier(),
+                rnaReadLength=sequencing.getRnaReadLength(),
+                rnaReadLengthTier=sequencing.getRnaReadLengthTier(),
+                pcrCycles=sequencing.getPcrCycles(),
+                pcrCyclesTier=sequencing.getPcrCyclesTier()
+
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                sequencing.getLocalId(),
+                sequencing.getParentContainer().getLocalId())
+
+    def _readSequencingTable(self):
+        """
+        Read the Sequencing table upon load
+        """
+        for sequencingRecord in models.Sequencing.select():
+            dataset = self.getDataset(sequencingRecord.datasetid.id)
+            sequencing = pipeline_metadata.Sequencing(
+                dataset, sequencingRecord.name)
+            sequencing.populateFromRow(sequencingRecord)
+            assert sequencing.getId() == sequencingRecord.id
+            dataset.addSequencing(sequencing)
+
+    def _createAlignmentTable(self):
+        self.database.create_table(models.Alignment)
+
+    def insertAlignment(self, alignment):
+        """
+        Inserts the specified patient into this repository.
+        """
+        try:
+            models.Alignment.create(
+                # Common fields
+                id=alignment.getId(),
+                datasetId=alignment.getParentContainer().getId(),
+                created=alignment.getCreated(),
+                updated=alignment.getUpdated(),
+                name=alignment.getLocalId(),
+                description=alignment.getDescription(),
+                # Unique fields
+                alignmentId=alignment.getAlignmentId(),
+                alignmentIdTier=alignment.getAlignmentIdTier(),
+                sampleId=alignment.getSampleId(),
+                sampleIdTier=alignment.getSampleIdTier(),
+                alignmentTool=alignment.getAlignmentTool(),
+                alignmentToolTier=alignment.getAlignmentToolTier(),
+                merge=alignment.getMerge(),
+                mergeTier=alignment.getMergeTier(),
+                markDuplicates=alignment.getMarkDuplicates(),
+                markDuplicatesTier=alignment.getMarkDuplicatesTier(),
+                realignerTarget=alignment.getRealignerTarget(),
+                realignerTargetTier=alignment.getRealignerTargetTier(),
+                indelRealigner=alignment.getIndelRealigner(),
+                indelRealignerTier=alignment.getIndelRealignerTier(),
+                coverage=alignment.getCoverage(),
+                coverageTier=alignment.getCoverageTier(),
+                baseRecalibrator=alignment.getBaseRecalibrator(),
+                baseRecalibratorTier=alignment.getBaseRecalibratorTier(),
+                printReads=alignment.getPrintReads(),
+                printReadsTier=alignment.getPrintReadsTier(),
+                idxStats=alignment.getIdxStats(),
+                idxStatsTier=alignment.getIdxStatsTier(),
+                flagStat=alignment.getFlagStat(),
+                flagStatTier=alignment.getFlagStatTier(),
+                insertSizeMetrics=alignment.getInsertSizeMetrics(),
+                insertSizeMetricsTier=alignment.getInsertSizeMetricsTier(),
+                fastqc=alignment.getFastqc(),
+                fastqcTier=alignment.getFastqcTier(),
+                reference=alignment.getReference(),
+                referenceTier=alignment.getReferenceTier()
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                alignment.getLocalId(),
+                alignment.getParentContainer().getLocalId())
+
+    def _readAlignmentTable(self):
+        """
+        Read the Alignment table upon load
+        """
+        for alignmentRecord in models.Alignment.select():
+            dataset = self.getDataset(alignmentRecord.datasetid.id)
+            alignment = pipeline_metadata.Alignment(
+                dataset, alignmentRecord.name)
+            alignment.populateFromRow(alignmentRecord)
+            assert alignment.getId() == alignmentRecord.id
+            dataset.addAlignment(alignment)
+
+    def _createVariantCallingTable(self):
+        self.database.create_table(models.VariantCalling)
+
+    def insertVariantCalling(self, variantCalling):
+        """
+        Inserts the specified patient into this repository.
+        """
+        try:
+            models.VariantCalling.create(
+                # Common fields
+                id=variantCalling.getId(),
+                datasetId=variantCalling.getParentContainer().getId(),
+                created=variantCalling.getCreated(),
+                updated=variantCalling.getUpdated(),
+                name=variantCalling.getLocalId(),
+                description=variantCalling.getDescription(),
+                # Unique fields
+                variantCallingId=variantCalling.getVariantCallingId(),
+                variantCallingIdTier=variantCalling.getVariantCallingIdTier(),
+                sampleId=variantCalling.getSampleId(),
+                sampleIdTier=variantCalling.getSampleIdTier(),
+                variantCaller=variantCalling.getVariantCaller(),
+                variantCallerTier=variantCalling.getVariantCallerTier(),
+                tabulate=variantCalling.getTabulate(),
+                tabulateTier=variantCalling.getTabulateTier(),
+                annotation=variantCalling.getAnnotation(),
+                annotationTier=variantCalling.getAnnotationTier(),
+                mergeTool=variantCalling.getMergeTool(),
+                mergeToolTier=variantCalling.getMergeToolTier(),
+                rdaToTab=variantCalling.getRdaToTab(),
+                rdaToTabTier=variantCalling.getRdaToTabTier(),
+                delly=variantCalling.getDelly(),
+                dellyTier=variantCalling.getDellyTier(),
+                postFilter=variantCalling.getPostFilter(),
+                postFilterTier=variantCalling.getPostFilterTier(),
+                clipFilter=variantCalling.getClipFilter(),
+                clipFilterTier=variantCalling.getClipFilterTier(),
+                cosmic=variantCalling.getCosmic(),
+                cosmicTier=variantCalling.getCosmicTier(),
+                dbSnp=variantCalling.getDbSnp(),
+                dbSnpTier=variantCalling.getDbSnpTier()
+
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                variantCalling.getLocalId(),
+                variantCalling.getParentContainer().getLocalId())
+
+    def _readVariantCallingTable(self):
+        """
+        Read the VariantCalling table upon load
+        """
+        for variantCallingRecord in models.VariantCalling.select():
+            dataset = self.getDataset(variantCallingRecord.datasetid.id)
+            variantCalling = pipeline_metadata.VariantCalling(
+                dataset, variantCallingRecord.name)
+            variantCalling.populateFromRow(variantCallingRecord)
+            assert variantCalling.getId() == variantCallingRecord.id
+            dataset.addVariantCalling(variantCalling)
+
+    def _createFusionDetectionTable(self):
+        self.database.create_table(models.FusionDetection)
+
+    def insertFusionDetection(self, fusionDetection):
+        """
+        Inserts the specified patient into this repository.
+        """
+        try:
+            models.FusionDetection.create(
+                # Common fields
+                id=fusionDetection.getId(),
+                datasetId=fusionDetection.getParentContainer().getId(),
+                created=fusionDetection.getCreated(),
+                updated=fusionDetection.getUpdated(),
+                name=fusionDetection.getLocalId(),
+                description=fusionDetection.getDescription(),
+                # Unique fields
+                fusionDetectionId=fusionDetection.getFusionDetectionId(),
+                fusionDetectionIdTier=fusionDetection.getFusionDetectionIdTier(),
+                sampleId=fusionDetection.getSampleId(),
+                sampleIdTier=fusionDetection.getSampleIdTier(),
+                inHousePipeline=fusionDetection.getInHousePipeline(),
+                inHousePipelineTier=fusionDetection.getInHousePipelineTier(),
+                svDetection=fusionDetection.getSvDetection(),
+                svDetectionTier=fusionDetection.getSvDetectionTier(),
+                fusionDetection=fusionDetection.getFusionDetection(),
+                fusionDetectionTier=fusionDetection.getFusionDetectionTier(),
+                realignment=fusionDetection.getRealignment(),
+                realignmentTier=fusionDetection.getRealignmentTier(),
+                annotation=fusionDetection.getAnnotation(),
+                annotationTier=fusionDetection.getAnnotationTier(),
+                genomeReference=fusionDetection.getGenomeReference(),
+                genomeReferenceTier=fusionDetection.getGenomeReferenceTier(),
+                geneModels=fusionDetection.getGeneModels(),
+                geneModelsTier=fusionDetection.getGeneModels()
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                fusionDetection.getLocalId(),
+                fusionDetection.getParentContainer().getLocalId())
+
+    def _readFusionDetectionTable(self):
+        """
+        Read the FusionDetection table upon load
+        """
+        for fusionDetectionRecord in models.FusionDetection.select():
+            dataset = self.getDataset(fusionDetectionRecord.datasetid.id)
+            fusionDetection = pipeline_metadata.FusionDetection(
+                dataset, fusionDetectionRecord.name)
+            fusionDetection.populateFromRow(fusionDetectionRecord)
+            assert fusionDetection.getId() == fusionDetectionRecord.id
+            dataset.addFusionDetection(fusionDetection)
+
+    def _createExpressionAnalysisTable(self):
+        self.database.create_table(models.ExpressionAnalysis)
+
+    def insertExpressionAnalysis(self, expressionAnalysis):
+        """
+        Inserts the specified patient into this repository.
+        """
+        try:
+            models.ExpressionAnalysis.create(
+                # Common fields
+                id=expressionAnalysis.getId(),
+                datasetId=expressionAnalysis.getParentContainer().getId(),
+                created=expressionAnalysis.getCreated(),
+                updated=expressionAnalysis.getUpdated(),
+                name=expressionAnalysis.getLocalId(),
+                description=expressionAnalysis.getDescription(),
+                # Unique fields
+                expressionAnalysisId=expressionAnalysis.getExpressionAnalysisId(),
+                expressionAnalysisIdTier=expressionAnalysis.getExpressionAnalysisIdTier(),
+                sampleId=expressionAnalysis.getSampleId(),
+                sampleIdTier=expressionAnalysis.getSampleIdTier(),
+                readLength=expressionAnalysis.getReadLength(),
+                readLengthTier=expressionAnalysis.getReadLengthTier(),
+                reference=expressionAnalysis.getReference(),
+                referenceTier=expressionAnalysis.getReferenceTier(),
+                alignmentTool=expressionAnalysis.getAlignmentTool(),
+                alignmentToolTier=expressionAnalysis.getAlignmentToolTier(),
+                bamHandling=expressionAnalysis.getBamHandling(),
+                bamHandlingTier=expressionAnalysis.getBamHandlingTier(),
+                expressionEstimation=expressionAnalysis.getExpressionEstimation(),
+                expressionEstimationTier=expressionAnalysis.getExpressionEstimationTier()
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                expressionAnalysis.getLocalId(),
+                expressionAnalysis.getParentContainer().getLocalId())
+
+    def _readExpressionAnalysisTable(self):
+        """
+        Read the ExpressionAnalysis table upon load
+        """
+        for expressionAnalysisRecord in models.ExpressionAnalysis.select():
+            dataset = self.getDataset(expressionAnalysisRecord.datasetid.id)
+            expressionAnalysis = pipeline_metadata.ExpressionAnalysis(
+                dataset, expressionAnalysisRecord.name)
+            expressionAnalysis.populateFromRow(expressionAnalysisRecord)
+            assert expressionAnalysis.getId() == expressionAnalysisRecord.id
+            dataset.addExpressionAnalysis(expressionAnalysis)
 
     def _createIndividualTable(self):
         self.database.create_table(models.Individual)
