@@ -2476,8 +2476,8 @@ class SqlDataRepository(AbstractDataRepository):
                 sampleIdTier=alignment.getSampleIdTier(),
                 alignmentTool=alignment.getAlignmentTool(),
                 alignmentToolTier=alignment.getAlignmentToolTier(),
-                merge=alignment.getMerge(),
-                mergeTier=alignment.getMergeTier(),
+                merge=alignment.getMergeTool(),
+                mergeTier=alignment.getMergeToolTier(),
                 markDuplicates=alignment.getMarkDuplicates(),
                 markDuplicatesTier=alignment.getMarkDuplicatesTier(),
                 realignerTarget=alignment.getRealignerTarget(),
@@ -2612,7 +2612,7 @@ class SqlDataRepository(AbstractDataRepository):
                 genomeReference=fusionDetection.getGenomeReference(),
                 genomeReferenceTier=fusionDetection.getGenomeReferenceTier(),
                 geneModels=fusionDetection.getGeneModels(),
-                geneModelsTier=fusionDetection.getGeneModels()
+                geneModelsTier=fusionDetection.getGeneModelsTier()
             )
         except Exception:
             raise exceptions.DuplicateNameException(
@@ -2853,6 +2853,12 @@ class SqlDataRepository(AbstractDataRepository):
         self._createOutcomeTable()
         self._createComplicationTable()
         self._createTumourboardTable()
+        self._createExtractionTable()
+        self._createSequencingTable()
+        self._createAlignmentTable()
+        self._createVariantCallingTable()
+        self._createFusionDetectionTable()
+        self._createExpressionAnalysisTable()
 
     def exists(self):
         """
@@ -2905,3 +2911,9 @@ class SqlDataRepository(AbstractDataRepository):
         self._readOutcomeTable()
         self._readComplicationTable()
         self._readTumourboardTable()
+        self._readExtractionTable()
+        self._readSequencingTable()
+        self._readAlignmentTable()
+        self._readVariantCallingTable()
+        self._readFusionDetectionTable()
+        self._readExpressionAnalysisTable()

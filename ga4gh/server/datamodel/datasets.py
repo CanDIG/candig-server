@@ -264,45 +264,45 @@ class Dataset(datamodel.DatamodelObject):
         Adds the specified extraction to this dataset.
         """
         id_ = sequencing.getId()
-        self._extractionIdMap[id_] = sequencing
-        self._extractionIds.append(id_)
-        self._extractionNameMap[sequencing.getName()] = sequencing
+        self._sequencingIdMap[id_] = sequencing
+        self._sequencingIds.append(id_)
+        self._sequencingNameMap[sequencing.getName()] = sequencing
 
     def addAlignment(self, alignment):
         """
         Adds the specified extraction to this dataset.
         """
         id_ = alignment.getId()
-        self._extractionIdMap[id_] = alignment
-        self._extractionIds.append(id_)
-        self._extractionNameMap[alignment.getName()] = alignment
+        self._alignmentIdMap[id_] = alignment
+        self._alignmentIds.append(id_)
+        self._alignmentNameMap[alignment.getName()] = alignment
 
     def addVariantCalling(self, variantCalling):
         """
         Adds the specified extraction to this dataset.
         """
         id_ = variantCalling.getId()
-        self._extractionIdMap[id_] = variantCalling
-        self._extractionIds.append(id_)
-        self._extractionNameMap[variantCalling.getName()] = variantCalling
+        self._variantCallingIdMap[id_] = variantCalling
+        self._variantCallingIds.append(id_)
+        self._variantCallingNameMap[variantCalling.getName()] = variantCalling
 
     def addFusionDetection(self, fusionDetection):
         """
         Adds the specified extraction to this dataset.
         """
         id_ = fusionDetection.getId()
-        self._extractionIdMap[id_] = fusionDetection
-        self._extractionIds.append(id_)
-        self._extractionNameMap[fusionDetection.getName()] = fusionDetection
+        self._fusionDetectionIdMap[id_] = fusionDetection
+        self._fusionDetectionIds.append(id_)
+        self._fusionDetectionNameMap[fusionDetection.getName()] = fusionDetection
 
     def addExpressionAnalysis(self, expressionAnalysis):
         """
         Adds the specified extraction to this dataset.
         """
         id_ = expressionAnalysis.getId()
-        self._extractionIdMap[id_] = expressionAnalysis
-        self._extractionIds.append(id_)
-        self._extractionNameMap[expressionAnalysis.getName()] = expressionAnalysis
+        self._expressionAnalysisIdMap[id_] = expressionAnalysis
+        self._expressionAnalysisIds.append(id_)
+        self._expressionAnalysisNameMap[expressionAnalysis.getName()] = expressionAnalysis
 
     def addFeatureSet(self, featureSet):
         """

@@ -1359,7 +1359,7 @@ def searchTumourboards():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchTumourboards)
 
-DisplayedRoute('/extractions/search', postMethod=True)
+@DisplayedRoute('/extractions/search', postMethod=True)
 @requires_auth
 def searchExtractions():
     return handleFlaskPostRequest(

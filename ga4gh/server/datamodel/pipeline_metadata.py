@@ -838,8 +838,8 @@ class VariantCalling(datamodel.DatamodelObject):
         self._postFilterTier = VariantCallingRecord.postFilterTier
         self._clipFilter = VariantCallingRecord.clipFilter
         self._clipFilterTier = VariantCallingRecord.clipFilterTier
-        self._cosmic = VariantCallingRecord.flagStat
-        self._cosmicTier = VariantCallingRecord.flagStatTier
+        self._cosmic = VariantCallingRecord.cosmic
+        self._cosmicTier = VariantCallingRecord.cosmicTier
         self._dbSnp = VariantCallingRecord.dbSnp
         self._dbSnpTier = VariantCallingRecord.dbSnpTier
 
@@ -885,8 +885,8 @@ class VariantCalling(datamodel.DatamodelObject):
         self._postFilterTier = parsed.postFilterTier
         self._clipFilter = parsed.clipFilter
         self._clipFilterTier = parsed.clipFilterTier
-        self._cosmic = parsed.flagStat
-        self._cosmicTier = parsed.flagStatTier
+        self._cosmic = parsed.cosmic
+        self._cosmicTier = parsed.cosmicTier
         self._dbSnp = parsed.dbSnp
         self._dbSnpTier = parsed.dbSnpTier
 
@@ -1228,8 +1228,8 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
         self._readLengthTier = None
         self._reference = None
         self._referenceTier = None
-        self._alignment = None
-        self._alignmentTier = None
+        self._alignmentTool = None
+        self._alignmentToolTier = None
         self._bamHandling = None
         self._bamHandlingTier = None
         self._expressionEstimation = None
@@ -1256,8 +1256,8 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
             record[str('readLength')] = str(self.getReadLength())
         if tier >= self.getReferenceTier():
             record[str('reference')] = str(self.getReference())
-        if tier >= self.getAlignmentTier():
-            record[str('alignment')] = str(self.getAlignment())
+        if tier >= self.getAlignmentToolTier():
+            record[str('alignmentTool')] = str(self.getAlignmentTool())
         if tier >= self.getBamHandlingTier():
             record[str('bamHandling')] = str(self.getBamHandling())
         if tier >= self.getExpressionEstimationTier():
@@ -1286,8 +1286,8 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
         self._readLengthTier = ExpressionAnalysisRecord.readLengthTier
         self._reference = ExpressionAnalysisRecord.reference
         self._referenceTier = ExpressionAnalysisRecord.referenceTier
-        self._alignment = ExpressionAnalysisRecord.alignment
-        self._alignmentTier = ExpressionAnalysisRecord.alignmentTier
+        self._alignmentTool = ExpressionAnalysisRecord.alignmentTool
+        self._alignmentToolTier = ExpressionAnalysisRecord.alignmentToolTier
         self._bamHandling = ExpressionAnalysisRecord.bamHandling
         self._bamHandlingTier = ExpressionAnalysisRecord.bamHandlingTier
         self._expressionEstimation = ExpressionAnalysisRecord.expressionEstimation
@@ -1321,8 +1321,8 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
         self._readLengthTier = parsed.readLengthTier
         self._reference = parsed.reference
         self._referenceTier = parsed.referenceTier
-        self._alignment = parsed.alignment
-        self._alignmentTier = parsed.alignmentTier
+        self._alignmentTool = parsed.alignmentTool
+        self._alignmentToolTier = parsed.alignmentToolTier
         self._bamHandling = parsed.bamHandling
         self._bamHandlingTier = parsed.bamHandlingTier
         self._expressionEstimation = parsed.expressionEstimation
@@ -1369,11 +1369,11 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
     def getReferenceTier(self):
         return self._referenceTier
 
-    def getAlignment(self):
-        return self._alignment
+    def getAlignmentTool(self):
+        return self._alignmentTool
 
-    def getAlignmentTier(self):
-        return self._alignmentTier
+    def getAlignmentToolTier(self):
+        return self._alignmentToolTier
 
     def getBamHandling(self):
         return self._bamHandling
