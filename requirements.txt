@@ -31,7 +31,7 @@ pyasn1==0.1.9
 pyasn1-modules==0.0.8
 aenum==2.1.2
 ipaddress==1.0.16
-cffi==1.5.2
+cffi==1.11.5
 pycparser==2.14
 Jinja2==2.7.3
 future==0.15.2
