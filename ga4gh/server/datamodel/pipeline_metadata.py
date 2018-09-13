@@ -9,12 +9,12 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import datetime
-import json
 
 import ga4gh.server.datamodel as datamodel
 import ga4gh.server.exceptions as exceptions
 
 import ga4gh.schemas.protocol as protocol
+
 
 class Extraction(datamodel.DatamodelObject):
     """
@@ -211,6 +211,7 @@ class Extraction(datamodel.DatamodelObject):
 
     def getSiteTier(self):
         return self._siteTier
+
 
 class Sequencing(datamodel.DatamodelObject):
     """
@@ -468,6 +469,7 @@ class Sequencing(datamodel.DatamodelObject):
     def getSiteTier(self):
         return self._siteTier
 
+
 class Alignment(datamodel.DatamodelObject):
     """
     """
@@ -493,7 +495,7 @@ class Alignment(datamodel.DatamodelObject):
         self._sampleIdTier = None
         self._inHousePipeline = None
         self._inHousePipelineTier = None
-        self._alignmentTool= None
+        self._alignmentTool = None
         self._alignmentToolTier = None
         self._mergeTool = None
         self._mergeToolTier = None
@@ -646,7 +648,6 @@ class Alignment(datamodel.DatamodelObject):
         self._sequencingIdTier = AlignmentRecord.sequencingIdTier
         self._site = AlignmentRecord.site
         self._siteTier = AlignmentRecord.siteTier
-
 
         return self
 
@@ -830,6 +831,7 @@ class Alignment(datamodel.DatamodelObject):
     def getSiteTier(self):
         return self._siteTier
 
+
 class VariantCalling(datamodel.DatamodelObject):
     """
     """
@@ -855,7 +857,7 @@ class VariantCalling(datamodel.DatamodelObject):
         self._sampleIdTier = None
         self._inHousePipeline = None
         self._inHousePipelineTier = None
-        self._tabulate= None
+        self._tabulate = None
         self._tabulateTier = None
         self._annotation = None
         self._annotationTier = None
@@ -1144,6 +1146,7 @@ class VariantCalling(datamodel.DatamodelObject):
     def getSiteTier(self):
         return self._siteTier
 
+
 class FusionDetection(datamodel.DatamodelObject):
     """
     """
@@ -1196,7 +1199,7 @@ class FusionDetection(datamodel.DatamodelObject):
             "annotation": self.getAnnotation,
             "genomeReference": self.getGenomeReference,
             "geneModels": self.getGeneModels,
-            "alignmentId":self.getAlignmentId,
+            "alignmentId": self.getAlignmentId,
             "site": self.getSite,
         }
 
@@ -1399,6 +1402,7 @@ class FusionDetection(datamodel.DatamodelObject):
 
     def getSiteTier(self):
         return self._siteTier
+
 
 class ExpressionAnalysis(datamodel.DatamodelObject):
     """

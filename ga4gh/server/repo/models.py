@@ -743,6 +743,7 @@ class Tumourboard(BaseModel):
             (('datasetid', 'name'), True),
         )
 
+
 class Extraction(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
@@ -772,6 +773,7 @@ class Extraction(BaseModel):
         indexes = (
             (('datasetid', 'name'), True),
         )
+
 
 class Sequencing(BaseModel):
     # Common fields
@@ -810,6 +812,7 @@ class Sequencing(BaseModel):
         indexes = (
             (('datasetid', 'name'), True),
         )
+
 
 class Alignment(BaseModel):
     # Common fields
@@ -863,6 +866,7 @@ class Alignment(BaseModel):
             (('datasetid', 'name'), True),
         )
 
+
 class VariantCalling(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
@@ -909,6 +913,7 @@ class VariantCalling(BaseModel):
             (('datasetid', 'name'), True),
         )
 
+
 class FusionDetection(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
@@ -947,6 +952,7 @@ class FusionDetection(BaseModel):
             (('datasetid', 'name'), True),
         )
 
+
 class ExpressionAnalysis(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
@@ -980,6 +986,7 @@ class ExpressionAnalysis(BaseModel):
         indexes = (
             (('datasetid', 'name'), True),
         )
+
 
 class Individual(BaseModel):
     created = pw.TextField()

@@ -421,6 +421,7 @@ class TumourboardCompoundId(DatasetCompoundId):
     containerIds = DatasetCompoundId.containerIds + [('tumourboard_id', 3)]
     differentiator = 'tum'
 
+
 class ExtractionCompoundId(DatasetCompoundId):
     """
     The compound id for extraction metadata
@@ -429,6 +430,7 @@ class ExtractionCompoundId(DatasetCompoundId):
         CompoundId.differentiatorFieldName, 'extraction']
     containerIds = DatasetCompoundId.containerIds + [('extraction_id', 3)]
     differentiator = 'ext'
+
 
 class SequencingCompoundId(DatasetCompoundId):
     """
@@ -439,6 +441,7 @@ class SequencingCompoundId(DatasetCompoundId):
     containerIds = DatasetCompoundId.containerIds + [('sequencing_id', 3)]
     differentiator = 'seq'
 
+
 class AlignmentCompoundId(DatasetCompoundId):
     """
     The compound id for alignment tool metadata
@@ -447,6 +450,7 @@ class AlignmentCompoundId(DatasetCompoundId):
         CompoundId.differentiatorFieldName, 'alignment']
     containerIds = DatasetCompoundId.containerIds + [('alignment_id', 3)]
     differentiator = 'aln'
+
 
 class VariantCallingCompoundId(DatasetCompoundId):
     """
@@ -457,6 +461,7 @@ class VariantCallingCompoundId(DatasetCompoundId):
     containerIds = DatasetCompoundId.containerIds + [('variant_calling_id', 3)]
     differentiator = 'vac'
 
+
 class FusionDetectionCompoundId(DatasetCompoundId):
     """
     The compound id for fusion detection metadata
@@ -466,6 +471,7 @@ class FusionDetectionCompoundId(DatasetCompoundId):
     containerIds = DatasetCompoundId.containerIds + [('fusion_detection_id', 3)]
     differentiator = 'fdn'
 
+
 class ExpressionAnalysisCompoundId(DatasetCompoundId):
     """
     The compound id for expression analysis metadata
@@ -474,6 +480,7 @@ class ExpressionAnalysisCompoundId(DatasetCompoundId):
         CompoundId.differentiatorFieldName, 'expression_analysis']
     containerIds = DatasetCompoundId.containerIds + [('expression_analysis_id', 3)]
     differentiator = 'exa'
+
 
 class BiosampleCompoundId(DatasetCompoundId):
     """
