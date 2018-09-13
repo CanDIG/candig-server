@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 import json
 import re
-import urlparse
+from urllib.parse import urlparse
 
 import ga4gh.server.exceptions as exceptions
 

@@ -11,7 +11,7 @@ import os
 import datetime
 import time
 import socket
-import urlparse
+from urllib.parse import urlparse
 import functools
 import json
 

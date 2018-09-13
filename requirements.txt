@@ -51,7 +51,7 @@ protobuf==3.3.0
 humanize==0.5.1
 pysam==0.15.0
 requests==2.7.0
-oic==0.7.6
+oic==0.14.0
 pyOpenSSL==18.0.0
 lxml==4.2.5
 pyBigWig==0.3.12
@@ -64,3 +64,7 @@ RDFLib==4.2.1
 
 # Differential privacy lib requires numpy
 numpy
+
+# Potential module needed for python 3
+SPARQLWrapper==1.8.2
+
