@@ -765,6 +765,8 @@ class Extraction(BaseModel):
     rnaTissueTier = pw.IntegerField(null=True)
     dnaTissue = pw.TextField(null=True)
     dnaTissueTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
@@ -799,6 +801,10 @@ class Sequencing(BaseModel):
     rnaReadLengthTier = pw.IntegerField(null=True)
     pcrCycles = pw.TextField(null=True)
     pcrCyclesTier = pw.IntegerField(null=True)
+    extractionId = pw.TextField(null=True)
+    extractionIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
@@ -847,6 +853,10 @@ class Alignment(BaseModel):
     fastqcTier = pw.IntegerField(null=True)
     reference = pw.TextField(null=True)
     referenceTier = pw.IntegerField(null=True)
+    sequencingId = pw.TextField(null=True)
+    sequencingIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
@@ -889,6 +899,10 @@ class VariantCalling(BaseModel):
     cosmicTier = pw.IntegerField(null=True)
     dbSnp = pw.TextField(null=True)
     dbSnpTier = pw.IntegerField(null=True)
+    alignmentId = pw.TextField(null=True)
+    alignmentIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
@@ -923,6 +937,10 @@ class FusionDetection(BaseModel):
     genomeReferenceTier = pw.IntegerField(null=True)
     geneModels = pw.TextField(null=True)
     geneModelsTier = pw.IntegerField(null=True)
+    alignmentId = pw.TextField(null=True)
+    alignmentIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
@@ -953,6 +971,10 @@ class ExpressionAnalysis(BaseModel):
     bamHandlingTier = pw.IntegerField(null=True)
     expressionEstimation = pw.TextField(null=True)
     expressionEstimationTier = pw.IntegerField(null=True)
+    sequencingId = pw.TextField(null=True)
+    sequencingIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (

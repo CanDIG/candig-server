@@ -646,16 +646,9 @@ class Backend(object):
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getExtractions():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by sample id
-            if request.sample_id:
-                if obj.getSampleId() not in request.sample_id.split(','):
-                    #                if request.sample_id != obj.getSampleId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -666,16 +659,10 @@ class Backend(object):
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getSequencings():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by sample id
-            if request.sample_id:
-                if obj.getSampleId() not in request.sample_id.split(','):
-                    #                if request.sample_id != obj.getSampleId():
-                    include = False
-            if include:
+            print("looping over sequencings")
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -686,16 +673,9 @@ class Backend(object):
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getAlignments():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by sample id
-            if request.sample_id:
-                if obj.getSampleId() not in request.sample_id.split(','):
-                    #                if request.sample_id != obj.getSampleId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -706,16 +686,9 @@ class Backend(object):
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getVariantCallings():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by sample id
-            if request.sample_id:
-                if obj.getSampleId() not in request.sample_id.split(','):
-                    #                if request.sample_id != obj.getSampleId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -726,16 +699,9 @@ class Backend(object):
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getFusionDetections():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by sample id
-            if request.sample_id:
-                if obj.getSampleId() not in request.sample_id.split(','):
-                    #                if request.sample_id != obj.getSampleId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -746,16 +712,9 @@ class Backend(object):
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getExpressionAnalyses():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.sample_id:
-                if obj.getSampleId() not in request.sample_id.split(','):
-                    #                if request.sample_id != obj.getSampleId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -1874,7 +1833,7 @@ class Backend(object):
             self.tumourboardsGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchExtractions(self, request, return_mimetype, access_map):
         """
@@ -1886,7 +1845,7 @@ class Backend(object):
             self.extractionsGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchSequencing(self, request, return_mimetype, access_map):
         """
@@ -1898,7 +1857,7 @@ class Backend(object):
             self.sequencingGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchAlignments(self, request, return_mimetype, access_map):
         """
@@ -1910,7 +1869,7 @@ class Backend(object):
             self.alignmentsGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchVariantCalling(self, request, return_mimetype, access_map):
         """
@@ -1922,7 +1881,7 @@ class Backend(object):
             self.variantCallingGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchFusionDetection(self, request, return_mimetype, access_map):
         """
@@ -1934,7 +1893,7 @@ class Backend(object):
             self.fusionDetectionGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchExpressionAnalysis(self, request, return_mimetype, access_map):
         """
@@ -1946,7 +1905,7 @@ class Backend(object):
             self.expressionAnalysisGenerator,
             access_map,
             return_mimetype
-            )
+        )
 
     def runSearchBiosamples(self, request, return_mimetype, access_map):
         """

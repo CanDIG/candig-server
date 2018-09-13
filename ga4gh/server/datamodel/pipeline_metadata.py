@@ -47,6 +47,18 @@ class Extraction(datamodel.DatamodelObject):
         self._rnaTissueTier = None
         self._dnaTissue = None
         self._dnaTissueTier = None
+        self._site = None
+        self._siteTier = None
+
+        self._objectAttr = {
+            "extractionId": self.getExtractionId,
+            "sampleId": self.getSampleId,
+            "rnaBlood": self.getRnaBlood,
+            "dnaBlood": self.getDnaBlood,
+            "rnaTissue": self.getRnaTissue,
+            "dnaTissue": self.getDnaTissue,
+            "site": self.getSite
+        }
 
     def toProtocolElement(self, tier=0):
         """
@@ -73,6 +85,8 @@ class Extraction(datamodel.DatamodelObject):
             record[str('rnaTissue')] = str(self.getRnaTissue())
         if tier >= self.getDnaTissueTier():
             record[str('dnaTissue')] = str(self.getDnaTissue())
+        if tier >= self.getSiteTier():
+            record[str('site')] = str(self.getSite())
 
         Extraction = protocol.Extraction(**record)
         self.serializeAttributes(Extraction)
@@ -101,6 +115,8 @@ class Extraction(datamodel.DatamodelObject):
         self._rnaTissueTier = ExtractionRecord.rnaTissueTier
         self._dnaTissue = ExtractionRecord.dnaTissue
         self._dnaTissueTier = ExtractionRecord.dnaTissueTier
+        self._site = ExtractionRecord.site
+        self._siteTier = ExtractionRecord.siteTier
 
         return self
 
@@ -134,6 +150,8 @@ class Extraction(datamodel.DatamodelObject):
         self._rnaTissueTier = parsed.rnaTissueTier
         self._dnaTissue = parsed.dnaTissue
         self._dnaTissueTier = parsed.dnaTissueTier
+        self._site = parsed.site
+        self._siteTier = parsed.siteTier
 
         return self
 
@@ -188,6 +206,12 @@ class Extraction(datamodel.DatamodelObject):
     def getDnaTissueTier(self):
         return self._dnaTissueTier
 
+    def getSite(self):
+        return self._site
+
+    def getSiteTier(self):
+        return self._siteTier
+
 class Sequencing(datamodel.DatamodelObject):
     """
     """
@@ -225,6 +249,24 @@ class Sequencing(datamodel.DatamodelObject):
         self._rnaReadLengthTier = None
         self._pcrCycles = None
         self._pcrCyclesTier = None
+        self._extractionId = None
+        self._extractionIdTier = None
+        self._site = None
+        self._siteTier = None
+
+        self._objectAttr = {
+            "sequencingId": self.getSequencingId(),
+            "sampleId": self.getSampleId,
+            "dnaLibraryKit": self.getDnaLibraryKit,
+            "dnaSeqPlatform": self.getDnaSeqPlatform,
+            "dnaReadLength": self.getDnaReadLength,
+            "rnaLibraryKit": self.getRnaLibraryKit,
+            "rnaSeqPlatform": self.getRnaSeqPlatform,
+            "rnaReadLength": self.getRnaReadLength,
+            "pcrCycles": self.getPcrCycles,
+            "extractionId": self.getExtractionId,
+            "site": self.getSite
+        }
 
     def toProtocolElement(self, tier=0):
         """
@@ -257,6 +299,10 @@ class Sequencing(datamodel.DatamodelObject):
             record[str('rnaReadLength')] = str(self.getRnaReadLength())
         if tier >= self.getPcrCyclesTier():
             record[str('pcrCycles')] = str(self.getPcrCycles())
+        if tier >= self.getExtractionIdTier():
+            record[str('extractionId')] = str(self.getExtractionId())
+        if tier >= self.getSiteTier():
+            record[str('site')] = str(self.getSite())
 
         Sequencing = protocol.Sequencing(**record)
         self.serializeAttributes(Sequencing)
@@ -291,6 +337,10 @@ class Sequencing(datamodel.DatamodelObject):
         self._rnaReadLengthTier = SequencingRecord.rnaReadLengthTier
         self._pcrCycles = SequencingRecord.pcrCycles
         self._pcrCyclesTier = SequencingRecord.pcrCyclesTier
+        self._extractionId = SequencingRecord.extractionId
+        self._extractionIdTier = SequencingRecord.extractionIdTier
+        self._site = SequencingRecord.site
+        self._siteTier = SequencingRecord.siteTier
 
         return self
 
@@ -330,6 +380,10 @@ class Sequencing(datamodel.DatamodelObject):
         self._rnaReadLengthTier = parsed.rnaReadLengthTier
         self._pcrCycles = parsed.pcrCycles
         self._pcrCyclesTier = parsed.pcrCyclesTier
+        self._extractionId = parsed.extractionId
+        self._extractionIdTier = parsed.extractionIdTier
+        self._site = parsed.site
+        self._siteTier = parsed.siteTier
 
         return self
 
@@ -402,6 +456,17 @@ class Sequencing(datamodel.DatamodelObject):
     def getPcrCyclesTier(self):
         return self._pcrCyclesTier
 
+    def getExtractionId(self):
+        return self._extractionId
+
+    def getExtractionIdTier(self):
+        return self._extractionIdTier
+
+    def getSite(self):
+        return self._site
+
+    def getSiteTier(self):
+        return self._siteTier
 
 class Alignment(datamodel.DatamodelObject):
     """
@@ -454,6 +519,31 @@ class Alignment(datamodel.DatamodelObject):
         self._fastqcTier = None
         self._reference = None
         self._referenceTier = None
+        self._sequencingId = None
+        self._sequencingIdTier = None
+        self._site = None
+        self._siteTier = None
+
+        self._objectAttr = {
+            "alignmentId": self.getAlignmentId,
+            "sampleId": self.getSampleId,
+            "inHousePipeline": self.getInHousePipeline,
+            "alignmentTool": self.getAlignmentTool,
+            "mergeTool": self.getMergeTool,
+            "markDuplicates": self.getMarkDuplicates,
+            "realignerTarget": self.getRealignerTarget,
+            "indelRealigner": self.getIndelRealigner,
+            "baseRecalibrator": self.getBaseRecalibrator,
+            "printReads": self.getPrintReads,
+            "idxStats": self.getIdxStats,
+            "flagStat": self.getFlagStat,
+            "coverage": self.getCoverage,
+            "insertSizeMetrics": self.getInsertSizeMetrics,
+            "fastqc": self.getFastqc,
+            "reference": self.getReference,
+            "sequencingId": self.getSequencingId,
+            "site": self.getSite
+        }
 
     def toProtocolElement(self, tier=0):
         """
@@ -500,6 +590,10 @@ class Alignment(datamodel.DatamodelObject):
             record[str('fastqc')] = str(self.getFastqc())
         if tier >= self.getReferenceTier():
             record[str('reference')] = str(self.getReference())
+        if tier >= self.getSequencingIdTier():
+            record[str('sequencingId')] = str(self.getSequencingId())
+        if tier >= self.getSiteTier():
+            record[str('site')] = str(self.getSite())
 
         Alignment = protocol.Alignment(**record)
         self.serializeAttributes(Alignment)
@@ -548,6 +642,10 @@ class Alignment(datamodel.DatamodelObject):
         self._fastqcTier = AlignmentRecord.fastqcTier
         self._reference = AlignmentRecord.reference
         self._referenceTier = AlignmentRecord.referenceTier
+        self._sequencingId = AlignmentRecord.sequencingId
+        self._sequencingIdTier = AlignmentRecord.sequencingIdTier
+        self._site = AlignmentRecord.site
+        self._siteTier = AlignmentRecord.siteTier
 
 
         return self
@@ -602,6 +700,10 @@ class Alignment(datamodel.DatamodelObject):
         self._fastqcTier = parsed.fastqcTier
         self._reference = parsed.reference
         self._referenceTier = parsed.referenceTier
+        self._sequencingId = parsed.sequencingId
+        self._sequencingIdTier = parsed.sequencingIdTier
+        self._site = parsed.site
+        self._siteTier = parsed.siteTier
 
         return self
 
@@ -716,6 +818,17 @@ class Alignment(datamodel.DatamodelObject):
     def getReferenceTier(self):
         return self._referenceTier
 
+    def getSequencingId(self):
+        return self._sequencingId
+
+    def getSequencingIdTier(self):
+        return self._sequencingIdTier
+
+    def getSite(self):
+        return self._site
+
+    def getSiteTier(self):
+        return self._siteTier
 
 class VariantCalling(datamodel.DatamodelObject):
     """
@@ -760,6 +873,28 @@ class VariantCalling(datamodel.DatamodelObject):
         self._cosmicTier = None
         self._dbSnp = None
         self._dbSnpTier = None
+        self._alignmentId = None
+        self._alignmentIdTier = None
+        self._site = None
+        self._siteTier = None
+
+        self._objectAttr = {
+            "variantCallingId": self.getVariantCallingId,
+            "sampleId": self.getSampleId,
+            "inHousePipeline": self.getInHousePipeline,
+            "variantCaller": self.getVariantCaller,
+            "tabulate": self.getTabulate,
+            "annotation": self.getAnnotation,
+            "mergeTool": self.getMergeTool,
+            "rdaToTab": self.getRdaToTab,
+            "delly": self.getDelly,
+            "postFilter": self.getPostFilter,
+            "clipFilter": self.getClipFilter,
+            "cosmic": self.getCosmic,
+            "dbSnp": self.getDbSnp,
+            "alignmentId": self.getAlignmentId,
+            "site": self.getSite,
+        }
 
     def toProtocolElement(self, tier=0):
         """
@@ -800,6 +935,10 @@ class VariantCalling(datamodel.DatamodelObject):
             record[str('cosmic')] = str(self.getCosmic())
         if tier >= self.getDbSnpTier():
             record[str('dbSnp')] = str(self.getDbSnp())
+        if tier >= self.getAlignmentIdTier():
+            record[str('alignmentId')] = str(self.getAlignmentId())
+        if tier >= self.getSiteTier():
+            record[str('site')] = str(self.getSite())
 
         VariantCalling = protocol.VariantCalling(**record)
         self.serializeAttributes(VariantCalling)
@@ -842,6 +981,10 @@ class VariantCalling(datamodel.DatamodelObject):
         self._cosmicTier = VariantCallingRecord.cosmicTier
         self._dbSnp = VariantCallingRecord.dbSnp
         self._dbSnpTier = VariantCallingRecord.dbSnpTier
+        self._alignmentId = VariantCallingRecord.alignmentId
+        self._alignmentIdTier = VariantCallingRecord.alignmentIdTier
+        self._site = VariantCallingRecord.site
+        self._siteTier = VariantCallingRecord.siteTier
 
         return self
 
@@ -889,6 +1032,10 @@ class VariantCalling(datamodel.DatamodelObject):
         self._cosmicTier = parsed.cosmicTier
         self._dbSnp = parsed.dbSnp
         self._dbSnpTier = parsed.dbSnpTier
+        self._alignmentId = parsed.alignmentId
+        self._alignmentIdTier = parsed.alignmentIdTier
+        self._site = parsed.site
+        self._siteTier = parsed.siteTier
 
         return self
 
@@ -985,6 +1132,17 @@ class VariantCalling(datamodel.DatamodelObject):
     def getDbSnpTier(self):
         return self._dbSnpTier
 
+    def getAlignmentId(self):
+        return self._alignmentId
+
+    def getAlignmentIdTier(self):
+        return self._alignmentIdTier
+
+    def getSite(self):
+        return self._site
+
+    def getSiteTier(self):
+        return self._siteTier
 
 class FusionDetection(datamodel.DatamodelObject):
     """
@@ -1023,6 +1181,24 @@ class FusionDetection(datamodel.DatamodelObject):
         self._genomeReferenceTier = None
         self._geneModels = None
         self._geneModelsTier = None
+        self._alignmentId = None
+        self._alignmentIdTier = None
+        self._site = None
+        self._siteTier = None
+
+        self._objectAttr = {
+            "fusionDetectionId": self.getFusionDetectionId,
+            "sampleId": self.getSampleId,
+            "inHousePipeline": self.getInHousePipeline,
+            "svDetection": self.getSvDetection,
+            "fusionDetection": self.getFusionDetection,
+            "realignment": self.getRealignment,
+            "annotation": self.getAnnotation,
+            "genomeReference": self.getGenomeReference,
+            "geneModels": self.getGeneModels,
+            "alignmentId":self.getAlignmentId,
+            "site": self.getSite,
+        }
 
     def toProtocolElement(self, tier=0):
         """
@@ -1055,6 +1231,10 @@ class FusionDetection(datamodel.DatamodelObject):
             record[str('genomeReference')] = str(self.getGenomeReference())
         if tier >= self.getGeneModelsTier():
             record[str('geneModels')] = str(self.getGeneModels())
+        if tier >= self.getAlignmentIdTier():
+            record[str('alignmentId')] = str(self.getAlignmentId())
+        if tier >= self.getSiteTier():
+            record[str('site')] = str(self.getSite())
 
         FusionDetection = protocol.FusionDetection(**record)
         self.serializeAttributes(VariantCalling)
@@ -1089,6 +1269,10 @@ class FusionDetection(datamodel.DatamodelObject):
         self._genomeReferenceTier = FusionDetectionRecord.genomeReferenceTier
         self._geneModels = FusionDetectionRecord.geneModels
         self._geneModelsTier = FusionDetectionRecord.geneModelsTier
+        self._alignmentId = FusionDetectionRecord.alignmentId
+        self._alignmentIdTier = FusionDetectionRecord.alignmentIdTier
+        self._site = FusionDetectionRecord.site
+        self._siteTier = FusionDetectionRecord.siteTier
 
         return self
 
@@ -1128,6 +1312,10 @@ class FusionDetection(datamodel.DatamodelObject):
         self._genomeReferenceTier = parsed.genomeReferenceTier
         self._geneModels = parsed.geneModels
         self._geneModelsTier = parsed.geneModelsTier
+        self._alignmentId = parsed.alignmentId
+        self._alignmentIdTier = parsed.alignmentIdTier
+        self._site = parsed.site
+        self._siteTier = parsed.siteTier
 
         return self
 
@@ -1200,6 +1388,17 @@ class FusionDetection(datamodel.DatamodelObject):
     def getGeneModelsTier(self):
         return self._geneModelsTier
 
+    def getAlignmentId(self):
+        return self._alignmentId
+
+    def getAlignmentIdTier(self):
+        return self._alignmentIdTier
+
+    def getSite(self):
+        return self._site
+
+    def getSiteTier(self):
+        return self._siteTier
 
 class ExpressionAnalysis(datamodel.DatamodelObject):
     """
@@ -1234,6 +1433,22 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
         self._bamHandlingTier = None
         self._expressionEstimation = None
         self._expressionEstimationTier = None
+        self._sequencingId = None
+        self._sequencingIdTier = None
+        self._site = None
+        self._siteTier = None
+
+        self._objectAttr = {
+            "expressionAnalysisId": self.getExpressionAnalysisId,
+            "sampleId": self.getSampleId,
+            "readLength": self.getReadLength,
+            "reference": self.getReference,
+            "alignmentTool": self.getAlignmentTool,
+            "bamHandling": self.getBamHandling(),
+            "expressionEstimation": self.getExpressionEstimation,
+            "sequencingId": self.getSequencingId,
+            "site": self.getSite
+        }
 
     def toProtocolElement(self, tier=0):
         """
@@ -1262,6 +1477,10 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
             record[str('bamHandling')] = str(self.getBamHandling())
         if tier >= self.getExpressionEstimationTier():
             record[str('expressionEstimation')] = str(self.getExpressionEstimation())
+        if tier >= self.getSequencingIdTier():
+            record[str('sequencingId')] = str(self.getSequencingId())
+        if tier >= self.getSiteTier():
+            record[str('site')] = str(self.getSite())
 
         ExpressionAnalysis = protocol.ExpressionAnalysis(**record)
         self.serializeAttributes(VariantCalling)
@@ -1292,6 +1511,10 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
         self._bamHandlingTier = ExpressionAnalysisRecord.bamHandlingTier
         self._expressionEstimation = ExpressionAnalysisRecord.expressionEstimation
         self._expressionEstimationTier = ExpressionAnalysisRecord.expressionEstimationTier
+        self._sequencingId = ExpressionAnalysisRecord.sequencingId
+        self._sequencingIdTier = ExpressionAnalysisRecord.sequencingIdTier
+        self._site = ExpressionAnalysisRecord.site
+        self._siteTier = ExpressionAnalysisRecord.siteTier
 
         return self
 
@@ -1327,6 +1550,10 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
         self._bamHandlingTier = parsed.bamHandlingTier
         self._expressionEstimation = parsed.expressionEstimation
         self._expressionEstimationTier = parsed.expressionEstimationTier
+        self._sequencingId = parsed.sequencingId
+        self._sequencingIdTier = parsed.sequencingIdTier
+        self._site = parsed.site
+        self._siteTier = parsed.siteTier
 
         return self
 
@@ -1386,3 +1613,15 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
 
     def getExpressionEstimationTier(self):
         return self._expressionEstimationTier
+
+    def getSequencingId(self):
+        return self._sequencingId
+
+    def getSequencingIdTier(self):
+        return self._sequencingIdTier
+
+    def getSite(self):
+        return self._site
+
+    def getSiteTier(self):
+        return self._siteTier
