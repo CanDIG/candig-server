@@ -311,7 +311,7 @@ class TestFusionDetection(unittest.TestCase):
         # Verify select elements exist
         self.assertEqual(gaFusionDetection.created, validFusionDetection.created)
         self.assertEqual(gaFusionDetection.updated, validFusionDetection.updated)
-        self.assertEqual(gaFusionDetection.variantCallingId, validFusionDetection.variantCallingId)
+        self.assertEqual(gaFusionDetection.fusionDetectionId, validFusionDetection.fusionDetectionId)
         self.assertEqual(gaFusionDetection.sampleId, validFusionDetection.sampleId)
         self.assertEqual(gaFusionDetection.site, validFusionDetection.site)
         self.assertEqual(gaFusionDetection.fusionDetectionTier, validFusionDetection.fusionDetectionTier)
