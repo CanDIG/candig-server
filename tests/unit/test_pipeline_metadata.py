@@ -25,19 +25,19 @@ class TestExtractions(unittest.TestCase):
             created="2016-05-19T21:00:19Z",
             updated="2016-05-19T21:00:19Z",
             extractionId="EXTRACTION_TEST",
-            extractionIdTier="n/a",
+            extractionIdTier=0,
             sampleId="n/a",
-            sampleIdTier="n/a",
+            sampleIdTier=0,
             rnaBlood="n/a",
-            rnaBloodTier="n/a",
+            rnaBloodTier=0,
             dnaBlood="n/a",
-            dnaBloodTier="n/a",
+            dnaBloodTier=0,
             rnaTissue="n/a",
-            rnaTissueTier="n/a",
+            rnaTissueTier=0,
             dnaTissue="n/a",
-            dnaTissueTier="n/a",
+            dnaTissueTier=0,
             site="Vancouver",
-            siteTier="n/a"
+            siteTier=0
         )
 
         validExtraction.attributes.attr['test']. \
@@ -336,34 +336,24 @@ class TestExpressionAnalysis(unittest.TestCase):
             name="test",
             created="2016-05-19T21:00:19Z",
             updated="2016-05-19T21:00:19Z",
-            variantCallingId = "VC_TEST",
-            variantCallingIdTier = 0,
+            expressionAnalysisId = "n/a",
+            expressionAnalysisIdTier = 0,
             sampleId = "n/a",
             sampleIdTier = 0,
-            inHousePipeline = "n/a",
-            inHousePipelineTier = 0,
-            tabulate = "n/a",
-            tabulateTier = 0,
-            annotation = "n/a",
-            annotationTier = 0,
-            mergeTool = "n/a",
-            mergeToolTier = 0,
-            rdaToTab = "n/a",
-            rdaToTabTier = 0,
-            delly = "n/a",
-            dellyTier = 0,
-            postFilter = "n/a",
-            postFilterTier = 0,
-            clipFilter = "n/a",
-            clipFilterTier = 0,
-            cosmic = "n/a",
-            cosmicTier = 0,
-            dbSnp = "n/a",
-            dbSnpTier = 0,
-            alignmentId = "n/a",
-            alignmentIdTier = 0,
-            site = "Vancouver",
-            siteTier = 0,
+            readLength = "n/a",
+            readLengthTier = 0,
+            reference = "n/a",
+            referenceTier = 0,
+            alignmentTool = "n/a",
+            alignmentToolTier = 0,
+            bamHandling = "n/a",
+            bamHandlingTier = 0,
+            expressionEstimation = "n/a",
+            expressionEstimationTier = 0,
+            sequencingId = "n/a",
+            sequencingIdTier = 0,
+            site = "n/a",
+            siteTier = 0
         )
 
         validExpressionAnalysis.attributes.attr['test']. \
@@ -377,10 +367,10 @@ class TestExpressionAnalysis(unittest.TestCase):
         # Verify select elements exist
         self.assertEqual(gaExpressionAnalysis.created, validExpressionAnalysis.created)
         self.assertEqual(gaExpressionAnalysis.updated, validExpressionAnalysis.updated)
-        self.assertEqual(gaExpressionAnalysis.variantCallingId, validExpressionAnalysis.variantCallingId)
+        self.assertEqual(gaExpressionAnalysis.expressionAnalysisId, validExpressionAnalysis.expressionAnalysisId)
         self.assertEqual(gaExpressionAnalysis.sampleId, validExpressionAnalysis.sampleId)
         self.assertEqual(gaExpressionAnalysis.site, validExpressionAnalysis.site)
-        self.assertEqual(gaExpressionAnalysis.postFilterTier, validExpressionAnalysis.postFilterTier)
+        self.assertEqual(gaExpressionAnalysis.bamHandlingTier, validExpressionAnalysis.bamHandlingTier)
 
         # Invalid input
         invalidExpressionAnalysis = '{"bad:", "json"}'

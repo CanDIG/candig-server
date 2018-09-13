@@ -1240,7 +1240,7 @@ class FusionDetection(datamodel.DatamodelObject):
             record[str('site')] = str(self.getSite())
 
         FusionDetection = protocol.FusionDetection(**record)
-        self.serializeAttributes(VariantCalling)
+        self.serializeAttributes(FusionDetection)
 
         return FusionDetection
 
@@ -1487,7 +1487,7 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
             record[str('site')] = str(self.getSite())
 
         ExpressionAnalysis = protocol.ExpressionAnalysis(**record)
-        self.serializeAttributes(VariantCalling)
+        self.serializeAttributes(ExpressionAnalysis)
 
         return ExpressionAnalysis
 
