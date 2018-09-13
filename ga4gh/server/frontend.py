@@ -1359,11 +1359,13 @@ def searchTumourboards():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchTumourboards)
 
-DisplayedRoute('/extractions/search', postMethod=True)
+
+@DisplayedRoute('/extractions/search', postMethod=True)
 @requires_auth
 def searchExtractions():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchExtractions)
+
 
 @DisplayedRoute('/sequencing/search', postMethod=True)
 @requires_auth
@@ -1371,11 +1373,13 @@ def searchSequencing():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchSequencing)
 
+
 @DisplayedRoute('/alignments/search', postMethod=True)
 @requires_auth
 def searchAlignments():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchAlignments)
+
 
 @DisplayedRoute('/variantcalling/search', postMethod=True)
 @requires_auth
@@ -1383,17 +1387,20 @@ def searchVariantCalling():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchVariantCalling)
 
+
 @DisplayedRoute('/fusiondetection/search', postMethod=True)
 @requires_auth
 def searchFusionDetection():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchFusionDetection)
 
+
 @DisplayedRoute('/expressionanalysis/search', postMethod=True)
 @requires_auth
 def searchExpressionAnalysis():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchExpressionAnalysis)
+
 
 @DisplayedRoute('/peers/list', postMethod=True)
 @requires_auth
@@ -1509,6 +1516,7 @@ def getTumourboard(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetTumourboard)
 
+
 @DisplayedRoute(
     '/extractions/<no(search):id>',
     pathDisplay='/extractions/<id>')
@@ -1516,6 +1524,7 @@ def getTumourboard(id):
 def getExtraction(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetExtraction)
+
 
 @DisplayedRoute(
     '/sequencing/<no(search):id>',
@@ -1525,6 +1534,7 @@ def getSequencing(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetSequencing)
 
+
 @DisplayedRoute(
     '/alignments/<no(search):id>',
     pathDisplay='/alignments/<id>')
@@ -1532,6 +1542,7 @@ def getSequencing(id):
 def getAlignment(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetAlignment)
+
 
 @DisplayedRoute(
     '/variantcalling/<no(search):id>',
@@ -1541,6 +1552,7 @@ def getVariantCalling(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetVariantCalling)
 
+
 @DisplayedRoute(
     '/fusiondetections/<no(search):id>',
     pathDisplay='/fusiondetections/<id>')
@@ -1549,6 +1561,7 @@ def getFusionDetection(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetFusionDetection)
 
+
 @DisplayedRoute(
     '/expressionanalysis/<no(search):id>',
     pathDisplay='/expressionanalysis/<id>')
@@ -1556,6 +1569,7 @@ def getFusionDetection(id):
 def getExpressionAnalysis(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetExpressionAnalysis)
+
 
 @DisplayedRoute('/rnaquantificationsets/search', postMethod=True)
 @requires_auth

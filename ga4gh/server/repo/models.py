@@ -743,6 +743,7 @@ class Tumourboard(BaseModel):
             (('datasetid', 'name'), True),
         )
 
+
 class Extraction(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
@@ -765,11 +766,14 @@ class Extraction(BaseModel):
     rnaTissueTier = pw.IntegerField(null=True)
     dnaTissue = pw.TextField(null=True)
     dnaTissueTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
             (('datasetid', 'name'), True),
         )
+
 
 class Sequencing(BaseModel):
     # Common fields
@@ -799,11 +803,16 @@ class Sequencing(BaseModel):
     rnaReadLengthTier = pw.IntegerField(null=True)
     pcrCycles = pw.TextField(null=True)
     pcrCyclesTier = pw.IntegerField(null=True)
+    extractionId = pw.TextField(null=True)
+    extractionIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
             (('datasetid', 'name'), True),
         )
+
 
 class Alignment(BaseModel):
     # Common fields
@@ -821,10 +830,10 @@ class Alignment(BaseModel):
     sampleIdTier = pw.IntegerField(null=True)
     inHousePipeline = pw.TextField(null=True)
     inHousePipelineTier = pw.IntegerField(null=True)
-    alignment = pw.TextField(null=True)
-    alignmentTier = pw.IntegerField(null=True)
-    merge = pw.TextField(null=True)
-    mergeTier = pw.IntegerField(null=True)
+    alignmentTool = pw.TextField(null=True)
+    alignmentToolTier = pw.IntegerField(null=True)
+    mergeTool = pw.TextField(null=True)
+    mergeToolTier = pw.IntegerField(null=True)
     markDuplicates = pw.TextField(null=True)
     markDuplicatesTier = pw.IntegerField(null=True)
     realignerTarget = pw.TextField(null=True)
@@ -847,11 +856,16 @@ class Alignment(BaseModel):
     fastqcTier = pw.IntegerField(null=True)
     reference = pw.TextField(null=True)
     referenceTier = pw.IntegerField(null=True)
+    sequencingId = pw.TextField(null=True)
+    sequencingIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
             (('datasetid', 'name'), True),
         )
+
 
 class VariantCalling(BaseModel):
     # Common fields
@@ -875,8 +889,8 @@ class VariantCalling(BaseModel):
     tabulateTier = pw.IntegerField(null=True)
     annotation = pw.TextField(null=True)
     annotationTier = pw.IntegerField(null=True)
-    merge = pw.TextField(null=True)
-    mergeTier = pw.IntegerField(null=True)
+    mergeTool = pw.TextField(null=True)
+    mergeToolTier = pw.IntegerField(null=True)
     rdaToTab = pw.TextField(null=True)
     rdaToTabTier = pw.IntegerField(null=True)
     delly = pw.TextField(null=True)
@@ -889,11 +903,16 @@ class VariantCalling(BaseModel):
     cosmicTier = pw.IntegerField(null=True)
     dbSnp = pw.TextField(null=True)
     dbSnpTier = pw.IntegerField(null=True)
+    alignmentId = pw.TextField(null=True)
+    alignmentIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
             (('datasetid', 'name'), True),
         )
+
 
 class FusionDetection(BaseModel):
     # Common fields
@@ -923,11 +942,16 @@ class FusionDetection(BaseModel):
     genomeReferenceTier = pw.IntegerField(null=True)
     geneModels = pw.TextField(null=True)
     geneModelsTier = pw.IntegerField(null=True)
+    alignmentId = pw.TextField(null=True)
+    alignmentIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
             (('datasetid', 'name'), True),
         )
+
 
 class ExpressionAnalysis(BaseModel):
     # Common fields
@@ -947,17 +971,22 @@ class ExpressionAnalysis(BaseModel):
     readLengthTier = pw.IntegerField(null=True)
     reference = pw.TextField(null=True)
     referenceTier = pw.IntegerField(null=True)
-    alignment = pw.TextField(null=True)
-    alignmentTier = pw.IntegerField(null=True)
+    alignmentTool = pw.TextField(null=True)
+    alignmentToolTier = pw.IntegerField(null=True)
     bamHandling = pw.TextField(null=True)
     bamHandlingTier = pw.IntegerField(null=True)
     expressionEstimation = pw.TextField(null=True)
     expressionEstimationTier = pw.IntegerField(null=True)
+    sequencingId = pw.TextField(null=True)
+    sequencingIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
             (('datasetid', 'name'), True),
         )
+
 
 class Individual(BaseModel):
     created = pw.TextField()
