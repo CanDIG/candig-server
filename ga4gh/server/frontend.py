@@ -252,7 +252,7 @@ def _configure_backend(app):
     # We use URLs to specify the backend. Currently we have file:// URLs (or
     # URLs with no scheme) for the SqlDataRepository, and special empty:// and
     # simulated:// URLs for empty or simulated data sources.
-    dataSource = urlparse.urlparse(app.config["DATA_SOURCE"], "file")
+    dataSource = urlparse(app.config["DATA_SOURCE"], "file")
 
     if dataSource.scheme == "simulated":
         # Ignore the query string
@@ -855,10 +855,10 @@ class DisplayedRoute(object):
 
     def __call__(self, func):
         if self.methods is None:
-            app.add_url_rule(self.path, func.func_name, func)
+            app.add_url_rule(self.path, func.__name__, func)
         else:
             app.add_url_rule(
-                self.path, func.func_name, func, methods=self.methods)
+                self.path, func.__name__, func, methods=self.methods)
 
         @functools.wraps(func)
         def wrapper(*args, **kwargs):

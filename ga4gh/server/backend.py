@@ -201,8 +201,8 @@ class Backend(object):
 
         op_keys = ['and', 'or']
 
-        if len(logic.keys()) == 1:
-            logic_key = logic.keys()[0]
+        if len(list(logic.keys())) == 1:
+            logic_key = list(logic.keys())[0]
         else:
             # too many logic keys
             raise exceptions.InvalidLogicException('Invalid number of keys')
