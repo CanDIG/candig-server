@@ -2380,7 +2380,9 @@ class SqlDataRepository(AbstractDataRepository):
                 rnaTissue=extraction.getRnaTissue(),
                 rnaTissueTier=extraction.getRnaTissueTier(),
                 dnaTissue=extraction.getDnaTissue(),
-                dnaTissueTier=extraction.getDnaTissueTier()
+                dnaTissueTier=extraction.getDnaTissueTier(),
+                site=extraction.getSite(),
+                siteTier=extraction.getSiteTier()
             )
         except Exception:
             raise exceptions.DuplicateNameException(
@@ -2433,8 +2435,11 @@ class SqlDataRepository(AbstractDataRepository):
                 rnaReadLength=sequencing.getRnaReadLength(),
                 rnaReadLengthTier=sequencing.getRnaReadLengthTier(),
                 pcrCycles=sequencing.getPcrCycles(),
-                pcrCyclesTier=sequencing.getPcrCyclesTier()
-
+                pcrCyclesTier=sequencing.getPcrCyclesTier(),
+                extractionId=sequencing.getExtractionId(),
+                extractionIdTier=sequencing.getExtractionIdTier(),
+                site=sequencing.getSite(),
+                siteTier=sequencing.getSiteTier()
             )
         except Exception:
             raise exceptions.DuplicateNameException(
@@ -2476,8 +2481,8 @@ class SqlDataRepository(AbstractDataRepository):
                 sampleIdTier=alignment.getSampleIdTier(),
                 alignmentTool=alignment.getAlignmentTool(),
                 alignmentToolTier=alignment.getAlignmentToolTier(),
-                merge=alignment.getMerge(),
-                mergeTier=alignment.getMergeTier(),
+                merge=alignment.getMergeTool(),
+                mergeTier=alignment.getMergeToolTier(),
                 markDuplicates=alignment.getMarkDuplicates(),
                 markDuplicatesTier=alignment.getMarkDuplicatesTier(),
                 realignerTarget=alignment.getRealignerTarget(),
@@ -2499,7 +2504,11 @@ class SqlDataRepository(AbstractDataRepository):
                 fastqc=alignment.getFastqc(),
                 fastqcTier=alignment.getFastqcTier(),
                 reference=alignment.getReference(),
-                referenceTier=alignment.getReferenceTier()
+                referenceTier=alignment.getReferenceTier(),
+                sequencingId=alignment.getSequencingId(),
+                sequencingIdTier=alignment.getSequencingIdTier(),
+                site=alignment.getSite(),
+                siteTier=alignment.getSiteTier()
             )
         except Exception:
             raise exceptions.DuplicateNameException(
@@ -2558,7 +2567,11 @@ class SqlDataRepository(AbstractDataRepository):
                 cosmic=variantCalling.getCosmic(),
                 cosmicTier=variantCalling.getCosmicTier(),
                 dbSnp=variantCalling.getDbSnp(),
-                dbSnpTier=variantCalling.getDbSnpTier()
+                dbSnpTier=variantCalling.getDbSnpTier(),
+                alignmentId=variantCalling.getAlignmentId(),
+                alignmentIdTier=variantCalling.getAlignmentIdTier(),
+                site=variantCalling.getSite(),
+                siteTier=variantCalling.getSiteTier()
 
             )
         except Exception:
@@ -2612,7 +2625,11 @@ class SqlDataRepository(AbstractDataRepository):
                 genomeReference=fusionDetection.getGenomeReference(),
                 genomeReferenceTier=fusionDetection.getGenomeReferenceTier(),
                 geneModels=fusionDetection.getGeneModels(),
-                geneModelsTier=fusionDetection.getGeneModels()
+                geneModelsTier=fusionDetection.getGeneModelsTier(),
+                alignmentId=fusionDetection.getAlignmentId(),
+                alignmentIdTier=fusionDetection.getAlignmentIdTier(),
+                site=fusionDetection.getSite(),
+                siteTier=fusionDetection.getSiteTier()
             )
         except Exception:
             raise exceptions.DuplicateNameException(
@@ -2661,7 +2678,11 @@ class SqlDataRepository(AbstractDataRepository):
                 bamHandling=expressionAnalysis.getBamHandling(),
                 bamHandlingTier=expressionAnalysis.getBamHandlingTier(),
                 expressionEstimation=expressionAnalysis.getExpressionEstimation(),
-                expressionEstimationTier=expressionAnalysis.getExpressionEstimationTier()
+                expressionEstimationTier=expressionAnalysis.getExpressionEstimationTier(),
+                sequencingId=expressionAnalysis.getSequencingId(),
+                sequencingIdTier=expressionAnalysis.getSequencingIdTier(),
+                site=expressionAnalysis.getSite(),
+                siteTier=expressionAnalysis.getSiteTier()
             )
         except Exception:
             raise exceptions.DuplicateNameException(
@@ -2853,6 +2874,12 @@ class SqlDataRepository(AbstractDataRepository):
         self._createOutcomeTable()
         self._createComplicationTable()
         self._createTumourboardTable()
+        self._createExtractionTable()
+        self._createSequencingTable()
+        self._createAlignmentTable()
+        self._createVariantCallingTable()
+        self._createFusionDetectionTable()
+        self._createExpressionAnalysisTable()
 
     def exists(self):
         """
@@ -2905,3 +2932,9 @@ class SqlDataRepository(AbstractDataRepository):
         self._readOutcomeTable()
         self._readComplicationTable()
         self._readTumourboardTable()
+        self._readExtractionTable()
+        self._readSequencingTable()
+        self._readAlignmentTable()
+        self._readVariantCallingTable()
+        self._readFusionDetectionTable()
+        self._readExpressionAnalysisTable()

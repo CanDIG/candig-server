@@ -16,8 +16,6 @@ import ga4gh.server.exceptions as exceptions
 
 import ga4gh.schemas.protocol as protocol
 
-import difflib as difflab
-
 
 class Patient(datamodel.DatamodelObject):
     """
@@ -75,7 +73,7 @@ class Patient(datamodel.DatamodelObject):
         self._occupationalOrEnvironmentalExposure = None
         self._occupationalOrEnvironmentalExposureTier = None
 
-        self.objectAttr = {
+        self._objectAttr = {
             "patientId": self.getPatientId,
             "otherIds": self.getOtherIds,
             "dateOfBirth": self.getDateOfBirth,
@@ -95,21 +93,6 @@ class Patient(datamodel.DatamodelObject):
             "otherGeneticConditionOrSignificantComorbidity": self.getOtherGeneticConditionOrSignificantComorbidity,
             "occupationalOrEnvironmentalExposure": self.getOccupationalOrEnvironmentalExposure,
         }
-
-    def mapper(self, field):
-        """
-        This function maps the requested field to the related Getter
-        :param field: specified in the request
-        :return: corresponding value of the field
-        """
-        try:
-            return self.objectAttr[field]()
-        except (AttributeError, KeyError):
-            try:
-                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
-                raise exceptions.BadFieldNameException(field, closeMatch)
-            except IndexError:
-                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -449,7 +432,7 @@ class Enrollment(datamodel.DatamodelObject):
         self._treatingCentreProvince = None
         self._treatingCentreProvinceTier = None
 
-        self.objectAttr = {
+        self._objectAttr = {
             "patientId": self.getPatientId,
             "enrollmentInstitution": self.getEnrollmentInstitution,
             "enrollmentApprovalDate": self.getEnrollmentApprovalDate,
@@ -467,21 +450,6 @@ class Enrollment(datamodel.DatamodelObject):
             "treatingCentreName": self.getTreatingCentreName,
             "treatingCentreProvince": self.getTreatingCentreProvince
         }
-
-    def mapper(self, field):
-        """
-        This function maps the requested field to the related Getter
-        :param field: specified in the request
-        :return: corresponding value of the field
-        """
-        try:
-            return self.objectAttr[field]()
-        except (AttributeError, KeyError):
-            try:
-                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
-                raise exceptions.BadFieldNameException(field, closeMatch)
-            except IndexError:
-                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -806,7 +774,7 @@ class Consent(datamodel.DatamodelObject):
         self._consentFormComplete = None
         self._consentFormCompleteTier = None
 
-        self.objectAttr = {
+        self._objectAttr = {
             "patientId": self.getPatientId,
             "consentId": self.getConsentId,
             "consentDate": self.getConsentDate,
@@ -828,21 +796,6 @@ class Consent(datamodel.DatamodelObject):
             "reasonForConsentWithdrawal": self.getReasonForConsentWithdrawal,
             "consentFormComplete": self.getConsentFormComplete
         }
-
-    def mapper(self, field):
-        """
-        This function maps the requested field to the related Getter
-        :param field: specified in the request
-        :return: corresponding value of the field
-        """
-        try:
-            return self.objectAttr[field]()
-        except (AttributeError, KeyError):
-            try:
-                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
-                raise exceptions.BadFieldNameException(field, closeMatch)
-            except IndexError:
-                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -1233,7 +1186,7 @@ class Diagnosis(datamodel.DatamodelObject):
         self._additionalTest = None
         self._additionalTestTier = None
 
-        self.objectAttr = {
+        self._objectAttr = {
             "patientId": self.getPatientId,
             "diagnosisId": self.getDiagnosisId,
             "diagnosisDate": self.getDiagnosisDate,
@@ -1264,21 +1217,6 @@ class Diagnosis(datamodel.DatamodelObject):
             "additionalMolecularDiagnosticTestingPerformed": self.getAdditionalMolecularDiagnosticTestingPerformed,
             "additionalTest": self.getAdditionalTest
         }
-
-    def mapper(self, field):
-        """
-        This function maps the requested field to the related Getter
-        :param field: specified in the request
-        :return: corresponding value of the field
-        """
-        try:
-            return self.objectAttr[field]()
-        except (AttributeError, KeyError):
-            try:
-                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
-                raise exceptions.BadFieldNameException(field, closeMatch)
-            except IndexError:
-                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -1767,7 +1705,7 @@ class Sample(datamodel.DatamodelObject):
         self._ifNotExplainAnyDeviation = None
         self._ifNotExplainAnyDeviationTier = None
 
-        self.objectAttr = {
+        self._objectAttr = {
             "patientId": self.getPatientId,
             "sampleId": self.getSampleId,
             "diagnosisId": self.getDiagnosisId,
@@ -1793,21 +1731,6 @@ class Sample(datamodel.DatamodelObject):
             "sopFollowed": self.getSopFollowed,
             "ifNotExplainAnyDeviation": self.getIfNotExplainAnyDeviation,
         }
-
-    def mapper(self, field):
-        """
-        This function maps the requested field to the related Getter
-        :param field: specified in the request
-        :return: corresponding value of the field
-        """
-        try:
-            return self.objectAttr[field]()
-        except (AttributeError, KeyError):
-            try:
-                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
-                raise exceptions.BadFieldNameException(field, closeMatch)
-            except IndexError:
-                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -2230,7 +2153,7 @@ class Treatment(datamodel.DatamodelObject):
         self._drugIdNumbers = None
         self._drugIdNumbersTier = None
 
-        self.objectAttr = {
+        self._objectAttr = {
             "patientId": self.getPatientId,
             "courseNumber": self.getCourseNumber,
             "therapeuticModality": self.getTherapeuticModality,
@@ -2253,21 +2176,6 @@ class Treatment(datamodel.DatamodelObject):
             "drugListOrAgent": self.getDrugListOrAgent,
             "drugIdNumbers": self.getDrugIdNumbers,
         }
-
-    def mapper(self, field):
-        """
-        This function maps the requested field to the related Getter
-        :param field: specified in the request
-        :return: corresponding value of the field
-        """
-        try:
-            return self.objectAttr[field]()
-        except (AttributeError, KeyError):
-            try:
-                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
-                raise exceptions.BadFieldNameException(field, closeMatch)
-            except IndexError:
-                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -2644,7 +2552,7 @@ class Outcome(datamodel.DatamodelObject):
         self._performanceStatus = None
         self._performanceStatusTier = None
 
-        self.objectAttr = {
+        self._objectAttr = {
             "patientId": self.getPatientId,
             "physicalExamId": self.getPhysicalExamId,
             "dateOfAssessment": self.getDateOfAssessment,
@@ -2662,21 +2570,6 @@ class Outcome(datamodel.DatamodelObject):
             "weightUnits": self.getWeightUnits,
             "performanceStatus": self.getPerformanceStatus
         }
-
-    def mapper(self, field):
-        """
-        This function maps the requested field to the related Getter
-        :param field: specified in the request
-        :return: corresponding value of the field
-        """
-        try:
-            return self.objectAttr[field]()
-        except (AttributeError, KeyError):
-            try:
-                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
-                raise exceptions.BadFieldNameException(field, closeMatch)
-            except IndexError:
-                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -2973,7 +2866,7 @@ class Complication(datamodel.DatamodelObject):
         self._treatmentInducedNeoplasmDetails = None
         self._treatmentInducedNeoplasmDetailsTier = None
 
-        self.objectAttr = {
+        self._objectAttr = {
             "patientId": self.getPatientId,
             "date": self.getDate,
             "lateComplicationOfTherapyDeveloped": self.getLateComplicationOfTherapyDeveloped,
@@ -2981,21 +2874,6 @@ class Complication(datamodel.DatamodelObject):
             "suspectedTreatmentInducedNeoplasmDeveloped": self.getSuspectedTreatmentInducedNeoplasmDeveloped,
             "treatmentInducedNeoplasmDetails": self.getTreatmentInducedNeoplasmDetails
         }
-
-    def mapper(self, field):
-        """
-        This function maps the requested field to the related Getter
-        :param field: specified in the request
-        :return: corresponding value of the field
-        """
-        try:
-            return self.objectAttr[field]()
-        except (AttributeError, KeyError):
-            try:
-                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
-                raise exceptions.BadFieldNameException(field, closeMatch)
-            except IndexError:
-                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
@@ -3220,7 +3098,7 @@ class Tumourboard(datamodel.DatamodelObject):
         self._summaryReport = None
         self._summaryReportTier = None
 
-        self.objectAttr = {
+        self._objectAttr = {
             "patientId": self.getPatientId,
             "dateOfMolecularTumorBoard": self.getDateOfMolecularTumorBoard,
             "typeOfSampleAnalyzed": self.getTypeOfSampleAnalyzed,
@@ -3252,21 +3130,6 @@ class Tumourboard(datamodel.DatamodelObject):
             "patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling": self.getPatientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling,
             "summaryReport": self.getSummaryReport
         }
-
-    def mapper(self, field):
-        """
-        This function maps the requested field to the related Getter
-        :param field: specified in the request
-        :return: corresponding value of the field
-        """
-        try:
-            return self.objectAttr[field]()
-        except (AttributeError, KeyError):
-            try:
-                closeMatch = difflab.get_close_matches(field, list(self.objectAttr.keys()))[0]
-                raise exceptions.BadFieldNameException(field, closeMatch)
-            except IndexError:
-                raise exceptions.BadFieldNameNoCloseMatchException(field)
 
     def toProtocolElement(self, tier=0):
         """
