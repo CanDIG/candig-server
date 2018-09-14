@@ -11,7 +11,7 @@ import os
 import sys
 import textwrap
 import traceback
-import urlparse
+from urllib.parse import urlparse
 
 import ga4gh.server.cli as cli
 import ga4gh.server.datamodel.bio_metadata as bio_metadata

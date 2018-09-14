@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 import unittest
 import socket
 import mock
-import urlparse
+from urllib.parse import urlparse, parse_qs
 import logging
 import mimetypes
 import shutil
@@ -147,10 +147,10 @@ class TestFrontendOidc(unittest.TestCase):
         authorization provider, of the correct form.
         """
         response = self.app.get('/')
-        scheme, netloc, path, params, query, fragment = urlparse.urlparse(
+        scheme, netloc, path, params, query, fragment = urlparse(
             response.location)
         self.assertEqual(netloc, 'auth.com')
-        args = urlparse.parse_qs(query, strict_parsing=True)
+        args = parse_qs(query, strict_parsing=True)
         self.assertEqual(path, '/auth')
         self.assertEqual(args['redirect_uri'][0],
                          'https://{}:8001/oauth2callback'.format(
@@ -214,7 +214,7 @@ class TestFrontendOidc(unittest.TestCase):
             with app.session_transaction() as sess:
                 sess['key'] = 'xxx'
             result = app.get('/')
-            scheme, netloc, path, params, query, fragment = urlparse.urlparse(
+            scheme, netloc, path, params, query, fragment = urlparse(
                 result.location)
             self.assertEqual(netloc, 'auth.com')
             args = urlparse.parse_qs(query, strict_parsing=True)

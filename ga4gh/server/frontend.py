@@ -11,7 +11,7 @@ import os
 import datetime
 import time
 import socket
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 import functools
 import json
 
@@ -1742,10 +1742,10 @@ def oidcCallback():
     # and port, and defaults to 'localhost' if not found. Therefore
     # we need to fix the returned url
     indexUrl = flask.url_for('index', _external=True)
-    indexParts = list(urlparse.urlparse(indexUrl))
+    indexParts = list(urlparse(indexUrl))
     if ':' not in indexParts[1]:
         indexParts[1] = '{}:{}'.format(socket.gethostname(), app.myPort)
-        indexUrl = urlparse.urlunparse(indexParts)
+        indexUrl = urlunparse(indexParts)
     response = flask.redirect(indexUrl)
     return response
 

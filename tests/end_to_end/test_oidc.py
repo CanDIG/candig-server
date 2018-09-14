@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 
 import requests
 import subprocess
-from urlparse import urlparse
+from urllib.parse import urlparse
 import shutil
 import unittest
 

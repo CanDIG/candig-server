@@ -22,7 +22,7 @@ def isUrl(urlString):
 
     From http://stackoverflow.com/questions/7160737/
     """
-    parsed = urlparse.urlparse(urlString)
+    parsed = urlparse(urlString)
     urlparseValid = parsed.netloc != '' and parsed.scheme != ''
     regex = re.compile(
         r'^(?:http|ftp)s?://'  # http:// or https://
