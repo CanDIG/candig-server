@@ -237,6 +237,67 @@ class ServerStatus(object):
         return app.backend.getDataRepository().getOntologyByName(name)
 
 
+class UserAccessMap(object):
+    """
+    Loads local authorization info from an access list file to the backend
+
+    access_list.txt formatting example:
+    username1:project1:0
+    username2:project2:4
+    """
+    def __init__(self):
+        self.user_access_map = {}
+        self.file_path = app.config.get('ACCESS_LIST')
+
+        if not self.file_path:
+            raise exceptions.ConfigurationException("No user access list defined")
+
+        self.list_updated = os.path.getmtime(self.file_path)
+
+    def initializeUserAccess(self, logger=None):
+        try:
+            with open(self.file_path) as access_list:
+                for line in access_list:
+                    parsed_line = line.split(":")
+                    if len(parsed_line) != 3:
+                        raise exceptions.MalformedAccessException
+                    username = parsed_line[0]
+                    project = parsed_line[1]
+                    level = parsed_line[2].strip('\n')
+                    try:
+                        int(level)
+                    except ValueError:
+                        exceptions.MalformedAccessException("Non-integer access level provided")
+                    if username not in self.user_access_map:
+                        self.user_access_map[username] = {}
+                    if any(project in role for role in self.user_access_map[username]):
+                        if logger:
+                            logger.warn(
+                                "Duplicate roles detected for {}. Resolve in access list".format(username)
+                            )
+                    else:
+                        self.user_access_map[username][project] = level
+        except:
+            raise exceptions.MalformedAccessException
+
+    def getUserAccessMap(self):
+        return self.user_access_map
+
+    def getFilePath(self):
+        return self.file_path
+
+    def getListUpdated(self):
+        return self.list_updated
+
+
+def load_access_map():
+    """
+    Reloads the user access map from file
+    """
+    app.access_map = UserAccessMap()
+    app.access_map.initializeUserAccess(app.logger)
+
+
 def reset():
     """
     Resets the flask app; used in testing
@@ -393,6 +454,10 @@ def configure(configFile=None, baseConfig="ProductionConfig",
                 redirect_uris=[redirectUri],
                 verify_ssl=False)
             app.oidcClient.store_registration_info(response)
+
+    # Set user access map from file if using a gateway to authenticate
+    if app.config.get("TYK_ENABLED"):
+        load_access_map()
 
 
 def chooseReturnMimetype(request):
@@ -590,31 +655,31 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     return json.dumps(responseObject)
 
 
-# testing method for access roles through tokens
+# testing method for access roles through token id + access_list.txt
 def getAccessMap(token):
     """
-    user roles are defined in the local keycloak server as client roles
-    string formatted as follows: project:tier
+    user roles are loaded in to the server from the access_list.txt
+    a user-specific access map is generated here based on the id_token and
+    the server side access map generated during on server startup
 
     if running NoAuth config, user has full access to local dataset
 
-    :param token: raw keycloak oidc id_token containing roles as claims
+    :param token: raw keycloak oidc id_token containing user info
     :return: python dict in the form {"project" : "access tier", ...}
     """
 
     access_map = {}
 
     if app.config.get("TYK_ENABLED"):
-        # assign access based on token
         parsed_payload = _parseTokenPayload(token)
-        access_levels = []
 
-        if 'access_levels' in parsed_payload:
-            access_levels = parsed_payload["access_levels"]
+        username = parsed_payload.get('preferred_username')
+        if username:
+            access_map = app.access_map.getUserAccessMap().get(username, {})
+        else:
+            if app.logger:
+                app.logger.warn("Token does not contain a valid username")
 
-        for role in access_levels:
-            split_role = role.split(':')
-            access_map[split_role[0]] = split_role[1]
     else:
         # mock full access to local dataset
         for dataset in app.serverStatus.getDatasets():
@@ -782,6 +847,14 @@ def checkAuthentication():
     the request arguments, we're using the command line and just raise an
     exception.
     """
+    if app.config.get("TYK_ENABLED"):
+        if app.access_map.getListUpdated() != os.path.getmtime(app.access_map.getFilePath()):
+            if app.logger:
+                app.logger.info(
+                    "local access_list.txt updated -> reloading backend list"
+                )
+            load_access_map()
+        return
     if app.oidcClient is None:
         return
     if flask.request.endpoint == 'oidcCallback':
