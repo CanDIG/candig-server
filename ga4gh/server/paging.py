@@ -131,6 +131,9 @@ class IntervalIterator(object):
         self._currentObject = obj
         self._nextObject = next(self._searchIterator, None)
 
+    def __next__(self):
+        return self.next()
+
     def next(self):
         """
         Returns the next (object, nextPageToken) pair.

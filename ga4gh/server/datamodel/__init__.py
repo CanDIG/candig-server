@@ -271,7 +271,7 @@ class CompoundId(object):
         dissuade users from depending on our internal ID structures.
         """
         return unicode(base64.urlsafe_b64encode(
-            idStr.encode('utf-8')).replace(b'=', b''))
+            idStr.encode('utf-8')).replace(b'=', b'').decode("utf-8"))
 
     @classmethod
     def deobfuscate(cls, data):
@@ -284,7 +284,7 @@ class CompoundId(object):
         # to an ascii string since the urlsafe_b64decode method
         # sometimes chokes on unicode strings
         return base64.urlsafe_b64decode(str((
-            data + b'A=='[(len(data) - 1) % 4:])))
+            data + (b'A=='[(len(data) - 1) % 4:]).decode('utf-8'))))
 
     @classmethod
     def getInvalidIdString(cls):
@@ -827,7 +827,7 @@ class PysamDatamodelMixin(object):
 
     @classmethod
     def assertInt(cls, attr, attrName):
-        if not isinstance(attr, (int, long)):
+        if not isinstance(attr, (int, int)):
             message = "invalid {} '{}' not an int".format(attrName, attr)
             raise exceptions.DatamodelValidationException(message)
 
@@ -847,7 +847,7 @@ class PysamDatamodelMixin(object):
                 attrName, attr)
             raise exceptions.DatamodelValidationException(message)
         if isinstance(attr, unicode):
-            attr = attr.encode('utf8')
+            attr = attr
         if len(attr) > cls.maxStringLength:
             attr = attr[:cls.maxStringLength]
         return attr

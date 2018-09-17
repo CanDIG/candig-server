@@ -12,4 +12,4 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import ga4gh
-ga4gh.__path__.insert(0, 'ga4gh')
+ga4gh.__path__.append('ga4gh')

@@ -145,7 +145,7 @@ class AlignmentDataMixin(datamodel.PysamDatamodelMixin):
         ret.aligned_quality.extend(read.query_qualities)
         ret.aligned_sequence = read.query_sequence
         if SamFlags.isFlagSet(read.flag, SamFlags.READ_UNMAPPED):
-            ret.ClearField(b"alignment")
+            ret.ClearField("alignment")
         else:
             ret.alignment.CopyFrom(protocol.LinearAlignment())
             ret.alignment.mapping_quality = read.mapping_quality

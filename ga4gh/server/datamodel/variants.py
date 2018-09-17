@@ -336,7 +336,7 @@ class AbstractVariantSet(datamodel.DatamodelObject):
         """
         hash_str = gaVariant.reference_bases + \
             str(tuple(gaVariant.alternate_bases))
-        return hashlib.md5(hash_str).hexdigest()
+        return hashlib.md5(hash_str.encode('utf-8')).hexdigest()
 
 
 class SimulatedVariantSet(AbstractVariantSet):
@@ -517,7 +517,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         files and indexes. These must be in the same order, such that
         the jth index file corresponds to the jth data file.
         """
-        assert len(dataUrls) == len(indexFiles)
+        assert len(list(dataUrls)) == len(list(indexFiles))
         for dataUrl, indexFile in zip(dataUrls, indexFiles):
             varFile = pysam.VariantFile(dataUrl, index_filename=indexFile)
             try:
