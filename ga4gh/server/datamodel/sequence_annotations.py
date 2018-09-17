@@ -362,7 +362,7 @@ class Gff3DbFeatureSet(AbstractFeatureSet):
         :raises: exceptions.ObjectWithIdNotFoundException if invalid
             compoundId is provided.
         """
-        featureId = long(compoundId.featureId)
+        featureId = int(compoundId.featureId)
         with self._db as dataSource:
             featureReturned = dataSource.getFeatureById(featureId)
 
