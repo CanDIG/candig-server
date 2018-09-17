@@ -238,15 +238,25 @@ class ServerStatus(object):
 
 
 class UserAccessMap(object):
+    """
+    Loads local authorization info from an access list file to the backend
+
+    access_list.txt formatting example:
+    username1:project1:0
+    username2:project2:4
+    """
     def __init__(self):
         self.user_access_map = {}
+        self.file_path = app.config.get('ACCESS_LIST')
+
+        if not self.file_path:
+            raise exceptions.ConfigurationException("No user access list defined")
+
+        self.list_updated = os.path.getmtime(self.file_path)
 
     def initializeUserAccess(self, logger=None):
-        file_path = app.config.get('ACCESS_LIST')
-        if not file_path:
-            raise exceptions.ConfigurationException("no user access list defined")
         try:
-            with open(file_path) as access_list:
+            with open(self.file_path) as access_list:
                 for line in access_list:
                     parsed_line = line.split(":")
                     if len(parsed_line) != 3:
@@ -273,6 +283,19 @@ class UserAccessMap(object):
     def getUserAccessMap(self):
         return self.user_access_map
 
+    def getFilePath(self):
+        return self.file_path
+
+    def getListUpdated(self):
+        return self.list_updated
+
+
+def load_access_map():
+    """
+    Reloads the user access map from file
+    """
+    app.access_map = UserAccessMap()
+    app.access_map.initializeUserAccess(app.logger)
 
 def reset():
     """
@@ -433,8 +456,7 @@ def configure(configFile=None, baseConfig="ProductionConfig",
 
     # Set user access map from file if using a gateway to authenticate
     if app.config.get("TYK_ENABLED"):
-        app.access_map = UserAccessMap()
-        app.access_map.initializeUserAccess(app.logger)
+        load_access_map()
 
 
 def chooseReturnMimetype(request):
@@ -642,7 +664,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         # Invalid by default
         'Valid response': False
     }
-    
+
     # Decide on valid response
     if responseObject['status']['Known peers'] == \
             responseObject['status']['Queried peers']:
@@ -677,7 +699,11 @@ def getAccessMap(token):
 
         username = parsed_payload.get('preferred_username')
         if username:
-            access_map = app.access_map.getAccessMap().get(username, {})
+            access_map = app.access_map.getUserAccessMap().get(username, {})
+        else:
+            if app.logger:
+                app.logger.warn("Token does not contain a valid username")
+
     else:
         # mock full access to local dataset
         for dataset in app.serverStatus.getDatasets():
@@ -845,6 +871,14 @@ def checkAuthentication():
     the request arguments, we're using the command line and just raise an
     exception.
     """
+    if app.config.get("TYK_ENABLED"):
+        if app.access_map.getListUpdated() != os.path.getmtime(app.access_map.getFilePath()):
+            if app.logger:
+                app.logger.info(
+                    "local access_list.txt updated -> reloading backend list"
+                )
+            load_access_map()
+        return
     if app.oidcClient is None:
         return
     if flask.request.endpoint == 'oidcCallback':
