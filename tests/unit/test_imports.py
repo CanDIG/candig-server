@@ -192,7 +192,8 @@ class ImportGraphLayerChecker(object):
             'ga4gh/server/gff3.py',
             'ga4gh/server/sqlite_backend.py',
             'ga4gh/server/datamodel/peers.py',
-            'ga4gh/server/datamodel/clinical_metadata.py'
+            'ga4gh/server/datamodel/clinical_metadata.py',
+            'ga4gh/server/datamodel/pipeline_metadata.py'
         ],
         'libraries': [
             'ga4gh/server/converters.py',

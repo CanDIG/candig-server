@@ -10,8 +10,11 @@ import ga4gh.server.datamodel as datamodel
 import ga4gh.server.exceptions as exceptions
 import ga4gh.server.paging as paging
 import ga4gh.server.response_builder as response_builder
-
 import ga4gh.schemas.protocol as protocol
+import operator
+from google.protobuf.json_format import MessageToDict
+import json
+import itertools
 
 
 class Backend(object):
@@ -24,6 +27,37 @@ class Backend(object):
         self._defaultPageSize = 300
         self._maxResponseLength = 2**20  # 1 MiB
         self._dataRepository = dataRepository
+
+        self.ops = {
+            ">": operator.gt,
+            "gt": operator.gt,
+            "<": operator.lt,
+            "lt": operator.lt,
+            ">=": operator.ge,
+            "ge": operator.ge,
+            "<=": operator.le,
+            "le": operator.le,
+            "eq": operator.eq,
+            "=": operator.eq,
+            "==": operator.eq,
+            "!=": operator.ne,
+            "ne": operator.ne,
+            "in": operator.contains
+        }
+
+        self.endpointMapper = {
+            "patients": self.runSearchPatients,
+            "enrollments": self.runSearchEnrollments,
+            "consents": self.runSearchConsents,
+            "diagnoses": self.runSearchDiagnoses,
+            "samples": self.runSearchSamples,
+            "treatments": self.runSearchTreatments,
+            "outcomes": self.runSearchOutcomes,
+            "complications": self.runSearchComplications,
+            "tumourboards": self.runSearchTumourboards,
+            "variantsByGene": self.runSearchVariantsByGeneName,
+            "variants": self.runSearchVariants
+        }
 
     def getDataRepository(self):
         """
@@ -138,6 +172,268 @@ class Backend(object):
             request, self.getDataRepository().getNumDatasets(),
             self.getDataRepository().getAuthzDatasetByIndex, access_map=access_map)
 
+    # SEARCH
+    def queryGenerator(self, request, return_mimetype, access_map):
+        """
+        Generator object for advanced search queries
+        """
+        parsedRequest = MessageToDict(request)
+
+        try:
+            dataset_id = parsedRequest["datasetId"]
+            logic = parsedRequest["logic"]
+            components = parsedRequest["components"]
+            results = parsedRequest["results"]
+        except KeyError as error:
+            raise exceptions.MissingFieldNameException(error.message)
+
+        responses = self.componentsHandler(dataset_id, components, return_mimetype, access_map)
+        patient_list = self.logicHandler(logic, responses, dataset_id)
+
+        return self.resultsHandler(results, patient_list, dataset_id, return_mimetype, access_map)
+
+    def logicHandler(self, logic, responses, dataset_id):
+        """
+        :param  logic: dict parsed from query containing logic statement keys or component id keys
+                responses: object with key being the id, and the value being the response from corresponding endpoints
+        :return: list of patient_id filtered based on join logic
+        """
+
+        op_keys = ['and', 'or']
+
+        if len(logic.keys()) == 1:
+            logic_key = logic.keys()[0]
+        else:
+            # too many logic keys
+            raise exceptions.InvalidLogicException('Invalid number of keys')
+
+        if logic_key in op_keys:
+            results_arr = []
+            patient_array = []
+
+            for logic_obj in logic[logic_key]:
+                results_arr.append(self.logicHandler(logic_obj, responses, dataset_id))
+
+            if logic_key == 'or':
+                for id_list in results_arr:
+                    for id in id_list:
+                        if id not in patient_array:
+                            patient_array.append(id)
+            elif logic_key == 'and':
+                results_arr.sort(key=len)
+                for id in results_arr[0]:
+                    if all(id in results_arr[x] for x in range(1, len(results_arr))):
+                        patient_array.append(id)
+
+            return patient_array
+
+        elif logic_key == 'id':
+            id_list = []
+            for response in responses[logic[logic_key]]:
+                patient_id = self.getResponsePatientId(response, dataset_id)
+                if patient_id not in id_list:
+                    id_list.append(patient_id)
+
+            return id_list
+
+        else:
+            # invalid logic key
+            raise exceptions.InvalidLogicException("Invalid key used")
+
+    def getResponsePatientId(self, response, dataset_id):
+        """
+        Gets the patientId from the response for object joins, otherwise throw error
+        :param response:
+        :param dataset_id:
+        :return: patient id string
+        """
+        if 'patientId' in response:
+            return response['patientId']
+        elif 'variantSetId' in response:
+            dataset = self.getDataRepository().getDataset(dataset_id)
+            variantSet = dataset.getVariantSet(response['variantSetId'])
+            return variantSet.getPatientId()
+        else:
+            raise exceptions.BadRequestException
+
+    def componentsHandler(self, datasetId, components, return_mimetype, access_map):
+        """
+        Parse the component portion of incoming request
+        :param datasetId;
+        :param components:
+        :param access_map
+        :return: responses object with key being the id, and the value being the response from corresponding endpoints
+        """
+        requests = {}
+        idMapper = {}
+
+        for component in components:
+            keyList = list(component.keys())
+            if len(keyList) != 2:
+                raise exceptions.MissingFieldNameException("Missing or invalid component fields")
+            keyList.remove('id')
+            endpoint = keyList[0]
+
+            request = {"datasetId": datasetId}
+
+            try:
+                if endpoint == "variants":
+                    request["start"] = component[endpoint]["start"]
+                    request["end"] = component[endpoint]["end"]
+                    request["referenceName"] = component[endpoint]["referenceName"]
+                    request["variantSetId"] = component[endpoint]["variantSetId"]
+
+                elif endpoint == "variantsByGene":
+                    request["gene"] = component[endpoint]["gene"]
+
+                else:
+                    request["filters"] = component[endpoint]["filters"]
+
+            except KeyError as error:
+                raise exceptions.MissingFieldNameException(error.message)
+
+            idMapper[component["id"]] = endpoint
+            requests[component["id"]] = request
+
+        return self.endpointCaller(requests, idMapper, return_mimetype, access_map)
+
+    def endpointCaller(self, requests, idMapper, return_mimetype, access_map):
+        """
+        Call all endpoints returned by componentsHandler
+        :param requests:
+        :return responses object with key being the id, and the value being the response from corresponding endpoints
+        """
+        responses = {}
+
+        for key in requests:
+            requestStr = json.dumps(requests[key])
+
+            responseObj = json.loads(
+                self.endpointMapper[idMapper[key]](requestStr, return_mimetype, access_map)
+            )
+
+            try:
+                # TODO: this work around could probably be improved
+                if idMapper[key] == "variantsByGene":
+                    idMapper[key] = "variants"
+                responses[key] = responseObj[idMapper[key]]
+            except KeyError:
+                responses[key] = []
+
+            nextToken = responseObj.get('nextPageToken')
+
+            while nextToken:
+                request = json.loads(requestStr)
+                request["page_token"] = nextToken
+                requestStr = json.dumps(request)
+
+                nextPageRequest = json.loads(
+                    self.endpointMapper[idMapper[key]](requestStr, return_mimetype, access_map)
+                )
+
+                responses[key] += nextPageRequest[idMapper[key]]
+                nextToken = nextPageRequest.get('nextPageToken')
+
+        return responses
+
+    def resultsHandler(self, results, patient_list, dataset_id, return_mimetype, access_map):
+        """
+        :param results:
+        :return:
+        """
+
+        # generatorMapper = {
+        #     "patients": self.patientsGenerator,
+        #     "enrollments": self.enrollmentsGenerator,
+        #     "consents": self.consentsGenerator,
+        #     "diagnoses": self.diagnosesGenerator,
+        #     "samples": self.samplesGenerator,
+        #     "treatments": self.treatmentsGenerator,
+        #     "outcomes": self.outcomesGenerator,
+        #     "complications": self.complicationsGenerator,
+        #     "tumourboards": self.tumourboardsGenerator
+        # }
+
+        # protocolMapper = {
+        #     "patients": protocol.SearchPatientsRequest,
+        #     "enrollments": protocol.SearchEnrollmentsRequest,
+        #     "consents": protocol.SearchConsentsRequest,
+        #     "diagnoses": protocol.SearchDiagnosesRequest,
+        #     "samples": protocol.SearchSamplesRequest,
+        #     "treatments": protocol.SearchTreatmentsRequest,
+        #     "outcomes": protocol.SearchOutcomesRequest,
+        #     "complications": protocol.SearchComplicationsRequest,
+        #     "tumourboards": protocol.SearchTumourboardsRequest
+        # }
+
+        request = {}
+
+        # no valid patient id's means no results
+        if not patient_list:
+            return '{}'
+
+        table = results[0].get("table")
+        if table is None:
+            raise exceptions.MissingFieldNameException("table")
+        elif table not in self.endpointMapper:
+            raise exceptions.MissingFieldNameException("Invalid results table specified")
+
+        # TODO: Handle returning other table types e.g. variants
+
+        if table == "variantsByGene" or table == "variants":
+            return self.variantsResultsHandler(table, results, patient_list, dataset_id, return_mimetype, access_map)
+
+        else:
+            request = {
+                "datasetId": dataset_id,
+                "filters": [{
+                    "field": "patientId",
+                    "operator": "in",
+                    "values": patient_list
+                }]
+            }
+            requestStr = json.dumps(request)
+
+            return self.endpointMapper[table](requestStr, return_mimetype, access_map)
+
+    def variantsResultsHandler(self, table, results, patient_list, dataset_id, return_mimetype, access_map):
+
+        request = {}
+
+        if table == "variantsByGene":
+            gene = results[0].get("gene")
+
+            if gene is None:
+                raise exceptions.MissingGeneNameException
+
+            else:
+                request = {
+                    "datasetId": dataset_id,
+                    "patientList": patient_list,
+                    "gene": gene
+                }
+
+        elif table == "variants":
+            start = results[0].get("start")
+            end = results[0].get("end")
+            referenceName = results[0].get("referenceName")
+
+            if start is None or end is None or referenceName is None:
+                raise exceptions.MissingVariantKeysException
+
+            else:
+                request = {
+                    "datasetId": dataset_id,
+                    "patientList": patient_list,
+                    "start": start,
+                    "end": end,
+                    "referenceName": referenceName
+                }
+
+        requestStr = json.dumps(request)
+
+        return self.runSearchVariantsByGeneName(requestStr, return_mimetype, access_map)
+
     def experimentsGenerator(self, request, tier=0):
         """
         Returns a generator over the (experiment, nextPageToken) pairs
@@ -187,21 +483,49 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results)
 
+    def comparisonGenerator(self, obj, request):
+        """
+        Apply the specified operator to determine if an object is valid for the request
+        :param obj: The candidate object
+        :param request: The request protobuf object
+        :return: True if the object is qualified, False otherwise.
+        """
+        qualified = True
+        filters = MessageToDict(request).get("filters", [])
+
+        try:
+            for filter in filters:
+                if "value" not in filter:
+                    if "values" not in filter:
+                        qualified = False
+                        break
+                    else:
+                        if not obj.mapper(filter["field"]) in filter["values"]:
+                            qualified = False
+                            break
+                elif not self.ops[filter["operator"].lower()](obj.mapper(filter["field"]), filter["value"]):
+                        qualified = False
+                        break
+        except TypeError:
+            raise exceptions.BadInputTypeException
+        except (KeyError, AttributeError):
+            raise exceptions.BadFilterKeyException
+
+        return qualified
+
     def patientsGenerator(self, request, access_map):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
-        for obj in dataset.getPatients():
-            include = True
-            if request.name:
-                if obj.getLocalId() not in request.name.split(','):
-                    # if request.name != obj.getLocalId():
-                    include = False
 
-            if include:
+        for obj in dataset.getPatients():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
+
         return self._objectListGenerator(request, results, tier=tier)
 
     def enrollmentsGenerator(self, request, access_map):
@@ -210,18 +534,13 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getEnrollments():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
+
         return self._objectListGenerator(request, results, tier=tier)
 
     def consentsGenerator(self, request, access_map):
@@ -230,18 +549,13 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getConsents():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
+
         return self._objectListGenerator(request, results, tier=tier)
 
     def diagnosesGenerator(self, request, access_map):
@@ -250,18 +564,13 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getDiagnoses():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
+
         return self._objectListGenerator(request, results, tier=tier)
 
     def samplesGenerator(self, request, access_map):
@@ -270,17 +579,11 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getSamples():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -290,17 +593,11 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getTreatments():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -310,17 +607,11 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getOutcomes():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -330,17 +621,11 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getComplications():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -350,17 +635,90 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+
         for obj in dataset.getTumourboards():
-            include = True
-            if request.name:
-                if request.name != obj.getLocalId():
-                    include = False
-            # Search table by patient id
-            if request.patient_id:
-                if obj.getPatientId() not in request.patient_id.split(','):
-                    # if request.patient_id != obj.getPatientId():
-                    include = False
-            if include:
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def extractionsGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+        for obj in dataset.getExtractions():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def sequencingGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+        for obj in dataset.getSequencings():
+            print("looping over sequencings")
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def alignmentsGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+        for obj in dataset.getAlignments():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def variantCallingGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+        for obj in dataset.getVariantCallings():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def fusionDetectionGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+        for obj in dataset.getFusionDetections():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def expressionAnalysisGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+        for obj in dataset.getExpressionAnalyses():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
                 results.append(obj)
         return self._objectListGenerator(request, results, tier=tier)
 
@@ -539,13 +897,30 @@ class Backend(object):
         Returns a generator over the (variant, nextPageToken) pairs defined
         by the specified request.
         """
-        compoundId = datamodel.VariantSetCompoundId \
-            .parse(request.variant_set_id)
-        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
-        variantSet = dataset.getVariantSet(compoundId.variant_set_id)
-        intervalIterator = paging.VariantsIntervalIterator(
-            request, variantSet)
-        return intervalIterator
+        variantSetIds = MessageToDict(request).get("variantSetIds", None)
+
+        if variantSetIds is None:
+            compoundId = datamodel.VariantSetCompoundId \
+                .parse(request.variant_set_id)
+            dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+            variantSet = dataset.getVariantSet(compoundId.variant_set_id)
+            intervalIterator = paging.VariantsIntervalIterator(request, variantSet)
+            return intervalIterator
+
+        else:
+            variantSets = []
+            for variantsetId in variantSetIds:
+                compoundId = datamodel.VariantSetCompoundId \
+                    .parse(variantsetId)
+                dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+                item = dataset.getVariantSet(variantsetId)
+                variantSets.append(item)
+
+            iterators = []
+            for item in variantSets:
+                iterators.append(paging.VariantsIntervalIterator(request, item))
+
+            return itertools.chain.from_iterable(iterators)
 
     def genotypeMatrixGenerator(self, request, access_map):
         """
@@ -1110,6 +1485,66 @@ class Backend(object):
         tumourboard = dataset.getTumourboard(id_)
         return self.runGetRequest(tumourboard, return_mimetype, tier=tier)
 
+    def runGetExtraction(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getExtraction request for the specified ID.
+        """
+        compoundId = datamodel.ExtractionCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        extraction = dataset.getExtraction(id_)
+        return self.runGetRequest(extraction, return_mimetype, tier=tier)
+
+    def runGetSequencing(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getSample request for the specified ID.
+        """
+        compoundId = datamodel.SequencingCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        sequencing = dataset.getSequencing(id_)
+        return self.runGetRequest(sequencing, return_mimetype, tier=tier)
+
+    def runGetAlignment(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getAlignment request for the specified ID.
+        """
+        compoundId = datamodel.AlignmentCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        alignment = dataset.getAlignment(id_)
+        return self.runGetRequest(alignment, return_mimetype, tier=tier)
+
+    def runGetVariantCalling(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getVariantCalling request for the specified ID.
+        """
+        compoundId = datamodel.VariantCallingCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        variantCalling = dataset.getVariantCalling(id_)
+        return self.runGetRequest(variantCalling, return_mimetype, tier=tier)
+
+    def runGetFusionDetection(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getFusionDetection request for the specified ID.
+        """
+        compoundId = datamodel.FusionDetectionCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        fusionDetection = dataset.getFusionDetection(id_)
+        return self.runGetRequest(fusionDetection, return_mimetype, tier=tier)
+
+    def runGetExpressionAnalysis(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getExpressionAnalyis request for the specified ID.
+        """
+        compoundId = datamodel.ExpressionAnalysisCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        expressionAnalysis = dataset.getExpressionAnalysis(id_)
+        return self.runGetRequest(expressionAnalysis, return_mimetype, tier=tier)
+
     def runGetFeature(self, id_, access_map, return_mimetype="application/json"):
         """
         Returns JSON string of the feature object corresponding to
@@ -1285,6 +1720,17 @@ class Backend(object):
             self.individualsGenerator,
             return_mimetype)
 
+    # Search requests
+    def runSearchQuery(self, request, return_mimetype, access_map):
+        """
+        Runs advanced SearchRequest
+        """
+        try:
+            request = protocol.fromJson(request, protocol.SearchQueryRequest)
+        except protocol.json_format.ParseError:
+            raise exceptions.InvalidJsonException(request)
+        return self.queryGenerator(request, return_mimetype, access_map)
+
     def runSearchPatients(self, request, return_mimetype, access_map):
         """
         Runs the specified search SearchPatientsRequest.
@@ -1389,6 +1835,78 @@ class Backend(object):
             request, protocol.SearchTumourboardsRequest,
             protocol.SearchTumourboardsResponse,
             self.tumourboardsGenerator,
+            access_map,
+            return_mimetype
+        )
+
+    def runSearchExtractions(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchExtractionsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchExtractionsRequest,
+            protocol.SearchExtractionsResponse,
+            self.extractionsGenerator,
+            access_map,
+            return_mimetype
+        )
+
+    def runSearchSequencing(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchSequencingRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchSequencingRequest,
+            protocol.SearchSequencingResponse,
+            self.sequencingGenerator,
+            access_map,
+            return_mimetype
+        )
+
+    def runSearchAlignments(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchAlignmentsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchAlignmentsRequest,
+            protocol.SearchAlignmentsResponse,
+            self.alignmentsGenerator,
+            access_map,
+            return_mimetype
+        )
+
+    def runSearchVariantCalling(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchVariantCallingRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchVariantCallingRequest,
+            protocol.SearchVariantCallingResponse,
+            self.variantCallingGenerator,
+            access_map,
+            return_mimetype
+        )
+
+    def runSearchFusionDetection(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchFusionDetectionRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchFusionDetectionRequest,
+            protocol.SearchFusionDetectionResponse,
+            self.fusionDetectionGenerator,
+            access_map,
+            return_mimetype
+        )
+
+    def runSearchExpressionAnalysis(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchExpressionAnalysisRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchExpressionAnalysisRequest,
+            protocol.SearchExpressionAnalysisResponse,
+            self.expressionAnalysisGenerator,
             access_map,
             return_mimetype
         )
@@ -1663,18 +2181,40 @@ class Backend(object):
         defined by the specified request.
         """
         results = []
+        processedVariantsets = []
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         variantsets = dataset.getVariantSets()
+        patientList = MessageToDict(request).get("patientList", None)
 
-        for featureset in dataset.getFeatureSets():
-            for feature in featureset.getFeatures(geneSymbol=request.gene):
-                for variantset in variantsets:
-                    for variant in variantset.getVariants(
-                            referenceName=feature.reference_name.replace('chr', ''),
-                            startPosition=feature.start,
-                            endPosition=feature.end,
-                    ):
-                        results.append(variant)
+        if patientList is None:
+            processedVariantsets = variantsets
+        else:
+            for variantset in variantsets:
+                if variantset.getPatientId() in patientList:
+                    processedVariantsets.append(variantset)
+
+        if request.gene == "" and request.start == "":
+            raise exceptions.BadRequestException
+
+        if request.gene != "":
+            for featureset in dataset.getFeatureSets():
+                for feature in featureset.getFeatures(geneSymbol=request.gene):
+                    for variantset in processedVariantsets:
+                        for variant in variantset.getVariants(
+                                referenceName=feature.reference_name.replace('chr', ''),
+                                startPosition=feature.start,
+                                endPosition=feature.end,
+                        ):
+                            if patientList is not None:
+                                setattr(variant, "patientId", variantset.getPatientId())
+                            results.append(variant)
+
+        elif request.start != "":
+            iterators = []
+            for item in processedVariantsets:
+                iterators.append(paging.VariantsIntervalIterator(request, item))
+
+            return itertools.chain.from_iterable(iterators)
 
         return self._protocolListGenerator(request, results)
 

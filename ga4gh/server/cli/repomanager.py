@@ -231,6 +231,18 @@ class RepoManager(object):
             referenceSetName = readGroupSet.getBamHeaderReferenceSetName()
         referenceSet = self._repo.getReferenceSetByName(referenceSetName)
         readGroupSet.setReferenceSet(referenceSet)
+        patientId = self._args.patientId
+        if patientId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding patient ID"
+            )
+        sampleId = self._args.sampleId
+        if sampleId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding sample ID"
+            )
+        readGroupSet.setPatientId(patientId)
+        readGroupSet.setSampleId(sampleId)
         readGroupSet.setAttributes(json.loads(self._args.attributes))
         self._updateRepo(self._repo.insertReadGroupSet, readGroupSet)
 
@@ -300,6 +312,18 @@ class RepoManager(object):
                 "VariantSet using the --referenceSetName option")
         referenceSet = self._repo.getReferenceSetByName(referenceSetName)
         variantSet.setReferenceSet(referenceSet)
+        patientId = self._args.patientId
+        if patientId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding patient ID"
+            )
+        sampleId = self._args.sampleId
+        if sampleId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding sample ID"
+            )
+        variantSet.setPatientId(patientId)
+        variantSet.setSampleId(sampleId)
         variantSet.setAttributes(json.loads(self._args.attributes))
         # Now check for annotations
         annotationSets = []
@@ -729,6 +753,150 @@ class RepoManager(object):
             self._updateRepo(self._repo.removeTumourboard, tumourboard)
         self._confirmDelete("Tumourboard", tumourboard.getLocalId(), func)
 
+    def addExtraction(self):
+        """
+        Adds a new extraction into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        extraction = bio_metadata.Extraction(
+            dataset, self._args.extractionName)
+        extraction.populateFromJson(self._args.extraction)
+        self._updateRepo(self._repo.insertExtraction, extraction)
+
+    def removeExtraction(self):
+        """
+        Removes an extraction from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        extraction = dataset.getExtractionByName(self._args.extractionName)
+
+        def func():
+            self._updateRepo(self._repo.removeExtraction, extraction)
+
+        self._confirmDelete("Extraction", extraction.getLocalId(), func)
+
+    def addSequencing(self):
+        """
+        Adds a new sequencing into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        sequencing = bio_metadata.Sequencing(
+            dataset, self._args.sequencingName)
+        sequencing.populateFromJson(self._args.sequencing)
+        self._updateRepo(self._repo.insertSequencing, sequencing)
+
+    def removeSequencing(self):
+        """
+        Removes an sequencing from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        sequencing = dataset.getSequencingByName(self._args.sequencingName)
+
+        def func():
+            self._updateRepo(self._repo.removeSequencing, sequencing)
+
+        self._confirmDelete("Sequencing", sequencing.getLocalId(), func)
+
+    def addAlignment(self):
+        """
+        Adds a new alignment into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        alignment = bio_metadata.Alignment(
+            dataset, self._args.alignmentName)
+        alignment.populateFromJson(self._args.alignment)
+        self._updateRepo(self._repo.insertAlignment, alignment)
+
+    def removeAlignment(self):
+        """
+        Removes an alignment from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        alignment = dataset.getAlignmentByName(self._args.alignmentName)
+
+        def func():
+            self._updateRepo(self._repo.removeAlignment, alignment)
+
+        self._confirmDelete("Alignment", alignment.getLocalId(), func)
+
+    def addVariantCalling(self):
+        """
+        Adds a new variantCalling into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        variantCalling = bio_metadata.VariantCalling(
+            dataset, self._args.variantCallingName)
+        variantCalling.populateFromJson(self._args.variantCalling)
+        self._updateRepo(self._repo.insertVariantCalling, variantCalling)
+
+    def removeVariantCalling(self):
+        """
+        Removes an variantCalling from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        variantCalling = dataset.getVariantCallingByName(self._args.variantCallingName)
+
+        def func():
+            self._updateRepo(self._repo.removeVariantCalling, variantCalling)
+
+        self._confirmDelete("VariantCalling", variantCalling.getLocalId(), func)
+
+    def addFusionDetection(self):
+        """
+        Adds a new expressionAnalysis into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        fusionDetection = bio_metadata.FusionDetection(
+            dataset, self._args.fusionDetectionName)
+        fusionDetection.populateFromJson(self._args.fusionDetection)
+        self._updateRepo(self._repo.insertFusionDetection, fusionDetection)
+
+    def removeFusionDetection(self):
+        """
+        Removes an fusionDetection from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        fusionDetection = dataset.getFusionDetectionByName(self._args.fusionDetectionName)
+
+        def func():
+            self._updateRepo(self._repo.removeFusionDetection, fusionDetection)
+
+        self._confirmDelete("FusionDetection", fusionDetection.getLocalId(), func)
+
+    def addExpressionAnalysis(self):
+        """
+        Adds a new expressionAnalysis into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        expressionAnalysis = bio_metadata.ExpressionAnalysis(
+            dataset, self._args.expressionAnalysisName)
+        expressionAnalysis.populateFromJson(self._args.expressionAnalysis)
+        self._updateRepo(self._repo.insertExpressionAnalysis, expressionAnalysis)
+
+    def removeExpressionAnalysis(self):
+        """
+        Removes an expressionAnalysis from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        expressionAnalysis = dataset.getExpressionAnalysisByName(self._args.expressionAnalysisName)
+
+        def func():
+            self._updateRepo(self._repo.removeExpressionAnalysis, expressionAnalysis)
+
+        self._confirmDelete("ExpressionAnalysis", expressionAnalysis.getLocalId(), func)
+
     def addPeer(self):
         """
         Adds a new peer into this repo
@@ -988,6 +1156,12 @@ class RepoManager(object):
             help="the name of the patient")
 
     @classmethod
+    def addPatientIdArgument(cls, subparser):
+        subparser.add_argument(
+            "patientId",
+            help="the ID of the patient")
+
+    @classmethod
     def addPatientArgument(cls, subparser):
         subparser.add_argument(
             "patient",
@@ -1034,6 +1208,12 @@ class RepoManager(object):
         subparser.add_argument(
             "sampleName",
             help="the name of the sample")
+
+    @classmethod
+    def addSampleIdArgument(cls, subparser):
+        subparser.add_argument(
+            "sampleId",
+            help="the ID of the sample")
 
     @classmethod
     def addSampleArgument(cls, subparser):
@@ -1088,6 +1268,78 @@ class RepoManager(object):
         subparser.add_argument(
             "tumourboard",
             help="the JSON of the tumourboard")
+
+    @classmethod
+    def addExtractionNameArgument(cls, subparser):
+        subparser.add_argument(
+            "extractionName",
+            help="the name of the extraction")
+
+    @classmethod
+    def addExtractionArgument(cls, subparser):
+        subparser.add_argument(
+            "extraction",
+            help="the JSON of the extraction")
+
+    @classmethod
+    def addSequencingNameArgument(cls, subparser):
+        subparser.add_argument(
+            "sequencingName",
+            help="the name of the sequencing")
+
+    @classmethod
+    def addSequencingArgument(cls, subparser):
+        subparser.add_argument(
+            "sequencing",
+            help="the JSON of the sequencing")
+
+    @classmethod
+    def addAlignmentNameArgument(cls, subparser):
+        subparser.add_argument(
+            "alignmentName",
+            help="the name of the alignment")
+
+    @classmethod
+    def addAlignmentArgument(cls, subparser):
+        subparser.add_argument(
+            "alignment",
+            help="the JSON of the alignment")
+
+    @classmethod
+    def addVariantCallingNameArgument(cls, subparser):
+        subparser.add_argument(
+            "variantCallingName",
+            help="the name of the variantCalling")
+
+    @classmethod
+    def addVariantCallingArgument(cls, subparser):
+        subparser.add_argument(
+            "variantCalling",
+            help="the JSON of the variantCalling")
+
+    @classmethod
+    def addFusionDetectionNameArgument(cls, subparser):
+        subparser.add_argument(
+            "fusionDetectionName",
+            help="the name of the fusionDetection")
+
+    @classmethod
+    def addFusionDetectionArgument(cls, subparser):
+        subparser.add_argument(
+            "fusionDetection",
+            help="the JSON of the fusionDetection")
+
+    @classmethod
+    def addExpressionAnalysisNameArgument(cls, subparser):
+        subparser.add_argument(
+            "expressionAnalysisName",
+            help="the name of the expressionAnalysis")
+
+    @classmethod
+    def addExpressionAnalysisArgument(cls, subparser):
+        subparser.add_argument(
+            "expressionAnalysis",
+            help="the JSON of the expressionAnalysis")
 
     @classmethod
     def addBiosampleNameArgument(cls, subparser):
@@ -1334,6 +1586,8 @@ class RepoManager(object):
         addReadGroupSetParser.set_defaults(runner="addReadGroupSet")
         cls.addRepoArgument(addReadGroupSetParser)
         cls.addDatasetNameArgument(addReadGroupSetParser)
+        cls.addPatientIdArgument(addReadGroupSetParser)
+        cls.addSampleIdArgument(addReadGroupSetParser)
         cls.addNameOption(addReadGroupSetParser, objectType)
         cls.addReferenceSetNameOption(addReadGroupSetParser, "ReadGroupSet")
         cls.addAttributesArgument(addReadGroupSetParser)
@@ -1390,6 +1644,8 @@ class RepoManager(object):
         addVariantSetParser.set_defaults(runner="addVariantSet")
         cls.addRepoArgument(addVariantSetParser)
         cls.addDatasetNameArgument(addVariantSetParser)
+        cls.addPatientIdArgument(addVariantSetParser)
+        cls.addSampleIdArgument(addVariantSetParser)
         cls.addRelativePathOption(addVariantSetParser)
         addVariantSetParser.add_argument(
             "dataFiles", nargs="+",
@@ -1661,6 +1917,108 @@ class RepoManager(object):
         cls.addDatasetNameArgument(removeTumourboardParser)
         cls.addTumourboardNameArgument(removeTumourboardParser)
         cls.addForceOption(removeTumourboardParser)
+
+        addExtractionParser = common_cli.addSubparser(
+            subparsers, "add-extraction", "Add a Extraction to the dataset")
+        addExtractionParser.set_defaults(runner="addExtraction")
+        cls.addRepoArgument(addExtractionParser)
+        cls.addDatasetNameArgument(addExtractionParser)
+        cls.addExtractionNameArgument(addExtractionParser)
+        cls.addExtractionArgument(addExtractionParser)
+
+        removeExtractionParser = common_cli.addSubparser(
+            subparsers, "remove-extraction",
+            "Remove an Extraction from the repo")
+        removeExtractionParser.set_defaults(runner="removeExtraction")
+        cls.addRepoArgument(removeExtractionParser)
+        cls.addDatasetNameArgument(removeExtractionParser)
+        cls.addExtractionNameArgument(removeExtractionParser)
+        cls.addForceOption(removeExtractionParser)
+
+        addSequencingParser = common_cli.addSubparser(
+            subparsers, "add-sequencing", "Add a Sequencing to the dataset")
+        addSequencingParser.set_defaults(runner="addSequencing")
+        cls.addRepoArgument(addSequencingParser)
+        cls.addDatasetNameArgument(addSequencingParser)
+        cls.addSequencingNameArgument(addSequencingParser)
+        cls.addSequencingArgument(addSequencingParser)
+
+        removeSequencingParser = common_cli.addSubparser(
+            subparsers, "remove-sequencing",
+            "Remove an Sequencing from the repo")
+        removeSequencingParser.set_defaults(runner="removeSequencing")
+        cls.addRepoArgument(removeSequencingParser)
+        cls.addDatasetNameArgument(removeSequencingParser)
+        cls.addSequencingNameArgument(removeSequencingParser)
+        cls.addForceOption(removeSequencingParser)
+
+        addAlignmentParser = common_cli.addSubparser(
+            subparsers, "add-alignment", "Add a Alignment to the dataset")
+        addAlignmentParser.set_defaults(runner="addAlignment")
+        cls.addRepoArgument(addAlignmentParser)
+        cls.addDatasetNameArgument(addAlignmentParser)
+        cls.addAlignmentNameArgument(addAlignmentParser)
+        cls.addAlignmentArgument(addAlignmentParser)
+
+        removeAlignmentParser = common_cli.addSubparser(
+            subparsers, "remove-alignment",
+            "Remove an Alignment from the repo")
+        removeAlignmentParser.set_defaults(runner="removeAlignment")
+        cls.addRepoArgument(removeAlignmentParser)
+        cls.addDatasetNameArgument(removeAlignmentParser)
+        cls.addAlignmentNameArgument(removeAlignmentParser)
+        cls.addForceOption(removeAlignmentParser)
+
+        addVariantCallingParser = common_cli.addSubparser(
+            subparsers, "add-variantcalling", "Add a VariantCalling to the dataset")
+        addVariantCallingParser.set_defaults(runner="addVariantCalling")
+        cls.addRepoArgument(addVariantCallingParser)
+        cls.addDatasetNameArgument(addVariantCallingParser)
+        cls.addVariantCallingNameArgument(addVariantCallingParser)
+        cls.addVariantCallingArgument(addVariantCallingParser)
+
+        removeVariantCallingParser = common_cli.addSubparser(
+            subparsers, "remove-variantcalling",
+            "Remove an VariantCalling from the repo")
+        removeVariantCallingParser.set_defaults(runner="removeVariantCalling")
+        cls.addRepoArgument(removeVariantCallingParser)
+        cls.addDatasetNameArgument(removeVariantCallingParser)
+        cls.addVariantCallingNameArgument(removeVariantCallingParser)
+        cls.addForceOption(removeVariantCallingParser)
+
+        addFusionDetectionParser = common_cli.addSubparser(
+            subparsers, "add-fusiondetection", "Add a FusionDetection to the dataset")
+        addFusionDetectionParser.set_defaults(runner="addFusionDetection")
+        cls.addRepoArgument(addFusionDetectionParser)
+        cls.addDatasetNameArgument(addFusionDetectionParser)
+        cls.addFusionDetectionNameArgument(addFusionDetectionParser)
+        cls.addFusionDetectionArgument(addFusionDetectionParser)
+
+        removeFusionDetectionParser = common_cli.addSubparser(
+            subparsers, "remove-fusiondetection",
+            "Remove an FusionDetection from the repo")
+        removeFusionDetectionParser.set_defaults(runner="removeFusionDetection")
+        cls.addRepoArgument(removeFusionDetectionParser)
+        cls.addDatasetNameArgument(removeFusionDetectionParser)
+        cls.addFusionDetectionNameArgument(removeFusionDetectionParser)
+        cls.addForceOption(removeFusionDetectionParser)
+
+        addExpressionAnalysisParser = common_cli.addSubparser(
+            subparsers, "add-expressionanalysis", "Add a ExpressionAnalysis to the dataset")
+        addExpressionAnalysisParser.set_defaults(runner="addExpressionAnalysis")
+        cls.addRepoArgument(addExpressionAnalysisParser)
+        cls.addDatasetNameArgument(addExpressionAnalysisParser)
+        cls.addExpressionAnalysisNameArgument(addExpressionAnalysisParser)
+        cls.addExpressionAnalysisArgument(addExpressionAnalysisParser)
+
+        removeExpressionAnalysisParser = common_cli.addSubparser(
+            subparsers, "remove-expressionanalysis",
+            "Remove an ExpressionAnalysis from the repo")
+        removeExpressionAnalysisParser.set_defaults(runner="removeExpressionAnalysis")
+        cls.addRepoArgument(removeExpressionAnalysisParser)
+        cls.addDatasetNameArgument(removeExpressionAnalysisParser)
+        cls.addExpressionAnalysisNameArgument(removeExpressionAnalysisParser)
+        cls.addForceOption(removeExpressionAnalysisParser)
 
         objectType = "RnaQuantification"
         addRnaQuantificationParser = common_cli.addSubparser(

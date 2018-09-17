@@ -97,6 +97,8 @@ class VariantSetTest(datadriven.DataDrivenTest):
         variantSet.populateFromDirectory(dataPath)
         referenceSet = references.AbstractReferenceSet("test")
         variantSet.setReferenceSet(referenceSet)
+        variantSet.setPatientId("patient1")
+        variantSet.setSampleId("sample1")
         return variantSet
 
     def getProtocolClass(self):
