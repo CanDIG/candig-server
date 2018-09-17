@@ -297,6 +297,7 @@ def load_access_map():
     app.access_map = UserAccessMap()
     app.access_map.initializeUserAccess(app.logger)
 
+
 def reset():
     """
     Resets the flask app; used in testing
