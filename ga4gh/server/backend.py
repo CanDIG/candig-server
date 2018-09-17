@@ -269,6 +269,8 @@ class Backend(object):
 
         for component in components:
             keyList = list(component.keys())
+            if len(keyList) != 2:
+                raise exceptions.MissingFieldNameException("Missing or invalid component fields")
             keyList.remove('id')
             endpoint = keyList[0]
 
@@ -373,6 +375,8 @@ class Backend(object):
         table = results[0].get("table")
         if table is None:
             raise exceptions.MissingFieldNameException("table")
+        elif table not in self.endpointMapper:
+            raise exceptions.MissingFieldNameException("Invalid results table specified")
 
         # TODO: Handle returning other table types e.g. variants
 
