@@ -550,35 +550,6 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException):
         responseObject['status'].append(404)
 
-    try:
-        nextToken = responseObject['results'].get('nextPageToken')
-
-    # response object not properly formed
-    except (IndexError, AttributeError):
-        nextToken = None
-
-    while nextToken:
-        request = json.loads(request)
-        request["page_token"] = responseObject['results']['nextPageToken']
-        responseObject['results'].pop('nextPageToken', None)
-        request = json.dumps(request)
-
-        nextPageRequest = json.loads(
-            endpoint(
-                request,
-                return_mimetype=return_mimetype,
-                access_map=access_map
-            )
-        )
-
-        for key in nextPageRequest:
-            if key in responseObject['results']:
-                responseObject['results'][key] += nextPageRequest[key]
-            else:
-                responseObject['results'][key] = nextPageRequest[key]
-
-        nextToken = responseObject['results'].get('nextPageToken')
-
     # Peer queries
     # Apply federation by default or if it was specifically requested
     if ('Federation' not in request_dictionary.headers or request_dictionary.headers.get('Federation') == 'True'):
@@ -638,6 +609,10 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                                 responseObject['results'] = peer_response
                             else:
                                 for key in peer_response:
+                                    if key == 'nextPageToken':
+                                        if 'nextPageToken' not in responseObject['results']:
+                                            responseObject['results'][key] = peer_response[key]
+                                        continue
                                     for record in peer_response[key]:
                                         responseObject['results'][key].append(record)
                     except ValueError:
@@ -1004,6 +979,14 @@ def index_info():
             exceptions.NotAuthenticatedException()
     else:
         return response
+
+
+# SEARCH
+@DisplayedRoute('/search', postMethod=True)
+@requires_auth
+def searchQuery():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchQuery)
 
 
 @app.route('/candig_patients')
@@ -1448,7 +1431,48 @@ def searchComplications():
 def searchTumourboards():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchTumourboards)
-# METADATA END
+
+
+@DisplayedRoute('/extractions/search', postMethod=True)
+@requires_auth
+def searchExtractions():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchExtractions)
+
+
+@DisplayedRoute('/sequencing/search', postMethod=True)
+@requires_auth
+def searchSequencing():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchSequencing)
+
+
+@DisplayedRoute('/alignments/search', postMethod=True)
+@requires_auth
+def searchAlignments():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchAlignments)
+
+
+@DisplayedRoute('/variantcalling/search', postMethod=True)
+@requires_auth
+def searchVariantCalling():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchVariantCalling)
+
+
+@DisplayedRoute('/fusiondetection/search', postMethod=True)
+@requires_auth
+def searchFusionDetection():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchFusionDetection)
+
+
+@DisplayedRoute('/expressionanalysis/search', postMethod=True)
+@requires_auth
+def searchExpressionAnalysis():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchExpressionAnalysis)
 
 
 @DisplayedRoute('/peers/list', postMethod=True)
@@ -1564,7 +1588,60 @@ def getComplication(id):
 def getTumourboard(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetTumourboard)
-# METADATA END
+
+
+@DisplayedRoute(
+    '/extractions/<no(search):id>',
+    pathDisplay='/extractions/<id>')
+@requires_auth
+def getExtraction(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetExtraction)
+
+
+@DisplayedRoute(
+    '/sequencing/<no(search):id>',
+    pathDisplay='/sequencing/<id>')
+@requires_auth
+def getSequencing(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetSequencing)
+
+
+@DisplayedRoute(
+    '/alignments/<no(search):id>',
+    pathDisplay='/alignments/<id>')
+@requires_auth
+def getAlignment(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetAlignment)
+
+
+@DisplayedRoute(
+    '/variantcalling/<no(search):id>',
+    pathDisplay='/variantcalling/<id>')
+@requires_auth
+def getVariantCalling(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetVariantCalling)
+
+
+@DisplayedRoute(
+    '/fusiondetections/<no(search):id>',
+    pathDisplay='/fusiondetections/<id>')
+@requires_auth
+def getFusionDetection(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetFusionDetection)
+
+
+@DisplayedRoute(
+    '/expressionanalysis/<no(search):id>',
+    pathDisplay='/expressionanalysis/<id>')
+@requires_auth
+def getExpressionAnalysis(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetExpressionAnalysis)
 
 
 @DisplayedRoute('/rnaquantificationsets/search', postMethod=True)

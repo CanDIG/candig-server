@@ -235,6 +235,8 @@ class AbstractReadGroupSet(datamodel.DatamodelObject):
         self._referenceSet = None
         self._numAlignedReads = -1
         self._numUnalignedReads = -1
+        self._patientId = None
+        self._sampleId = None
 
     def setReferenceSet(self, referenceSet):
         """
@@ -290,6 +292,8 @@ class AbstractReadGroupSet(datamodel.DatamodelObject):
         readGroupSet.name = self.getLocalId()
         readGroupSet.dataset_id = self.getParentContainer().getId()
         readGroupSet.stats.CopyFrom(self.getStats())
+        readGroupSet.patient_id = self.getPatientId()
+        readGroupSet.sample_id = self.getSampleId()
         self.serializeAttributes(readGroupSet)
         return readGroupSet
 
@@ -330,6 +334,30 @@ class AbstractReadGroupSet(datamodel.DatamodelObject):
         stats.unaligned_read_count = self._numUnalignedReads
         return stats
 
+    def setPatientId(self, patientId):
+        """
+        Sets the patientId for this ReadGroupSet to the specified value.
+        """
+        self._patientId = patientId
+
+    def getPatientId(self):
+        """
+        Returns the patientId associated with this ReadGroupSet.
+        """
+        return self._patientId
+
+    def setSampleId(self, sampleId):
+        """
+        Sets the sampleId for this ReadGroupSet to the specified value.
+        """
+        self._sampleId = sampleId
+
+    def getSampleId(self):
+        """
+        Returns the sampleId associated with this ReadGroupSet.
+        """
+        return self._sampleId
+
 
 class SimulatedReadGroupSet(AbstractReadGroupSet):
     """
@@ -349,6 +377,8 @@ class SimulatedReadGroupSet(AbstractReadGroupSet):
             readGroup = SimulatedReadGroup(
                 self, localId, randomSeed + i, numAlignments)
             self.addReadGroup(readGroup)
+        self._patientId = "SIMULATED_PATIENT"
+        self._sampleId = "SIMULATED_SAMPLE"
 
     def getPrograms(self):
         return []
@@ -402,6 +432,8 @@ class HtslibReadGroupSet(AlignmentDataMixin, AbstractReadGroupSet):
         stats = protocol.fromJson(readGroupSetRecord.stats, protocol.ReadStats)
         self._numAlignedReads = stats.aligned_read_count
         self._numUnalignedReads = stats.unaligned_read_count
+        self._patientId = readGroupSetRecord.patientId
+        self._sampleId = readGroupSetRecord.sampleId
 
     def populateFromFile(self, dataUrl, indexFile=None):
         """
