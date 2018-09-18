@@ -945,8 +945,6 @@ class DisplayedRoute(object):
 def index():
     return flask.render_template('spa.html',
                                  session_id=flask.session.get('id_token', ''),
-                                 refresh=flask.session.get('refresh_token', ''),
-                                 access=flask.session.get('access_token', ''),
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
 
