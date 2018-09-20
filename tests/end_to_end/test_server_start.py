@@ -10,7 +10,7 @@ from __future__ import unicode_literals
 
 import unittest
 
-import server as server
+import ga4gh.server as server
 
 import tests.paths as paths
 

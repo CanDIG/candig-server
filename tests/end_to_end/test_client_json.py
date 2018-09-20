@@ -18,7 +18,7 @@ import ga4gh.client.cli as cli_client
 import ga4gh.server.datarepo as datarepo
 import ga4gh.common.utils as utils
 import tests.paths as paths
-import server
+import ga4gh.server as server
 
 import ga4gh.schemas.protocol as protocol
 
@@ -104,7 +104,7 @@ class TestClientJson(TestClientOutput):
         for line in stdout.splitlines():
             try:
                 cliOutput.append(json.loads(line))
-            except ValueError, e:
+            except ValueError as e:
                 raise Exception((e, line, stdout, command, arguments))
         return cliOutput
 

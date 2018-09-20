@@ -290,7 +290,7 @@ class DataDrivenTest(TestCase):
         """
         try:
             json_format.Parse(jsonDict, protocolClass())
-        except json_format.ParseError, e:
+        except json_format.ParseError as e:
             assert False, e.message
 
     def testProtocolElementValid(self):

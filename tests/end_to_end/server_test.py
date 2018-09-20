@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 import unittest
 import subprocess
 
-import server as server
+import ga4gh.server as server
 
 
 class ClientHelperMixin(object):

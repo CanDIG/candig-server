@@ -13,7 +13,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import server_test
-import client
+import ga4gh.client as client
 import unittest
 
 import ga4gh.server.datarepo as datarepo

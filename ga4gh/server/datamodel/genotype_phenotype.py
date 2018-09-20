@@ -135,7 +135,7 @@ class G2PUtility(object):
         create a dict of plain text
         """
         myDict = {}
-        for key, val in bindings.iteritems():
+        for key, val in bindings.items():
             myDict[key.toPython().replace('?', '')] = val.toPython()
         return myDict
 

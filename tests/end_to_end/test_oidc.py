@@ -14,8 +14,8 @@ import unittest
 
 import lxml.html as html
 
-import client
-import server
+import ga4gh.client as client
+import ga4gh.server as server
 import server_test
 
 import ga4gh.server.datarepo as datarepo

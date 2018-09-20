@@ -258,6 +258,9 @@ class VariantAnnotationsIntervalIterator(IntervalIterator):
         variant, annotation = pair
         return variant.end
 
+    def __next__(self):
+        return self.next()
+
     def next(self):
         while True:
             ret = super(VariantAnnotationsIntervalIterator, self).next()
@@ -367,6 +370,9 @@ class SequenceIterator(object):
         it to the object stream
         """
         raise NotImplementedError()
+
+    def __next__(self):
+        return self.next()
 
     def next(self):
         if (self._numToReturn <= 0 or self._objectIndex >=
