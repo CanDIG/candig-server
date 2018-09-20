@@ -164,6 +164,8 @@ class Variantset(BaseModel):
     referencesetid = pw.ForeignKeyField(
         db_column='referenceSetId', rel_model=Referenceset, to_field='id')
     updated = pw.TextField(null=True)
+    patientId = pw.TextField(db_column='patientId', null=False)
+    sampleId = pw.TextField(db_column='sampleId', null=False)
 
     class Meta:
         indexes = (
@@ -742,6 +744,250 @@ class Tumourboard(BaseModel):
         )
 
 
+class Extraction(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    extractionId = pw.TextField(null=True)
+    extractionIdTier = pw.IntegerField(null=True)
+    sampleId = pw.TextField(null=True)
+    sampleIdTier = pw.IntegerField(null=True)
+    rnaBlood = pw.TextField(null=True)
+    rnaBloodTier = pw.IntegerField(null=True)
+    dnaBlood = pw.TextField(null=True)
+    dnaBloodTier = pw.IntegerField(null=True)
+    rnaTissue = pw.TextField(null=True)
+    rnaTissueTier = pw.IntegerField(null=True)
+    dnaTissue = pw.TextField(null=True)
+    dnaTissueTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Sequencing(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    sequencingId = pw.TextField(null=True)
+    sequencingIdTier = pw.IntegerField(null=True)
+    sampleId = pw.TextField(null=True)
+    sampleIdTier = pw.IntegerField(null=True)
+    dnaLibraryKit = pw.TextField(null=True)
+    dnaLibraryKitTier = pw.IntegerField(null=True)
+    dnaSeqPlatform = pw.TextField(null=True)
+    dnaSeqPlatformTier = pw.IntegerField(null=True)
+    dnaReadLength = pw.TextField(null=True)
+    dnaReadLengthTier = pw.IntegerField(null=True)
+    rnaLibraryKit = pw.TextField(null=True)
+    rnaLibraryKitTier = pw.IntegerField(null=True)
+    rnaSeqPlatform = pw.TextField(null=True)
+    rnaSeqPlatformTier = pw.IntegerField(null=True)
+    rnaReadLength = pw.TextField(null=True)
+    rnaReadLengthTier = pw.IntegerField(null=True)
+    pcrCycles = pw.TextField(null=True)
+    pcrCyclesTier = pw.IntegerField(null=True)
+    extractionId = pw.TextField(null=True)
+    extractionIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Alignment(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    alignmentId = pw.TextField(null=True)
+    alignmentIdTier = pw.IntegerField(null=True)
+    sampleId = pw.TextField(null=True)
+    sampleIdTier = pw.IntegerField(null=True)
+    inHousePipeline = pw.TextField(null=True)
+    inHousePipelineTier = pw.IntegerField(null=True)
+    alignmentTool = pw.TextField(null=True)
+    alignmentToolTier = pw.IntegerField(null=True)
+    mergeTool = pw.TextField(null=True)
+    mergeToolTier = pw.IntegerField(null=True)
+    markDuplicates = pw.TextField(null=True)
+    markDuplicatesTier = pw.IntegerField(null=True)
+    realignerTarget = pw.TextField(null=True)
+    realignerTargetTier = pw.IntegerField(null=True)
+    indelRealigner = pw.TextField(null=True)
+    indelRealignerTier = pw.IntegerField(null=True)
+    baseRecalibrator = pw.TextField(null=True)
+    baseRecalibratorTier = pw.IntegerField(null=True)
+    printReads = pw.TextField(null=True)
+    printReadsTier = pw.IntegerField(null=True)
+    idxStats = pw.TextField(null=True)
+    idxStatsTier = pw.IntegerField(null=True)
+    flagStat = pw.TextField(null=True)
+    flagStatTier = pw.IntegerField(null=True)
+    coverage = pw.TextField(null=True)
+    coverageTier = pw.IntegerField(null=True)
+    insertSizeMetrics = pw.TextField(null=True)
+    insertSizeMetricsTier = pw.IntegerField(null=True)
+    fastqc = pw.TextField(null=True)
+    fastqcTier = pw.IntegerField(null=True)
+    reference = pw.TextField(null=True)
+    referenceTier = pw.IntegerField(null=True)
+    sequencingId = pw.TextField(null=True)
+    sequencingIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class VariantCalling(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    variantCallingId = pw.TextField(null=True)
+    variantCallingIdTier = pw.IntegerField(null=True)
+    sampleId = pw.TextField(null=True)
+    sampleIdTier = pw.IntegerField(null=True)
+    inHousePipeline = pw.TextField(null=True)
+    inHousePipelineTier = pw.IntegerField(null=True)
+    variantCaller = pw.TextField(null=True)
+    variantCallerTier = pw.IntegerField(null=True)
+    tabulate = pw.TextField(null=True)
+    tabulateTier = pw.IntegerField(null=True)
+    annotation = pw.TextField(null=True)
+    annotationTier = pw.IntegerField(null=True)
+    mergeTool = pw.TextField(null=True)
+    mergeToolTier = pw.IntegerField(null=True)
+    rdaToTab = pw.TextField(null=True)
+    rdaToTabTier = pw.IntegerField(null=True)
+    delly = pw.TextField(null=True)
+    dellyTier = pw.IntegerField(null=True)
+    postFilter = pw.TextField(null=True)
+    postFilterTier = pw.IntegerField(null=True)
+    clipFilter = pw.TextField(null=True)
+    clipFilterTier = pw.IntegerField(null=True)
+    cosmic = pw.TextField(null=True)
+    cosmicTier = pw.IntegerField(null=True)
+    dbSnp = pw.TextField(null=True)
+    dbSnpTier = pw.IntegerField(null=True)
+    alignmentId = pw.TextField(null=True)
+    alignmentIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class FusionDetection(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    fusionDetectionId = pw.TextField(null=True)
+    fusionDetectionIdTier = pw.IntegerField(null=True)
+    sampleId = pw.TextField(null=True)
+    sampleIdTier = pw.IntegerField(null=True)
+    inHousePipeline = pw.TextField(null=True)
+    inHousePipelineTier = pw.IntegerField(null=True)
+    svDetection = pw.TextField(null=True)
+    svDetectionTier = pw.IntegerField(null=True)
+    fusionDetection = pw.TextField(null=True)
+    fusionDetectionTier = pw.IntegerField(null=True)
+    realignment = pw.TextField(null=True)
+    realignmentTier = pw.IntegerField(null=True)
+    annotation = pw.TextField(null=True)
+    annotationTier = pw.IntegerField(null=True)
+    genomeReference = pw.TextField(null=True)
+    genomeReferenceTier = pw.IntegerField(null=True)
+    geneModels = pw.TextField(null=True)
+    geneModelsTier = pw.IntegerField(null=True)
+    alignmentId = pw.TextField(null=True)
+    alignmentIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class ExpressionAnalysis(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    expressionAnalysisId = pw.TextField(null=True)
+    expressionAnalysisIdTier = pw.IntegerField(null=True)
+    sampleId = pw.TextField(null=True)
+    sampleIdTier = pw.IntegerField(null=True)
+    readLength = pw.TextField(null=True)
+    readLengthTier = pw.IntegerField(null=True)
+    reference = pw.TextField(null=True)
+    referenceTier = pw.IntegerField(null=True)
+    alignmentTool = pw.TextField(null=True)
+    alignmentToolTier = pw.IntegerField(null=True)
+    bamHandling = pw.TextField(null=True)
+    bamHandlingTier = pw.IntegerField(null=True)
+    expressionEstimation = pw.TextField(null=True)
+    expressionEstimationTier = pw.IntegerField(null=True)
+    sequencingId = pw.TextField(null=True)
+    sequencingIdTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
 class Individual(BaseModel):
     created = pw.TextField()
     datasetid = pw.ForeignKeyField(
@@ -793,6 +1039,8 @@ class Readgroupset(BaseModel):
     referencesetid = pw.ForeignKeyField(
         db_column='referenceSetId', rel_model=Referenceset, to_field='id')
     stats = pw.TextField()
+    patientId = pw.TextField(db_column='patientId', null=False)
+    sampleId = pw.TextField(db_column='sampleId', null=False)
 
     class Meta:
         indexes = (

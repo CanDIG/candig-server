@@ -238,15 +238,25 @@ class ServerStatus(object):
 
 
 class UserAccessMap(object):
+    """
+    Loads local authorization info from an access list file to the backend
+
+    access_list.txt formatting example:
+    username1:project1:0
+    username2:project2:4
+    """
     def __init__(self):
         self.user_access_map = {}
+        self.file_path = app.config.get('ACCESS_LIST')
+
+        if not self.file_path:
+            raise exceptions.ConfigurationException("No user access list defined")
+
+        self.list_updated = os.path.getmtime(self.file_path)
 
     def initializeUserAccess(self, logger=None):
-        file_path = app.config.get('ACCESS_LIST')
-        if not file_path:
-            raise exceptions.ConfigurationException("no user access list defined")
         try:
-            with open(file_path) as access_list:
+            with open(self.file_path) as access_list:
                 for line in access_list:
                     parsed_line = line.split(":")
                     if len(parsed_line) != 3:
@@ -272,6 +282,20 @@ class UserAccessMap(object):
 
     def getUserAccessMap(self):
         return self.user_access_map
+
+    def getFilePath(self):
+        return self.file_path
+
+    def getListUpdated(self):
+        return self.list_updated
+
+
+def load_access_map():
+    """
+    Reloads the user access map from file
+    """
+    app.access_map = UserAccessMap()
+    app.access_map.initializeUserAccess(app.logger)
 
 
 def reset():
@@ -433,8 +457,7 @@ def configure(configFile=None, baseConfig="ProductionConfig",
 
     # Set user access map from file if using a gateway to authenticate
     if app.config.get("TYK_ENABLED"):
-        app.access_map = UserAccessMap()
-        app.access_map.initializeUserAccess(app.logger)
+        load_access_map()
 
 
 def chooseReturnMimetype(request):
@@ -527,35 +550,6 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException):
         responseObject['status'].append(404)
 
-    try:
-        nextToken = responseObject['results'].get('nextPageToken')
-
-    # response object not properly formed
-    except (IndexError, AttributeError):
-        nextToken = None
-
-    while nextToken:
-        request = json.loads(request)
-        request["page_token"] = responseObject['results']['nextPageToken']
-        responseObject['results'].pop('nextPageToken', None)
-        request = json.dumps(request)
-
-        nextPageRequest = json.loads(
-            endpoint(
-                request,
-                return_mimetype=return_mimetype,
-                access_map=access_map
-            )
-        )
-
-        for key in nextPageRequest:
-            if key in responseObject['results']:
-                responseObject['results'][key] += nextPageRequest[key]
-            else:
-                responseObject['results'][key] = nextPageRequest[key]
-
-        nextToken = responseObject['results'].get('nextPageToken')
-
     # Peer queries
     # Apply federation by default or if it was specifically requested
     if ('Federation' not in request_dictionary.headers or request_dictionary.headers.get('Federation') == 'True'):
@@ -615,6 +609,10 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                                 responseObject['results'] = peer_response
                             else:
                                 for key in peer_response:
+                                    if key == 'nextPageToken':
+                                        if 'nextPageToken' not in responseObject['results']:
+                                            responseObject['results'][key] = peer_response[key]
+                                        continue
                                     for record in peer_response[key]:
                                         responseObject['results'][key].append(record)
                     except ValueError:
@@ -642,7 +640,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         # Invalid by default
         'Valid response': False
     }
-    
+
     # Decide on valid response
     if responseObject['status']['Known peers'] == \
             responseObject['status']['Queried peers']:
@@ -677,7 +675,11 @@ def getAccessMap(token):
 
         username = parsed_payload.get('preferred_username')
         if username:
-            access_map = app.access_map.getAccessMap().get(username, {})
+            access_map = app.access_map.getUserAccessMap().get(username, {})
+        else:
+            if app.logger:
+                app.logger.warn("Token does not contain a valid username")
+
     else:
         # mock full access to local dataset
         for dataset in app.serverStatus.getDatasets():
@@ -845,6 +847,14 @@ def checkAuthentication():
     the request arguments, we're using the command line and just raise an
     exception.
     """
+    if app.config.get("TYK_ENABLED"):
+        if app.access_map.getListUpdated() != os.path.getmtime(app.access_map.getFilePath()):
+            if app.logger:
+                app.logger.info(
+                    "local access_list.txt updated -> reloading backend list"
+                )
+            load_access_map()
+        return
     if app.oidcClient is None:
         return
     if flask.request.endpoint == 'oidcCallback':
@@ -935,8 +945,6 @@ class DisplayedRoute(object):
 def index():
     return flask.render_template('spa.html',
                                  session_id=flask.session.get('id_token', ''),
-                                 refresh=flask.session.get('refresh_token', ''),
-                                 access=flask.session.get('access_token', ''),
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
 
@@ -969,6 +977,14 @@ def index_info():
             exceptions.NotAuthenticatedException()
     else:
         return response
+
+
+# SEARCH
+@DisplayedRoute('/search', postMethod=True)
+@requires_auth
+def searchQuery():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchQuery)
 
 
 @app.route('/candig_patients')
@@ -1413,7 +1429,48 @@ def searchComplications():
 def searchTumourboards():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchTumourboards)
-# METADATA END
+
+
+@DisplayedRoute('/extractions/search', postMethod=True)
+@requires_auth
+def searchExtractions():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchExtractions)
+
+
+@DisplayedRoute('/sequencing/search', postMethod=True)
+@requires_auth
+def searchSequencing():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchSequencing)
+
+
+@DisplayedRoute('/alignments/search', postMethod=True)
+@requires_auth
+def searchAlignments():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchAlignments)
+
+
+@DisplayedRoute('/variantcalling/search', postMethod=True)
+@requires_auth
+def searchVariantCalling():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchVariantCalling)
+
+
+@DisplayedRoute('/fusiondetection/search', postMethod=True)
+@requires_auth
+def searchFusionDetection():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchFusionDetection)
+
+
+@DisplayedRoute('/expressionanalysis/search', postMethod=True)
+@requires_auth
+def searchExpressionAnalysis():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchExpressionAnalysis)
 
 
 @DisplayedRoute('/peers/list', postMethod=True)
@@ -1529,7 +1586,60 @@ def getComplication(id):
 def getTumourboard(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetTumourboard)
-# METADATA END
+
+
+@DisplayedRoute(
+    '/extractions/<no(search):id>',
+    pathDisplay='/extractions/<id>')
+@requires_auth
+def getExtraction(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetExtraction)
+
+
+@DisplayedRoute(
+    '/sequencing/<no(search):id>',
+    pathDisplay='/sequencing/<id>')
+@requires_auth
+def getSequencing(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetSequencing)
+
+
+@DisplayedRoute(
+    '/alignments/<no(search):id>',
+    pathDisplay='/alignments/<id>')
+@requires_auth
+def getAlignment(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetAlignment)
+
+
+@DisplayedRoute(
+    '/variantcalling/<no(search):id>',
+    pathDisplay='/variantcalling/<id>')
+@requires_auth
+def getVariantCalling(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetVariantCalling)
+
+
+@DisplayedRoute(
+    '/fusiondetections/<no(search):id>',
+    pathDisplay='/fusiondetections/<id>')
+@requires_auth
+def getFusionDetection(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetFusionDetection)
+
+
+@DisplayedRoute(
+    '/expressionanalysis/<no(search):id>',
+    pathDisplay='/expressionanalysis/<id>')
+@requires_auth
+def getExpressionAnalysis(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetExpressionAnalysis)
 
 
 @DisplayedRoute('/rnaquantificationsets/search', postMethod=True)

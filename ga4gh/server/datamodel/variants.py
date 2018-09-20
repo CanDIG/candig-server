@@ -126,6 +126,8 @@ class AbstractVariantSet(datamodel.DatamodelObject):
         self._metadata = []
         self._variantAnnotationSetIds = []
         self._variantAnnotationSetIdMap = {}
+        self._patientId = None
+        self._sampleId = None
 
     def addVariantAnnotationSet(self, variantAnnotationSet):
         """
@@ -257,9 +259,9 @@ class AbstractVariantSet(datamodel.DatamodelObject):
         protocolElement.dataset_id = self.getParentContainer().getId()
         protocolElement.reference_set_id = self._referenceSet.getId()
         protocolElement.metadata.extend(self.getMetadata())
-        protocolElement.dataset_id = self.getParentContainer().getId()
-        protocolElement.reference_set_id = self._referenceSet.getId()
         protocolElement.name = self.getLocalId()
+        protocolElement.patient_id = self.getPatientId()
+        protocolElement.sample_id = self.getSampleId()
         self.serializeAttributes(protocolElement)
         return protocolElement
 
@@ -302,6 +304,30 @@ class AbstractVariantSet(datamodel.DatamodelObject):
             self.getCompoundId(), sampleName)
         return str(compoundId)
 
+    def setPatientId(self, patientId):
+        """
+        Sets the patientId for this VariantSet to the specified value.
+        """
+        self._patientId = patientId
+
+    def getPatientId(self):
+        """
+        Returns the patientId associated with this VariantSet.
+        """
+        return self._patientId
+
+    def setSampleId(self, sampleId):
+        """
+        Sets the sampleId for this VariantSet to the specified value.
+        """
+        self._sampleId = sampleId
+
+    def getSampleId(self):
+        """
+        Returns the sampleId associated with this VariantSet.
+        """
+        return self._sampleId
+
     @classmethod
     def hashVariant(cls, gaVariant):
         """
@@ -337,6 +363,8 @@ class SimulatedVariantSet(AbstractVariantSet):
         now = protocol.convertDatetime(datetime.datetime.now())
         self._creationTime = now
         self._updatedTime = now
+        self._patientId = "SIMULATED_PATIENT"
+        self._sampleId = "SIMULATED_SAMPLE"
 
     def _createMetaData(self):
         metadata_1 = protocol.VariantSetMetadata()
@@ -469,6 +497,8 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         """
         self._created = variantSetRecord.created
         self._updated = variantSetRecord.updated
+        self._patientId = variantSetRecord.patientId
+        self._sampleId = variantSetRecord.sampleId
         self.setAttributesJson(variantSetRecord.attributes)
         self._chromFileMap = {}
         # We can't load directly as we want tuples to be stored
