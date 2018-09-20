@@ -22,8 +22,6 @@ $(window).load(function() {
             if (listOfDatasetId.length == 0) {
                 $('warningMsg').html("Sorry, but it seems like no data is available at the moment..")
             } else {
-                let finalDatasetName = [];
-                let finalDatasetId = [];
                 let dropdown = document.getElementById("dropdown-menu");
 
                 for (let i = 0; i < listOfDatasetId.length; i++) {
@@ -1100,10 +1098,7 @@ function logout() {
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('Accept', 'application/json');
     xhr.setRequestHeader('Authorization', 'Bearer '+ session_id);
-    xhr.send(JSON.stringify({
-        'access': access,
-        'refresh': refresh
-    }));
+    xhr.send('{}');
     xhr.onload = function() {
         window.location.href = JSON.parse(xhr.response).redirect;
     }        
