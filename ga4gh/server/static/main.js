@@ -14,6 +14,7 @@ $(window).load(function() {
             let warningMsg = document.getElementById('warningMsg');
             warningMsg.style.display = "block";
             document.getElementById('tab-content').style.display = "none";
+            warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
             warningMsg.innerHTML += "No data currently available. Please contact a system administrator for assistance.";
         } else {
             const data = JSON.parse(this.responseText);
@@ -22,8 +23,6 @@ $(window).load(function() {
             if (listOfDatasetId.length == 0) {
                 $('warningMsg').html("Sorry, but it seems like no data is available at the moment..")
             } else {
-                let finalDatasetName = [];
-                let finalDatasetId = [];
                 let dropdown = document.getElementById("dropdown-menu");
 
                 for (let i = 0; i < listOfDatasetId.length; i++) {
@@ -359,8 +358,10 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
 
             for (var i = 0; i < diagnosesDatasets.length; i++) {
                 var currCancer = diagnosesDatasets[i]['cancerType'];
-                drugList[cancerTypesList.indexOf(currCancer)] += treatments[i]['drugListOrAgent'];
-                //cancerTypeFreq[cancerTypesList.indexOf(currCancer)]++;
+                // Temporary fix, this method needs rewrite to ensure proper working with access levels
+                if (diagnosesDatasets[i]["patientId"] == treatments[i]["patientId"] && treatments[i]['drugListOrAgent'] != undefined && diagnosesDatasets[i]["patientId"] != undefined){
+                    drugList[cancerTypesList.indexOf(currCancer)] += treatments[i]['drugListOrAgent'];
+                }
             }
 
             for (var i = 0; i < cancerTypesList.length; i++) {
@@ -389,8 +390,11 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
                     return [String(key), objectDrugList[i][key]];
                 });
 
-                drillDownObj['id'] = cancerTypesList[i];
-                drillDownObj['data'] = tempData;
+                // temporary fix to remove cancer with no drug list
+                if (tempData[0][0] != "") {
+                    drillDownObj['id'] = cancerTypesList[i];
+                    drillDownObj['data'] = tempData;
+                }
                 drillDownList.push(drillDownObj);
             }
 
@@ -442,6 +446,16 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
     activeTab = e.target;
     patient_main();
 
+    function replace_undefined(targetList) {
+        for (let i = 0; i < targetList.length; i++){
+            if (targetList[i] == "undefined" || targetList[i] == undefined) {
+                targetList[i] = "N/A"
+            } 
+        }
+
+        return targetList
+    }
+
     function patient_main() {
         if (document.getElementById('mytable').innerHTML != "") {
             var table = $("#mytable").DataTable();
@@ -479,25 +493,31 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
             $("#mytable").append(th);
 
             for (var i = 0; i < patientsDataset.length; i++) {
+                
+                listOfRace.push(patientsDataset[i]["race"]);
+                listOfProvinces.push(patientsDataset[i]["provinceOfResidence"]);
+                listOfGenders.push(patientsDataset[i]["gender"]);
 
-                if (patientsDataset[i]["race"] != undefined && patientsDataset[i]["provinceOfResidence"] != undefined && patientsDataset[i]["gender"] != undefined) {
-                    listOfRace.push(patientsDataset[i]["race"]);
-                    listOfProvinces.push(patientsDataset[i]["provinceOfResidence"]);
-                    listOfGenders.push(patientsDataset[i]["gender"]);
 
-                    var tr = "<tr>";
-                    var td0 = '<td scope="col">' + patientsDataset[i]["patientId"] + "</td>";
-                    var tdGender = '<td scope="col">' + patientsDataset[i]["gender"] + "</td>";
-                    var td1 = '<td scope="col">' + patientsDataset[i]["dateOfDeath"] + "</td>";
-                    var td2 = '<td scope="col">' + patientsDataset[i]["provinceOfResidence"] + "</td>";
-                    var td3 = '<td scope="col">' + patientsDataset[i]["dateOfBirth"] + "</td>";
-                    var td4 = '<td scope="col">' + patientsDataset[i]["race"] + "</td>";
-                    var td5 = '<td scope="col">' + patientsDataset[i]["occupationalOrEnvironmentalExposure"] + "</td>";
-                    var td6 = "</tr>";
+                var tr = "<tr>";
+                var td0 = '<td scope="col">' + patientsDataset[i]["patientId"] + "</td>";
+                var tdGender = '<td scope="col">' + patientsDataset[i]["gender"] + "</td>";
+                var td1 = '<td scope="col">' + patientsDataset[i]["dateOfDeath"] + "</td>";
+                var td2 = '<td scope="col">' + patientsDataset[i]["provinceOfResidence"] + "</td>";
+                var td3 = '<td scope="col">' + patientsDataset[i]["dateOfBirth"] + "</td>";
+                var td4 = '<td scope="col">' + patientsDataset[i]["race"] + "</td>";
+                var td5 = '<td scope="col">' + patientsDataset[i]["occupationalOrEnvironmentalExposure"] + "</td>";
+                var td6 = "</tr>";
 
-                    $("#mytable").append(tr + td0 + tdGender + td1 + td2 + td3 + td4 + td5 + td6);
-                }
+                var tempRow = tr + td0 + tdGender + td1 + td2 + td3 + td4 + td5 + td6
+                var updatedRow = tempRow.replace(/undefined/g, "N/A")
+
+                $("#mytable").append(updatedRow);
             }
+
+            listOfRace = replace_undefined(listOfRace)
+            listOfProvinces = replace_undefined(listOfProvinces)
+            listOfGenders = replace_undefined(listOfGenders)
 
             categoriesDrawer("raceGraph", "Ethnic Groups", listOfRace);
             categoriesDrawer("provinceGraph", "Provinces", listOfProvinces);
@@ -533,7 +553,16 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
             $('#mytable tbody').on('click', 'tr', function() {
                 var table = $("#mytable").DataTable();
                 var tempData = table.row(this).data()[0];
-                patientInfoFetcher(tempData);
+
+                if (tempData != "N/A") {
+                    patientInfoFetcher(tempData)
+                }
+                else {
+                    var warningMsg = document.getElementById('warningMsg');
+                    warningMsg.style.display = "block";
+                    warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
+                    warningMsg.innerHTML += "We are sorry, but the record you are trying to query doesn't have a valid id.";
+                };
             });
 
         }
@@ -638,15 +667,18 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
         }
 
         var xhr = new XMLHttpRequest();
-
         xhr.open("POST", prepend_path + "/samples/search", true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader('Accept', 'application/json');
         xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
         xhr.send(JSON.stringify({
             'datasetId': datasetId,
-            'patientId': patientId
-        }));
+            'filters': [{
+                "field": "patientId",
+                "operator": "==",
+                "value": patientId
+
+        }]}));
         xhr.onload = function() {
             var data = JSON.parse(this.responseText);
             var sampleDataset = data['results']['samples'];
@@ -657,8 +689,12 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
             xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
             xhr.send(JSON.stringify({
                 'datasetId': datasetId,
-                'patientId': patientId
-            }));
+                'filters': [{
+                    "field": "patientId",
+                    "operator": "==",
+                    "value": patientId
+
+            }]}));
             xhr.onload = function() {
                 var tempRes = JSON.parse(this.responseText);
                 var treatmentDataset = tempRes['results']['treatments'];
@@ -681,7 +717,10 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
                     var td5 = '<td scope="col">' + treatmentDataset[i]["therapeuticModality"] + "</td>";
                     var td6 = "</tr>";
 
-                    $("#patientTable").append(tr + td0 + td1 + td2 + td7 + td3 + td4 + td5 + td6);
+                    var tempRow = tr + td0 + td1 + td2 + td7 + td3 + td4 + td5 + td6
+                    var updatedRow = tempRow.replace(/undefined/g, "N/A")
+
+                    $("#patientTable").append(updatedRow);
                 }
 
                 $("#patientTable").append('</tbody>')
@@ -690,7 +729,6 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
                     $("#patientTable").DataTable();
                     patientStatusCode = 1;
                 });
-
             }
         }
 
@@ -758,7 +796,6 @@ function freqCounter(arrayToCount) {
 let readGroupDict = {}
 
 function readGroupFetcher(geneRequest, geneDataset) {
-    console.log("inside readgroup request")
     var xhr = new XMLHttpRequest();
     xhr.open("POST", prepend_path + "/readgroupsets/search", true);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -768,7 +805,6 @@ function readGroupFetcher(geneRequest, geneDataset) {
         'datasetId': datasetId,
     }));
     xhr.onload = function() {
-        console.log("data is now loading")
         var data = JSON.parse(this.responseText);
         var readGroupIds = [];
         var referenceSetIds = [];
@@ -801,6 +837,7 @@ function readGroupFetcher(geneRequest, geneDataset) {
                     else {
                         let warningMsg = document.getElementById('warningMsg');
                         warningMsg.style.display = "block";
+                        warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
                         warningMsg.innerHTML += "We are sorry, but some parts of IGV may not work correctly.";
                     }
 
@@ -826,11 +863,13 @@ function readGroupFetcher(geneRequest, geneDataset) {
             } catch (err) {
                 let warningMsg = document.getElementById('warningMsg');
                 warningMsg.style.display = "block";
+                warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
                 warningMsg.innerHTML += "We are sorry, but the IGV browser cannot be rendered.";
             }
         } else {
             let warningMsg = document.getElementById('warningMsg');
             warningMsg.style.display = "block";
+            warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
             warningMsg.innerHTML += "We are sorry, but the IGV browser cannot be rendered.";
         }
     }
@@ -883,7 +922,6 @@ function rg_submit() {
 
 function referenceIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgObj, chromesomeId) {
 
-    console.log("inside reference id fetcher")
     var xhr = new XMLHttpRequest();
     xhr.open("POST", prepend_path + "/references/search", true);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -914,6 +952,7 @@ function referenceIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgOb
             } catch (err) {
                 let warningMsg = document.getElementById('warningMsg');
                 warningMsg.style.display = "block";
+                warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
                 warningMsg.innerHTML += "We are sorry, but some parts of IGV may not work correctly.";
             }
 
@@ -1100,11 +1139,16 @@ function logout() {
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('Accept', 'application/json');
     xhr.setRequestHeader('Authorization', 'Bearer '+ session_id);
-    xhr.send(JSON.stringify({
-        'access': access,
-        'refresh': refresh
-    }));
+    xhr.send('{}');
     xhr.onload = function() {
         window.location.href = JSON.parse(xhr.response).redirect;
     }        
 }
+
+$('.alert').on('close.bs.alert', function (e) {
+    // prevent the alert from being removed from DOM
+    e.preventDefault();
+    var warningMsg = document.getElementById('warningMsg');
+    warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
+    warningMsg.style.display = "none";
+});

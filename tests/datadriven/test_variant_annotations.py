@@ -118,6 +118,8 @@ class VariantAnnotationSetTest(datadriven.DataDrivenTest):
         variantSet.populateFromDirectory(dataPath)
         referenceSet = references.AbstractReferenceSet("rs")
         variantSet.setReferenceSet(referenceSet)
+        variantSet.setPatientId("patient1")
+        variantSet.setSampleId("sample1")
         if variantSet.isAnnotated():
             sequenceOntology = ontologies.Ontology(paths.ontologyName)
             sequenceOntology.populateFromFile(paths.ontologyPath)
