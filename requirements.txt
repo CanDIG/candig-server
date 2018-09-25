@@ -16,7 +16,7 @@ ga4gh-common==0.0.7
 ga4gh-schemas
 ga4gh-client
 
-Werkzeug==0.11.5
+Werkzeug==0.14.1
 MarkupSafe==0.23
 itsdangerous==0.24
 six==1.10.0
@@ -33,7 +33,7 @@ enum34==1.1.2
 ipaddress==1.0.16
 cffi==1.5.2
 pycparser==2.14
-Jinja2==2.7.3
+Jinja2==2.10
 future==0.15.2
 pyjwkest==1.4.0
 PyJWT==1.4.2
@@ -45,8 +45,8 @@ peewee==2.8.5
 
 # Flask must come after all other requirements that have "flask" as a
 # prefix due to a setuptools bug.
-Flask-Cors==2.0.1
-Flask==0.10.1
+Flask-Cors==3.0.6
+Flask==1.0.2
 protobuf==3.3.0
 humanize==0.5.1
 pysam==0.9.0
