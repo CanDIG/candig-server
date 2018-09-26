@@ -336,10 +336,9 @@ class TestFrontend(unittest.TestCase):
         self.verifySearchRouting('/variantsets/search', True)
         self.verifySearchRouting('/variants/search', False)
 
-    @unittest.skip("Disabled for now, pending investigations")
     def testRouteIndex(self):
         path = "/"
-        response = self.app.options(path)
+        response = self.app.get(path)
         self.assertEqual(200, response.status_code)
         self.assertEqual("text/html", response.mimetype)
         self.assertGreater(len(response.data), 0)
