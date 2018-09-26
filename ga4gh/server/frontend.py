@@ -16,7 +16,7 @@ import functools
 import json
 
 import flask
-from flask_cors import cross_origin, CORS as cors
+from flask_cors import cross_origin, CORS
 # import flask.ext.cors as cors
 # from flask.ext.oidc import OpenIDConnect
 from flask import jsonify, render_template, request  # Flask
@@ -387,7 +387,7 @@ def configure(configFile=None, baseConfig="ProductionConfig",
         app.config["FILE_HANDLE_CACHE_MAX_SIZE"])
     # Setup CORS
     try:
-        cors(app, allow_headers='Content-Type')
+        CORS(app, allow_headers='Content-Type')
     except AssertionError:
         pass
     app.serverStatus = ServerStatus()

@@ -156,12 +156,14 @@ class FlaskDefaultConfig(object):
     The default values for the Flask config.
     Only used in testing.
     """
-    APPLICATION_ROOT = "/"
+    APPLICATION_ROOT = '/'
     DEBUG = False
+    EXPLAIN_TEMPLATE_LOADING = True
     JSONIFY_PRETTYPRINT_REGULAR = True
     JSON_AS_ASCII = True
     JSON_SORT_KEYS = True
     LOGGER_NAME = 'ga4gh.frontend'
+    LOGGER_HANDLER_POLICY = None
     MAX_CONTENT_LENGTH = None
     MAX_COOKIE_SIZE = 4093
     PERMANENT_SESSION_LIFETIME = datetime.timedelta(31)
@@ -177,6 +179,7 @@ class FlaskDefaultConfig(object):
     SESSION_COOKIE_PATH = None
     SESSION_COOKIE_SECURE = False
     SESSION_COOKIE_SAMESITE = None
+    SESSION_REFRESH_EACH_REQUEST = None
     TESTING = False
     TEMPLATES_AUTO_RELOAD = None
     TRAP_BAD_REQUEST_ERRORS = False
