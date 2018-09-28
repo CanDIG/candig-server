@@ -66,7 +66,7 @@ $("a[href='#gene_search']").on('shown.bs.tab', function(e) {
 $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
     activeTab = e.target;
 
-    var tableIds = ["sample_analysis1", "sample_analysis2", "sample_analysis3", "sample_analysis4", "sample_analysis5", "sample_analysis6"];
+    var tableIds = ["extractions", "alignments", "sequencing", "variantcalling", "fusiondetection", "expressionanalysis"];
 
     initialize();
 
@@ -85,12 +85,10 @@ $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
 
     function caller(){
         var request = document.getElementById("sampleSelect").value;
-        xhrInitiator("extractions", "sample_analysis1", request);
-        xhrInitiator("alignments", "sample_analysis2", request);
-        xhrInitiator("sequencing", "sample_analysis3", request);
-        xhrInitiator("variantcalling", "sample_analysis4", request);
-        xhrInitiator("fusiondetection", "sample_analysis5", request);
-        xhrInitiator("expressionanalysis", "sample_analysis6", request);
+
+        for (let i = 0; i < tableIds.length; i++) {
+            xhrInitiator(tableIds[i], tableIds[i], request)
+        }
     }
 
     // Initiates XHR calls to different endpoints
