@@ -11,17 +11,14 @@ $(window).load(function() {
     xhr.onload = function() {
 
         if (xhr.status != 200) {
-            let warningMsg = document.getElementById('warningMsg');
-            warningMsg.style.display = "block";
             document.getElementById('tab-content').style.display = "none";
-            warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
-            warningMsg.innerHTML += "No data currently available. Please contact a system administrator for assistance.";
+            alertBuilder("No data currently available. Please contact a system administrator for assistance.")
         } else {
             const data = JSON.parse(this.responseText);
             const listOfDatasetId = data['results']['datasets'];
 
             if (listOfDatasetId.length == 0) {
-                $('warningMsg').html("Sorry, but it seems like no data is available at the moment..")
+                alertBuilder("Sorry, but it seems like no data is available at the moment..");
             } else {
                 let dropdown = document.getElementById("dropdown-menu");
 
@@ -64,6 +61,133 @@ $("a[href='#gene_search']").on('shown.bs.tab', function(e) {
         statusCode = 0;
     }
 
+})
+
+$("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
+    activeTab = e.target;
+
+    var tableIds = ["sample_analysis1", "sample_analysis2", "sample_analysis3", "sample_analysis4", "sample_analysis5", "sample_analysis6"];
+
+    initialize();
+
+    document.getElementById("sampleSearch").addEventListener("click", caller);
+
+    function initialize(){
+        for (let i = 0; i < tableIds; i++){
+            document.getElementById(tableIds[i].innerHTML = "");
+        }
+
+        // If the list of sample Ids have been fetched, don't fetch again
+        if (document.getElementById("sampleSelect").value == "") {
+            sampleIDsFetcher();
+        }
+    }
+
+    function caller(){
+        var request = document.getElementById("sampleSelect").value;
+        xhrInitiator("extractions", "sample_analysis1", request);
+        xhrInitiator("alignments", "sample_analysis2", request);
+        xhrInitiator("sequencing", "sample_analysis3", request);
+        xhrInitiator("variantcalling", "sample_analysis4", request);
+        xhrInitiator("fusiondetection", "sample_analysis5", request);
+        xhrInitiator("expressionanalysis", "sample_analysis6", request);
+    }
+
+    // Initiates XHR calls to different endpoints
+    function xhrInitiator(endpoint, element, request) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", prepend_path + endpoint + "/search", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
+        xhr.send(JSON.stringify({
+            'datasetId': datasetId,
+            "filters": [
+                {
+                    "field": "sampleId",
+                    "operator": "==",
+                    "value": request
+                }
+            ]
+        }));
+        xhr.onload = function() {
+            tableBuilder(JSON.parse(this.responseText), endpoint, element);
+        };
+    }
+
+    function sampleIDsFetcher() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", prepend_path + "/samples/search", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
+        xhr.send(JSON.stringify({
+            'datasetId': datasetId
+        }));
+        xhr.onload = function() {
+            var data = JSON.parse(this.responseText)["results"]["samples"].sort();
+            let sampleSelect = document.getElementById("sampleSelect");
+
+            for (let i = 0; i < data.length; i++){
+                if (data[i]["sampleId"] != undefined){
+                    sampleSelect.options[sampleSelect.options.length] = new Option(data[i]["sampleId"], data[i]["sampleId"]);
+                }
+            }
+        }
+    }
+
+    function tableBuilder(results, endpoint, id) {
+        document.getElementById(id).innerHTML = "";
+        var dataset = results["results"][endpoint];
+        var keyList = Object.keys(dataset[0]);
+        var columnDefs = [];
+        var newHeader;
+        var hiddenHeaders = ["id", "datasetId", "name"];
+
+        for (var i = 0; i < keyList.length; i++){
+            newHeader = {}
+
+            if (!hiddenHeaders.includes(keyList[i])) {
+                columnDefs.push(keyList[i]);
+            }
+        }
+
+        var newColumnDefs = [{"headerName": endpoint, "field": "field"}, {"headerName": "", "field": "value"}];
+
+        for (var k = 0; k < dataset.length; k++) {
+
+            var newDataset = [];
+
+            for (var j = 0; j < columnDefs.length; j++) {
+                var tempItem = {};
+                tempItem["field"] = columnDefs[j];
+                tempItem["value"] = dataset[k][columnDefs[j]];
+                newDataset.push(tempItem);
+            }
+            gridMaker(newColumnDefs, newDataset, id);
+        }
+    }
+
+    function gridMaker(newColumnDefs, newDataset, id){
+
+        var gridOptions = {
+            domLayout: 'autoHeight',
+            columnDefs: newColumnDefs,
+            rowData: newDataset,
+            enableSorting: true,
+            enableFilter: true,
+            rowSelection: "multiple",
+            defaultColDef: {
+            width: 120,
+            editable: true,
+            filter: 'agTextColumnFilter',
+            },
+            enableColResize: true
+        };
+
+        var eGridDiv = document.querySelector('#' + id);
+        new agGrid.Grid(eGridDiv, gridOptions);
+    }
 })
 
 /*
@@ -221,7 +345,6 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
             cumulativeYearCounts.shift();
 
             timelineDrawer(yearsCount, years, cumulativeYearCounts);
-
         }
     }
 
@@ -434,7 +557,6 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
                 data: seriesArray
             }]
         });
-        //Highcharts.setOptions(theme);
     }
 });
 
@@ -558,10 +680,7 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
                     patientInfoFetcher(tempData)
                 }
                 else {
-                    var warningMsg = document.getElementById('warningMsg');
-                    warningMsg.style.display = "block";
-                    warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
-                    warningMsg.innerHTML += "We are sorry, but the record you are trying to query doesn't have a valid id.";
+                    alertBuilder("We are sorry, but the record you are trying to query doesn't have a valid id.");
                 };
             });
 
@@ -738,6 +857,9 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
 var statusCode = 0; // Initial value, table is empty
 
 function submit() {
+    $("#firstRG").empty();
+    $("#secondRG").empty();
+    $("#igvSample").empty();
 
     if (statusCode == 1) {
         if (document.getElementById('myTable').innerHTML != "") {
@@ -835,10 +957,7 @@ function readGroupFetcher(geneRequest, geneDataset) {
                     }
 
                     else {
-                        let warningMsg = document.getElementById('warningMsg');
-                        warningMsg.style.display = "block";
-                        warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
-                        warningMsg.innerHTML += "We are sorry, but some parts of IGV may not work correctly.";
+                        alertBuilder("We are sorry, but some parts of IGV may not work correctly.")
                     }
 
                 }
@@ -861,16 +980,10 @@ function readGroupFetcher(geneRequest, geneDataset) {
                 document.getElementById("readGroupSelector").style.display = "block"
 
             } catch (err) {
-                let warningMsg = document.getElementById('warningMsg');
-                warningMsg.style.display = "block";
-                warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
-                warningMsg.innerHTML += "We are sorry, but the IGV browser cannot be rendered.";
+                alertBuilder("We are sorry, but the IGV browser cannot be rendered.");
             }
-        } else {
-            let warningMsg = document.getElementById('warningMsg');
-            warningMsg.style.display = "block";
-            warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
-            warningMsg.innerHTML += "We are sorry, but the IGV browser cannot be rendered.";
+        } else {                
+            alertBuilder("We are sorry, but the IGV browser cannot be rendered.");
         }
     }
 }
@@ -950,10 +1063,7 @@ function referenceIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgOb
 
                 variantSetIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgObj, referenceId, chromesomeId);
             } catch (err) {
-                let warningMsg = document.getElementById('warningMsg');
-                warningMsg.style.display = "block";
-                warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
-                warningMsg.innerHTML += "We are sorry, but some parts of IGV may not work correctly.";
+                alertBuilder("We are sorry, but some parts of IGV may not work correctly.");
             }
 
         } else {
@@ -1152,3 +1262,10 @@ $('.alert').on('close.bs.alert', function (e) {
     warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
     warningMsg.style.display = "none";
 });
+
+function alertBuilder(message) {
+    let warningMsg = document.getElementById('warningMsg');
+    warningMsg.style.display = "block";
+    warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
+    warningMsg.innerHTML += message;
+}
