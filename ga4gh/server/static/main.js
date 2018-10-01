@@ -36,7 +36,12 @@ $(window).load(function() {
                 datasetId = finalDatasetId[0];
                 $('#dropdownMenuLink').html('<i class="fas fa-database"></i> ' + finalDatasetName[0]);
 
-                $('.nav-tabs a[href="#candig"]').tab('show');
+                if (location.hash == "#candig_patients" || location.hash == "#gene_search" || location.hash == "#sample_analysis") {
+                    $('.nav-tabs a[href="' + location.hash + '"]').tab('show');
+                }
+
+                else $('.nav-tabs a[href="#candig"]').tab('show');
+
             }
         }
     }
@@ -51,6 +56,7 @@ function refreshDataset(datasetIndex) {
 }
 
 $("a[href='#gene_search']").on('shown.bs.tab', function(e) {
+    window.history.pushState("", "Gene Search", "#gene_search");
     activeTab = e.target;
 
     // If the dataTable is not initialized, statusCode == -1 meaning that the previous response was invalid
@@ -64,6 +70,7 @@ $("a[href='#gene_search']").on('shown.bs.tab', function(e) {
 })
 
 $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
+    window.history.pushState("", "Sample Analysis", "#sample_analysis");
     activeTab = e.target;
 
     var tableIds = ["extractions", "alignments", "sequencing", "variantcalling", "fusiondetection", "expressionanalysis"];
@@ -193,6 +200,7 @@ The following chunk of function gets executed on load, or once the candig tab is
 */
 
 $("a[href='#candig']").on('shown.bs.tab', function(e) {
+    window.history.pushState("", "HomePage", "/");
 
     activeTab = e.target;
     var treatments;
@@ -561,6 +569,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
 
 
 $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
+    window.history.pushState("", "Patients Overview", "#candig_patients");
 
     var patientStatusCode = 0;
     activeTab = e.target;
