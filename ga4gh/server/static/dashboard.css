@@ -94,7 +94,6 @@
      -webkit-animation: spin 2s linear infinite;
     /* Safari */
      animation: spin 2s linear infinite;
-     margin-left: calc( 50% - 60px);
      margin-top: 200px;
 }
 /* Safari */
@@ -160,11 +159,12 @@
      height: 15rem;
      margin-bottom: 3px;
 }
- .dropdown {
-     position: absolute !important;
-     right: 5%;
-}
+
  #readGroupSelector select {
      margin-right: 20px;
      margin-left: 10px;
+}
+
+#mytable {
+    cursor: pointer;
 }
