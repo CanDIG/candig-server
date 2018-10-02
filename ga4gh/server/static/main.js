@@ -34,9 +34,14 @@ $(window).load(function() {
                 }
 
                 datasetId = finalDatasetId[0];
-                $('#dropdownMenuLink').html("Dataset: " + finalDatasetName[0]);
+                $('#dropdownMenuLink').html('<i class="fas fa-database"></i> ' + finalDatasetName[0]);
 
-                $('.nav-tabs a[href="#candig"]').tab('show');
+                if (location.hash == "#candig_patients" || location.hash == "#gene_search" || location.hash == "#sample_analysis") {
+                    $('.nav-tabs a[href="' + location.hash + '"]').tab('show');
+                }
+
+                else $('.nav-tabs a[href="#candig"]').tab('show');
+
             }
         }
     }
@@ -47,10 +52,11 @@ function refreshDataset(datasetIndex) {
     let currTab = activeTab.href.split('#')[1];
     $('#topTabs a[href="#' + "refreshTab" + '"]').tab('show');
     $('#topTabs a[href="#' + currTab + '"]').tab('show');
-    $('#dropdownMenuLink').html("Dataset: " + finalDatasetName[datasetIndex]);
+    $('#dropdownMenuLink').html('<i class="fas fa-database"></i> ' + finalDatasetName[datasetIndex]);
 }
 
 $("a[href='#gene_search']").on('shown.bs.tab', function(e) {
+    window.history.pushState("", "Gene Search", "#gene_search");
     activeTab = e.target;
 
     // If the dataTable is not initialized, statusCode == -1 meaning that the previous response was invalid
@@ -64,6 +70,7 @@ $("a[href='#gene_search']").on('shown.bs.tab', function(e) {
 })
 
 $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
+    window.history.pushState("", "Sample Analysis", "#sample_analysis");
     activeTab = e.target;
 
     var tableIds = ["extractions", "alignments", "sequencing", "variantcalling", "fusiondetection", "expressionanalysis"];
@@ -193,6 +200,7 @@ The following chunk of function gets executed on load, or once the candig tab is
 */
 
 $("a[href='#candig']").on('shown.bs.tab', function(e) {
+    window.history.pushState("", "HomePage", "/");
 
     activeTab = e.target;
     var treatments;
@@ -561,6 +569,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
 
 
 $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
+    window.history.pushState("", "Patients Overview", "#candig_patients");
 
     var patientStatusCode = 0;
     activeTab = e.target;
@@ -608,7 +617,7 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
 
             var tbl = $('<table/>').attr("id", "mytable");
 
-            var th = '<thead><tr><th scope="col">Patient ID</th><th scope="col">Gender</th><th scope="col">Date of Death</th><th scope="col">Province of Residence</th> <th scope="col">Date of Birth</th><th scope="col">Race</th><th scope="col">OEE</th></tr></thead><tbody>';
+            var th = '<thead><tr><th scope="col">Patient ID</th><th scope="col">Gender</th><th scope="col">Date of Death</th><th scope="col">Province of Residence</th> <th scope="col">Date of Birth</th><th scope="col">Race</th><th scope="col">Occupational Or Environmental Exposure</th></tr></thead><tbody>';
 
             $("#mytable").append(th);
 
@@ -617,7 +626,6 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
                 listOfRace.push(patientsDataset[i]["race"]);
                 listOfProvinces.push(patientsDataset[i]["provinceOfResidence"]);
                 listOfGenders.push(patientsDataset[i]["gender"]);
-
 
                 var tr = "<tr>";
                 var td0 = '<td scope="col">' + patientsDataset[i]["patientId"] + "</td>";
@@ -647,6 +655,7 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
 
             $(document).ready(function() {
                 $('#mytable').DataTable({
+                    "scrollX": true,
                     initComplete: function() {
                         this.api().columns().every(function() {
                             var column = this;
@@ -779,7 +788,12 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
 
         if (patientStatusCode == 1) {
             var table = $("#patientTable").DataTable();
-            table.destroy();
+            try {
+                table.destroy();
+            }
+            catch(err) {
+                //pass
+            }
             document.getElementById("patientTable").innerHTML = "";
         }
 

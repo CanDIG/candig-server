@@ -946,6 +946,7 @@ class DisplayedRoute(object):
 def index():
     return flask.render_template('spa.html',
                                  session_id=flask.session.get('id_token', ''),
+                                 username=flask.session.get('username', ''),
                                  prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
 
 
@@ -1054,6 +1055,7 @@ def login_oidc():
 
             response = flask.redirect(base_url)
             parsed_payload = _parseTokenPayload(flask.session["id_token"])
+            flask.session["username"] = parsed_payload["preferred_username"]
             max_cookie_age = parsed_payload["exp"] - parsed_payload["iat"]
             response.set_cookie('session_id', flask.session["id_token"], max_age=max_cookie_age,
                                 path=app.config.get('TYK_LISTEN_PATH', '/'), httponly=True)
