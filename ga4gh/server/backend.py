@@ -663,7 +663,6 @@ class Backend(object):
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getSequencings():
-            print("looping over sequencings")
             qualified = self.comparisonGenerator(obj, request)
 
             if qualified:

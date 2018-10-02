@@ -165,7 +165,7 @@ $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
 
             for (var j = 0; j < columnDefs.length; j++) {
                 var tempItem = {};
-                tempItem["field"] = columnDefs[j];
+                tempItem["field"] = columnDefs[j].replace(/([a-z])([A-Z])/g, '$1 $2');
                 tempItem["value"] = dataset[k][columnDefs[j]];
                 newDataset.push(tempItem);
             }
@@ -655,7 +655,6 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
 
             $(document).ready(function() {
                 $('#mytable').DataTable({
-                    "scrollX": true,
                     initComplete: function() {
                         this.api().columns().every(function() {
                             var column = this;
