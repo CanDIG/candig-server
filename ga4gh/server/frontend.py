@@ -1092,6 +1092,7 @@ def gateway_logout():
 
 def _generate_login_url(return_url=''):
     """
+    :param: return_url: URL to return to after successful login
     :return: formatted url for keycloak login
     """
     login_url = '{0}{1}'.format(app.config.get('KC_SERVER'), app.config.get('KC_LOGIN_REDIRECT'))
