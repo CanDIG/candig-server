@@ -17,7 +17,6 @@ import json
 
 import flask
 from flask_cors import cross_origin, CORS
-# import flask.ext.cors as cors
 # from flask.ext.oidc import OpenIDConnect
 from flask import jsonify, render_template, request  # Flask
 import humanize
@@ -297,6 +296,23 @@ def load_access_map():
     """
     app.access_map = UserAccessMap()
     app.access_map.initializeUserAccess(app.logger)
+
+
+def render_candig_template(template_path, **kwargs):
+    """
+    wrapper for flask render template to apply preset environment variables
+
+    :param template_path: template file to render
+    :param kwargs: additional variables
+    :return: call to flask.render_template
+    """
+    return flask.render_template(
+        template_path,
+        session_id=flask.session.get('id_token', ''),
+        prepend_path=app.config.get('TYK_LISTEN_PATH', ''),
+        logout_url=_generate_logout_url(),
+        **kwargs
+    )
 
 
 def reset():
@@ -944,26 +960,12 @@ class DisplayedRoute(object):
 @app.route('/')
 @requires_session
 def index():
-    return flask.render_template('spa.html',
-                                 session_id=flask.session.get('id_token', ''),
-                                 username=flask.session.get('username', ''),
-                                 prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
+    return render_candig_template('spa.html')
 
 
-@app.route('/candig')
+@app.route('/serverinfo')
 @requires_session
-def candig():
-    datasetId = "WyJNRVRBREFUQSJd"
-    return flask.render_template('candig.html',
-                                 session_id=flask.session["id_token"],
-                                 refresh=flask.session["refresh_token"],
-                                 access=flask.session["access_token"],
-                                 datasetId=datasetId)
-
-
-@app.route('/info')
-@requires_session
-def index_info():
+def server_info():
     response = flask.render_template('index.html',
                                      info=app.serverStatus)
     if app.config.get('AUTH0_ENABLED'):
@@ -989,24 +991,6 @@ def searchQuery():
         flask.request, app.backend.runSearchQuery)
 
 
-@app.route('/candig_patients')
-@requires_session
-def candig_patients():
-    return flask.render_template('candig_patients.html', session_id=flask.session["id_token"])
-
-
-@app.route('/igv')
-@requires_session
-def candig_igv():
-    return flask.render_template('candig_igv.html', session_id=flask.session["id_token"],
-                                 prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
-
-
-@app.route('/gene_search')
-def candig_gene_search():
-    return flask.render_template('gene_search.html', session_id=flask.session["id_token"])
-
-
 @DisplayedRoute('/variantsbygenesearch', postMethod=True)
 def search_variant_by_gene_name():
     return handleFlaskPostRequest(
@@ -1019,16 +1003,20 @@ def login_oidc():
     *** GETs to this endpoint should be set to 'ignore' in Tyk Endpoint settings ***
 
     All GET requests without an Authorization header should be proxied through
-    this endpoint (except for API token request).
+    this endpoint by gateway middleware (except for API token request).
 
-    :return: redirect call to the identity provider authentication point
+    Identity Provider should treat this route as the callback url for handling oauth2 protocol
+    using the form_post method
     """
 
     base_url = _generate_base_url()
-    redirect_from = flask.request.args.get('redirectUri', '', type=str).replace(base_url, '')
 
-    # GET request: check if authenticated and redirect root page, otherwise render template
+    # GET request: check if already authenticated, check for a return url to save
     if flask.request.method == "GET":
+
+        return_path = flask.request.args.get('returnUri', '', type=str).replace(base_url, '')
+        if return_path != "/login_oidc":
+            flask.session["return_url"] = base_url + return_path
 
         # check for valid flask session
         if flask.request.cookies.get("session_id"):
@@ -1038,12 +1026,12 @@ def login_oidc():
         else:
             get_endpoints = [x[1].replace('<id>', '') for x in app.serverStatus.getUrls() if x[0] == 'GET']
 
-            if redirect_from.startswith(tuple(get_endpoints)):
+            if return_path.startswith(tuple(get_endpoints)):
                 return getFlaskResponse(json.dumps({'error': 'Key not authorised'}), 403)
 
-            return flask.redirect(_generate_login_url())
+            return flask.redirect(_generate_login_url(base_url + return_path))
 
-    # POST request: successful keycloak authentication else Tyk blocks request
+    # POST request: successful keycloak authentication or gateway blocks request
     elif flask.request.method == "POST":
 
         if flask.request.headers.get('KC-Access'):
@@ -1053,12 +1041,19 @@ def login_oidc():
             flask.session["refresh_token"] = flask.request.headers["KC-Refresh"]
             flask.session["id_token"] = flask.request.headers["Authorization"][7:]
 
-            response = flask.redirect(base_url)
+            # extract token data used in session
             parsed_payload = _parseTokenPayload(flask.session["id_token"])
             flask.session["username"] = parsed_payload["preferred_username"]
             max_cookie_age = parsed_payload["exp"] - parsed_payload["iat"]
+
+            # redirect user to the page they requested or the default landing page
+            redirect_url = flask.session.pop('return_url') if 'return_url' in flask.session else base_url
+
+            # load response
+            response = flask.redirect(redirect_url)
             response.set_cookie('session_id', flask.session["id_token"], max_age=max_cookie_age,
                                 path=app.config.get('TYK_LISTEN_PATH', '/'), httponly=True)
+
             return response
 
         # refresh/back POST
@@ -1080,12 +1075,11 @@ def gateway_logout():
     End flask login sessions. Tyk will handle remote keycloak session
     :return: redirect to the keycloak login
     """
-    # response = flask.redirect(_generate_base_url()+'/login_oidc')
+
     if not flask.request.cookies.get("session_id"):
         raise exceptions.NotAuthenticatedException
 
-    data = {"redirect": _generate_logout_url()}
-    response = flask.Response(json.dumps(data))
+    response = flask.Response({})
 
     # delete browser cookie
     response.set_cookie('session_id', '', expires=0, path=app.config.get('TYK_LISTEN_PATH', '/'), httponly=True)
@@ -1096,24 +1090,28 @@ def gateway_logout():
     return response
 
 
-def _generate_login_url():
-    '''
+def _generate_login_url(return_url=''):
+    """
+    :param: return_url: URL to return to after successful login
     :return: formatted url for keycloak login
-    '''
-    return '{0}{1}'.format(app.config.get('KC_SERVER'), app.config.get('KC_LOGIN_REDIRECT'))
+    """
+    login_url = '{0}{1}'.format(app.config.get('KC_SERVER'), app.config.get('KC_LOGIN_REDIRECT'))
+    if return_url:
+        login_url += '&return_url=' + return_url
+    return login_url
 
 
 def _generate_base_url():
-    '''
+    """
     :return: formatted url for TYK proxied dashboard homepage
-    '''
+    """
     return '{0}{1}'.format(app.config.get('TYK_SERVER'), app.config.get('TYK_LISTEN_PATH'))
 
 
 def _generate_logout_url():
-    '''
+    """
     :return: formatted url for keycloak logout
-    '''
+    """
     return '{0}/auth/realms/{1}/protocol/openid-connect/logout?redirect_uri={2}'.format(
         app.config.get('KC_SERVER'), app.config.get('KC_REALM'), app.config.get('KC_REDIRECT'))
 
