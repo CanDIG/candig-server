@@ -1262,7 +1262,7 @@ function logout() {
     xhr.setRequestHeader('Authorization', 'Bearer '+ session_id);
     xhr.send('{}');
     xhr.onload = function() {
-        window.location.href = JSON.parse(xhr.response).redirect;
+        window.location.href = logout_url;
     }        
 }
 
