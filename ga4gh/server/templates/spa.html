@@ -52,7 +52,7 @@
       <div class="dropdown show col-1">
          <a class="dropdown-toggle" href="#" role="button" id="user-dropdown-top" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user-circle"></i> {{ username }}</a>
          <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown" aria-labelledby="dropdownMenuLink" style="width: 30%">
-            <a class="dropdown-item" href="/info"><i class="fas fa-info-circle"></i> info</a>
+            <a class="dropdown-item" href="/serverinfo"><i class="fas fa-info-circle"></i> info</a>
             <a class="dropdown-item" onclick="logout()" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
          </ul>
       </div>
@@ -185,7 +185,8 @@
       let activeTab;
       const session_id = '{{ session_id }}';
       const prepend_path = '{{prepend_path}}';
-          
+      const logout_url = '{{ logout_url }}';
+
    </script>
    <script src="{{prepend_path}}/static/main.js"></script>
 </html>
