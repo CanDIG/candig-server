@@ -168,3 +168,7 @@
 #mytable {
     cursor: pointer;
 }
+
+#drugScatter .highcharts-legend {
+    display: none
+}

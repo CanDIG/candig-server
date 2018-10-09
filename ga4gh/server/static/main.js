@@ -204,8 +204,6 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
 
     activeTab = e.target;
     var treatments;
-    var objectDrugList = [];
-    var drugList = Array(18).join(".").split("."); //Initialize an emptry string array that has 18 empty strings.
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", prepend_path + "/treatments/search", true);
@@ -358,7 +356,8 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
     function timelineDrawer(yearsCount, years, cumulativeData) {
         Highcharts.chart('timelineSamples', {
             chart: {
-                type: 'area'
+                type: 'area',
+                zoomType: 'xy'
             },
             title: {
                 text: 'Samples received by years'
@@ -410,7 +409,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
         });
     }
 
-    function drillDownDrawer(elementId, titleText, seriesName, seriesList, drillDownList) {
+    function drillDownDrawer(elementId, titleText, seriesName, seriesList, cancerTypeWithDrug) {
         Highcharts.chart(elementId, {
             chart: {
                 type: 'bar'
@@ -428,7 +427,6 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
             legend: {
                 enabled: false
             },
-
             plotOptions: {
                 series: {
                     borderWidth: 0,
@@ -437,22 +435,20 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
                     }
                 }
             },
-
             series: [{
                 type: 'pie',
                 name: seriesName,
                 colorByPoint: true,
-                data: seriesList
-            }],
-            drilldown: {
-                series: drillDownList,
-                drillUpButton: {
-                    position: {
-                        x: 0,
-                        y: -40
+                data: seriesList,
+                cursor: 'pointer',
+                point: {
+                    events: {
+                        click: function() {
+                            drugScatter(cancerTypeWithDrug, this.name);
+                        }
                     }
                 }
-            }
+            }],
         });
     }
 
@@ -468,30 +464,65 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
         xhr.onload = function() {
             var data = JSON.parse(this.responseText);
             var diagnosesDatasets = data['results']['diagnoses'];
-            var result = {};
             var seriesList = [];
             var seriesObj = {};
-            var drillDownList = [];
-            var drillDownObj = {};
             var tempCancerList = [];
 
+            var cancerTypeWithDrug = {}
+            var filteredDiagDataset = []
+
             for (var i = 0; i < diagnosesDatasets.length; i++) {
-                if (diagnosesDatasets[i]['cancerType'] != undefined) {
+                // only the record that has both values will be included
+                if (diagnosesDatasets[i]['cancerType'] && diagnosesDatasets[i]['patientId']) {
                     tempCancerList.push(diagnosesDatasets[i]['cancerType']);
+                    filteredDiagDataset.push(diagnosesDatasets[i])
                 }
             }
 
+            // A merged array of diagnoses and treatments, with a left join performed
+            var mergedData = filteredDiagDataset.map(x => Object.assign(x, treatments.find(y => y.patientId == x.patientId)));
+
+            // Length of a day
+            let day = 1000 * 60 * 60 * 24
+
+            /*
+            Build a dict that stores cancerType, drug and duration information.
+            Format: {"cancerType1": {"drug1": ["duration1", "duration2", ...]}}
+            */
+            for (let i = 0; i < mergedData.length; i++) {
+                let curr = mergedData[i];
+
+                if (curr["drugListOrAgent"] && curr["startDate"] && curr["stopDate"]){
+                    let startDate = new Date(curr["startDate"]);
+                    let stopDate = new Date(curr["stopDate"]);
+                    let duration = Math.floor((stopDate - startDate) / day);
+
+                    let currDrugList = curr["drugListOrAgent"].split(", ");
+
+                    for (let j = 0; j < currDrugList.length; j++) {
+                        if (!cancerTypeWithDrug[curr["cancerType"]]){
+                            cancerTypeWithDrug[curr["cancerType"]] = {}
+                        }
+
+                        // If the list that stores duration of drug has not been initialized
+                        if (!cancerTypeWithDrug[curr["cancerType"]][currDrugList[j]]) {
+                            cancerTypeWithDrug[curr["cancerType"]][currDrugList[j]] = []
+                        }
+                        cancerTypeWithDrug[curr["cancerType"]][currDrugList[j]].push(duration)
+                    }
+                }
+            }
+            var cancerTypes = Object.keys(cancerTypeWithDrug)
+
+            // A random scatter plot is generated at first
+            let randomNum = Math.floor(Math.random() * cancerTypes.length);
+            let randomCancer = cancerTypes[randomNum];
+            drugScatter(cancerTypeWithDrug, randomCancer);
+
+            // Calculate the frequency of cancer types
             var tempCancerObj = freqCounter(tempCancerList);
             var cancerTypesList = Object.keys(tempCancerObj);
             var cancerTypeFreq = Object.values(tempCancerObj);
-
-            for (var i = 0; i < diagnosesDatasets.length; i++) {
-                var currCancer = diagnosesDatasets[i]['cancerType'];
-                // Temporary fix, this method needs rewrite to ensure proper working with access levels
-                if (diagnosesDatasets[i]["patientId"] == treatments[i]["patientId"] && treatments[i]['drugListOrAgent'] != undefined && diagnosesDatasets[i]["patientId"] != undefined){
-                    drugList[cancerTypesList.indexOf(currCancer)] += treatments[i]['drugListOrAgent'];
-                }
-            }
 
             for (var i = 0; i < cancerTypesList.length; i++) {
                 seriesObj = {};
@@ -501,35 +532,81 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
                 seriesList.push(seriesObj);
             }
 
-            for (var j = 0; j < drugList.length; j++) {
-                drugList[j] = drugList[j].split(", ");
-
-                result = {};
-                for (var k = 0; k < drugList[j].length; k++) {
-                    if (!result[drugList[j][k]])
-                        result[drugList[j][k]] = 0;
-                    ++result[drugList[j][k]];
-                }
-                objectDrugList.push(result);
-            }
-
-            for (var i = 0; i < objectDrugList.length; i++) {
-                drillDownObj = {};
-                var tempData = Object.keys(objectDrugList[i]).map(function(key) {
-                    return [String(key), objectDrugList[i][key]];
-                });
-
-                // temporary fix to remove cancer with no drug list
-                if (tempData[0][0] != "") {
-                    drillDownObj['id'] = cancerTypesList[i];
-                    drillDownObj['data'] = tempData;
-                }
-                drillDownList.push(drillDownObj);
-            }
-
-            drillDownDrawer('cancerTypes', "cancer types and corresponding treatment drugs", 'cancer types', seriesList, drillDownList);
+            drillDownDrawer('cancerTypes', "cancer types and corresponding treatment drugs", 'cancer types', seriesList, cancerTypeWithDrug);
 
         }
+    }
+
+    // Draw the drug scatter plot
+    function drugScatter(cancerTypeWithDrug, cancerType) {
+        let testArray = Object.keys(cancerTypeWithDrug[cancerType])
+        let scatterArray = []
+
+        for (var i = 0; i < testArray.length; i++) {
+            let temp;
+            for (var j = 0; j < cancerTypeWithDrug[cancerType][testArray[i]].length; j++) {
+                temp = []
+                temp.push(i)
+                temp.push(cancerTypeWithDrug[cancerType][testArray[i]][j])
+
+                scatterArray.push(temp)
+            }
+        }
+
+        Highcharts.chart("drugScatter", {
+            chart: {
+                renderTo: 'drugScatter',
+                type: 'scatter',
+                zoomType: 'xy'
+            },
+            title: {
+                text: 'Time of drug treatment for ' + cancerType
+            },
+            credits: {
+                enabled: false
+            },
+            xAxis: {
+                categories: testArray
+            },
+            yAxis: {
+                title: {
+                    text: 'days'
+                }
+            },
+            tooltip: {
+                formatter: function() {
+                        return ''+
+                        this.x +', '+ this.y +' days';
+                }
+            },
+            plotOptions: {
+                scatter: {
+                    marker: {
+                        symbol:'circle',
+                        radius: 5,
+                        states: {
+                            hover: {
+                                enabled: true,
+                                lineColor: 'rgb(100,100,100)'
+                            }
+                        }
+                    },
+                    states: {
+                        hover: {
+                            marker: {
+                                enabled: false
+                            }
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Drugs',
+                color: 'rgba(223, 83, 83, .75)',
+                data: scatterArray
+
+            }]
+        });
     }
 
     function singleLayerDrawer(id, type, title, seriesArray) {
