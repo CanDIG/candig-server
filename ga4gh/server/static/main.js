@@ -539,17 +539,18 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
 
     // Draw the drug scatter plot
     function drugScatter(cancerTypeWithDrug, cancerType) {
-        let testArray = Object.keys(cancerTypeWithDrug[cancerType])
-        let scatterArray = []
+        // list of drugs used in the current cancer type
+        let listOfDrugs = Object.keys(cancerTypeWithDrug[cancerType])
+        let listOfDrugsWithLength = []
 
-        for (var i = 0; i < testArray.length; i++) {
+        for (var i = 0; i < listOfDrugs.length; i++) {
             let temp;
-            for (var j = 0; j < cancerTypeWithDrug[cancerType][testArray[i]].length; j++) {
+            for (var j = 0; j < cancerTypeWithDrug[cancerType][listOfDrugs[i]].length; j++) {
                 temp = []
                 temp.push(i)
-                temp.push(cancerTypeWithDrug[cancerType][testArray[i]][j])
+                temp.push(cancerTypeWithDrug[cancerType][listOfDrugs[i]][j])
 
-                scatterArray.push(temp)
+                listOfDrugsWithLength.push(temp)
             }
         }
 
@@ -566,7 +567,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
                 enabled: false
             },
             xAxis: {
-                categories: testArray
+                categories: listOfDrugs
             },
             yAxis: {
                 title: {
@@ -603,7 +604,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
             series: [{
                 name: 'Drugs',
                 color: 'rgba(223, 83, 83, .75)',
-                data: scatterArray
+                data: listOfDrugsWithLength
 
             }]
         });
