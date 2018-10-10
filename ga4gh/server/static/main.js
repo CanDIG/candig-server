@@ -2,50 +2,97 @@
 
 /*Retrieve a list of datasets and initialize the page*/
 $(window).load(function() {
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", prepend_path + "/datasets/search", true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
-    xhr.send(JSON.stringify({}));
-    xhr.onload = function() {
+    makeRequest("datasets/search", {}).then(function(response) {
 
-        if (xhr.status != 200) {
+        const data = JSON.parse(response);
+        const listOfDatasetId = data['results']['datasets'];
+
+        let dropdown = document.getElementById("dropdown-menu");
+
+        for (let i = 0; i < listOfDatasetId.length; i++) {
+            if (!finalDatasetId.includes(listOfDatasetId[i]['id'])) {
+                finalDatasetId.push(listOfDatasetId[i]['id']);
+                finalDatasetName.push(listOfDatasetId[i]['name']);
+            }
+        }
+
+        for (let j = 0; j < finalDatasetId.length; j++) {
+            dropdown.innerHTML += '<a class="dropdown-item" id="refresh" href="javascript:void(0)" onclick="refreshDataset(' + j + ')">' + finalDatasetName[j] + '</a>'
+        }
+
+        datasetId = finalDatasetId[0];
+        $('#dropdownMenuLink').html('<i class="fas fa-database"></i> ' + finalDatasetName[0]);
+
+        if (location.hash == "#candig_patients" || location.hash == "#gene_search" || location.hash == "#sample_analysis") {
+            $('.nav-tabs a[href="' + location.hash + '"]').tab('show');
+        }
+
+        else $('.nav-tabs a[href="#candig"]').tab('show');
+
+    }, function(Error) {
             document.getElementById('tab-content').style.display = "none";
             alertBuilder("No data currently available. Please contact a system administrator for assistance.")
-        } else {
-            const data = JSON.parse(this.responseText);
-            const listOfDatasetId = data['results']['datasets'];
+    })
+});
 
-            if (listOfDatasetId.length == 0) {
-                alertBuilder("Sorry, but it seems like no data is available at the moment..");
-            } else {
-                let dropdown = document.getElementById("dropdown-menu");
+function makeRequest(path, body) {
+    return new Promise(function(resolve, reject) {
+    let results = []
+    let key;
 
-                for (let i = 0; i < listOfDatasetId.length; i++) {
-                    if (!finalDatasetId.includes(listOfDatasetId[i]['id'])) {
-                        finalDatasetId.push(listOfDatasetId[i]['id']);
-                        finalDatasetName.push(listOfDatasetId[i]['name']);
+    // Initialize the request with empty pageToken
+    return repeatRequest("");
+
+    function repeatRequest(pageToken){
+        body["pageToken"] = pageToken;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', prepend_path + path, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+
+                let data = JSON.parse(xhr.response);
+
+                // If initial request completes the request, resolve with the raw response
+                if (data["results"]["nextPageToken"] == undefined && results.length == 0) {
+                    resolve(xhr.response)
+                }
+
+                // If unsolved, search for the table name in the response
+                if (key == undefined) {
+                    let keys = Object.keys(data["results"])
+
+                    for (let i = 0; i < keys.length; i++) {
+                        if (keys[i] != "nextPageToken") {
+                            key = keys[i];
+                        }
                     }
                 }
 
-                for (let j = 0; j < finalDatasetId.length; j++) {
-                    dropdown.innerHTML += '<a class="dropdown-item" id="refresh" href="javascript:void(0)" onclick="refreshDataset(' + j + ')">' + finalDatasetName[j] + '</a>'
+                // If nextPageToken is present, save the current response and calls itself
+                if (data["results"]["nextPageToken"]) {
+                    results.push.apply(results, data["results"][key]);
+                    repeatRequest(data["results"]["nextPageToken"]);
                 }
 
-                datasetId = finalDatasetId[0];
-                $('#dropdownMenuLink').html('<i class="fas fa-database"></i> ' + finalDatasetName[0]);
-
-                if (location.hash == "#candig_patients" || location.hash == "#gene_search" || location.hash == "#sample_analysis") {
-                    $('.nav-tabs a[href="' + location.hash + '"]').tab('show');
+                // If nextPageToken is no longer present, resolve with the complete response
+                else {
+                    data["results"][key] = results
+                    resolve(JSON.stringify(data));
                 }
-
-                else $('.nav-tabs a[href="#candig"]').tab('show');
-
+            } else {
+                reject(Error(xhr.response));
             }
-        }
+        };
+        xhr.onerror = function() {
+            reject(Error(xhr.response));
+        };
+        xhr.send(JSON.stringify(body));
     }
-});
+})};
 
 function refreshDataset(datasetIndex) {
     datasetId = finalDatasetId[datasetIndex];
@@ -100,12 +147,7 @@ $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
 
     // Initiates XHR calls to different endpoints
     function xhrInitiator(endpoint, element, request) {
-        let xhr = new XMLHttpRequest();
-        xhr.open("POST", prepend_path + endpoint + "/search", true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('Accept', 'application/json');
-        xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
-        xhr.send(JSON.stringify({
+        let requestObj = {
             'datasetId': datasetId,
             "filters": [
                 {
@@ -114,23 +156,16 @@ $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
                     "value": request
                 }
             ]
-        }));
-        xhr.onload = function() {
-            tableBuilder(JSON.parse(this.responseText), endpoint, element);
-        };
+        }
+
+        makeRequest(endpoint + "/search", requestObj).then(function(response) {
+            tableBuilder(JSON.parse(response), endpoint, element);
+        })
     }
 
     function sampleIDsFetcher() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", prepend_path + "/samples/search", true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('Accept', 'application/json');
-        xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
-        xhr.send(JSON.stringify({
-            'datasetId': datasetId
-        }));
-        xhr.onload = function() {
-            var data = JSON.parse(this.responseText)["results"]["samples"].sort();
+        makeRequest("samples/search", {"datasetId": datasetId}).then(function(response) {
+            var data = JSON.parse(response)["results"]["samples"].sort();
             let sampleSelect = document.getElementById("sampleSelect");
 
             for (let i = 0; i < data.length; i++){
@@ -138,7 +173,7 @@ $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
                     sampleSelect.options[sampleSelect.options.length] = new Option(data[i]["sampleId"], data[i]["sampleId"]);
                 }
             }
-        }
+        })
     }
 
     function tableBuilder(results, endpoint, id) {
@@ -205,16 +240,8 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
     activeTab = e.target;
     var treatments;
 
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", prepend_path + "/treatments/search", true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
-    xhr.send(JSON.stringify({
-        'datasetId': datasetId
-    }));
-    xhr.onload = function() {
-        var data = JSON.parse(this.responseText);
+    makeRequest("treatments/search", {"datasetId": datasetId}).then(function(response) {
+        var data = JSON.parse(response);
         var knownPeers = data['status']['Known peers'];
         var queriedPeers = data['status']['Queried peers'];
         var success = data['status']['Successful communications'];
@@ -226,8 +253,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
         cancerTypeDruglistFetcher();
         treatments = data['results']['treatments'];
         treatmentsFetcher(treatments);
-
-    }
+    })
 
     function highChartSeriesObjectMaker(nameArray, dataArray) {
         var tempObj = {};
@@ -286,16 +312,8 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
     }
 
     function samplesFetcher() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", prepend_path + "/samples/search", true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('Accept', 'application/json');
-        xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
-        xhr.send(JSON.stringify({
-            'datasetId': datasetId
-        }));
-        xhr.onload = function() {
-            var data = JSON.parse(this.responseText);
+        makeRequest("samples/search", {"datasetId": datasetId}).then(function(response) {
+            var data = JSON.parse(response);
 
             var sampleDataset = data['results']['samples'];
             var tempArray = [];
@@ -349,7 +367,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
             cumulativeYearCounts.shift();
 
             timelineDrawer(yearsCount, years, cumulativeYearCounts);
-        }
+        })
     }
 
     // This function calculates the cumulative sum over the years
@@ -453,16 +471,8 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
     }
 
     function cancerTypeDruglistFetcher() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", prepend_path + "/diagnoses/search", true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('Accept', 'application/json');
-        xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
-        xhr.send(JSON.stringify({
-            'datasetId': datasetId
-        }));
-        xhr.onload = function() {
-            var data = JSON.parse(this.responseText);
+        makeRequest("diagnoses/search", {"datasetId": datasetId}).then(function(response) {
+            var data = JSON.parse(response);
             var diagnosesDatasets = data['results']['diagnoses'];
             var seriesList = [];
             var seriesObj = {};
@@ -533,8 +543,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
             }
 
             drillDownDrawer('cancerTypes', "cancer types and corresponding treatment drugs", 'cancer types', seriesList, cancerTypeWithDrug);
-
-        }
+        })
     }
 
     // Draw the drug scatter plot
@@ -657,7 +666,7 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
         for (let i = 0; i < targetList.length; i++){
             if (targetList[i] == "undefined" || targetList[i] == undefined) {
                 targetList[i] = "N/A"
-            } 
+            }
         }
 
         return targetList
@@ -680,16 +689,9 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
         var listOfRace = [];
         var listOfProvinces = [];
         var listOfGenders = [];
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", prepend_path + "/patients/search", true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('Accept', 'application/json');
-        xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
-        xhr.send(JSON.stringify({
-            'datasetId': datasetId
-        }));
-        xhr.onload = function() {
-            var data = JSON.parse(this.responseText);
+
+        makeRequest("patients/search", {"datasetId": datasetId}).then(function(response) {
+            var data = JSON.parse(response);
 
             var patientsDataset = data['results']['patients'];
 
@@ -700,7 +702,7 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
             $("#mytable").append(th);
 
             for (var i = 0; i < patientsDataset.length; i++) {
-                
+
                 listOfRace.push(patientsDataset[i]["race"]);
                 listOfProvinces.push(patientsDataset[i]["provinceOfResidence"]);
                 listOfGenders.push(patientsDataset[i]["gender"]);
@@ -767,9 +769,7 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
                     alertBuilder("We are sorry, but the record you are trying to query doesn't have a valid id.");
                 };
             });
-
-        }
-
+        })
     }
 
 
@@ -779,9 +779,7 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
         var tempDataArray = [];
         for (var i = 0; i < nameArray.length; i++) {
             tempObj = {};
-            //tempDataArray = [];
             tempObj['name'] = nameArray[i];
-            //tempDataArray.push(dataArray[i]);
             tempObj['y'] = dataArray[i];
             seriesObjList.push(tempObj);
         }
@@ -964,31 +962,24 @@ function submit() {
     document.getElementById("readGroupSelector").style.display = "none"
     var geneRequest = document.getElementById("request").value;
 
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", prepend_path + "/variantsbygenesearch", true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
-    xhr.send(JSON.stringify({
+    var geneRequestObj = {
         'datasetId': datasetId,
         'gene': geneRequest
-    }));
-    xhr.onload = function() {
-        var data = JSON.parse(this.responseText);
-        if (xhr.status == 200) {
-            var geneDataset = data['results']['variants'];
-            tableMaker(geneDataset);
-            readGroupFetcher(geneRequest, geneDataset)
-            //igvSearch(geneRequest);
-            document.getElementById("igvSample").style.display = "block";
+    }
+
+    makeRequest("/variantsbygenesearch", geneRequestObj).then(function(response) {
+        var data = JSON.parse(response)
+        var geneDataset = data['results']['variants'];
+        tableMaker(geneDataset);
+        readGroupFetcher(geneRequest, geneDataset)
+        document.getElementById("igvSample").style.display = "block";
             statusCode = 1; // The Dataset was created successfully
-        } else {
+    }, function(Error) {
             document.getElementById("loader").style.display = "none";
             document.getElementById("igvSample").style.display = "none";
             document.getElementById("myTable").innerHTML = "Sorry, but we are not able to locate the gene.";
             statusCode = -1; //The dataset failed to initialized.
-        }
-    }
+    })
 }
 
 function freqCounter(arrayToCount) {
@@ -1007,74 +998,64 @@ function freqCounter(arrayToCount) {
 let readGroupDict = {}
 
 function readGroupFetcher(geneRequest, geneDataset) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", prepend_path + "/readgroupsets/search", true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
-    xhr.send(JSON.stringify({
-        'datasetId': datasetId,
-    }));
-    xhr.onload = function() {
-        var data = JSON.parse(this.responseText);
+    makeRequest("readgroupsets/search", {"datasetId": datasetId}).then(function(response) {
+        var data = JSON.parse(response);
         var readGroupIds = [];
         var referenceSetIds = [];
-        if (xhr.status == 200) {
-            //console.log("xhr status okay")
-            try {
-                let finalChrId;
-                let tempBody = data['results']["readGroupSets"]; //an array of readgroupsets
-                let readGroupSetId = [];
-                let readGroupSetName = []
+
+        try {
+            let finalChrId;
+            let tempBody = data['results']["readGroupSets"]; //an array of readgroupsets
+            let readGroupSetId = [];
+            let readGroupSetName = []
 
 
-                for (let i = 0; i < tempBody.length; i++) {
-                    readGroupSetId.push(tempBody[i]["id"]);
-                    readGroupIds.push(tempBody[i]["readGroups"][0]["id"]);
-                    referenceSetIds.push(tempBody[i]["readGroups"][0]["referenceSetId"])
-                    readGroupSetName.push(tempBody[i]["name"])
-                }
-
-                for (var j = 0; j < 1; j++) {
-                    let tempCurrData = geneDataset[j];
-                    let tempChrId = tempCurrData['referenceName'];
-
-                    if (tempChrId.includes('chr')) {
-                        finalChrId = tempChrId.replace("chr", "");
-                    } else if (parseInt(tempChrId) != NaN) {
-                        finalChrId = tempChrId;
-                    }
-
-                    else {
-                        alertBuilder("We are sorry, but some parts of IGV may not work correctly.")
-                    }
-
-                }
-
-                readGroupDict["geneRequest"] = geneRequest
-                readGroupDict["referenceSetIds"] = referenceSetIds[0]
-                readGroupDict["chromesomeId"] = finalChrId
-                readGroupDict["readGroupIds"] = readGroupIds
-                readGroupDict["readGroupSetId"] = readGroupSetId
-                readGroupDict["readGroupName"] = readGroupSetName
-
-                let selectRG1 = document.getElementById("firstRG");
-                let selectRG2 = document.getElementById("secondRG");
-
-                for (let i = 0; i < readGroupSetId.length; i++){
-                    selectRG1.options[selectRG1.options.length] = new Option(readGroupSetName[i], readGroupSetId[i])
-                    selectRG2.options[selectRG2.options.length] = new Option(readGroupSetName[i], readGroupSetId[i])
-                }
-
-                document.getElementById("readGroupSelector").style.display = "block"
-
-            } catch (err) {
-                alertBuilder("We are sorry, but the IGV browser cannot be rendered.");
+            for (let i = 0; i < tempBody.length; i++) {
+                readGroupSetId.push(tempBody[i]["id"]);
+                readGroupIds.push(tempBody[i]["readGroups"][0]["id"]);
+                referenceSetIds.push(tempBody[i]["readGroups"][0]["referenceSetId"])
+                readGroupSetName.push(tempBody[i]["name"])
             }
-        } else {                
+
+            for (var j = 0; j < 1; j++) {
+                let tempCurrData = geneDataset[j];
+                let tempChrId = tempCurrData['referenceName'];
+
+                if (tempChrId.includes('chr')) {
+                    finalChrId = tempChrId.replace("chr", "");
+                } else if (parseInt(tempChrId) != NaN) {
+                    finalChrId = tempChrId;
+                }
+
+                else {
+                    alertBuilder("We are sorry, but some parts of IGV may not work correctly.")
+                }
+
+            }
+
+            readGroupDict["geneRequest"] = geneRequest
+            readGroupDict["referenceSetIds"] = referenceSetIds[0]
+            readGroupDict["chromesomeId"] = finalChrId
+            readGroupDict["readGroupIds"] = readGroupIds
+            readGroupDict["readGroupSetId"] = readGroupSetId
+            readGroupDict["readGroupName"] = readGroupSetName
+
+            let selectRG1 = document.getElementById("firstRG");
+            let selectRG2 = document.getElementById("secondRG");
+
+            for (let i = 0; i < readGroupSetId.length; i++){
+                selectRG1.options[selectRG1.options.length] = new Option(readGroupSetName[i], readGroupSetId[i])
+                selectRG2.options[selectRG2.options.length] = new Option(readGroupSetName[i], readGroupSetId[i])
+            }
+
+            document.getElementById("readGroupSelector").style.display = "block"
+
+        } catch (err) {
             alertBuilder("We are sorry, but the IGV browser cannot be rendered.");
         }
-    }
+    }, function(Error) {
+        alertBuilder("We are sorry, but the IGV browser cannot be rendered.");
+    })
 }
 
 function rg_submit() {
@@ -1123,62 +1104,43 @@ function rg_submit() {
 }
 
 function referenceIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgObj, chromesomeId) {
+    makeRequest("references/search", {'referenceSetId': referenceSetIds,}).then(function(response) {
 
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", prepend_path + "/references/search", true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
-    xhr.send(JSON.stringify({
-        'referenceSetId': referenceSetIds,
-    }));
-    xhr.onload = function() {
-        let data = JSON.parse(this.responseText);
+        let data = JSON.parse(response);
         let referenceId = "";
 
-        if (xhr.status == 200) {
-            try {
-                let referencesList = data['results']["references"];
+        try {
+            let referencesList = data['results']["references"];
 
-                for (let i = 0; i < referencesList.length; i++) {
-                    if (referencesList[i]["name"] == chromesomeId) {
-                        referenceId = referencesList[i]["id"];
-                    }
+            for (let i = 0; i < referencesList.length; i++) {
+                if (referencesList[i]["name"] == chromesomeId) {
+                    referenceId = referencesList[i]["id"];
                 }
-
-                if (secondRgObj != "") {
-                    secondRgObj["referenceId"] = referenceId
-                }
-
-                variantSetIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgObj, referenceId, chromesomeId);
-            } catch (err) {
-                alertBuilder("We are sorry, but some parts of IGV may not work correctly.");
             }
 
-        } else {
-            // do nothing for now
+            if (secondRgObj != "") {
+                secondRgObj["referenceId"] = referenceId
+            }
+
+            variantSetIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgObj, referenceId, chromesomeId);
+        } catch (err) {
+            alertBuilder("We are sorry, but some parts of IGV may not work correctly.");
         }
-    }
+    }, function(Error) {
+        alertBuilder("We are sorry, but some parts of IGV may not work correctly.");
+    })
 }
 
 function variantSetIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgObj, referenceId, chromesomeId) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", prepend_path + "/variantsets/search", true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
-    xhr.send(JSON.stringify({
-        'datasetId': datasetId,
-    }));
-    xhr.onload = function() {
-        let data = JSON.parse(this.responseText);
+    makeRequest("variantsets/search", {'datasetId': datasetId}).then(function(response) {
+        let data = JSON.parse(response);
         let variantsetId;
         if (data['results']["variantSets"][0]["id"] != undefined) {
             variantsetId = data['results']["variantSets"][0]["id"];
 
             igvSearch(variantsetId, geneRequest, referenceSetIds, firstRgObj, secondRgObj, referenceId, chromesomeId);
         }
-    }
+    })
 }
 
 
@@ -1333,15 +1295,9 @@ function tableMaker(geneDataset) {
 }
 
 function logout() {
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", prepend_path + "/logout_oidc", true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.setRequestHeader('Authorization', 'Bearer '+ session_id);
-    xhr.send('{}');
-    xhr.onload = function() {
+    makeRequest("/logout_oidc", {}).then(function(response){
         window.location.href = logout_url;
-    }        
+    })
 }
 
 $('.alert').on('close.bs.alert', function (e) {
