@@ -567,6 +567,9 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException):
         responseObject['status'].append(404)
 
+    except (exceptions.NotAuthorizedException):
+        responseObject['status'].append(401)
+
     # Peer queries
     # Apply federation by default or if it was specifically requested
     if ('Federation' not in request_dictionary.headers or request_dictionary.headers.get('Federation') == 'True'):
