@@ -386,7 +386,7 @@ class OntologyNotFoundException(ObjectNotFoundException):
 
 class ObjectWithIdNotFoundException(ObjectNotFoundException):
     def __init__(self, objectId):
-        self.message = "No object of this type exists with id '{}'".format(
+        self.message = "Either the resources you are looking for don't exist, or you don't have access to them.".format(
             objectId)
 
 
