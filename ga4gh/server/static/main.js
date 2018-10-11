@@ -107,6 +107,14 @@ $("a[href='#gene_search']").on('shown.bs.tab', function(e) {
     window.history.pushState("", "Gene Search", "#gene_search");
     activeTab = e.target;
 
+    $("#firstRG").empty();
+    $("#secondRG").empty();
+    $("#igvSample").empty();
+    document.getElementById("request").value = "";
+    document.getElementById("readGroupSelector").style.display = "none";
+    document.getElementById("geneTable_wrap").style.display = "none";
+    document.getElementById("title").style.marginTop = "10%";
+
     // If the dataTable is not initialized, statusCode == -1 meaning that the previous response was invalid
     if (document.getElementById('geneTable').innerHTML != "" && statusCode != -1) {
         var table = $("#geneTable").DataTable();
@@ -128,14 +136,16 @@ $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
     document.getElementById("sampleSearch").addEventListener("click", caller);
 
     function initialize(){
-        for (let i = 0; i < tableIds; i++){
-            document.getElementById(tableIds[i].innerHTML = "");
-        }
 
-        // If the list of sample Ids have been fetched, don't fetch again
-        if (document.getElementById("sampleSelect").value == "") {
-            sampleIDsFetcher();
-        }
+        document.getElementById("extractions").innerHTML = "";
+        document.getElementById("alignments").innerHTML = "";
+        document.getElementById("sequencing").innerHTML = "";
+        document.getElementById("variantcalling").innerHTML = "";
+        document.getElementById("fusiondetection").innerHTML = "";
+        document.getElementById("expressionanalysis").innerHTML = "";
+
+        document.getElementById("sampleSelect").value = ""
+        sampleIDsFetcher();
     }
 
     function caller(){
