@@ -52,7 +52,7 @@ function makeRequest(path, body) {
             xhr.setRequestHeader('Accept', 'application/json');
             xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
             xhr.onload = function() {
-                if (xhr.status === 200) {
+                if (xhr.status == 200) {
 
                     let data = JSON.parse(xhr.response);
 
@@ -108,10 +108,10 @@ $("a[href='#gene_search']").on('shown.bs.tab', function(e) {
     activeTab = e.target;
 
     // If the dataTable is not initialized, statusCode == -1 meaning that the previous response was invalid
-    if (document.getElementById('myTable').innerHTML != "" && statusCode != -1) {
-        var table = $("#myTable").DataTable();
+    if (document.getElementById('geneTable').innerHTML != "" && statusCode != -1) {
+        var table = $("#geneTable").DataTable();
         table.destroy();
-        document.getElementById("myTable").innerHTML = "";
+        document.getElementById("geneTable").innerHTML = "";
         statusCode = 0;
     }
 
@@ -165,8 +165,8 @@ $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
     }
 
     function sampleIDsFetcher() {
-        makeRequest("samples/search", {"datasetId": datasetId}).then(function(response) {
-            var data = JSON.parse(response)["results"]["samples"].sort();
+        makeRequest("extractions/search", {"datasetId": datasetId}).then(function(response) {
+            var data = JSON.parse(response)["results"]["extractions"].sort();
             let sampleSelect = document.getElementById("sampleSelect");
 
             for (let i = 0; i < data.length; i++){
@@ -674,16 +674,16 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
     }
 
     function patient_main() {
-        if (document.getElementById('mytable').innerHTML != "") {
-            var table = $("#mytable").DataTable();
+        if (document.getElementById('patients_table').innerHTML != "") {
+            var table = $("#patients_table").DataTable();
             table.destroy();
-            document.getElementById("mytable").innerHTML = "";
+            document.getElementById("patients_table").innerHTML = "";
         }
 
-        if (document.getElementById('patientTable').innerHTML != "") {
-            var table = $("#patientTable").DataTable();
+        if (document.getElementById('mergedTreatmentsDiagnosesTable').innerHTML != "") {
+            var table = $("#mergedTreatmentsDiagnosesTable").DataTable();
             table.destroy();
-            document.getElementById("patientTable").innerHTML = "";
+            document.getElementById("mergedTreatmentsDiagnosesTable").innerHTML = "";
         }
 
 
@@ -696,11 +696,11 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
 
             var patientsDataset = data['results']['patients'];
 
-            var tbl = $('<table/>').attr("id", "mytable");
+            var tbl = $('<table/>').attr("id", "patients_table");
 
             var th = '<thead><tr><th scope="col">Patient ID</th><th scope="col">Gender</th><th scope="col">Date of Death</th><th scope="col">Province of Residence</th> <th scope="col">Date of Birth</th><th scope="col">Race</th><th scope="col">Occupational Or Environmental Exposure</th></tr></thead><tbody>';
 
-            $("#mytable").append(th);
+            $("#patients_table").append(th);
 
             for (var i = 0; i < patientsDataset.length; i++) {
 
@@ -721,7 +721,7 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
                 var tempRow = tr + td0 + tdGender + td1 + td2 + td3 + td4 + td5 + td6
                 var updatedRow = tempRow.replace(/undefined/g, "N/A")
 
-                $("#mytable").append(updatedRow);
+                $("#patients_table").append(updatedRow);
             }
 
             listOfRace = replace_undefined(listOfRace)
@@ -732,10 +732,10 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
             categoriesDrawer("provinceGraph", "Provinces", listOfProvinces);
             categoriesDrawer("genderGraph", "Genders", listOfGenders);
 
-            $("#mytable").append('</tbody><tfoot><tr><th scope="col">Patient ID</th><th scope="col">Gender</th><th scope="col">Date of Death</th><th scope="col">Province of Residence</th> <th scope="col">Date of Birth</th><th scope="col">Race</th><th scope="col">OEE</th></tr></tfoot>');
+            $("#patients_table").append('</tbody><tfoot><tr><th scope="col">Patient ID</th><th scope="col">Gender</th><th scope="col">Date of Death</th><th scope="col">Province of Residence</th> <th scope="col">Date of Birth</th><th scope="col">Race</th><th scope="col">OEE</th></tr></tfoot>');
 
             $(document).ready(function() {
-                $('#mytable').DataTable({
+                $('#patients_table').DataTable({
                     initComplete: function() {
                         this.api().columns().every(function() {
                             var column = this;
@@ -759,8 +759,8 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
                 });
             });
 
-            $('#mytable tbody').on('click', 'tr', function() {
-                var table = $("#mytable").DataTable();
+            $('#patients_table tbody').on('click', 'tr', function() {
+                var table = $("#patients_table").DataTable();
                 var tempData = table.row(this).data()[0];
 
                 if (tempData != "N/A") {
@@ -836,10 +836,10 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
                         events: {
                             click: function() {
                                 if (lastSearch != this.name) {
-                                    $('#mytable').DataTable().search(this.name).draw();
+                                    $('#patients_table').DataTable().search(this.name).draw();
                                     lastSearch = this.name;
                                 } else if (lastSearch == this.name) {
-                                    $('#mytable').DataTable().search("").draw();
+                                    $('#patients_table').DataTable().search("").draw();
                                     lastSearch = "";
                                 }
                             }
@@ -863,14 +863,14 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
     function patientInfoFetcher(patientId) {
 
         if (patientStatusCode == 1) {
-            var table = $("#patientTable").DataTable();
+            var table = $("#mergedTreatmentsDiagnosesTable").DataTable();
             try {
                 table.destroy();
             }
             catch(err) {
                 //pass
             }
-            document.getElementById("patientTable").innerHTML = "";
+            document.getElementById("mergedTreatmentsDiagnosesTable").innerHTML = "";
         }
 
         var xhr = new XMLHttpRequest();
@@ -906,10 +906,10 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
                 var tempRes = JSON.parse(this.responseText);
                 var treatmentDataset = tempRes['results']['treatments'];
 
-                var tbl = $('<table/>').attr("id", "patientTable");
+                var tbl = $('<table/>').attr("id", "mergedTreatmentsDiagnosesTable");
                 var th = '<thead><tr><th scope="col">Patient ID</th><th scope="col">Collection Hospital</th><th scope="col">Collection Date</th><th scope="col">Cancer Type</th><th scope="col">Response to treatment</th><th scope="col">Drug list</th><th scope="col">Therapeutic Modality </th></tr></thead><tbody>';
 
-                $("#patientTable").append(th);
+                $("#mergedTreatmentsDiagnosesTable").append(th);
 
                 for (var i = 0; i < sampleDataset.length; i++) {
 
@@ -927,13 +927,13 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
                     var tempRow = tr + td0 + td1 + td2 + td7 + td3 + td4 + td5 + td6
                     var updatedRow = tempRow.replace(/undefined/g, "N/A")
 
-                    $("#patientTable").append(updatedRow);
+                    $("#mergedTreatmentsDiagnosesTable").append(updatedRow);
                 }
 
-                $("#patientTable").append('</tbody>')
+                $("#mergedTreatmentsDiagnosesTable").append('</tbody>')
 
                 $(document).ready(function() {
-                    $("#patientTable").DataTable();
+                    $("#mergedTreatmentsDiagnosesTable").DataTable();
                     patientStatusCode = 1;
                 });
             }
@@ -950,15 +950,15 @@ function submit() {
     $("#igvSample").empty();
 
     if (statusCode == 1) {
-        if (document.getElementById('myTable').innerHTML != "") {
-            var table = $('#myTable').DataTable();
+        if (document.getElementById('geneTable').innerHTML != "") {
+            var table = $('#geneTable').DataTable();
             table.destroy();
-            document.getElementById('myTable').innerHTML = "";
+            document.getElementById('geneTable').innerHTML = "";
         }
     }
 
     document.getElementById("loader").style.display = "block";
-    document.getElementById("myTable").innerHTML = "";
+    document.getElementById("geneTable").innerHTML = "";
 
     document.getElementById("readGroupSelector").style.display = "none"
     var geneRequest = document.getElementById("request").value;
@@ -978,7 +978,7 @@ function submit() {
     }, function(Error) {
             document.getElementById("loader").style.display = "none";
             document.getElementById("igvSample").style.display = "none";
-            document.getElementById("myTable").innerHTML = "Sorry, but we are not able to locate the gene.";
+            document.getElementById("geneTable").innerHTML = "Sorry, but we are not able to locate the gene.";
             statusCode = -1; //The dataset failed to initialized.
     })
 }
@@ -1204,14 +1204,14 @@ function igvSearch(variantsetId, geneRequest, referenceSetIds, firstRgObj, secon
 
 function tableMaker(geneDataset) {
     var clickableName;
-    var tbl = $('<table/>').attr("id", "myTable");
-    //$("#myTable").append(tbl);
+    var tbl = $('<table/>').attr("id", "geneTable");
+    //$("#geneTable").append(tbl);
     var tempRefName;
     var fullRefName;
     var result = {};
 
     var th = '<thead><tr><th scope="col" >Reference Name</th><th scope="col">Start</th><th scope="col">End</th> <th scope="col">Length</th><th scope="col">Reference Bases</th><th scope="col">Alternate Bases</th><th scope="col">Frequency</th><th scope="col">Names</th></tr></thead><tbody>';
-    $("#myTable").append(th);
+    $("#geneTable").append(th);
 
     var simplifiedObjArray = []
 
@@ -1282,23 +1282,30 @@ function tableMaker(geneDataset) {
         var td5 = '<td scope="col">' + clickableName + "</td>";
         var td6 = "</tr>";
 
-        $("#myTable").append(tr + td0 + td1 + td2 + tdLength + td3 + td4 + tdFreq + td5 + td6);
+        $("#geneTable").append(tr + td0 + td1 + td2 + tdLength + td3 + td4 + tdFreq + td5 + td6);
     }
-    $("#myTable").append('</tbody>');
+    $("#geneTable").append('</tbody>');
 
     $(document).ready(function() {
-        $('#myTable').DataTable();
-        document.getElementById("myTable_info").innerHTML += ", aggregated from " + geneDataset.length + " records.";
+        $('#geneTable').DataTable();
+        document.getElementById("geneTable_info").innerHTML += ", aggregated from " + geneDataset.length + " records.";
     });
 
+    document.getElementById("geneTable_wrap").style.display = "block";
     document.getElementById("title").style.marginTop = "50px";
     document.getElementById("loader").style.display = "none";
 }
 
 function logout() {
-    makeRequest("/logout_oidc", {}).then(function(response){
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", prepend_path + "/logout_oidc", true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.setRequestHeader('Authorization', 'Bearer '+ session_id);
+    xhr.send('{}');
+    xhr.onload = function() {
         window.location.href = logout_url;
-    })
+    }
 }
 
 $('.alert').on('close.bs.alert', function (e) {
