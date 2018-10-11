@@ -311,6 +311,7 @@ def render_candig_template(template_path, **kwargs):
         session_id=flask.session.get('id_token', ''),
         prepend_path=app.config.get('TYK_LISTEN_PATH', ''),
         logout_url=_generate_logout_url(),
+        username=flask.session.get('username', 'N/A'),
         **kwargs
     )
 
