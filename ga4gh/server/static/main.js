@@ -37,61 +37,62 @@ $(window).load(function() {
 
 function makeRequest(path, body) {
     return new Promise(function(resolve, reject) {
-    let results = []
-    let key;
+        let results = []
+        let key;
 
-    // Initialize the request with empty pageToken
-    return repeatRequest("");
+        // Initialize the request with empty pageToken
+        return repeatRequest("");
 
-    function repeatRequest(pageToken){
-        body["pageToken"] = pageToken;
+        function repeatRequest(pageToken){
+            body["pageToken"] = pageToken;
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', prepend_path + path, true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('Accept', 'application/json');
-        xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
-        xhr.onload = function() {
-            if (xhr.status === 200) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', prepend_path + path, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Accept', 'application/json');
+            xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
 
-                let data = JSON.parse(xhr.response);
+                    let data = JSON.parse(xhr.response);
 
-                // If initial request completes the request, resolve with the raw response
-                if (data["results"]["nextPageToken"] == undefined && results.length == 0) {
-                    resolve(xhr.response)
-                }
+                    // If initial request completes the request, resolve with the raw response
+                    if (data["results"]["nextPageToken"] == undefined && results.length == 0) {
+                        resolve(xhr.response)
+                    }
 
-                // If unsolved, search for the table name in the response
-                if (key == undefined) {
-                    let keys = Object.keys(data["results"])
+                    // If unsolved, search for the table name in the response
+                    if (key == undefined) {
+                        let keys = Object.keys(data["results"])
 
-                    for (let i = 0; i < keys.length; i++) {
-                        if (keys[i] != "nextPageToken") {
-                            key = keys[i];
+                        for (let i = 0; i < keys.length; i++) {
+                            if (keys[i] != "nextPageToken") {
+                                key = keys[i];
+                            }
                         }
                     }
-                }
 
-                // If nextPageToken is present, save the current response and calls itself
-                if (data["results"]["nextPageToken"]) {
-                    results.push.apply(results, data["results"][key]);
-                    repeatRequest(data["results"]["nextPageToken"]);
-                }
+                    // If nextPageToken is present, save the current response and calls itself
+                    if (data["results"]["nextPageToken"]) {
+                        results.push.apply(results, data["results"][key]);
+                        repeatRequest(data["results"]["nextPageToken"]);
+                    }
 
-                // If nextPageToken is no longer present, resolve with the complete response
-                else {
-                    data["results"][key] = results
-                    resolve(JSON.stringify(data));
+                    // If nextPageToken is no longer present, resolve with the complete response
+                    else {
+                        results.push.apply(results, data["results"][key]);
+                        data["results"][key] = results
+                        resolve(JSON.stringify(data));
+                    }
+                } else {
+                    reject(Error(xhr.response));
                 }
-            } else {
+            };
+            xhr.onerror = function() {
                 reject(Error(xhr.response));
-            }
-        };
-        xhr.onerror = function() {
-            reject(Error(xhr.response));
-        };
-        xhr.send(JSON.stringify(body));
-    }
+            };
+            xhr.send(JSON.stringify(body));
+        }
 })};
 
 function refreshDataset(datasetIndex) {
