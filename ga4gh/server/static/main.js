@@ -85,6 +85,9 @@ function makeRequest(path, body) {
                         resolve(JSON.stringify(data));
                     }
                 } else {
+                    if (xhr.status == 403) {
+                        alertBuilder("Your session might have expired. Click " + "<a href='" + window.location.href + "'>here</a> to restore your session.")
+                    }
                     reject(Error(xhr.response));
                 }
             };
