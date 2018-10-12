@@ -254,6 +254,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
     activeTab = e.target;
     var treatments;
 
+    samplesFetcher();
     makeRequest("treatments/search", {"datasetId": datasetId}).then(function(response) {
         var data = JSON.parse(response);
         var knownPeers = data['status']['Known peers'];
@@ -261,11 +262,8 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
         var success = data['status']['Successful communications'];
         var queryStatusSeriesArray = highChartSeriesObjectMaker(["Known Peers", "Queried Peers", "Successful Communications"], [knownPeers, queriedPeers, success]);
         singleLayerDrawer("queryStatus", 'bar', 'Server status', queryStatusSeriesArray);
-
-        samplesFetcher();
-
-        cancerTypeDruglistFetcher();
         treatments = data['results']['treatments'];
+        cancerTypeDruglistFetcher();
         treatmentsFetcher(treatments);
     })
 
