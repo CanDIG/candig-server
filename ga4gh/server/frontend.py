@@ -537,17 +537,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     """
     request_dictionary = flask.request
-
-    if app.config.get("TYK_ENABLED"):
-        # Check authorization if using gateway
-        if 'Authorization' in request_dictionary.headers:
-            authz_token = request_dictionary.headers['Authorization']
-            access_map = getAccessMap(authz_token[7:])
-        else:
-            raise exceptions.NotAuthenticatedException
-    else:
-        authz_token = ''
-        access_map = getAccessMap(authz_token)
+    authz_token, access_map = handleAuthz(request_dictionary)
 
     # Self query
     responseObject = {}
@@ -676,39 +666,6 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     return json.dumps(responseObject)
 
 
-# testing method for access roles through token id + access_list.txt
-def getAccessMap(token):
-    """
-    user roles are loaded in to the server from the access_list.txt
-    a user-specific access map is generated here based on the id_token and
-    the server side access map generated during on server startup
-
-    if running NoAuth config, user has full access to local dataset
-
-    :param token: raw keycloak oidc id_token containing user info
-    :return: python dict in the form {"project" : "access tier", ...}
-    """
-
-    access_map = {}
-
-    if app.config.get("TYK_ENABLED"):
-        parsed_payload = _parseTokenPayload(token)
-
-        username = parsed_payload.get('preferred_username')
-        if username:
-            access_map = app.access_map.getUserAccessMap().get(username, {})
-        else:
-            if app.logger:
-                app.logger.warn("Token does not contain a valid username")
-
-    else:
-        # mock full access to local dataset
-        for dataset in app.serverStatus.getDatasets():
-            access_map[dataset.getLocalId()] = 4
-
-    return access_map
-
-
 def _parseTokenPayload(token):
 
     try:
@@ -725,6 +682,35 @@ def _parseTokenPayload(token):
 
     return json.loads(decoded_payload)
 
+
+def handleAuthz(request_dictionary):
+    access_map = {}
+    if app.config.get("TYK_ENABLED"):
+        if 'Authorization' in request_dictionary.headers:
+            access_map = {}
+            authz_token = request_dictionary.headers['Authorization']
+            try:
+                response = requests.Session().get(
+                    'http://ga4ghdev01.bcgsc.ca:8049/token_access',
+                    headers={'Authorization': authz_token},
+                )
+                print('  >> authz info retrieval status: {0}'.format(response.status_code))
+            except (requests.exceptions.ConnectionError, requests.exceptions.Timeout,
+                    requests.exceptions.HTTPError) as e:
+                print('  >> authz info retrieval status: {0}'.format(e.message))
+            else:
+                if response.status_code == 200:
+                    access_map = response.json()
+        else:
+            raise exceptions.NotAuthenticatedException
+    else:
+        authz_token = None
+        # for dev purposes
+        if app.config.get("MOCK_ACCESS"):
+            for dataset in app.serverStatus.getDatasets():
+                access_map[dataset.getLocalId()] = app.config["MOCK_ACCESS"]
+
+    return authz_token, access_map
 
 def handleHttpPost(request, endpoint):
     """
