@@ -86,7 +86,13 @@ function makeRequest(path, body) {
                     }
                 } else {
                     if (xhr.status == 403) {
-                        alertBuilder("Your session might have expired. Click " + "<a href='" + window.location.href + "'>here</a> to restore your session.")
+                        alertBuilder("Your session might have expired. Click " + "<a href='" + window.location.href + "'>here</a> to restore your session." +
+                        " If problems persist, please contact your system administrators for assistance");
+                    }
+
+                    else if (xhr.status == 500) {
+                        alertBuilder("Unexpected errors occurred. Click " + "<a href='" + window.location.href + "'>here</a> to refresh your session." +
+                        " If problems persist, please contact your system administrators for assistance.");
                     }
                     reject(Error(xhr.response));
                 }
@@ -187,6 +193,8 @@ $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
                     sampleSelect.options[sampleSelect.options.length] = new Option(data[i]["sampleId"], data[i]["sampleId"]);
                 }
             }
+        }, function(Error) {
+            alertBuilder("No data currently available, either the server does not have it, or you do not have access to them.")
         })
     }
 
@@ -266,6 +274,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
         cancerTypeDruglistFetcher();
         treatmentsFetcher(treatments);
     })
+
 
     function highChartSeriesObjectMaker(nameArray, dataArray) {
         var tempObj = {};
