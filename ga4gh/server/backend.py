@@ -169,8 +169,8 @@ class Backend(object):
         defined by the specified request
         """
         return self._topLevelAuthzDatasetGenerator(
-            request, self.getDataRepository().getDatasetByName,
-            access_map=access_map)
+            request, self.getDataRepository().getNumDatasets(),
+            self.getDataRepository().getAuthzDatasetByIndex, access_map=access_map)
 
     # SEARCH
     def queryGenerator(self, request, return_mimetype, access_map):
@@ -2230,16 +2230,15 @@ class Backend(object):
         else:
             raise exceptions.NotAuthorizedException("Not authorized to access this dataset")
 
-    def _topLevelAuthzDatasetGenerator(self, request, getDatasetMethod, tier=0, access_map=None):
+    def _topLevelAuthzDatasetGenerator(self, request, numObjects, getDatasetMethod, access_map=None):
         """
         top level authorized object generator to use with access maps (e.g. datasets/search)
         """
         if not access_map:
             access_map = {}
-        for key in access_map:
-            try:
-                object_ = getDatasetMethod(key)
-                if object_:
-                    yield object_.toProtocolElement(tier), None
-            except exceptions.DatasetNameNotFoundException:
-                continue
+        currentIndex = 0
+        while currentIndex < numObjects:
+            object_ = getDatasetMethod(currentIndex, access_map)
+            currentIndex += 1
+            if object_:
+                yield object_.toProtocolElement(0), None
