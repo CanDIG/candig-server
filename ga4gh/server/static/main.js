@@ -104,12 +104,12 @@ function makeRequest(path, body) {
                     }
                 } else {
                     if (xhr.status == 403) {
-                        alertBuilder("Your session might have expired. Click " + "<a href='" + window.location.href + "'>here</a> to restore your session." +
+                        alertBuilder("Your session might have expired. Click <a href='/'>here</a> to restore your session." +
                         " If problems persist, please contact your system administrators for assistance");
                     }
 
                     else if (xhr.status == 500) {
-                        alertBuilder("Unexpected errors occurred. Click " + "<a href='" + window.location.href + "'>here</a> to refresh your session." +
+                        alertBuilder("Unexpected errors occurred. Click <a href='/'>here</a> to refresh your session." +
                         " If problems persist, please contact your system administrators for assistance.");
                     }
                     else if (xhr.status == 404) {
