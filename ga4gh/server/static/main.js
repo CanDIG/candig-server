@@ -212,6 +212,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
         document.getElementById("drugScatter").innerHTML = loader;
         document.getElementById("hospitals").innerHTML = loader;
         document.getElementById("queryStatus").innerHTML = loader;
+        document.getElementById("timelineSamples").innerHTML = loader;
     }
 
     function noPermissionMsg() {
@@ -298,6 +299,9 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
             credits: {
                 enabled: false
             },
+            exporting: {
+                enabled: false
+            },
             xAxis: {
                 categories: years,
                 tickmarkPlacement: 'on',
@@ -353,10 +357,12 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
             credits: {
                 enabled: false
             },
+            exporting: {
+                enabled: false
+            },
             xAxis: {
                 type: 'category'
             },
-
             legend: {
                 enabled: false
             },
@@ -490,6 +496,9 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
             credits: {
                 enabled: false
             },
+            exporting: {
+                enabled: false
+            },
             xAxis: {
                 categories: listOfDrugs
             },
@@ -544,6 +553,9 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
                 type: type
             },
             credits: {
+                enabled: false
+            },
+            exporting: {
                 enabled: false
             },
             title: {
@@ -964,8 +976,6 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
     document.getElementById("genderGraph").innerHTML = loader;
     document.getElementById("provinceGraph").innerHTML = loader;
 
-
-
     function replace_undefined(targetList) {
         for (let i = 0; i < targetList.length; i++){
             if (targetList[i] == "undefined" || targetList[i] == undefined) {
@@ -1118,6 +1128,9 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
                 text: titleText
             },
             credits: {
+                enabled: false
+            },
+            exporting: {
                 enabled: false
             },
             xAxis: {
@@ -1484,16 +1497,17 @@ $("a[href='#custom_visualization']").on('shown.bs.tab', function(e) {
         selectPopulator("type1", types);
         selectPopulator("type2", types);
         selectPopulated = 1;
+
+        makeRequest("patients/search", {"datasetId": datasetId}).then(function(response) {
+            var data = JSON.parse(response)["results"]["patients"];
+            var selectedKey = "provinceOfResidence"
+            var count = groupBy(data, selectedKey);
+
+            singleLayerDrawer("adv1", type1, "Distribution of Province Of Residence from Patients", count)
+            singleLayerDrawer("adv2", type2, "Distribution of Province Of Residence from Patients", count)
+        })
     }
 
-    makeRequest("patients/search", {"datasetId": datasetId}).then(function(response) {
-        var data = JSON.parse(response)["results"]["patients"];
-        var selectedKey = "provinceOfResidence"
-        var count = groupBy(data, selectedKey);
-
-        singleLayerDrawer("adv1", type1, "Distribution of Provinces from Patients", count)
-        singleLayerDrawer("adv2", type2, "Distribution of Provinces from Patients", count)
-    })
 
     function selectPopulator(id, array) {
         let selectId = document.getElementById(id);
