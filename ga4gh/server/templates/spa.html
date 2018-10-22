@@ -48,11 +48,11 @@
             <a class="nav-link" data-toggle="tab" href="#refreshTab" style="display: none">refreshTab</a>
          </li>
       </ul>
-      <div class="dropdown show col-1">
+      <span class="dropdown show col-1">
          <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
-         <div class="dropdown-menu dropdown-menu-right" id="dropdown-menu" aria-labelledby="dropdownMenuLink">
-         </div>
-      </div>
+         <span class="dropdown-menu dropdown-menu-right" id="dropdown-menu" aria-labelledby="dropdownMenuLink">
+         </span>
+      </span>
       <div class="dropdown show col-1">
          <a class="dropdown-toggle" href="#" role="button" id="user-dropdown-top" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user-circle"></i> {{ username }}</a>
          <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown" aria-labelledby="dropdownMenuLink" style="width: 30%">
@@ -82,28 +82,28 @@
                   <div class="col-sm-3">
                      <div class="card">
                         <div class="card-body">
-                           <div id="queryStatus" style="max-width: 100%; height: 200px; auto;"></div>
+                           <div id="queryStatus" style="max-width: 100%; height: 200px; auto;"><div class="loader_bar"></div></div>
                         </div>
                      </div>
                   </div>
                   <div class="col-sm-3">
                      <div class="card">
                         <div class="card-body">
-                           <div id="responseToTreatment" style="max-width: 100%; height: 200px; auto;"></div>
+                           <div id="responseToTreatment" style="max-width: 100%; height: 200px; auto;"><div class="loader_bar"></div></div>
                         </div>
                      </div>
                   </div>
                   <div class="col-sm-3">
                      <div class="card">
                         <div class="card-body">
-                           <div id="hospitals" style="max-width: 100%; height: 200px; auto;"></div>
+                           <div id="hospitals" style="max-width: 100%; height: 200px; auto;"><div class="loader_bar"></div></div>
                         </div>
                      </div>
                   </div>
                   <div class="col-sm-3">
                      <div class="card">
                         <div class="card-body">
-                           <div id="therapeuticToResponses" style="max-width: 100%; height: 200px; auto;"></div>
+                           <div id="therapeuticToResponses" style="max-width: 100%; height: 200px; auto;"><div class="loader_bar"></div></div>
                         </div>
                      </div>
                   </div>
@@ -111,23 +111,17 @@
                <div class="row" style="margin-top:50px; margin-bottom:50px">
                   <div class="col-sm-6">
                      <div class="card" style="height: 30rem">
-                        <div class="card-body">
-                           <div id="timelineSamples"></div>
-                        </div>
+                           <div id="timelineSamples"><div class="loader_bar"></div></div>
                      </div>
                   </div>
                   <div class="col-sm-6">
                      <div class="card" style="height: 30rem">
-                        <div class="card-body">
-                           <div id="cancerTypes" style="min-width: 310px; height: 400px; auto;"></div>
-                        </div>
+                           <div id="cancerTypes" style="min-width: 310px; height: 400px; auto;"><div class="loader_bar"></div></div>
                      </div>
                   </div>
                    <div class="col-sm-12">
                      <div class="card" style="height: 30rem; margin-top: 50px">
-                        <div class="card-body">
-                           <div id="drugScatter" style="min-width: 310px; height: 400px; auto;"></div>
-                        </div>
+                           <div id="drugScatter" style="min-width: 310px; height: 400px; auto;"><div class="loader_bar"></div></div>
                      </div>
                   </div>
                </div>
@@ -207,7 +201,7 @@
                   <select class="form-control" id="type1" style="width: 15%; margin-right: 10px"></select>
                   <button id="adv1_confirm" class="btn btn-secondary">Confirm</button>
                </div>
-               <div id="adv1" style="margin-top: 20px"></div>
+               <div id="adv1" style="margin-top: 20px; text-align: center"></div>
             </div>
                <div class="col-sm-6">
                   <div class="row wrapper">
@@ -216,7 +210,7 @@
                   <select class="form-control" id="type2" style="width: 15%; margin-right: 10px"></select>
                   <button id="adv2_confirm" class="btn btn-secondary">Confirm</button>
                </div>
-                  <div id="adv2" style="margin-top: 20px"></div>
+                  <div id="adv2" style="margin-top: 20px; text-align: center"></div>
                </div>
          </div>
       </div>
