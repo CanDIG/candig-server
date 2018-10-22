@@ -156,14 +156,17 @@ $('.alert').on('close.bs.alert', function (e) {
     warningMsg.style.display = "none";
 });
 
+function alertCloser() {
+    var warningMsg = document.getElementById('warningMsg');
+    warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
+    warningMsg.style.display = "none";
+}
+
 function alertBuilder(message) {
     let warningMsg = document.getElementById('warningMsg');
     warningMsg.style.display = "block";
     warningMsg.innerHTML = '<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>'
     warningMsg.innerHTML += message;
-    $("#warningMsg").fadeTo(100000, 500).slideUp(500, function(){
-        $("#warningMsg").slideUp(500);
-    });
 }
 
 function startLoading() {
@@ -180,10 +183,11 @@ function stopLoading() {
 
 $("a[href='#candig']").on('shown.bs.tab', function(e) {
     window.history.pushState("", "HomePage", "/");
-
     activeTab = e.target;
-    var treatments;
+    alertCloser();
 
+    loadingBarInitiator();
+    var treatments;
     samplesFetcher();
     makeRequest("treatments/search", {"datasetId": datasetId}).then(function(response) {
         var data = JSON.parse(response);
@@ -192,9 +196,32 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
                         "Successful Communications": data['status']['Successful communications']}
         singleLayerDrawer("queryStatus", 'bar', 'Server status', statusObj);
         treatments = data['results']['treatments'];
-        cancerTypeDruglistFetcher();
-        treatmentsFetcher(treatments);
+        if (treatments[0]["responseToTreatment"] != undefined) {
+            cancerTypeDruglistFetcher();
+            treatmentsFetcher(treatments);            
+        }
+        else noPermissionMsg();
+
     })
+
+    function loadingBarInitiator() {
+        let loader = '<div class="loader_bar"></div>'
+        document.getElementById("responseToTreatment").innerHTML = loader;
+        document.getElementById("therapeuticToResponses").innerHTML = loader;
+        document.getElementById("cancerTypes").innerHTML = loader;
+        document.getElementById("drugScatter").innerHTML = loader;
+        document.getElementById("hospitals").innerHTML = loader;
+        document.getElementById("queryStatus").innerHTML = loader;
+    }
+
+    function noPermissionMsg() {
+        let message = "<p class='noPermission'>You don't have access to this data.</p>";
+        document.getElementById("responseToTreatment").innerHTML = message;
+        document.getElementById("therapeuticToResponses").innerHTML = message;
+        document.getElementById("cancerTypes").innerHTML = message;
+        document.getElementById("drugScatter").innerHTML = message;
+        document.getElementById("hospitals").innerHTML = message;
+    }
 
 
     function highChartSeriesObjectMaker(nameArray, dataArray) {
@@ -222,30 +249,39 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
             var collectionDateArray = [];
             var hospitalFrequency;
 
-            for (var i = 0; i < sampleDataset.length; i++) {
-                if (sampleDataset[i]['collectionDate']) {
-                    var tempDate = sampleDataset[i]['collectionDate'];
-                    sampleDataset[i]['collectionDate'] = tempDate.substr(tempDate.length - 4);
-                }
+            if (sampleDataset[0]["collectionHospital"] != undefined) {
+                hospitalFrequency = groupBy(sampleDataset, "collectionHospital")
+                singleLayerDrawer("hospitals", 'bar', 'Hospital distribution', hospitalFrequency);
             }
 
-            hospitalFrequency = groupBy(sampleDataset, "collectionHospital")
-            collectionDateArray = groupBy(sampleDataset, "collectionDate")
+            if (sampleDataset[0]["collectionDate"] == undefined) {
+                document.getElementById("timelineSamples").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
+            }
 
-            singleLayerDrawer("hospitals", 'bar', 'Hospital distribution', hospitalFrequency);
+            else {
+                for (var i = 0; i < sampleDataset.length; i++) {
+                    if (sampleDataset[i]['collectionDate']) {
+                        var tempDate = sampleDataset[i]['collectionDate'];
+                        sampleDataset[i]['collectionDate'] = tempDate.substr(tempDate.length - 4);
+                    }
+                }
 
-            var years = Object.keys(collectionDateArray);
-            var yearsCount = Object.values(collectionDateArray);
+                collectionDateArray = groupBy(sampleDataset, "collectionDate")
 
-            var cumulativeYearCounts = [0];
 
-            yearsCount.forEach(function(elementToAdd, index) {
-                var newElement = cumulativeYearCounts[index] + elementToAdd;
-                cumulativeYearCounts.push(newElement);
-            });
-            cumulativeYearCounts.shift();
+                var years = Object.keys(collectionDateArray);
+                var yearsCount = Object.values(collectionDateArray);
 
-            timelineDrawer(yearsCount, years, cumulativeYearCounts);
+                var cumulativeYearCounts = [0];
+
+                yearsCount.forEach(function(elementToAdd, index) {
+                    var newElement = cumulativeYearCounts[index] + elementToAdd;
+                    cumulativeYearCounts.push(newElement);
+                });
+                cumulativeYearCounts.shift();
+
+                timelineDrawer(yearsCount, years, cumulativeYearCounts);                
+            }
         })
     }
 
@@ -427,6 +463,7 @@ $("a[href='#candig']").on('shown.bs.tab', function(e) {
     // Draw the drug scatter plot
     function drugScatter(cancerTypeWithDrug, cancerType) {
         // list of drugs used in the current cancer type
+
         let listOfDrugs = Object.keys(cancerTypeWithDrug[cancerType])
         let listOfDrugsWithLength = []
 
@@ -540,6 +577,7 @@ var statusCode = 0; // Initial value, table is empty
 $("a[href='#gene_search']").on('shown.bs.tab', function(e) {
     window.history.pushState("", "Gene Search", "#gene_search");
     activeTab = e.target;
+    alertCloser();
 
     $("#firstRG").empty();
     $("#secondRG").empty();
@@ -915,10 +953,18 @@ $("a[href='#gene_search']").on('shown.bs.tab', function(e) {
 
 $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
     window.history.pushState("", "Patients Overview", "#candig_patients");
+    alertCloser();
 
     var patientStatusCode = 0;
     activeTab = e.target;
     patient_main();
+
+    let loader = '<div class="loader_bar"></div>'
+    document.getElementById("raceGraph").innerHTML = loader;
+    document.getElementById("genderGraph").innerHTML = loader;
+    document.getElementById("provinceGraph").innerHTML = loader;
+
+
 
     function replace_undefined(targetList) {
         for (let i = 0; i < targetList.length; i++){
@@ -1202,6 +1248,7 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
 $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
     window.history.pushState("", "Sample Analysis", "#sample_analysis");
     activeTab = e.target;
+    alertCloser();
 
     var tableIds = ["extractions", "alignments", "sequencing", "variantcalling", "fusiondetection", "expressionanalysis"];
 
@@ -1224,9 +1271,15 @@ $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
     }
 
     function caller(){
-
+        let loader = '<div class="loader_bar"></div>'
         document.getElementById("sample_analysis_title").style.marginTop = "50px";
         document.getElementById("sample_analysis_title").style.marginBottom = "50px";
+        document.getElementById("extractions").innerHTML = loader;
+        document.getElementById("alignments").innerHTML = loader;
+        document.getElementById("sequencing").innerHTML = loader;
+        document.getElementById("variantcalling").innerHTML = loader;
+        document.getElementById("fusiondetection").innerHTML = loader;
+        document.getElementById("expressionanalysis").innerHTML = loader;
 
         var request = document.getElementById("sampleSelect").value;
 
@@ -1368,10 +1421,9 @@ const categories = {
 $("a[href='#custom_visualization']").on('shown.bs.tab', function(e) {
     window.history.pushState("", "Custom Visualization", "#custom_visualization");
     activeTab = e.target;
+    alertCloser();
 
     let endpoints = ["patients", "enrollments", "treatments", "samples", "diagnoses", "tumourboards", "outcomes", "complications", "consents"];
-    let endpoint1 = endpoints[Math.floor(Math.random() * endpoints.length)];
-    let endpoint2 = endpoints[Math.floor(Math.random() * endpoints.length)];
     let types = ["bar", "column", "pie", "line", "scatter"]
     let type1 = types[Math.floor(Math.random() * types.length)];
     let type2 = types[Math.floor(Math.random() * types.length)];
@@ -1387,22 +1439,40 @@ $("a[href='#custom_visualization']").on('shown.bs.tab', function(e) {
     });
 
     $( "#adv1_confirm" ).click(function() {
+        document.getElementById("adv1").innerHTML = '<div class="loader_bar"></div>';
         makeRequest($("#table1").val() + "/search", {"datasetId": datasetId}).then(function(response) {
             var data = JSON.parse(response)["results"][$("#table1").val()];
             var selectedKey = $("#key1").val()
-            var count = groupBy(data, selectedKey);
 
-            singleLayerDrawer("adv1", $("#type1").val(), "Distribution of " + splitString(selectedKey) + " from " + $("#table1").val(), count)
+            if (data[0][selectedKey] == undefined) {
+                document.getElementById("adv1").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
+            }
+
+            else {
+                var count = groupBy(data, selectedKey);
+                singleLayerDrawer("adv1", $("#type1").val(), "Distribution of " + splitString(selectedKey) + " from " + $("#table1").val(), count)        
+            }
+
+
         })
     });
 
     $( "#adv2_confirm" ).click(function() {
+        document.getElementById("adv2").innerHTML = '<div class="loader_bar"></div>';
         makeRequest($("#table2").val() + "/search", {"datasetId": datasetId}).then(function(response) {
             var data = JSON.parse(response)["results"][$("#table2").val()];
             var selectedKey = $("#key2").val()
-            var count = groupBy(data, selectedKey);
 
-            singleLayerDrawer("adv2", $("#type2").val(), "Distribution of " + splitString(selectedKey) + " from " + $("#table2").val(), count)
+            if (data[0][selectedKey] == undefined) {
+                document.getElementById("adv2").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
+            }
+
+            else {
+                var count = groupBy(data, selectedKey);
+                singleLayerDrawer("adv2", $("#type2").val(), "Distribution of " + splitString(selectedKey) + " from " + $("#table2").val(), count)
+
+            }
+
         })
     });
 
@@ -1416,22 +1486,13 @@ $("a[href='#custom_visualization']").on('shown.bs.tab', function(e) {
         selectPopulated = 1;
     }
 
-    makeRequest(endpoint1 + "/search", {"datasetId": datasetId}).then(function(response) {
-        var data = JSON.parse(response)["results"][endpoint1];
-        var keys = Object.keys(data[0])
-        var selectedKey = keys[Math.floor(Math.random() * keys.length)];
+    makeRequest("patients/search", {"datasetId": datasetId}).then(function(response) {
+        var data = JSON.parse(response)["results"]["patients"];
+        var selectedKey = "provinceOfResidence"
         var count = groupBy(data, selectedKey);
 
-        singleLayerDrawer("adv1", type1, "Distribution of " + splitString(selectedKey) + " from " + endpoint1, count)
-    })
-
-    makeRequest(endpoint2 + "/search", {"datasetId": datasetId}).then(function(response) {
-        var data = JSON.parse(response)["results"][endpoint2];
-        var keys = Object.keys(data[0])
-        var selectedKey = keys[Math.floor(Math.random() * keys.length)];
-        var count = groupBy(data, selectedKey);
-
-        singleLayerDrawer("adv2", type2, "Distribution of " + splitString(selectedKey) + " from " + endpoint2, count)
+        singleLayerDrawer("adv1", type1, "Distribution of Provinces from Patients", count)
+        singleLayerDrawer("adv2", type2, "Distribution of Provinces from Patients", count)
     })
 
     function selectPopulator(id, array) {

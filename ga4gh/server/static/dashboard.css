@@ -26,6 +26,7 @@
      border-width: 0px !important;
      height: 15rem;
      margin-bottom: 3px;
+     text-align: center;
 }
  .single {
      background-color: olive;
@@ -182,4 +183,11 @@
 
 .alert {
     margin-bottom: 0px !important;
+}
+
+.noPermission {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
 }
