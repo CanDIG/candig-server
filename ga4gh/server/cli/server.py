@@ -32,7 +32,6 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
         return self.application
 
 
-
 def addServerOptions(parser):
     parser.add_argument(
         "--port", "-P", default=8000, type=int,
@@ -62,7 +61,6 @@ def addServerOptions(parser):
         "--worker_class", "-k", default='sync',
         help="The type of worker process to run. "
              "gevent or sync (default)")
-
 
     cli.addVersionArgument(parser)
     cli.addDisableUrllibWarningsArgument(parser)
