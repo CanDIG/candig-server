@@ -105,7 +105,7 @@ function makeRequest(path, body) {
                 } else {
                     if (xhr.status == 403) {
                         alertBuilder("Your session might have expired. Click <a href='/'>here</a> to restore your session." +
-                        " If problems persist, please contact your system administrators for assistance");
+                        " If problems persist, please contact your system administrators for assistance.");
                     }
 
                     else if (xhr.status == 500) {
@@ -607,8 +607,8 @@ $("a[href='#gene_search']").on('shown.bs.tab', function(e) {
         statusCode = 0;
     }
 
-    document.getElementById("searchBtn").addEventListener("click", submit);
-    document.getElementById("confirmRG").addEventListener("click", rg_submit);
+    $("#searchBtn").off('click').on("click", submit);
+    $("#confirmRG").off('click').on("click", rg_submit);
 
     function submit() {
         $("#firstRG").empty();
@@ -988,17 +988,26 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
 
     function patient_main() {
         if (document.getElementById('patients_table').innerHTML != "") {
-            var table = $("#patients_table").DataTable();
-            table.destroy();
+            try {
+                var table = $("#patients_table").DataTable();
+                table.destroy();
+            }
+            catch (err) {
+                //pass
+            }
             document.getElementById("patients_table").innerHTML = "";
         }
 
         if (document.getElementById('mergedTreatmentsDiagnosesTable').innerHTML != "") {
-            var table = $("#mergedTreatmentsDiagnosesTable").DataTable();
-            table.destroy();
+            try {
+                var table = $("#mergedTreatmentsDiagnosesTable").DataTable();
+                table.destroy();        
+            }
+            catch (err) {
+                //pass
+            }
             document.getElementById("mergedTreatmentsDiagnosesTable").innerHTML = "";
         }
-
 
         var listOfRace = [];
         var listOfProvinces = [];
@@ -1048,31 +1057,37 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
             $("#patients_table").append('</tbody><tfoot><tr><th scope="col">Patient ID</th><th scope="col">Gender</th><th scope="col">Date of Death</th><th scope="col">Province of Residence</th> <th scope="col">Date of Birth</th><th scope="col">Race</th><th scope="col">OEE</th></tr></tfoot>');
 
             $(document).ready(function() {
-                $('#patients_table').DataTable({
-                    initComplete: function() {
-                        this.api().columns().every(function() {
-                            var column = this;
-                            var select = $('<select><option value=""></option></select>')
-                                .appendTo($(column.footer()).empty())
-                                .on('change', function() {
-                                    var val = $.fn.dataTable.util.escapeRegex(
-                                        $(this).val()
-                                    );
+                try {
+                    $('#patients_table').DataTable({
+                        initComplete: function() {
+                            this.api().columns().every(function() {
+                                var column = this;
+                                var select = $('<select><option value=""></option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function() {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                            $(this).val()
+                                        );
 
-                                    column
-                                        .search( "^" + this.value, true, false, true )
-                                        .draw();
+                                        column
+                                            .search( "^" + this.value, true, false, true )
+                                            .draw();
+                                    });
+
+                                column.data().unique().sort().each(function(d, j) {
+                                    select.append('<option value="' + d + '">' + d + '</option>')
                                 });
-
-                            column.data().unique().sort().each(function(d, j) {
-                                select.append('<option value="' + d + '">' + d + '</option>')
                             });
-                        });
-                    }
-                });
+                        }
+                    });
+                }
+                catch (err) {
+                    alertBuilder("The table wasn't correctly rendered. Please refresh the page.")
+                }
+
             });
 
-            $('#patients_table tbody').on('click', 'tr', function() {
+            $('#patients_table tbody').off('click').on('click', 'tr', function() {
                 var table = $("#patients_table").DataTable();
                 var tempData = table.row(this).data()[0];
 
@@ -1179,8 +1194,8 @@ $("a[href='#candig_patients']").on('shown.bs.tab', function(e) {
     function patientInfoFetcher(patientId) {
 
         if (patientStatusCode == 1) {
-            var table = $("#mergedTreatmentsDiagnosesTable").DataTable();
             try {
+                var table = $("#mergedTreatmentsDiagnosesTable").DataTable();
                 table.destroy();
             }
             catch(err) {
@@ -1267,10 +1282,9 @@ $("a[href='#sample_analysis']").on('shown.bs.tab', function(e) {
 
     initialize();
 
-    document.getElementById("sampleSearch").addEventListener("click", caller);
+    $("#sampleSearch").off('click').on("click", caller);
 
     function initialize(){
-
         document.getElementById("sample_analysis_title").style.marginTop = "10%";
         document.getElementById("sample_analysis_title").style.marginBottom = "100px";
         document.getElementById("extractions").innerHTML = "";
@@ -1437,21 +1451,21 @@ $("a[href='#custom_visualization']").on('shown.bs.tab', function(e) {
     alertCloser();
 
     let endpoints = ["patients", "enrollments", "treatments", "samples", "diagnoses", "tumourboards", "outcomes", "complications", "consents"];
-    let types = ["bar", "column", "pie", "line", "scatter"]
+    let types = ["bar", "column", "pie", "scatter"]
     let type1 = types[Math.floor(Math.random() * types.length)];
     let type2 = types[Math.floor(Math.random() * types.length)];
 
-    $( "#table1" ).change(function() {
+    $( "#table1" ).off("change").change(function() {
         document.getElementById("key1").innerHTML = "";
         selectPopulator("key1", categories[$("#table1").val()]);
     });
 
-    $( "#table2" ).change(function() {
+    $( "#table2" ).off("change").change(function() {
         document.getElementById("key2").innerHTML = "";
         selectPopulator("key2", categories[$("#table2").val()]);
     });
 
-    $( "#adv1_confirm" ).click(function() {
+    $( "#adv1_confirm" ).off('click').click(function() {
         document.getElementById("adv1").innerHTML = '<div class="loader_bar"></div>';
         makeRequest($("#table1").val() + "/search", {"datasetId": datasetId}).then(function(response) {
             var data = JSON.parse(response)["results"][$("#table1").val()];
@@ -1470,7 +1484,7 @@ $("a[href='#custom_visualization']").on('shown.bs.tab', function(e) {
         })
     });
 
-    $( "#adv2_confirm" ).click(function() {
+    $( "#adv2_confirm" ).off('click').click(function() {
         document.getElementById("adv2").innerHTML = '<div class="loader_bar"></div>';
         makeRequest($("#table2").val() + "/search", {"datasetId": datasetId}).then(function(response) {
             var data = JSON.parse(response)["results"][$("#table2").val()];
