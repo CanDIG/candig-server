@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+  <head>
+    {% block head %}
+      <link type="text/css" rel="stylesheet" href="{{prepend_path}}/static/loader.css">
+      <link rel=stylesheet type=text/css href="https://www.distributedgenomics.ca/static/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+      <script src="https://www.distributedgenomics.ca/static/bootstrap.min.js"></script>
+      <script src="https://www.distributedgenomics.ca/static/highcharts.js"></script>
+      <link type="text/css" rel="stylesheet" href="{{prepend_path}}/static/dashboard.css">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    {% endblock %}
+  </head>
+  <body>
+  {% block nav %}
+     <nav class="navbar navbar-expand-sm bg-light">
+        <a class="navbar-brand col-1" href="/">
+          <img src="https://www.distributedgenomics.ca/static/logo.png" height="35" alt="">
+        </a>
+      <!-- Links -->
+      <ul class="nav col-9" id="topTabs" style="border-bottom:0px;">
+         <li class="active">
+            <a class="nav-link" href="/"><i class="fas fa-tachometer-alt"></i> Homepage</a>
+         </li>
+         <li>
+            <a class="nav-link" href="/gene_search"><i class="fas fa-search"></i> Gene Search</a>
+         </li>
+         <li>
+            <a class="nav-link" href="/patients_overview"><i class="fas fa-users"></i> Patient Overview</a>
+         </li>
+         <li>
+            <a class="nav-link" href="/sample_analysis"><i class="fas fa-chart-bar"></i> Sample Analysis</a>
+         </li>
+          <li>
+            <a class="nav-link" href="/custom_visualization"><i class="fas fa-chart-pie"></i> Custom Visualization</a>
+         </li>
+      </ul>
+      <span class="dropdown show col-1">
+         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+         <span class="dropdown-menu dropdown-menu-right" id="dropdown-menu" aria-labelledby="dropdownMenuLink">
+         </span>
+      </span>
+      <div class="dropdown show col-1">
+         <a class="dropdown-toggle" href="#" role="button" id="user-dropdown-top" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user-circle"></i> {{ username }}</a>
+         <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown" aria-labelledby="dropdownMenuLink" style="width: 30%">
+            <a class="dropdown-item" href="/serverinfo"><i class="fas fa-info-circle"></i> info</a>
+            <a class="dropdown-item" onclick="logout()" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+         </ul>
+      </div>
+   </nav>
+
+    <div class="alert alert-danger alert-dismissible" role="alert" id="warningMsg" style="display:none">
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    </div>
+
+   <div id="initial_loader" class="wrapper">
+        <img src="https://www.distributedgenomics.ca/static/logo.png" height="100" alt="" class="logo_image">
+         <div class="sk-folding-cube">
+            <div class="sk-cube1 sk-cube"></div>
+            <div class="sk-cube2 sk-cube"></div>
+            <div class="sk-cube4 sk-cube"></div>
+            <div class="sk-cube3 sk-cube"></div>
+          </div>
+   </div>
+  {% endblock %}
+  {% block content %}{% endblock %}
+
+  {% block footer %}
+    <script type="text/javascript">
+      let datasetId;
+      let finalDatasetName = [];
+      let finalDatasetId = [];
+      const session_id = '{{ session_id }}';
+      const prepend_path = '{{prepend_path}}';
+      const logout_url = '{{ logout_url }}';
+    </script>
+    <script src="{{prepend_path}}/static/global.js"></script>
+  {% endblock %}
+  </body>
+</html>

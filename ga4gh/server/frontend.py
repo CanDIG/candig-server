@@ -963,8 +963,32 @@ class DisplayedRoute(object):
 
 @app.route('/')
 @requires_session
-def index():
-    return render_candig_template('spa.html')
+def dashboard():
+    return render_candig_template('dashboard.html')
+
+
+@app.route('/gene_search')
+@requires_session
+def gene_search():
+    return render_candig_template('gene_search.html')
+
+
+@app.route('/patients_overview')
+@requires_session
+def patients_overview():
+    return render_candig_template('patients_overview.html')
+
+
+@app.route('/sample_analysis')
+@requires_session
+def sample_analysis():
+    return render_candig_template('sample_analysis.html')
+
+
+@app.route('/custom_visualization')
+@requires_session
+def custom_visualization():
+    return render_candig_template('custom_visualization.html')
 
 
 @app.route('/serverinfo')
