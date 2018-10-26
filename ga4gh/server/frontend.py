@@ -963,7 +963,7 @@ class DisplayedRoute(object):
 
 @app.route('/')
 @requires_session
-def dashboard():
+def index():
     return render_candig_template('dashboard.html')
 
 
