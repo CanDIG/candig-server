@@ -28,13 +28,10 @@ $(window).on('load', function() {
             $('#dropdownMenuLink').html('<i class="fas fa-database"></i> ' + finalDatasetName[finalDatasetId.indexOf(getCookie("datasetId"))]);
         }
 
-        if (location.pathname == "/") {
-            let dashboard_instance = new dashboard();
-            dashboard_instance.initialize();
-        }
+        let dashboard_instance = new dashboard();
+        dashboard_instance.initialize();
 
     }, function(Error) {
-        document.getElementById('tab-content').style.display = "none";
         alertBuilder("No data currently available. Please contact a system administrator for assistance.")
     })
 });
@@ -47,7 +44,6 @@ function refreshDataset(datasetIndex) {
     let dashboard_instance = new dashboard();
     dashboard_instance.initialize();
 }
-
 
 
 function dashboard() {

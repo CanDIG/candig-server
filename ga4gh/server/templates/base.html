@@ -36,13 +36,15 @@
          </li>
       </ul>
       <span class="dropdown show col-1">
-         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
-         <span class="dropdown-menu dropdown-menu-right" id="dropdown-menu" aria-labelledby="dropdownMenuLink">
-         </span>
+         <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+           <span class="text" id="dropdownMenuLink"></span>
+         </a>
+         <span class="dropdown-menu dropdown-menu-right" id="dropdown-menu" aria-labelledby="dropdownMenuLink"></span>
       </span>
       <div class="dropdown show col-1">
-         <a class="dropdown-toggle" href="#" role="button" id="user-dropdown-top" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user-circle"></i> {{ username }}</a>
-         <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown" aria-labelledby="dropdownMenuLink" style="width: 30%">
+         <a class="dropdown-toggle" href="#" role="button" id="user-dropdown-top" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="text"><i class="fas fa-user-circle"></i> {{ username }}</a></span>
+         <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown" aria-labelledby="dropdownMenuLink">
             <a class="dropdown-item" href="/serverinfo"><i class="fas fa-info-circle"></i> info</a>
             <a class="dropdown-item" onclick="logout()" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
          </ul>

@@ -28,12 +28,9 @@ $(window).on('load', function() {
             $('#dropdownMenuLink').html('<i class="fas fa-database"></i> ' + finalDatasetName[finalDatasetId.indexOf(getCookie("datasetId"))]);
         }
 
-        if (location.pathname == "/patients_overview") {
-            patient_main();
-        }
+        patient_main();
 
     }, function(Error) {
-        document.getElementById('tab-content').style.display = "none";
         alertBuilder("No data currently available. Please contact a system administrator for assistance.")
     })
 });

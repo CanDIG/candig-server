@@ -19,7 +19,7 @@ $(window).on('load', function() {
         }
 
         for (let j = 0; j < finalDatasetId.length; j++) {
-            dropdown.innerHTML += `<a class="dropdown-item" id="refresh" href="javascript:void(0)" onclick="refreshDataset(' + j + ')">` + finalDatasetName[j] + '</a>'
+            dropdown.innerHTML += '<a class="dropdown-item" id="refresh" href="javascript:void(0)" onclick="refreshDataset(' + j + ')">' + finalDatasetName[j] + '</a>'
         }
 
         if (getCookie("datasetId") == null) {
@@ -30,13 +30,10 @@ $(window).on('load', function() {
             $('#dropdownMenuLink').html('<i class="fas fa-database"></i> ' + finalDatasetName[finalDatasetId.indexOf(getCookie("datasetId"))]);
         }
 
-        if (location.pathname == "/sample_analysis") {
-            sample_analysis_instance = new sample_analysis();
-            sample_analysis_instance.initialize();
-        }
-
+        sample_analysis_instance = new sample_analysis();
+        sample_analysis_instance.initialize();
+        
     }, function (Error) {
-        document.getElementById('tab-content').style.display = "none";
         alertBuilder("No data currently available. Please contact a system administrator for assistance.")
     })
 });

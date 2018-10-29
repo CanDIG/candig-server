@@ -31,7 +31,6 @@ $(window).on('load', function() {
         }
 
     }, function(Error) {
-        document.getElementById('tab-content').style.display = "none";
         alertBuilder("No data currently available. Please contact a system administrator for assistance.")
     })
 });
