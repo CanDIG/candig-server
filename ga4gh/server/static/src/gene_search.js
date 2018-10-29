@@ -1,6 +1,6 @@
 "use strict";
 
-$(window).load(function() {
+$(window).on('load', function() {
 
     makeRequest("datasets/search", {}).then(function(response) {
 

@@ -15,6 +15,10 @@ function groupBy(objectArray, property) {
     }, {});
 }
 
+/*
+Input: API endpoint request path and request body
+Output: A complete response from the server
+*/
 function makeRequest(path, body) {
     return new Promise(function(resolve, reject) {
         let results = []
