@@ -20,14 +20,17 @@ $(window).on('load', function() {
             dropdown.innerHTML += '<a class="dropdown-item" id="refresh" href="javascript:void(0)" onclick="refreshDataset(' + j + ')">' + finalDatasetName[j] + '</a>'
         }
 
-        if (getCookie("datasetId") == null) {
+        // If the cookie is not set; or if it is set, but not in a list of available datasets
+        if (getCookie("datasetId") == null || finalDatasetId.indexOf(getCookie("datasetId")) == -1) {
             datasetId = finalDatasetId[0];
+            setCookie("datasetId", datasetId);
             $('#dropdownMenuLink').html('<i class="fas fa-database"></i> ' + finalDatasetName[0]);
+            currentDatasetName = splitString(finalDatasetName[0]);
         } else {
-            datasetId = getCookie("datasetId")
-            $('#dropdownMenuLink').html('<i class="fas fa-database"></i> ' + finalDatasetName[finalDatasetId.indexOf(getCookie("datasetId"))]);
+            datasetId = getCookie("datasetId");
+            $('#dropdownMenuLink').html('<i class="fas fa-database"></i> ' + finalDatasetName[finalDatasetId.indexOf(datasetId)]);
+            currentDatasetName = splitString(finalDatasetName[finalDatasetId.indexOf(getCookie("datasetId"))]);
         }
-        currentDatasetName = splitString(finalDatasetName[finalDatasetId.indexOf(getCookie("datasetId"))]);
         initialize();
 
     }, function(Error) {
@@ -47,7 +50,7 @@ function refreshDataset(datasetIndex) {
 
 var selectPopulated = 0;
 
-let currentDatasetName = finalDatasetName[finalDatasetId.indexOf(getCookie("datasetId"))];
+let currentDatasetName;
 
 const categories = {
     "patients": ["patientId", "otherIds", "dateOfBirth", "gender", "ethnicity", "race", "provinceOfResidence", "dateOfDeath",
