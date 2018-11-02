@@ -36,3 +36,4 @@ yubico-client==1.9.1
 
 # For ingesting various metadata
 git+git://github.com/CanDIG/PROFYLE_ingest.git@py3_jimli#egg=PROFYLE_ingest
+git+git://github.com/HaoyuanLi/ga4gh-common.git@master
