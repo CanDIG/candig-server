@@ -12,7 +12,7 @@
 # way to resolve our internal dependencies. During development,
 # the constraints file will point at the current master branch 
 # of the respective module.
-ga4gh-common==0.0.7
+-e git@github.com:HaoyuanLi/ga4gh-common.git
 ga4gh-schemas
 ga4gh-client
 
