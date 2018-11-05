@@ -41,7 +41,7 @@ script:
            tests ga4gh scripts
   - python -mnose tests 
               --with-coverage --cover-package ga4gh.server
-              --cover-inclusive --cover-min-percentage 75
+              --cover-inclusive --cover-min-percentage 70
               --cover-branches --cover-erase
   - make clean -C docs
   - make -C docs

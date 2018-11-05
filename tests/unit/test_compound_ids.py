@@ -36,15 +36,15 @@ class TestCompoundIds(unittest.TestCase):
         foo = latin1chars
         bar = "a unicode string"
         baz = str("an ascii string")
-        self.assertEqual(type(foo), unicode)
-        self.assertEqual(type(bar), unicode)
+        self.assertEqual(type(foo), str)
+        self.assertEqual(type(bar), str)
         self.assertEqual(type(baz), str)
         compoundId = ExampleCompoundId(None, foo, bar, baz)
-        self.assertEqual(type(compoundId.foo), unicode)
-        self.assertEqual(type(compoundId.bar), unicode)
-        self.assertEqual(type(compoundId.baz), unicode)
-        self.assertEqual(type(compoundId.foobar), unicode)
-        self.assertEqual(type(compoundId.foobarbaz), unicode)
+        self.assertEqual(type(compoundId.foo), str)
+        self.assertEqual(type(compoundId.bar), str)
+        self.assertEqual(type(compoundId.baz), str)
+        self.assertEqual(type(compoundId.foobar), str)
+        self.assertEqual(type(compoundId.foobarbaz), str)
 
     def testTopLevelIdsUnique(self):
         datasetId = "a"

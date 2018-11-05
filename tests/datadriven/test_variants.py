@@ -517,6 +517,6 @@ class VariantSetTest(datadriven.DataDrivenTest):
         if record.ALT[0] is None:
             alts = tuple()
         else:
-            alts = tuple([unicode(sub) for sub in record.ALT])
+            alts = tuple([str(sub) for sub in record.ALT])
         hash_str = record.REF + str(alts)
         return hashlib.md5(hash_str).hexdigest()

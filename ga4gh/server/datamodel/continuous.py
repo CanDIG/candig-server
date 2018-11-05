@@ -21,7 +21,11 @@ import ga4gh.server.exceptions as exceptions
 import ga4gh.schemas.pb as pb
 import ga4gh.schemas.protocol as protocol
 
-
+try:
+    # Python 2 forward compatibility
+    range = xrange
+except NameError:
+    pass
 """
 These classes handle continuous message.
 This message defines a format for exchanging continuous valued signal data,

@@ -10,6 +10,12 @@ import pysam
 
 import ga4gh.common.utils as utils
 
+try:
+    # Python 2 forward compatibility
+    range = xrange
+except NameError:
+    pass
+
 
 class AlignmentFileConstants(object):
     """

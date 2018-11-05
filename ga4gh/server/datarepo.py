@@ -32,6 +32,12 @@ import ga4gh.schemas.protocol as protocol
 MODE_READ = 'r'
 MODE_WRITE = 'w'
 
+try:
+    # Python 2 forward compatibility
+    range = xrange
+except NameError:
+    pass
+
 
 class AbstractDataRepository(object):
     """

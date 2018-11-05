@@ -14,6 +14,11 @@ import ga4gh.server.frontend as frontend
 
 import ga4gh.schemas.protocol as protocol
 
+try:
+  basestring
+except NameError:
+  basestring = str
+
 
 class TestExceptionHandler(unittest.TestCase):
     """
