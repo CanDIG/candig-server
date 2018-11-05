@@ -109,7 +109,7 @@ class Feature(object):
         including url-style quoting
         """
         return ";".join([self._attributeStr(name)
-                         for name in self.attributes.iterkeys()])
+                         for name in self.attributes.keys()])
 
     def __str__(self):
         """
@@ -192,7 +192,7 @@ class Gff3Set(object):
         finish loading the set, constructing the tree
         """
         # features maybe disjoint
-        for featureParts in self.byFeatureName.itervalues():
+        for featureParts in self.byFeatureName.values():
             for feature in featureParts:
                 self._linkFeature(feature)
 
