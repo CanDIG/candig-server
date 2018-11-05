@@ -13,8 +13,7 @@ import requests
 import shutil
 import subprocess
 import tempfile
-import urllib2
-
+from urllib.request import urlopen
 import pysam
 
 import ga4gh.common.utils as utils
@@ -206,7 +205,7 @@ class AbstractFileDownloader(object):
             ".20130502.genotypes.vcf.gz").format(chromosome)
         url = os.path.join(self.getVcfBaseUrl(), sourceFileName)
         self.log("Downloading '{}'".format(url))
-        response = urllib2.urlopen(url)
+        response = urlopen(url)
         megabyte = 1024 * 1024
         data = response.read(megabyte)
         localFileName = os.path.join(
@@ -261,7 +260,7 @@ class AbstractFileDownloader(object):
     def _downloadIndex(self, indexUrl, localIndexFile):
         self.log("Downloading index from {} to {}".format(
             indexUrl, localIndexFile))
-        response = urllib2.urlopen(indexUrl)
+        response = urlopen(indexUrl)
         with open(localIndexFile, "w") as destFile:
             destFile.write(response.read())
 

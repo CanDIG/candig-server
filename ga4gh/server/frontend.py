@@ -1777,7 +1777,7 @@ def oidcCallback():
     """
     if app.oidcClient is None:
         raise exceptions.NotImplementedException()
-    response = dict(flask.request.args.iteritems(multi=True))
+    response = dict(flask.request.args.items(multi=True))
     aresp = app.oidcClient.parse_response(
         message.AuthorizationResponse,
         info=response,

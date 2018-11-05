@@ -25,7 +25,7 @@ class TestGff3ParserOnTypicalFile(unittest.TestCase):
         self.assertNotEqual(len(self.gff3Data.roots), 0, "No root features")
 
     def testSomeFeatureIsWellFormed(self):
-        featId = self.gff3Data.byFeatureName.keys()[0]
+        featId = list(self.gff3Data.byFeatureName.keys())[0] # Modified for Python 3 compatibility
         feat = self.gff3Data.byFeatureName[featId][0]
         self.assertEqual(featId, feat.featureName, "featureName mismatch")
         self.assertIsNotNone(feat.seqname, "sequence name is not populated")

@@ -677,7 +677,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
             phaseset = str(pysamCall.phased)
         genotypeLikelihood = []
         info = {}
-        for key, value in pysamCall.iteritems():
+        for key, value in pysamCall.items():
             if key == 'GL' and value is not None:
                 genotypeLikelihood = list(value)
             elif key != 'GT':
@@ -718,7 +718,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
                 variant.filters_passed = False
                 variant.filters_failed.extend(filterKeys)
         # record.qual is also available, when supported by GAVariant.
-        for key, value in record.info.iteritems():
+        for key, value in record.info.items():
             if value is None:
                 continue
             if key == 'SVTYPE':

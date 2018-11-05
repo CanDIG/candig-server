@@ -5,7 +5,7 @@ import json
 import mimetypes
 import os
 import urllib
-import urlparse
+from urllib.parse import urlparse
 import errno
 
 import cherrypy
@@ -194,7 +194,7 @@ def main():
     path = os.path.join(os.path.dirname(__file__), "static")
     try:
         os.makedirs(path)
-    except OSError, e:
+    except OSError as e:
         if e.errno != errno.EEXIST:
             raise e
         pass

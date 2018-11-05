@@ -555,7 +555,7 @@ class SnakefoodScanner(object):
         # not just to the files that live in the same roots.
         if self.optsInternal >= 2:
             filtfiles = type(allfiles)()
-            for from_, tolist in allfiles.iteritems():
+            for from_, tolist in allfiles.items():
                 filtfiles[from_] = set(
                     x for x in tolist if x in allfiles or x == (None, None))
             allfiles = filtfiles
@@ -585,7 +585,7 @@ class SnakefoodScanner(object):
         info("")
         info("Found roots:")
         foundRoots = set()
-        for key, files in allfiles.iteritems():
+        for key, files in allfiles.items():
             foundRoots.add(key[0])
             foundRoots.update(map(operator.itemgetter(0), files))
         if None in foundRoots:
@@ -596,7 +596,7 @@ class SnakefoodScanner(object):
         entries = SnakefoodEntries()
         info("")
         for (from_root, from_), targets in sorted(
-                allfiles.iteritems(), key=operator.itemgetter(0)):
+                allfiles.items(), key=operator.itemgetter(0)):
             for to_root, to_ in sorted(targets):
                 entry = SnakefoodEntry(from_root, from_, to_root, to_)
                 entries.append(entry)

@@ -124,7 +124,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
                     " values are inconsistent",
                     "between ga4ghObject and pyvcf!"))
 
-        for key, value in pyvcfInfo.iteritems():
+        for key, value in pyvcfInfo.items():
             if isinstance(value, list):
                 self.assertEqual(len(gaObjectInfo[key].values), len(value))
                 for gaValue, pyvcfValue in zip(
@@ -138,7 +138,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
         pyvcfLen = None
         pyvcfPos = None
         pyvcfEnd = None
-        for key, value in pyvcfInfo.iteritems():
+        for key, value in pyvcfInfo.items():
             if key == 'SVTYPE':
                 pyvcfType = value
             elif key == 'SVLEN':
