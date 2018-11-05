@@ -32,12 +32,6 @@ import ga4gh.schemas.protocol as protocol
 MODE_READ = 'r'
 MODE_WRITE = 'w'
 
-try:
-    # Python 2 forward compatibility
-    range = xrange
-except NameError:
-    pass
-
 
 class AbstractDataRepository(object):
     """
@@ -650,7 +644,7 @@ class SimulatedDataRepository(AbstractDataRepository):
             numAlignments=2, numRnaQuantSets=2, numExpressionLevels=2,
             numPeers=1):
         super(SimulatedDataRepository, self).__init__()
-        for i in xrange(numPeers):
+        for i in range(numPeers):
             peer = peers.Peer("http://test{}.org".format(i))
             self.insertPeer(peer)
 

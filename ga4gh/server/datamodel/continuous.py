@@ -21,11 +21,6 @@ import ga4gh.server.exceptions as exceptions
 import ga4gh.schemas.pb as pb
 import ga4gh.schemas.protocol as protocol
 
-try:
-    # Python 2 forward compatibility
-    range = xrange
-except NameError:
-    pass
 """
 These classes handle continuous message.
 This message defines a format for exchanging continuous valued signal data,
@@ -151,7 +146,7 @@ class WiggleReader:
             while self._position < start:
                 self._data.values.append(float('NaN'))
                 self._position += 1
-            for _ in xrange(self._span):
+            for _ in range(self._span):
                 self._data.values.append(val)
             self._position += self._span
 

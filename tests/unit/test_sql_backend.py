@@ -72,8 +72,8 @@ class TestSqlBackend(unittest.TestCase):
         self.assertEqual(len(rowDict.keys()), 2)
         self.assertIn("id", rowDict.keys())
         self.assertIn("name", rowDict.keys())
-        self.assertIsInstance(rowDict["id"], unicode)
-        self.assertIsInstance(rowDict["name"], unicode)
+        self.assertIsInstance(rowDict["id"], str)
+        self.assertIsInstance(rowDict["name"], str)
 
     def testRowToDict(self):
         rows = None

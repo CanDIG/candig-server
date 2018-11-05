@@ -10,12 +10,6 @@ import pysam
 
 import ga4gh.common.utils as utils
 
-try:
-    # Python 2 forward compatibility
-    range = xrange
-except NameError:
-    pass
-
 
 class AlignmentFileConstants(object):
     """
@@ -78,7 +72,7 @@ class AlignmentFileTool(object):
         outputFilePath = outputFile.filename
         utils.log("Creating alignment file '{}'".format(outputFilePath))
         # write new file
-        for _ in xrange(self.args.numLines):
+        for _ in range(self.args.numLines):
             alignedSegment = inputFile.next()
             outputFile.write(alignedSegment)
         # clean up
