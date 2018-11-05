@@ -26,7 +26,7 @@ def _wrapTestMethod(method):
     updating the description attribute so that we can see details of
     the tests being run in nose.
     """
-    instance = method.im_self
+    instance = method.__self__
     cls = instance.__class__
 
     def testFunction():
