@@ -440,6 +440,8 @@ class VariantSetTest(datadriven.DataDrivenTest):
         variantSet = self._gaObject
         start = 0
         end = datamodel.PysamDatamodelMixin.vcfMax
+        print(end)
+        print(start)
         call_set_ids = [cs.getId() for cs in variantSet.getCallSets()]
         somecall_set_ids = call_set_ids[0:3]
         for call_set_id in call_set_ids:
@@ -519,4 +521,4 @@ class VariantSetTest(datadriven.DataDrivenTest):
         else:
             alts = tuple([str(sub) for sub in record.ALT])
         hash_str = record.REF + str(alts)
-        return hashlib.md5(hash_str).hexdigest()
+        return hashlib.md5(hash_str.encode('utf-8')).hexdigest()  #Python 3 fix
