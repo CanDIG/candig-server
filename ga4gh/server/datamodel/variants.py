@@ -13,6 +13,7 @@ import json
 import os
 import random
 import re
+from six import iteritems
 
 import pysam
 
@@ -677,7 +678,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
             phaseset = str(pysamCall.phased)
         genotypeLikelihood = []
         info = {}
-        for key, value in pysamCall.items():
+        for key, value in iteritems(pysamCall):
             if key == 'GL' and value is not None:
                 genotypeLikelihood = list(value)
             elif key != 'GT':
@@ -718,7 +719,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
                 variant.filters_passed = False
                 variant.filters_failed.extend(filterKeys)
         # record.qual is also available, when supported by GAVariant.
-        for key, value in record.info.items():
+        for key, value in iteritems(record.info):
             if value is None:
                 continue
             if key == 'SVTYPE':

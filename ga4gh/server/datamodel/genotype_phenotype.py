@@ -13,6 +13,7 @@ import ga4gh.server.datamodel as datamodel
 import ga4gh.server.exceptions as exceptions
 
 import ga4gh.schemas.protocol as protocol
+from six import iteritems
 
 # annotation keys
 TYPE = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
@@ -135,7 +136,7 @@ class G2PUtility(object):
         create a dict of plain text
         """
         myDict = {}
-        for key, val in bindings.items():
+        for key, val in iteritems(bindings):
             myDict[key.toPython().replace('?', '')] = val.toPython()
         return myDict
 

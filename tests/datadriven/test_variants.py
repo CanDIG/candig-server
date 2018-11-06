@@ -18,6 +18,7 @@ import ga4gh.server.datamodel.variants as variants
 import ga4gh.server.exceptions as exceptions
 import tests.datadriven as datadriven
 import tests.paths as paths
+from six import iteritems
 
 import ga4gh.common.utils as utils
 import ga4gh.schemas.protocol as protocol
@@ -124,7 +125,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
                     " values are inconsistent",
                     "between ga4ghObject and pyvcf!"))
 
-        for key, value in pyvcfInfo.items():
+        for key, value in iteritems(pyvcfInfo):
             if isinstance(value, list):
                 self.assertEqual(len(gaObjectInfo[key].values), len(value))
                 for gaValue, pyvcfValue in zip(
@@ -138,7 +139,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
         pyvcfLen = None
         pyvcfPos = None
         pyvcfEnd = None
-        for key, value in pyvcfInfo.items():
+        for key, value in iteritems(pyvcfInfo):
             if key == 'SVTYPE':
                 pyvcfType = value
             elif key == 'SVLEN':

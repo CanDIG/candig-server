@@ -12,6 +12,7 @@ import ga4gh.server.exceptions as exceptions
 import ga4gh.server.datamodel.obo_parser as obo_parser
 
 import ga4gh.schemas.protocol as protocol
+from six import iteritems
 
 
 SEQUENCE_ONTOLOGY_PREFIX = "SO"
@@ -116,7 +117,7 @@ class Ontology(object):
         Returns the ontology term name corresponding to the specified IDs.
         If the term name is not found, return the empty list.
         """
-        for name, termIds in self._nameIdMap.items():
+        for name, termIds in iteritems(self._nameIdMap):
             # because it is a list of ids
             for termId in termIds:
                 if id == termId:

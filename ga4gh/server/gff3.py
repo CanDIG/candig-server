@@ -14,6 +14,7 @@ import re
 import gzip
 import bz2
 import collections
+from six import iterkeys, itervalues
 
 GFF3_HEADER = "##gff-version 3"
 
@@ -109,7 +110,7 @@ class Feature(object):
         including url-style quoting
         """
         return ";".join([self._attributeStr(name)
-                         for name in self.attributes.keys()])
+                         for name in iterkeys(self.attributes)])
 
     def __str__(self):
         """
@@ -192,7 +193,7 @@ class Gff3Set(object):
         finish loading the set, constructing the tree
         """
         # features maybe disjoint
-        for featureParts in self.byFeatureName.values():
+        for featureParts in itervalues(self.byFeatureName):
             for feature in featureParts:
                 self._linkFeature(feature)
 
