@@ -1020,7 +1020,7 @@ class AbstractVariantAnnotationSet(datamodel.DatamodelObject):
             "{}\t{}\t{}\t{}".format(
                 gaTranscriptEffect.alternate_bases,
                 gaTranscriptEffect.feature_id,
-                effs, gaTranscriptEffect.hgvs_annotation)
+                effs, gaTranscriptEffect.hgvs_annotation).encode("utf-8")
         ).hexdigest()
 
     def hashVariantAnnotation(cls, gaVariant, gaVariantAnnotation):
@@ -1031,7 +1031,7 @@ class AbstractVariantAnnotationSet(datamodel.DatamodelObject):
         return hashlib.md5(
             "{}\t{}\t{}\t".format(
                 gaVariant.reference_bases, tuple(gaVariant.alternate_bases),
-                treffs)
+                treffs).encode("utf-8")
         ).hexdigest()
 
     def getVariantAnnotationId(self, gaVariant, gaAnnotation):
