@@ -252,7 +252,7 @@ class Backend(object):
                 return id_list
 
             except KeyError:
-                raise exceptions.InvalidLogicException("given id does not match a component")
+                raise exceptions.InvalidLogicException("Given id does not match a component")
 
         else:
             # invalid logic key
@@ -1796,7 +1796,7 @@ class Backend(object):
         try:
             request = protocol.fromJson(request, protocol.SearchQueryRequest)
         except protocol.json_format.ParseError as e:
-            raise exceptions.InvalidJsonException(e.message)
+            raise exceptions.InvalidJsonException(str(e))
         return self.queryGenerator(request, return_mimetype, access_map)
 
     def runSearchPatients(self, request, return_mimetype, access_map):
