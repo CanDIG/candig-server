@@ -468,7 +468,6 @@ class Backend(object):
 
         if table == "variantsByGene":
             gene = results[0].get("gene")
-            gene = "MUC1"
 
             if gene is None:
                 raise exceptions.MissingGeneNameException
