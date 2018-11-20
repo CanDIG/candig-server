@@ -398,12 +398,6 @@ class Backend(object):
         #     "tumourboards": protocol.SearchTumourboardsRequest
         # }
 
-        request = {}
-
-        # no valid patient id's means no results
-        if not patient_list:
-            return '{}'
-
         table = results[0].get("table")
         field = results[0].get("field")
 
@@ -416,7 +410,6 @@ class Backend(object):
             raise exceptions.MissingFieldNameException("Invalid results table specified")
 
         # TODO: Handle returning other table types e.g. variants
-
         if table == "variantsByGene" or table == "variants":
             results = self.variantsResultsHandler(table, results, patient_list, dataset_id,
                                                   return_mimetype, access_map, page_token)
@@ -445,11 +438,18 @@ class Backend(object):
         # filter results on given field list (/search endpoint)
         elif field:
             json_results = json.loads(results)
-            json_array = json_results[table]
+            json_array = json_results.get(table, [])
             filtered_results = []
             for entry in json_array:
                 filtered_results.append({k: entry[k] for k in field if k in entry})
-            results = json.dumps({table: filtered_results})
+            response_obj = {}
+            if filtered_results:
+                response_obj = {table: filtered_results}
+            results = json.dumps(response_obj)
+
+        # returns empty list instead of 404
+        if not json.loads(results):
+            results = json.dumps({table: []})
 
         return results
 
@@ -473,7 +473,10 @@ class Backend(object):
         # TODO: option to apply differential privacy?
         # ndp = DP.DP(field_value_counts, eps=0.9)
         # ndp.get_noise()
-        agg_results = {table: [field_value_counts]}
+        response_list = []
+        if field_value_counts:
+            response_list.append(field_value_counts)
+        agg_results = {table: response_list}
         if "nextPageToken" in results:
             agg_results["nextPageToken"] = results["nextPageToken"]
         return json.dumps(agg_results)

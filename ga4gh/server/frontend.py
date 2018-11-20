@@ -639,10 +639,12 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                     except ValueError:
                         pass
 
-    # If no result has been found on any of the servers raise an error (GET endpoints)
+    # If no result has been found on any of the servers raise an error
     if not responseObject['results']:
         if request_type == 'GET':
             raise exceptions.ObjectWithIdNotFoundException(request)
+        elif request_type == 'POST':
+            raise exceptions.ObjectWithIdNotFoundException(json.loads(request))
 
     # Reformat the status response
     responseObject['status'] = {
