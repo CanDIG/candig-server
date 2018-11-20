@@ -433,19 +433,11 @@ class Backend(object):
 
         # perform count based on field aggregation (/count endpoint)
         if count:
-            results = self.aggregationHandler(table, json.loads(results), field)
+            results = self.aggregationHandler(table, results, field)
 
         # filter results on given field list (/search endpoint)
         elif field:
-            json_results = json.loads(results)
-            json_array = json_results.get(table, [])
-            filtered_results = []
-            for entry in json_array:
-                filtered_results.append({k: entry[k] for k in field if k in entry})
-            response_obj = {}
-            if filtered_results:
-                response_obj = {table: filtered_results}
-            results = json.dumps(response_obj)
+            results = self.fieldHandler(table, results, field)
 
         # returns empty list instead of 404
         if not json.loads(results):
@@ -454,12 +446,27 @@ class Backend(object):
         return results
 
     @staticmethod
+    def fieldHandler(table, results, field):
+        json_results = json.loads(results)
+        json_array = json_results.get(table, [])
+        filtered_results = []
+        for entry in json_array:
+            filtered_fields = {k: entry[k] for k in field if k in entry}
+            if filtered_fields:
+                filtered_results.append(filtered_fields)
+        response_obj = {}
+        if filtered_results:
+            response_obj = {table: filtered_results}
+        return json.dumps(response_obj)
+
+    @staticmethod
     def aggregationHandler(table, results, field):
+        json_results = json.loads(results)
         field_value_counts = {}
         if table == "variantsByGene":
             table = "variants"
         try:
-            for entry in results[table]:
+            for entry in json_results[table]:
                 for k, v in entry.iteritems():
                     if k in field:
                         if k not in field_value_counts:
@@ -477,8 +484,8 @@ class Backend(object):
         if field_value_counts:
             response_list.append(field_value_counts)
         agg_results = {table: response_list}
-        if "nextPageToken" in results:
-            agg_results["nextPageToken"] = results["nextPageToken"]
+        if "nextPageToken" in json_results:
+            agg_results["nextPageToken"] = json_results["nextPageToken"]
         return json.dumps(agg_results)
 
     def variantsResultsHandler(self, table, results, patient_list, dataset_id, return_mimetype, access_map, page_token):
