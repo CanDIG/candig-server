@@ -174,7 +174,7 @@ class Backend(object):
             self.getDataRepository().getAuthzDatasetByIndex, access_map=access_map)
 
     # SEARCH
-    def queryGenerator(self, request, return_mimetype, access_map):
+    def queryGenerator(self, request, return_mimetype, access_map, count=False):
         """
         Generator object for advanced search queries
         """
@@ -192,7 +192,7 @@ class Backend(object):
         patient_list = self.logicHandler(logic, responses, dataset_id, access_map)
         page_token = parsedRequest.get("pageToken")
 
-        return self.resultsHandler(results, patient_list, dataset_id, return_mimetype, access_map, page_token)
+        return self.resultsHandler(results, patient_list, dataset_id, return_mimetype, access_map, page_token, count)
 
     def logicHandler(self, logic, responses, dataset_id, access_map):
         """
@@ -209,12 +209,11 @@ class Backend(object):
         if len(logic.keys()) == 1:
             logic_key = logic.keys()[0]
         elif len(logic.keys()) == 2:
-            if 'id' in logic.keys():
+            if {'id', 'negate'} == set(logic.keys()):
                 logic_key = 'id'
-            else:
-                raise exceptions.InvalidLogicException("Invalid key used")
-            if 'negate' in logic.keys():
                 logic_negate = bool(logic['negate'])
+            else:
+                raise exceptions.InvalidLogicException("Invalid key combination")
         else:
             raise exceptions.InvalidLogicException('Invalid number of keys')
 
@@ -319,10 +318,11 @@ class Backend(object):
                     request["gene"] = component[endpoint]["gene"]
 
                 else:
-                    request["filters"] = component[endpoint]["filters"]
+                    if "filters" in component[endpoint]:
+                        request["filters"] = component[endpoint]["filters"]
 
             except KeyError as error:
-                raise exceptions.MissingFieldNameException(error.message)
+                raise exceptions.MissingFieldNameException(str(error))
 
             idMapper[component["id"]] = endpoint
             requests[component["id"]] = request
@@ -368,7 +368,7 @@ class Backend(object):
 
         return responses
 
-    def resultsHandler(self, results, patient_list, dataset_id, return_mimetype, access_map, page_token):
+    def resultsHandler(self, results, patient_list, dataset_id, return_mimetype, access_map, page_token, count):
         """
         :param results:
         :return:
@@ -398,14 +398,11 @@ class Backend(object):
         #     "tumourboards": protocol.SearchTumourboardsRequest
         # }
 
-        request = {}
-
-        # no valid patient id's means no results
-        if not patient_list:
-            return '{}'
-
         table = results[0].get("table")
-        aggregate = results[0].get("count")
+        field = results[0].get("field")
+
+        if count and not field:
+            raise exceptions.MissingFieldNameException("Field list required for count query")
 
         if table is None:
             raise exceptions.MissingFieldNameException("table")
@@ -413,7 +410,6 @@ class Backend(object):
             raise exceptions.MissingFieldNameException("Invalid results table specified")
 
         # TODO: Handle returning other table types e.g. variants
-
         if table == "variantsByGene" or table == "variants":
             results = self.variantsResultsHandler(table, results, patient_list, dataset_id,
                                                   return_mimetype, access_map, page_token)
@@ -435,31 +431,61 @@ class Backend(object):
 
             results = self.endpointMapper[table](requestStr, return_mimetype, access_map)
 
-        if aggregate:
-            results = self.aggregationHandler(table, json.loads(results), aggregate)
+        # perform count based on field aggregation (/count endpoint)
+        if count:
+            results = self.aggregationHandler(table, results, field)
+
+        # filter results on given field list (/search endpoint)
+        elif field:
+            results = self.fieldHandler(table, results, field)
+
+        # returns empty list instead of 404
+        if not json.loads(results):
+            results = json.dumps({table: []})
 
         return results
 
     @staticmethod
-    def aggregationHandler(table, results, aggregate):
+    def fieldHandler(table, results, field):
+        json_results = json.loads(results)
+        json_array = json_results.get(table, [])
+        filtered_results = []
+        for entry in json_array:
+            filtered_fields = {k: entry[k] for k in field if k in entry}
+            if filtered_fields:
+                filtered_results.append(filtered_fields)
+        response_obj = {}
+        if filtered_results:
+            response_obj = {table: filtered_results}
+        return json.dumps(response_obj)
+
+    @staticmethod
+    def aggregationHandler(table, results, field):
+        json_results = json.loads(results)
         field_value_counts = {}
         if table == "variantsByGene":
             table = "variants"
-        for entry in results[table]:
-            for k, v in entry.iteritems():
-                if k in aggregate:
-                    if k not in field_value_counts:
-                        field_value_counts[k] = {}
-                    if v not in field_value_counts[k]:
-                        field_value_counts[k][v] = 1
-                    else:
-                        field_value_counts[k][v] += 1
+        try:
+            for entry in json_results[table]:
+                for k, v in entry.iteritems():
+                    if k in field:
+                        if k not in field_value_counts:
+                            field_value_counts[k] = {}
+                        if v not in field_value_counts[k]:
+                            field_value_counts[k][v] = 1
+                        else:
+                            field_value_counts[k][v] += 1
+        except KeyError:
+            field_value_counts = {}
         # TODO: option to apply differential privacy?
         # ndp = DP.DP(field_value_counts, eps=0.9)
         # ndp.get_noise()
-        agg_results = {table: [field_value_counts]}
-        if "nextPageToken" in results:
-            agg_results["nextPageToken"] = results["nextPageToken"]
+        response_list = []
+        if field_value_counts:
+            response_list.append(field_value_counts)
+        agg_results = {table: response_list}
+        if "nextPageToken" in json_results:
+            agg_results["nextPageToken"] = json_results["nextPageToken"]
         return json.dumps(agg_results)
 
     def variantsResultsHandler(self, table, results, patient_list, dataset_id, return_mimetype, access_map, page_token):
@@ -1798,6 +1824,17 @@ class Backend(object):
         except protocol.json_format.ParseError as e:
             raise exceptions.InvalidJsonException(str(e))
         return self.queryGenerator(request, return_mimetype, access_map)
+
+    # Count requests
+    def runCountQuery(self, request, return_mimetype, access_map):
+        """
+        Runs count query on top of advanced SearchRequest
+        """
+        try:
+            request = protocol.fromJson(request, protocol.SearchQueryRequest)
+        except protocol.json_format.ParseError as e:
+            raise exceptions.InvalidJsonException(str(e))
+        return self.queryGenerator(request, return_mimetype, access_map, count=True)
 
     def runSearchPatients(self, request, return_mimetype, access_map):
         """

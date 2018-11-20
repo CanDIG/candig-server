@@ -640,7 +640,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                         pass
 
     # If no result has been found on any of the servers raise an error
-    if not responseObject['results'] or not responseObject['results']:
+    if not responseObject['results']:
         if request_type == 'GET':
             raise exceptions.ObjectWithIdNotFoundException(request)
         elif request_type == 'POST':
@@ -1017,6 +1017,13 @@ def server_info():
 def searchQuery():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchQuery)
+
+
+@DisplayedRoute('/count', postMethod=True)
+@requires_auth
+def countQuery():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runCountQuery)
 
 
 @DisplayedRoute('/variantsbygenesearch', postMethod=True)
