@@ -46,6 +46,7 @@ import ga4gh.schemas.protocol as protocol
 
 from ga4gh.client import client
 import base64
+from collections import Counter
 
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
@@ -639,12 +640,18 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                     except ValueError:
                         pass
 
+    if endpoint == app.backend.runCountQuery:
+        _mergeCounts(responseObject)
+
     # If no result has been found on any of the servers raise an error
     if not responseObject['results']:
         if request_type == 'GET':
             raise exceptions.ObjectWithIdNotFoundException(request)
         elif request_type == 'POST':
             raise exceptions.ObjectWithIdNotFoundException(json.loads(request))
+    else:
+        table = list(set(responseObject['results'].keys()) - {"nextPageToken"})[0]
+        responseObject['results']['total'] = len(responseObject['results'][table])
 
     # Reformat the status response
     responseObject['status'] = {
@@ -724,6 +731,25 @@ def _parseTokenPayload(token):
         decoded_payload = '{}'
 
     return json.loads(decoded_payload)
+
+
+def _mergeCounts(responseObject):
+    table = responseObject['results'].keys()[0]
+    prepare_counts = {}
+    for record in responseObject['results'][table]:
+        for k, v in record.iteritems():
+            if k in prepare_counts:
+                prepare_counts[k].append(Counter(v))
+            else:
+                prepare_counts[k] = [Counter(v)]
+
+    merged_counts = {}
+    for field in prepare_counts:
+        count_total = Counter()
+        for count in prepare_counts[field]:
+            count_total = count_total + count
+        merged_counts[field] = dict(count_total)
+    responseObject['results'][table] = [merged_counts]
 
 
 def handleHttpPost(request, endpoint):
