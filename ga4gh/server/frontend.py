@@ -631,8 +631,8 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                                 responseObject['results'] = peer_response
                             else:
                                 for key in peer_response:
-                                    if key == 'nextPageToken':
-                                        if 'nextPageToken' not in responseObject['results']:
+                                    if key in ['nextPageToken', 'total']:
+                                        if key not in responseObject['results']:
                                             responseObject['results'][key] = peer_response[key]
                                         continue
                                     for record in peer_response[key]:
@@ -650,7 +650,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         elif request_type == 'POST':
             raise exceptions.ObjectWithIdNotFoundException(json.loads(request))
     else:
-        table = list(set(responseObject['results'].keys()) - {"nextPageToken"})[0]
+        table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
         responseObject['results']['total'] = len(responseObject['results'][table])
 
     # Reformat the status response

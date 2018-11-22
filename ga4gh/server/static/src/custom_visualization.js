@@ -119,34 +119,24 @@ $("#table2").off("change").change(function() {
 
 $("#adv1_confirm").off('click').click(function() {
     document.getElementById("adv1").innerHTML = '<div class="loader_bar"></div>';
-    makeRequest($("#table1").val() + "/search", {
-        "datasetId": datasetId
-    }).then(function(response) {
-        var data = JSON.parse(response)["results"][$("#table1").val()];
-        var selectedKey = $("#key1").val()
-
-        if (data[0][selectedKey] == undefined) {
+    countRequest($("#table1").val(), [$("#key1").val()], datasetId).then(function(response) {
+        if (response[$("#key1").val()] == undefined) {
             document.getElementById("adv1").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
         } else {
-            var count = groupBy(data, selectedKey);
-            singleLayerDrawer("adv1", $("#type1").val(), "Distribution of " + splitString(selectedKey), currentDatasetName + " " + splitString($("#table1").val()), count)
+            var selectedKey = $("#key1").val();
+            singleLayerDrawer("adv1", $("#type1").val(), "Distribution of " + splitString(selectedKey), currentDatasetName + " " + splitString($("#table1").val()), response[$("#key1").val()])
         }
     })
 });
 
 $("#adv2_confirm").off('click').click(function() {
     document.getElementById("adv2").innerHTML = '<div class="loader_bar"></div>';
-    makeRequest($("#table2").val() + "/search", {
-        "datasetId": datasetId
-    }).then(function(response) {
-        var data = JSON.parse(response)["results"][$("#table2").val()];
-        var selectedKey = $("#key2").val()
-
-        if (data[0][selectedKey] == undefined) {
+    countRequest($("#table2").val(), [$("#key1").val()], datasetId).then(function(response) {
+        if (response[$("#key2").val()] == undefined) {
             document.getElementById("adv2").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
         } else {
-            var count = groupBy(data, selectedKey);
-            singleLayerDrawer("adv2", $("#type2").val(), "Distribution of " + splitString(selectedKey), currentDatasetName + " " + splitString($("#table1").val()), count)
+            var selectedKey = $("#key2").val();
+            singleLayerDrawer("adv2", $("#type2").val(), "Distribution of " + splitString(selectedKey), currentDatasetName + " " + splitString($("#table2").val()), response[$("#key2").val()])
         }
     })
 });
@@ -166,16 +156,15 @@ function initialize() {
         document.getElementById("type1").selectedIndex = JSON.stringify(types.indexOf(type1));
         document.getElementById("type2").selectedIndex = JSON.stringify(types.indexOf(type2));
 
-        makeRequest("patients/search", {
-            "datasetId": datasetId
-        }).then(function(response) {
-            var data = JSON.parse(response)["results"]["patients"];
-            var selectedKey = "provinceOfResidence"
-            var count = groupBy(data, selectedKey);
-
-            singleLayerDrawer("adv1", type1, "Distribution of Province Of Residence", currentDatasetName + " " + "Patients", count)
-            singleLayerDrawer("adv2", type2, "Distribution of Province Of Residence", currentDatasetName + " " + "Patients", count)
-        });
+        countRequest($("#table1").val(), [$("#key1").val()], datasetId).then(function(response) {
+            if (response[$("#key1").val()] == undefined) {
+                document.getElementById("adv1").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
+                document.getElementById("adv2").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
+            } else {
+                singleLayerDrawer("adv1", type1, "Distribution of Province Of Residence", currentDatasetName + " " + "Patients", response[$("#key1").val()])
+                singleLayerDrawer("adv2", type2, "Distribution of Province Of Residence", currentDatasetName + " " + "Patients", response[$("#key2").val()])
+            }
+        })
     }
 }
 

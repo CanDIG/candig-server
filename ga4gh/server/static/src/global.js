@@ -50,7 +50,7 @@ function makeRequest(path, body) {
                         let keys = Object.keys(data["results"])
 
                         for (let i = 0; i < keys.length; i++) {
-                            if (keys[i] != "nextPageToken") {
+                            if (keys[i] != "nextPageToken" && keys[i] != "total") {
                                 key = keys[i];
                             }
                         }
@@ -148,3 +148,48 @@ function getCookie(name) {
 function setCookie(name, value) {
     document.cookie = name + "=" + value;
 }
+
+
+/**
+ * Make a request to the /count endpoint
+ * @param {string} table The table of the request
+ * @param {array} keys A list of fields to aggregate on
+ * @param {string} datasetId The current chosen datasetId 
+ * @return a Promise with an object that contains aggregation values from the server
+*/
+
+function countRequest(table, keys, datasetId) {
+    return new Promise(function(resolve, reject) {
+
+    let body = {
+        "dataset_id": datasetId,
+        "logic": {
+            "id": "A"
+        },
+        "components": [
+            {
+                "id": "A"
+            }
+        ],
+        "results": [
+            {
+                "table": table,
+                "field": keys
+            }
+        ]
+    }
+    // Assign the requested table to be the key of the first component
+    body["components"][0][table] = {}
+
+    makeRequest("/count", body).then(function(response) {
+
+        let listOfCounts = JSON.parse(response)["results"][table][0];
+
+        resolve(listOfCounts);
+
+    }), function(Error) {
+
+        reject(Error(response));
+        
+    }
+})}

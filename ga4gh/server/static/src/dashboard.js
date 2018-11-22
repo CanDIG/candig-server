@@ -113,31 +113,30 @@ function dashboard() {
     }
 
     function samplesFetcher() {
-        makeRequest("samples/search", {
+        makeRequest("enrollments/search", {
             "datasetId": datasetId
         }).then(function(response) {
             var data = JSON.parse(response);
-            var sampleDataset = data['results']['samples'];
+            var sampleDataset = data['results']['enrollments'];
             var collectionDateArray = [];
             var hospitalFrequency;
 
-            if (sampleDataset[0]["collectionHospital"] != undefined) {
-                hospitalFrequency = groupBy(sampleDataset, "collectionHospital")
+            if (sampleDataset[0]["treatingCentreName"] != undefined) {
+                hospitalFrequency = groupBy(sampleDataset, "treatingCentreName")
                 singleLayerDrawer("hospitals", 'bar', 'Hospital distribution', hospitalFrequency);
             }
 
-            if (sampleDataset[0]["collectionDate"] == undefined) {
+            if (sampleDataset[0]["enrollmentApprovalDate"] == undefined) {
                 document.getElementById("timelineSamples").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
             } else {
                 for (var i = 0; i < sampleDataset.length; i++) {
-                    if (sampleDataset[i]['collectionDate']) {
-                        var tempDate = sampleDataset[i]['collectionDate'];
-                        sampleDataset[i]['collectionDate'] = tempDate.substr(tempDate.length - 4);
+                    if (sampleDataset[i]['enrollmentApprovalDate']) {
+                        let tempDate = new Date(sampleDataset[i]['enrollmentApprovalDate']);
+                        sampleDataset[i]['enrollmentApprovalDate'] = tempDate.getFullYear();
                     }
                 }
 
-                collectionDateArray = groupBy(sampleDataset, "collectionDate")
-
+                collectionDateArray = groupBy(sampleDataset, "enrollmentApprovalDate")
 
                 var years = Object.keys(collectionDateArray);
                 var yearsCount = Object.values(collectionDateArray);
