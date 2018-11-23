@@ -137,6 +137,7 @@ class TestConfig(BaseConfig):
     REQUEST_VALIDATION = True
     TYK_ENABLED = False
     TYK_SERVER = TYK_LISTEN_PATH = KC_SERVER = KC_LOGIN_REDIRECT = ''
+    DP_EPSILON = None
 
 
 class TestOidcConfig(TestConfig):

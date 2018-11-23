@@ -223,6 +223,7 @@ class Ga4ghServerForTestingDataSource(Ga4ghServerForTesting):
     def getConfig(self):
         config = """
 DATA_SOURCE = "{}"
+DP_EPSILON = None
 DEBUG = True""".format(self.dataDir)
         return config
 

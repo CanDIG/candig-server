@@ -1212,24 +1212,6 @@ def token():
     return flask.Response(json.dumps(response), status=status, mimetype=mimetype)
 
 
-@app.route('/concordance')
-def concordance():
-    gene = request.args.get('gene', '', type=str)
-    if gene == '':
-        return jsonify(result = 'Gene symbol is missing')
-    concordance, freq, uniq = client.FederatedClient(
-        ServerStatus().getPeers()).get_concordance(gene)
-    abnormality = NCIT.NCIT().get_genetic_abnormalities(gene)
-    disease = NCIT.NCIT().get_diseases(gene)
-    return jsonify(result=render_template(
-        'concordance.html',
-        concordance=concordance,
-        freq=freq,
-        uniq=uniq,
-        abnormality=abnormality,
-        disease=disease))
-
-
 # New configuration added by Kevin Chan
 @app.route("/login")
 def login():
@@ -1258,20 +1240,6 @@ def callback_handling():
             redirect_uri=app.config.get('AUTH0_CALLBACK_URL'))()
     else:
         raise exceptions.NotFoundException()
-
-
-@app.route("/logout")
-@requires_auth
-@cross_origin(headers=['Content-Type', 'Authorization'])
-def logout():
-    key = flask.session['auth0_key']
-    auth.logout(app.cache)
-    url = 'https://{}/v2/logout?access_token={}&?client_id={}'.format(
-        app.config.get('AUTH0_HOST'),
-        key,
-        app.config.get('AUTH0_CLIENT_ID'),
-        app.config.get('AUTH0_CALLBACK_URL'))
-    return flask.redirect(url)
 
 
 @app.route('/favicon.ico')
