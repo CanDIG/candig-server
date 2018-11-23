@@ -381,6 +381,7 @@ def _configure_backend(app):
     theBackend.setRequestValidation(app.config["REQUEST_VALIDATION"])
     theBackend.setDefaultPageSize(app.config["DEFAULT_PAGE_SIZE"])
     theBackend.setMaxResponseLength(app.config["MAX_RESPONSE_LENGTH"])
+    theBackend.setDpEpsilon(app.config["DP_EPSILON"])
     return theBackend
 
 
