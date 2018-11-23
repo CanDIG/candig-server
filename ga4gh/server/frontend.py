@@ -16,9 +16,7 @@ import functools
 import json
 
 import flask
-from flask_cors import cross_origin, CORS
-# from flask.ext.oidc import OpenIDConnect
-from flask import jsonify, render_template, request  # Flask
+from flask_cors import CORS
 import humanize
 import werkzeug
 import oic
@@ -39,12 +37,9 @@ import ga4gh.server.exceptions as exceptions
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.auth as auth
 import ga4gh.server.network as network
-# import ga4gh.server.DP as DP
-import ga4gh.server.NCIT as NCIT
 
 import ga4gh.schemas.protocol as protocol
 
-from ga4gh.client import client
 import base64
 from collections import Counter
 
