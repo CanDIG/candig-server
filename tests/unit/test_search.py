@@ -24,7 +24,7 @@ class TestSearchGenerator(unittest.TestCase):
         self.backend = backend.Backend(dataRepository)
         self.dataset = self.backend.getDataRepository().getDatasets()[0]
 
-    def testCountQuery1(self):
+    def testCountQuery(self):
         dataset_id = self.dataset.getId()
         request = {
             "dataset_id": dataset_id,
@@ -51,3 +51,81 @@ class TestSearchGenerator(unittest.TestCase):
         responseStr = self.backend.runCountQuery(request, "application/json", {self.dataset.getLocalId(): 4})
         response = json.loads(responseStr)
         self.assertEqual(response["patients"][0]["gender"]["male"], 10)
+
+    def testSearchQuery(self):
+        dataset_id = self.dataset.getId()
+        request = {
+            "dataset_id": dataset_id,
+            "logic": {
+                "and": [
+                    {
+                        "id": "A"
+                    },
+                    {
+                        "or": [
+                            {
+                                "id": "B",
+                                "negate": True
+                            },
+                            {
+                                "id": "C"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "enrollments": {
+                        "filters": [
+                            {
+                                "field": "treatingCentreName",
+                                "operator": "!=",
+                                "value": "Ontario"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "B",
+                    "treatments": {
+                        "filters": [
+                            {
+                                "field": "courseNumber",
+                                "operator": "!=",
+                                "value": "100"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": "C",
+                    "diagnoses": {
+                        "filters": [
+                            {
+                                "field": "sampleType",
+                                "operator": "==",
+                                "value": "metastatic"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "samples",
+                    "field": [
+                        "sampleType",
+                        "quantity"
+                    ]
+                }
+            ]
+        }
+        request = json.dumps(request)
+        # assert error for empty access map
+        with self.assertRaises(exceptions.NotAuthorizedException):
+            self.backend.runSearchQuery(request, "application/json", {})
+        responseStr = self.backend.runSearchQuery(request, "application/json", {self.dataset.getLocalId(): 4})
+        response = json.loads(responseStr)
+        self.assertEqual(len(response["samples"]), 3)
