@@ -209,4 +209,30 @@ class TestSearchGenerator(unittest.TestCase):
         }
         return json.dumps(request)
 
-
+    def testDifferentialPrivacy(self):
+        request = {
+            "dataset_id": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "patients": {}
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "field": ["provinceOfResidence"]
+                }
+            ]
+        }
+        request = json.dumps(request)
+        self.backend.setDpEpsilon(0.75)
+        self.assertEqual(self.backend._dpEpsilon, 0.75)
+        responseStr = self.backend.runCountQuery(request, "application/json", self.access_map)
+        response = json.loads(responseStr)
+        fieldResponse = response["patients"][0]["provinceOfResidence"]
+        self.assertGreater(fieldResponse["British Columbia"], fieldResponse["Quebec"])
+        self.assertGreater(fieldResponse["British Columbia"], fieldResponse["Northwest Territories"])
