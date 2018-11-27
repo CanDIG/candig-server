@@ -14,7 +14,7 @@ class DP(object):
         federated_counts_dp = defaultdict()
 
         for k, v in self._servers.items():
-            federated_counts_dp[k] = self._add_noise(len(v), k)
+            federated_counts_dp[k] = self._add_noise(v, k)
 
         return federated_counts_dp
 
@@ -37,11 +37,11 @@ class DP(object):
                 if type(v) is dict:
                     for var, count in v.items():
                         vec[pop][var] += int(np.random.laplace(0, scale=scale))
-                        vec[pop][var] = max(vec[pop][var], 0.0)
+                        vec[pop][var] = max(vec[pop][var], 1)
                 else:
                     vec[pop] += int(np.random.laplace(0, scale=scale))
-                    vec[pop] = max(vec[pop], 0.0)
+                    vec[pop] = max(vec[pop], 1)
         else:
             vec += int(np.random.laplace(0, scale=scale))
-            vec = max(vec, 0.0)
+            vec = max(vec, 1)
         return vec

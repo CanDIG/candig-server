@@ -16,9 +16,7 @@ import functools
 import json
 
 import flask
-from flask_cors import cross_origin, CORS
-# from flask.ext.oidc import OpenIDConnect
-from flask import jsonify, render_template, request  # Flask
+from flask_cors import CORS
 import humanize
 import werkzeug
 import oic
@@ -39,12 +37,9 @@ import ga4gh.server.exceptions as exceptions
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.auth as auth
 import ga4gh.server.network as network
-# import ga4gh.server.DP as DP
-import ga4gh.server.NCIT as NCIT
 
 import ga4gh.schemas.protocol as protocol
 
-from ga4gh.client import client
 import base64
 from collections import Counter
 
@@ -381,6 +376,7 @@ def _configure_backend(app):
     theBackend.setRequestValidation(app.config["REQUEST_VALIDATION"])
     theBackend.setDefaultPageSize(app.config["DEFAULT_PAGE_SIZE"])
     theBackend.setMaxResponseLength(app.config["MAX_RESPONSE_LENGTH"])
+    theBackend.setDpEpsilon(app.config["DP_EPSILON"])
     return theBackend
 
 
@@ -1211,24 +1207,6 @@ def token():
     return flask.Response(json.dumps(response), status=status, mimetype=mimetype)
 
 
-@app.route('/concordance')
-def concordance():
-    gene = request.args.get('gene', '', type=str)
-    if gene == '':
-        return jsonify(result = 'Gene symbol is missing')
-    concordance, freq, uniq = client.FederatedClient(
-        ServerStatus().getPeers()).get_concordance(gene)
-    abnormality = NCIT.NCIT().get_genetic_abnormalities(gene)
-    disease = NCIT.NCIT().get_diseases(gene)
-    return jsonify(result=render_template(
-        'concordance.html',
-        concordance=concordance,
-        freq=freq,
-        uniq=uniq,
-        abnormality=abnormality,
-        disease=disease))
-
-
 # New configuration added by Kevin Chan
 @app.route("/login")
 def login():
@@ -1257,20 +1235,6 @@ def callback_handling():
             redirect_uri=app.config.get('AUTH0_CALLBACK_URL'))()
     else:
         raise exceptions.NotFoundException()
-
-
-@app.route("/logout")
-@requires_auth
-@cross_origin(headers=['Content-Type', 'Authorization'])
-def logout():
-    key = flask.session['auth0_key']
-    auth.logout(app.cache)
-    url = 'https://{}/v2/logout?access_token={}&?client_id={}'.format(
-        app.config.get('AUTH0_HOST'),
-        key,
-        app.config.get('AUTH0_CLIENT_ID'),
-        app.config.get('AUTH0_CALLBACK_URL'))
-    return flask.redirect(url)
 
 
 @app.route('/favicon.ico')

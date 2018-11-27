@@ -15,7 +15,7 @@ import operator
 from google.protobuf.json_format import MessageToDict
 import json
 import itertools
-# import DP as DP
+import DP as DP
 
 
 class Backend(object):
@@ -28,6 +28,7 @@ class Backend(object):
         self._defaultPageSize = 300
         self._maxResponseLength = 2**20  # 1 MiB
         self._dataRepository = dataRepository
+        self._dpEpsilon = None
 
         self.ops = {
             ">": operator.gt,
@@ -84,6 +85,12 @@ class Backend(object):
         value.
         """
         self._maxResponseLength = maxResponseLength
+
+    def setDpEpsilon(self, epsilon):
+        """
+        Sets the epsilon value used in differential privacy functions
+        """
+        self._dpEpsilon = epsilon
 
     def startProfile(self):
         """
@@ -445,22 +452,34 @@ class Backend(object):
 
         return results
 
-    @staticmethod
-    def fieldHandler(table, results, field):
+    def fieldHandler(self, table, results, field):
+        """
+        Modifies results object to return only specified fields
+        :param table: db table from which results are being returned
+        :param results: query results
+        :param field: array of field names to return
+        :return: formatted results in string representation
+        """
         json_results = json.loads(results)
         json_array = json_results.get(table, [])
         filtered_results = []
         for entry in json_array:
-            filtered_fields = {k: entry[k] for k in field if k in entry}
-            if filtered_fields:
-                filtered_results.append(filtered_fields)
+            field_obj = {k: entry[k] for k in field if k in entry}
+            if field_obj:
+                filtered_results.append(field_obj)
         response_obj = {}
         if filtered_results:
             response_obj = {table: filtered_results}
         return json.dumps(response_obj)
 
-    @staticmethod
-    def aggregationHandler(table, results, field):
+    def aggregationHandler(self, table, results, field):
+        """
+        Aggregates results based on specified fields and returns counts for each value
+        :param table: db table from which results are being returned
+        :param results: query results
+        :param field: array of field names to aggregate on
+        :return: formatted results in string representation
+        """
         json_results = json.loads(results)
         field_value_counts = {}
         if table == "variantsByGene":
@@ -477,16 +496,26 @@ class Backend(object):
                             field_value_counts[k][v] += 1
         except KeyError:
             field_value_counts = {}
-        # TODO: option to apply differential privacy?
-        # ndp = DP.DP(field_value_counts, eps=0.9)
-        # ndp.get_noise()
-        response_list = []
-        if field_value_counts:
-            response_list.append(field_value_counts)
-        agg_results = {table: response_list}
+
+        agg_results = self.countHelper(table, field_value_counts)
         if "nextPageToken" in json_results:
             agg_results["nextPageToken"] = json_results["nextPageToken"]
         return json.dumps(agg_results)
+
+    def countHelper(self, table, fv_counts):
+        """
+        Formats count results and applies differential privacy if set in backend
+        :param table: db table from which results are being returned
+        :param fv_counts: dict containing value based counts for each field
+        :return: formatted results object
+        """
+        response_list = []
+        if fv_counts:
+            if self._dpEpsilon:
+                ndp = DP.DP(fv_counts, eps=self._dpEpsilon)
+                ndp.get_noise()
+            response_list.append(fv_counts)
+        return {table: response_list}
 
     def variantsResultsHandler(self, table, results, patient_list, dataset_id, return_mimetype, access_map, page_token):
 

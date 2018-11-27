@@ -47,6 +47,7 @@ class ComplianceConfig(BaseConfig):
     """
     DATA_SOURCE = "ga4gh-compliance-data/registry.db"
     DEBUG = True
+    DP_EPSILON = None
 
 
 class DevelopmentConfig(BaseConfig):
@@ -59,6 +60,7 @@ class DevelopmentConfig(BaseConfig):
     # INITIAL_PEERS =
     #   "/srv/ga4gh/server/ga4gh/server/templates/initial_peers.txt"
     INITIAL_PEERS = "ga4gh/server/templates/initial_peers.txt"
+    DP_EPSILON = None
 
 
 class LocalOidConfig(DevelopmentConfig):
@@ -85,6 +87,7 @@ class SimulatedConfig(BaseConfig):
     DATA_SOURCE = "simulated://"
     DEBUG = True
     REQUEST_VALIDATION = True
+    DP_EPSILON = None
 
 
 class ProductionConfig(BaseConfig):
@@ -95,6 +98,7 @@ class ProductionConfig(BaseConfig):
     # We should complain loudly if data source is not set, rather than
     # mysteriously serve no data.
     DATA_SOURCE = None
+    DP_EPSILON = None
 
 
 class GoogleOidcConfig(ProductionConfig):
@@ -133,6 +137,7 @@ class TestConfig(BaseConfig):
     REQUEST_VALIDATION = True
     TYK_ENABLED = False
     TYK_SERVER = TYK_LISTEN_PATH = KC_SERVER = KC_LOGIN_REDIRECT = ''
+    DP_EPSILON = None
 
 
 class TestOidcConfig(TestConfig):
