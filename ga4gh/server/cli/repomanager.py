@@ -985,8 +985,6 @@ class RepoManager(object):
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
         biosampleId = ""
-        patientId = ""
-        sampleId = ""
         if self._args.biosampleName:
             biosample = dataset.getBiosampleByName(self._args.biosampleName)
             biosampleId = biosample.getId()
@@ -995,14 +993,21 @@ class RepoManager(object):
         else:
             name = self._args.name
         # TODO: programs not fully supported by GA4GH yet
-        if self._args.sampleId:
-            sampleId = self._args.sampleId
-        if self._args.patientId:
-            patientId = self._args.patientId
+        sampleId = self._args.sampleId
+        patientId = self._args.patientId
         programs = ""
         featureType = "gene"
         if self._args.transcript:
             featureType = "transcript"
+
+        if patientId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding patient ID"
+            )
+        if sampleId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding sample ID"
+            )
         rnaseq2ga.rnaseq2ga(
             self._args.quantificationFilePath, self._args.filePath, name,
             self._args.format, dataset=dataset, featureType=featureType,
