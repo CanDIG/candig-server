@@ -757,7 +757,7 @@ class FederationResponse(object):
         Use futures session type to async process peer requests
         :return: list of future responses
         """
-        async_session = FuturesSession(max_workers=10) # capping max threads
+        async_session = FuturesSession(max_workers=10)  # capping max threads
         if request_type == "GET":
             responses = [
                 async_session.get(uri, headers=header)
