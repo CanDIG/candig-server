@@ -49,12 +49,12 @@ Flask-Cors==2.0.1
 Flask==0.10.1
 protobuf==3.3.0
 humanize==0.5.1
-pysam==0.9.0
+pysam==0.15.0
 requests==2.20.0
-oic==0.7.6
+oic==0.14.0
 pyOpenSSL==18.0.0
-lxml==3.4.4
-pyBigWig==0.3.4
+lxml==4.2.5
+pyBigWig==0.3.12
 
 # We need sphinx-argparse to build on readthedocs.
 sphinx-argparse==0.1.15
