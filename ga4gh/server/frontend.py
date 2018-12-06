@@ -707,7 +707,6 @@ class FederationResponse(object):
 
                     elif request_type == 'POST':
                         peer_response = response.json()['results']
-                        print(peer_response)
 
                         if not self.results:
                             self.results = peer_response
