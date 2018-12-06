@@ -994,17 +994,28 @@ class RepoManager(object):
         else:
             name = self._args.name
         # TODO: programs not fully supported by GA4GH yet
+        sampleId = self._args.sampleId
+        patientId = self._args.patientId
         programs = ""
         featureType = "gene"
         if self._args.transcript:
             featureType = "transcript"
+
+        if patientId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding patient ID"
+            )
+        if sampleId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding sample ID"
+            )
         rnaseq2ga.rnaseq2ga(
             self._args.quantificationFilePath, self._args.filePath, name,
             self._args.format, dataset=dataset, featureType=featureType,
             description=self._args.description, programs=programs,
             featureSetNames=self._args.featureSetNames,
             readGroupSetNames=self._args.readGroupSetName,
-            biosampleId=biosampleId)
+            biosampleId=biosampleId, sampleId=sampleId, patientId=patientId)
 
     def initRnaQuantificationSet(self):
         """
@@ -2037,6 +2048,10 @@ class RepoManager(object):
         cls.addDatasetNameArgument(addRnaQuantificationParser)
         addRnaQuantificationParser.add_argument(
             "--biosampleName", default=None, help="Biosample Name")
+        addRnaQuantificationParser.add_argument(
+            "--sampleId", default=None, help="SampleId")
+        addRnaQuantificationParser.add_argument(
+            "--patientId", default=None, help="PatientId")
         addRnaQuantificationParser.add_argument(
             "--readGroupSetName", default=None, help="Read Group Set Name")
         addRnaQuantificationParser.add_argument(

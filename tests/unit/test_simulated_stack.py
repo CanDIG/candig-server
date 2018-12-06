@@ -643,7 +643,7 @@ class TestSimulatedStack(unittest.TestCase):
                                           protocol.GAException))
         self.assertEqual(responseData.error_code, 758389611)
         self.assertEqual(responseData.message,
-                         "No object of this type exists with id '{u'variantSetId': u'b4d=='}'")
+                         "Either the resources you are looking for don't exist, or you don't have access to them.")
 
         request.variant_set_id = self.variantSet.getId()
         response = self.sendJsonPostRequest(path, protocol.toJson(request))

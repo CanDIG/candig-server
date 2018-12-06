@@ -7,10 +7,29 @@ from __future__ import unicode_literals
 
 import requests
 
+import gunicorn.app.base
+
 import ga4gh.server.cli as cli
 import ga4gh.server.frontend as frontend
 
 import ga4gh.common.cli as common_cli
+
+
+class StandaloneApplication(gunicorn.app.base.BaseApplication):
+    def __init__(self, app, options=None):
+        self.options = options or {}
+        self.application = app
+        super(StandaloneApplication, self).__init__()
+
+    def load_config(self):
+        config = dict(
+            [(key, value) for key, value in self.options.iteritems()
+             if key in self.cfg.settings and value is not None])
+        for key, value in config.iteritems():
+            self.cfg.set(key.lower(), value)
+
+    def load(self):
+        return self.application
 
 
 def addServerOptions(parser):
@@ -30,8 +49,19 @@ def addServerOptions(parser):
         "--tls", "-t", action="store_true", default=False,
         help="Start in TLS (https) mode.")
     parser.add_argument(
+        "--gunicorn", action="store_true", default=False,
+        help="start server with gunicorn")
+    parser.add_argument(
         "--dont-use-reloader", default=False, action="store_true",
-        help="Don't use the flask reloader")
+        help="Don't use the flask or gunicorn reloader")
+    parser.add_argument(
+        "--workers", "-w", default=1,
+        help="number of gunicorn  worker.")
+    parser.add_argument(
+        "--worker_class", "-k", default='sync',
+        help="The type of worker process to run. "
+             "gevent or sync (default)")
+
     cli.addVersionArgument(parser)
     cli.addDisableUrllibWarningsArgument(parser)
 
@@ -47,12 +77,31 @@ def server_main(args=None):
     parsedArgs = parser.parse_args(args)
     if parsedArgs.disable_urllib_warnings:
         requests.packages.urllib3.disable_warnings()
+
     frontend.configure(
         parsedArgs.config_file, parsedArgs.config, parsedArgs.port)
+
     sslContext = None
+
     if parsedArgs.tls or ("OIDC_PROVIDER" in frontend.app.config):
         sslContext = "adhoc"
-    frontend.app.run(
-        host=parsedArgs.host, port=parsedArgs.port,
-        use_reloader=not parsedArgs.dont_use_reloader,
-        ssl_context=sslContext, threaded=True)
+
+    if parsedArgs.gunicorn:
+        options = {
+            'bind': '%s:%s' % (parsedArgs.host, parsedArgs.port),
+            'workers': int(parsedArgs.workers),
+            'worker_class': parsedArgs.worker_class,
+            'accesslog': '-',  # Puts the access log on stdout
+            'errorlog': '-',  # Puts the error log on stdout
+            'reload': not parsedArgs.dont_use_reloader,
+        }
+
+        frontend.configure(configFile=parsedArgs.config_file, baseConfig="BaseConfig")
+        app = StandaloneApplication(frontend.app, options)
+        app.run()
+    else:
+
+        frontend.app.run(
+            host=parsedArgs.host, port=parsedArgs.port,
+            use_reloader=not parsedArgs.dont_use_reloader,
+            ssl_context=sslContext, threaded=True)

@@ -15,6 +15,7 @@ import operator
 from google.protobuf.json_format import MessageToDict
 import json
 import itertools
+import DP as DP
 
 
 class Backend(object):
@@ -27,6 +28,7 @@ class Backend(object):
         self._defaultPageSize = 300
         self._maxResponseLength = 2**20  # 1 MiB
         self._dataRepository = dataRepository
+        self._dpEpsilon = None
 
         self.ops = {
             ">": operator.gt,
@@ -83,6 +85,12 @@ class Backend(object):
         value.
         """
         self._maxResponseLength = maxResponseLength
+
+    def setDpEpsilon(self, epsilon):
+        """
+        Sets the epsilon value used in differential privacy functions
+        """
+        self._dpEpsilon = epsilon
 
     def startProfile(self):
         """
@@ -168,12 +176,12 @@ class Backend(object):
         Returns a generator over the (dataset, nextPageToken) pairs
         defined by the specified request
         """
-        return self._topLevelAuthzObjectGenerator(
+        return self._topLevelAuthzDatasetGenerator(
             request, self.getDataRepository().getNumDatasets(),
             self.getDataRepository().getAuthzDatasetByIndex, access_map=access_map)
 
     # SEARCH
-    def queryGenerator(self, request, return_mimetype, access_map):
+    def queryGenerator(self, request, return_mimetype, access_map, count=False):
         """
         Generator object for advanced search queries
         """
@@ -188,14 +196,17 @@ class Backend(object):
             raise exceptions.MissingFieldNameException(error.message)
 
         responses = self.componentsHandler(dataset_id, components, return_mimetype, access_map)
-        patient_list = self.logicHandler(logic, responses, dataset_id)
+        patient_list = self.logicHandler(logic, responses, dataset_id, access_map)
+        page_token = parsedRequest.get("pageToken")
 
-        return self.resultsHandler(results, patient_list, dataset_id, return_mimetype, access_map)
+        return self.resultsHandler(results, patient_list, dataset_id, return_mimetype, access_map, page_token, count)
 
-    def logicHandler(self, logic, responses, dataset_id):
+    def logicHandler(self, logic, responses, dataset_id, access_map):
         """
         :param  logic: dict parsed from query containing logic statement keys or component id keys
-                responses: object with key being the id, and the value being the response from corresponding endpoints
+        :param  responses: object with key being the id, and the value being the response from corresponding endpoints
+        :param  dataset_id: unique dataset id
+        :param  access_map: user access levels for authz
         :return: list of patient_id filtered based on join logic
         """
 
@@ -211,7 +222,6 @@ class Backend(object):
             else:
                 raise exceptions.InvalidLogicException("Invalid key combination")
         else:
-            # too many logic keys
             raise exceptions.InvalidLogicException('Invalid number of keys')
 
         if logic_key in op_keys:
@@ -219,7 +229,7 @@ class Backend(object):
             patient_array = []
 
             for logic_obj in logic[logic_key]:
-                results_arr.append(self.logicHandler(logic_obj, responses, dataset_id))
+                results_arr.append(self.logicHandler(logic_obj, responses, dataset_id, access_map))
 
             if logic_key == 'or':
                 for id_list in results_arr:
@@ -231,21 +241,39 @@ class Backend(object):
                 for id in results_arr[0]:
                     if all(id in results_arr[x] for x in range(1, len(results_arr))):
                         patient_array.append(id)
-
             return patient_array
 
         elif logic_key == 'id':
             id_list = []
-            for response in responses[logic[logic_key]]:
-                patient_id = self.getResponsePatientId(response, dataset_id)
-                if patient_id not in id_list:
-                    id_list.append(patient_id)
 
-            return id_list
+            try:
+                for response in responses[logic[logic_key]]:
+                    patient_id = self.getResponsePatientId(response, dataset_id)
+                    if patient_id not in id_list:
+                        id_list.append(patient_id)
+                if logic_negate:
+                    id_list_all = self.getAllPatientId(dataset_id, access_map)
+                    id_set = set(id_list_all) - set(id_list)
+                    id_list = list(id_set)
+                return id_list
+
+            except KeyError:
+                raise exceptions.InvalidLogicException("Given id does not match a component")
 
         else:
             # invalid logic key
             raise exceptions.InvalidLogicException("Invalid key used")
+
+    def getAllPatientId(self, dataset_id, access_map):
+        """
+        Return all available patient id for the dataset on the local server
+        :param  dataset_id: unique dataset id
+        :param  access_map: user access levels for authz
+        :return: patient id list
+        """
+        request = json.dumps({"dataset_id": dataset_id})
+        all_pt = json.loads(self.runSearchPatients(request, 'application/json', access_map))
+        return [pt["patientId"] for pt in all_pt["patients"]]
 
     def getResponsePatientId(self, response, dataset_id):
         """
@@ -288,16 +316,20 @@ class Backend(object):
                     request["start"] = component[endpoint]["start"]
                     request["end"] = component[endpoint]["end"]
                     request["referenceName"] = component[endpoint]["referenceName"]
-                    request["variantSetId"] = component[endpoint]["variantSetId"]
+                    if "variantSetIds" in component[endpoint]:
+                        request["variantSetIds"] = component[endpoint]["variantSetIds"]
+                    else:
+                        request["variantSetId"] = component[endpoint]["variantSetId"]
 
                 elif endpoint == "variantsByGene":
                     request["gene"] = component[endpoint]["gene"]
 
                 else:
-                    request["filters"] = component[endpoint]["filters"]
+                    if "filters" in component[endpoint]:
+                        request["filters"] = component[endpoint]["filters"]
 
             except KeyError as error:
-                raise exceptions.MissingFieldNameException(error.message)
+                raise exceptions.MissingFieldNameException(str(error))
 
             idMapper[component["id"]] = endpoint
             requests[component["id"]] = request
@@ -343,7 +375,7 @@ class Backend(object):
 
         return responses
 
-    def resultsHandler(self, results, patient_list, dataset_id, return_mimetype, access_map):
+    def resultsHandler(self, results, patient_list, dataset_id, return_mimetype, access_map, page_token, count):
         """
         :param results:
         :return:
@@ -373,22 +405,21 @@ class Backend(object):
         #     "tumourboards": protocol.SearchTumourboardsRequest
         # }
 
-        request = {}
-
-        # no valid patient id's means no results
-        if not patient_list:
-            return '{}'
-
         table = results[0].get("table")
+        field = results[0].get("field")
+
+        if count and not field:
+            raise exceptions.MissingFieldNameException("Field list required for count query")
+
         if table is None:
             raise exceptions.MissingFieldNameException("table")
         elif table not in self.endpointMapper:
             raise exceptions.MissingFieldNameException("Invalid results table specified")
 
         # TODO: Handle returning other table types e.g. variants
-
         if table == "variantsByGene" or table == "variants":
-            return self.variantsResultsHandler(table, results, patient_list, dataset_id, return_mimetype, access_map)
+            results = self.variantsResultsHandler(table, results, patient_list, dataset_id,
+                                                  return_mimetype, access_map, page_token)
 
         else:
             request = {
@@ -399,11 +430,94 @@ class Backend(object):
                     "values": patient_list
                 }]
             }
+
+            if page_token:
+                request["page_token"] = page_token
+
             requestStr = json.dumps(request)
 
-            return self.endpointMapper[table](requestStr, return_mimetype, access_map)
+            results = self.endpointMapper[table](requestStr, return_mimetype, access_map)
 
-    def variantsResultsHandler(self, table, results, patient_list, dataset_id, return_mimetype, access_map):
+        # perform count based on field aggregation (/count endpoint)
+        if count:
+            results = self.aggregationHandler(table, results, field)
+
+        # filter results on given field list (/search endpoint)
+        elif field:
+            results = self.fieldHandler(table, results, field)
+
+        # returns empty list instead of 404
+        if not json.loads(results):
+            results = json.dumps({table: []})
+
+        return results
+
+    def fieldHandler(self, table, results, field):
+        """
+        Modifies results object to return only specified fields
+        :param table: db table from which results are being returned
+        :param results: query results
+        :param field: array of field names to return
+        :return: formatted results in string representation
+        """
+        json_results = json.loads(results)
+        json_array = json_results.get(table, [])
+        filtered_results = []
+        for entry in json_array:
+            field_obj = {k: entry[k] for k in field if k in entry}
+            if field_obj:
+                filtered_results.append(field_obj)
+        response_obj = {}
+        if filtered_results:
+            response_obj = {table: filtered_results}
+        return json.dumps(response_obj)
+
+    def aggregationHandler(self, table, results, field):
+        """
+        Aggregates results based on specified fields and returns counts for each value
+        :param table: db table from which results are being returned
+        :param results: query results
+        :param field: array of field names to aggregate on
+        :return: formatted results in string representation
+        """
+        json_results = json.loads(results)
+        field_value_counts = {}
+        if table == "variantsByGene":
+            table = "variants"
+        try:
+            for entry in json_results[table]:
+                for k, v in entry.iteritems():
+                    if k in field:
+                        if k not in field_value_counts:
+                            field_value_counts[k] = {}
+                        if v not in field_value_counts[k]:
+                            field_value_counts[k][v] = 1
+                        else:
+                            field_value_counts[k][v] += 1
+        except KeyError:
+            field_value_counts = {}
+
+        agg_results = self.countHelper(table, field_value_counts)
+        if "nextPageToken" in json_results:
+            agg_results["nextPageToken"] = json_results["nextPageToken"]
+        return json.dumps(agg_results)
+
+    def countHelper(self, table, fv_counts):
+        """
+        Formats count results and applies differential privacy if set in backend
+        :param table: db table from which results are being returned
+        :param fv_counts: dict containing value based counts for each field
+        :return: formatted results object
+        """
+        response_list = []
+        if fv_counts:
+            if self._dpEpsilon:
+                ndp = DP.DP(fv_counts, eps=self._dpEpsilon)
+                ndp.get_noise()
+            response_list.append(fv_counts)
+        return {table: response_list}
+
+    def variantsResultsHandler(self, table, results, patient_list, dataset_id, return_mimetype, access_map, page_token):
 
         request = {}
 
@@ -436,6 +550,9 @@ class Backend(object):
                     "end": end,
                     "referenceName": referenceName
                 }
+
+        if page_token:
+            request["page_token"] = page_token
 
         requestStr = json.dumps(request)
 
@@ -670,7 +787,6 @@ class Backend(object):
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
         for obj in dataset.getSequencings():
-            print("looping over sequencings")
             qualified = self.comparisonGenerator(obj, request)
 
             if qualified:
@@ -1734,9 +1850,20 @@ class Backend(object):
         """
         try:
             request = protocol.fromJson(request, protocol.SearchQueryRequest)
-        except protocol.json_format.ParseError:
-            raise exceptions.InvalidJsonException(request)
+        except protocol.json_format.ParseError as e:
+            raise exceptions.InvalidJsonException(str(e))
         return self.queryGenerator(request, return_mimetype, access_map)
+
+    # Count requests
+    def runCountQuery(self, request, return_mimetype, access_map):
+        """
+        Runs count query on top of advanced SearchRequest
+        """
+        try:
+            request = protocol.fromJson(request, protocol.SearchQueryRequest)
+        except protocol.json_format.ParseError as e:
+            raise exceptions.InvalidJsonException(str(e))
+        return self.queryGenerator(request, return_mimetype, access_map, count=True)
 
     def runSearchPatients(self, request, return_mimetype, access_map):
         """
@@ -2238,19 +2365,15 @@ class Backend(object):
         else:
             raise exceptions.NotAuthorizedException("Not authorized to access this dataset")
 
-    def _topLevelAuthzObjectGenerator(self, request, numObjects, getByAuthzIndexMethod, tier=0, access_map=None):
+    def _topLevelAuthzDatasetGenerator(self, request, numObjects, getDatasetMethod, access_map=None):
         """
         top level authorized object generator to use with access maps (e.g. datasets/search)
         """
+        if not access_map:
+            access_map = {}
         currentIndex = 0
-        if request.page_token:
-            currentIndex, = paging._parsePageToken(
-                request.page_token, 1)
         while currentIndex < numObjects:
-            object_ = getByAuthzIndexMethod(currentIndex, access_map)
+            object_ = getDatasetMethod(currentIndex, access_map)
             currentIndex += 1
-            if (object_):
-                nextPageToken = None
-                if currentIndex < numObjects:
-                    nextPageToken = str(currentIndex)
-                yield object_.toProtocolElement(tier), nextPageToken
+            if object_:
+                yield object_.toProtocolElement(0), None

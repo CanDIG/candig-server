@@ -32,7 +32,9 @@ class RnaSqliteStore(object):
                        name TEXT,
                        read_group_ids TEXT,
                        programs TEXT,
-                       biosample_id TEXT)''')
+                       biosample_id TEXT,
+                       sampleId TEXT,
+                       patientId TEXT)''')
         self._cursor.execute('''CREATE TABLE Expression (
                        id INTEGER,
                        rna_quantification_id TEXT,
@@ -60,7 +62,7 @@ class RnaSqliteStore(object):
 
     def batchaddRNAQuantification(self):
         if len(self._rnaValueList) > 0:
-            sql = "INSERT INTO RnaQuantification VALUES (?,?,?,?,?,?,?)"
+            sql = "INSERT INTO RnaQuantification VALUES (?,?,?,?,?,?,?,?,?)"
             self._cursor.executemany(sql, self._rnaValueList)
             self._dbConn.commit()
             self._rnaValueList = []
@@ -249,12 +251,12 @@ class KallistoWriter(AbstractWriter):
 
 
 def writeRnaseqTable(rnaDB, analysisIds, description, annotationId,
-                     readGroupId="", programs="", biosampleId=""):
+                     readGroupId="", programs="", biosampleId="", sampleId="", patientId=""):
     if readGroupId is None:
         readGroupId = ""
     for analysisId in analysisIds:
         datafields = (analysisId, annotationId, description, analysisId,
-                      readGroupId, programs, biosampleId)
+                      readGroupId, programs, biosampleId, sampleId, patientId)
         rnaDB.addRNAQuantification(datafields)
     rnaDB.batchaddRNAQuantification()
 
@@ -267,7 +269,7 @@ def writeExpressionTable(writer, data):
 def rnaseq2ga(quantificationFilename, sqlFilename, localName, rnaType,
               dataset=None, featureType="gene",
               description="", programs="", featureSetNames="",
-              readGroupSetNames="", biosampleId=""):
+              readGroupSetNames="", biosampleId="", sampleId="", patientId=""):
     """
     Reads RNA Quantification data in one of several formats and stores the data
     in a sqlite database for use by the GA4GH reference server.
@@ -303,5 +305,5 @@ def rnaseq2ga(quantificationFilename, sqlFilename, localName, rnaType,
         writer = RsemWriter(rnaDB, featureType, dataset=dataset)
     writeRnaseqTable(rnaDB, [localName], description, featureSetIds,
                      readGroupId=readGroupIds, programs=programs,
-                     biosampleId=biosampleId)
+                     biosampleId=biosampleId, sampleId=sampleId, patientId=patientId)
     writeExpressionTable(writer, [(localName, quantificationFilename)])
