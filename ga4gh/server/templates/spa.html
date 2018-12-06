@@ -2,114 +2,146 @@
 <html>
    <head>
       <title>Candig server</title>
-      <link rel="stylesheet" type="text/css" href="https://igv.org/web/beta/igv.css">
-      <link rel=stylesheet type=text/css href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-      <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-      <script src="https://code.highcharts.com/highcharts.js"></script>
-      <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+       <link type="text/css" rel="stylesheet" href="{{prepend_path}}/static/loader.css">
+      <link rel="stylesheet" type="text/css" href="https://www.distributedgenomics.ca/static/igv.css">
+      <link rel=stylesheet type=text/css href="https://www.distributedgenomics.ca/static/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+      <script src="https://www.distributedgenomics.ca/static/jquery-ui.min.js"></script>
+      <script src="https://www.distributedgenomics.ca/static/bootstrap.min.js"></script>
+      <script src="https://www.distributedgenomics.ca/static/highcharts.js"></script>
+      <script src="https://www.distributedgenomics.ca/static/exporting.js"></script>
+      <script src="https://www.distributedgenomics.ca/static/offline-exporting.js"></script>
+      <script src="https://www.distributedgenomics.ca/static/drilldown.js"></script>
       <link rel=stylesheet type=text/css href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
-      <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-      <script type="text/javascript" src="{{prepend_path}}/static/igv-2.0.0-rc3.js"></script>
+      <script src="https://www.distributedgenomics.ca/static/jquery.dataTables.min.js"></script>
+      <script type="text/javascript" src="https://www.distributedgenomics.ca/static/igv-2.0.0-rc3.js"></script>
       <link type="text/css" rel="stylesheet" href="{{prepend_path}}/static/dashboard.css">
+      <script src="https://www.distributedgenomics.ca/static/ag-grid-community.min.noStyle.js"></script>
+      <link rel="stylesheet" href="https://www.distributedgenomics.ca/static/ag-grid.css">
+      <link rel="stylesheet" href="https://www.distributedgenomics.ca/static/ag-theme-balham.css">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
    </head>
+<body>
    <!-- A grey horizontal navbar that becomes vertical on small screens -->
    <nav class="navbar navbar-expand-sm bg-light">
+        <a class="navbar-brand col-1" href="/">
+          <img src="{{prepend_path}}/static/logo.png" height="35" alt="">
+        </a>
       <!-- Links -->
-      <ul class="nav nav-tabs" id="topTabs">
+      <ul class="nav nav-tabs col-9" id="topTabs" style="border-bottom:0px;">
          <li class="active">
-            <a class="nav-link" data-toggle="tab" href="#candig">Homepage</a>
+            <a class="nav-link" data-toggle="tab" href="#candig"><i class="fas fa-tachometer-alt"></i> Homepage</a>
          </li>
          <li>
-            <a class="nav-link" data-toggle="tab" href="#gene_search">Gene search</a>
+            <a class="nav-link" data-toggle="tab" href="#gene_search"><i class="fas fa-search"></i> Gene search</a>
          </li>
          <li>
-            <a class="nav-link" data-toggle="tab" href="#candig_patients">Patient overview</a>
+            <a class="nav-link" data-toggle="tab" href="#candig_patients"><i class="fas fa-users"></i> Patient overview</a>
          </li>
          <li>
-            <a class="nav-link" onclick="logout()" href="javascript:void(0)">Log out</a>
+            <a class="nav-link" data-toggle="tab" href="#sample_analysis"><i class="fas fa-chart-bar"></i> Sample Analysis</a>
+         </li>
+          <li>
+            <a class="nav-link" data-toggle="tab" href="#custom_visualization"><i class="fas fa-chart-pie"></i> Custom Visualization</a>
          </li>
          <!--          A workaround to refresh the current tab, do not delete this tab with #refreshTab
-            -->         
+            -->
          <li>
             <a class="nav-link" data-toggle="tab" href="#refreshTab" style="display: none">refreshTab</a>
          </li>
       </ul>
-      <div class="dropdown show">
-         <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dataset:</a>
-         <div class="dropdown-menu" id="dropdown-menu" aria-labelledby="dropdownMenuLink">
-         </div>
+      <span class="dropdown show col-1">
+         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+         <span class="dropdown-menu dropdown-menu-right" id="dropdown-menu" aria-labelledby="dropdownMenuLink">
+         </span>
+      </span>
+      <div class="dropdown show col-1">
+         <a class="dropdown-toggle" href="#" role="button" id="user-dropdown-top" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user-circle"></i> {{ username }}</a>
+         <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown" aria-labelledby="dropdownMenuLink" style="width: 30%">
+            <a class="dropdown-item" href="/serverinfo"><i class="fas fa-info-circle"></i> info</a>
+            <a class="dropdown-item" onclick="logout()" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+         </ul>
       </div>
    </nav>
 
     <div class="alert alert-danger alert-dismissible" role="alert" id="warningMsg" style="display:none">
       <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
     </div>
+
+   <div id="initial_loader" class="wrapper">
+        <img src="https://www.distributedgenomics.ca/static/logo.png" height="100" alt="" class="logo_image">
+         <div class="sk-folding-cube">
+            <div class="sk-cube1 sk-cube"></div>
+            <div class="sk-cube2 sk-cube"></div>
+            <div class="sk-cube4 sk-cube"></div>
+            <div class="sk-cube3 sk-cube"></div>
+          </div>
+   </div>
    <div class="tab-content" id="tab-content">
       <div id="candig" class="tab-pane fade in active">
-         <div class="container-fluid">
-            <h2>Candig Dashboard</h2>
-            <div>
-               <div class="row" style="margin-top:50px; margin-bottom:50px">
+         <div class="container-fluid" style="padding-top: 50px">
+               <div class="row" style="margin-bottom:50px">
                   <div class="col-sm-3">
-                     <div class="card" style="border:solid; padding: 1rem; height: 15rem">
+                     <div class="card">
                         <div class="card-body">
-                           <div id="queryStatus" style="max-width: 100%; height: 200px; auto;"></div>
+                           <div id="queryStatus" style="max-width: 100%; height: 200px; auto;"><div class="loader_bar"></div></div>
                         </div>
                      </div>
                   </div>
                   <div class="col-sm-3">
-                     <div class="card" style="border:solid; padding: 1rem; height: 15rem">
+                     <div class="card">
                         <div class="card-body">
-                           <div id="responseToTreatment" style="max-width: 100%; height: 200px; auto;"></div>
+                           <div id="responseToTreatment" style="max-width: 100%; height: 200px; auto;"><div class="loader_bar"></div></div>
                         </div>
                      </div>
                   </div>
                   <div class="col-sm-3">
-                     <div class="card" style="border:solid; padding: 1rem; height: 15rem">
+                     <div class="card">
                         <div class="card-body">
-                           <div id="hospitals" style="max-width: 100%; height: 200px; auto;"></div>
+                           <div id="hospitals" style="max-width: 100%; height: 200px; auto;"><div class="loader_bar"></div></div>
                         </div>
                      </div>
                   </div>
                   <div class="col-sm-3">
-                     <div class="card" style="border:solid; padding: 1rem; height: 15rem">
+                     <div class="card">
                         <div class="card-body">
-                           <div id="therapeuticToResponses" style="max-width: 100%; height: 200px; auto;"></div>
+                           <div id="therapeuticToResponses" style="max-width: 100%; height: 200px; auto;"><div class="loader_bar"></div></div>
                         </div>
                      </div>
                   </div>
                </div>
                <div class="row" style="margin-top:50px; margin-bottom:50px">
                   <div class="col-sm-6">
-                     <div class="card" style="border:solid; padding: 1rem; height: 30rem">
-                        <div class="card-body">
-                           <div id="timelineSamples"></div>
-                        </div>
+                     <div class="card" style="height: 30rem">
+                           <div id="timelineSamples"><div class="loader_bar"></div></div>
                      </div>
                   </div>
                   <div class="col-sm-6">
-                     <div class="card" style="border:solid; padding: 1rem; height: 30rem">
-                        <div class="card-body">
-                           <div id="cancerTypes" style="min-width: 310px; height: 400px; auto;"></div>
-                        </div>
+                     <div class="card" style="height: 30rem">
+                           <div id="cancerTypes" style="min-width: 310px; height: 400px; auto;"><div class="loader_bar"></div></div>
+                     </div>
+                  </div>
+                   <div class="col-sm-12">
+                     <div class="card" style="height: 30rem; margin-top: 50px">
+                           <div id="drugScatter" style="min-width: 310px; height: 400px; auto;"><div class="loader_bar"></div></div>
                      </div>
                   </div>
                </div>
-            </div>
          </div>
       </div>
       <div id="gene_search" class="tab-pane fade">
          <div class="container-fluid">
-            <h2 style="text-align: center; margin-bottom: 100px" class="title" id="title">CanDIG 0.07 - Gene Search Tool</h2>
-            <div id="searchBox"><input type="text" id="request" name="search" placeholder="Search.."></div>
-            <button id="searchBtn" class="btn btn-primary" name="submit" onclick="submit()">Submit</button>
-            <div class="loader" id="loader" style="display: none"></div>
-            <table id="myTable" class="table table-striped table-bordered nowrap"></table>
+            <h2 style="text-align: center; margin-bottom: 100px" class="title" id="title">Gene Search</h2>
 
-            <div class="container">
-               <div id="readGroupSelector" class="form-inline" style="display: none; margin: 50px">
+            <div class="wrapper" id="gene_search_parent">
+            <input type="text" id="request" name="search" placeholder="Search..">
+            <button id="searchBtn" class="btn btn-primary" name="submit">Submit</button>
+            </div>
+            <div class="loader mx-auto" id="loader" style="display: none"></div>
+             <div id="geneTable_wrap" style="overflow: scroll; display: none"><table id="geneTable" class="table table-striped table-bordered nowrap"></table></div>
+
+            <div class="container wrapper">
+               <div id="readGroupSelector" class="form-inline" style="display: none; margin-top: 50px; margin-bottom: 50px">
                    <div class="form-group">
                      <label for="firstRG">Select the first readGroupSet:</label>
                      <select class="form-control" id="firstRG">
@@ -118,7 +150,7 @@
                      <label for="secondRG">Select the second readGroupSet:</label>
                      <select class="form-control" id="secondRG">
                      </select>
-                     <button class="btn btn-primary" id="confirmRG" onclick="rg_submit()">Confirm</button>
+                     <button class="btn btn-primary" id="confirmRG">Confirm</button>
                   </div>
                </div>
             </div>
@@ -127,7 +159,6 @@
       </div>
       <div id="candig_patients" class="tab-pane fade">
          <div class="container-fluid">
-            <h2 style="margin-bottom: 10px">CanDIG 0.07 - Overview of Patients</h2>
             <div class="row" style="margin-top:50px; margin-bottom:50px">
                <div class="col-sm-3">
                   <div class="card">
@@ -141,14 +172,52 @@
                   </div>
                </div>
                <div class="col-sm-9">
-                  <table id="mytable" class="table table-striped table-bordered nowrap"></table>
-                  <table id="patientTable" class="table table-striped table-bordered nowrap"></table>
+                  <div style="overflow-x: scroll"><table id="patients_table" class="table table-striped table-bordered nowrap hover"></table></div>
+                  <div style="overflow-x: scroll"><table id="mergedTreatmentsDiagnosesTable" class="table table-striped table-bordered nowrap"></table></div>
                </div>
             </div>
          </div>
       </div>
+      <div id="sample_analysis" class="tab-pane fade">
+        <h2 style="text-align: center; margin-bottom: 100px;" class="title" id="sample_analysis_title">Sample Analysis</h2>
+         <div class="wrapper" style="margin-top: 50px">
+               <select class="form-control" id="sampleSelect"></select>
+               <button id="sampleSearch" class="btn btn-primary" name="submit">Submit</button>
+         </div>
+         <div class="container-fluid row" style="margin-top: 50px;">
+               <div class="col-sm-2 ag-theme-balham" id="extractions"></div>
+               <div class="col-sm-2 ag-theme-balham" id="alignments"></div>
+               <div class="col-sm-2 ag-theme-balham" id="sequencing"></div>
+               <div class="col-sm-2 ag-theme-balham" id="variantcalling"></div>
+               <div class="col-sm-2 ag-theme-balham" id="fusiondetection"></div>
+               <div class="col-sm-2 ag-theme-balham" id="expressionanalysis"></div>
+         </div>
+      </div>
+       <div id="custom_visualization" class="tab-pane fade">
+           <h2 style="text-align: center; margin-bottom: 50px; margin-top: 50px">Custom Visualization</h2>
+         <div class="row" style="margin: 50px">
+            <div class="col-sm-6">
+               <div class="row wrapper">
+                  <select class="form-control" id="table1" style="width: 25%; margin-right: 10px"></select>
+                  <select class="form-control" id="key1" style="width: 40%; margin-right: 10px"></select>
+                  <select class="form-control" id="type1" style="width: 15%; margin-right: 10px"></select>
+                  <button id="adv1_confirm" class="btn btn-secondary">Confirm</button>
+               </div>
+               <div id="adv1" style="margin-top: 20px; text-align: center"></div>
+            </div>
+               <div class="col-sm-6">
+                  <div class="row wrapper">
+                  <select class="form-control" id="table2" style="width: 25%; margin-right: 10px"></select>
+                  <select class="form-control" id="key2" style="width: 40%; margin-right: 10px"></select>
+                  <select class="form-control" id="type2" style="width: 15%; margin-right: 10px"></select>
+                  <button id="adv2_confirm" class="btn btn-secondary">Confirm</button>
+               </div>
+                  <div id="adv2" style="margin-top: 20px; text-align: center"></div>
+               </div>
+         </div>
+      </div>
    </div>
-
+</body>
    <script type="text/javascript">
       let datasetId;
       let finalDatasetName = [];
@@ -156,7 +225,8 @@
       let activeTab;
       const session_id = '{{ session_id }}';
       const prepend_path = '{{prepend_path}}';
-          
+      const logout_url = '{{ logout_url }}';
+
    </script>
    <script src="{{prepend_path}}/static/main.js"></script>
 </html>

@@ -16,9 +16,7 @@ import functools
 import json
 
 import flask
-import flask.ext.cors as cors
-# from flask.ext.oidc import OpenIDConnect
-from flask import jsonify, render_template, request  # Flask
+from flask_cors import CORS
 import humanize
 import werkzeug
 import oic
@@ -39,13 +37,11 @@ import ga4gh.server.exceptions as exceptions
 import ga4gh.server.datarepo as datarepo
 import ga4gh.server.auth as auth
 import ga4gh.server.network as network
-# import ga4gh.server.DP as DP
-import ga4gh.server.NCIT as NCIT
 
 import ga4gh.schemas.protocol as protocol
 
-from ga4gh.client import client
 import base64
+from collections import Counter
 
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
@@ -298,6 +294,24 @@ def load_access_map():
     app.access_map.initializeUserAccess(app.logger)
 
 
+def render_candig_template(template_path, **kwargs):
+    """
+    wrapper for flask render template to apply preset environment variables
+
+    :param template_path: template file to render
+    :param kwargs: additional variables
+    :return: call to flask.render_template
+    """
+    return flask.render_template(
+        template_path,
+        session_id=flask.session.get('id_token', ''),
+        prepend_path=app.config.get('TYK_LISTEN_PATH', ''),
+        logout_url=_generate_logout_url(),
+        username=flask.session.get('username', 'N/A'),
+        **kwargs
+    )
+
+
 def reset():
     """
     Resets the flask app; used in testing
@@ -362,6 +376,7 @@ def _configure_backend(app):
     theBackend.setRequestValidation(app.config["REQUEST_VALIDATION"])
     theBackend.setDefaultPageSize(app.config["DEFAULT_PAGE_SIZE"])
     theBackend.setMaxResponseLength(app.config["MAX_RESPONSE_LENGTH"])
+    theBackend.setDpEpsilon(app.config["DP_EPSILON"])
     return theBackend
 
 
@@ -386,7 +401,7 @@ def configure(configFile=None, baseConfig="ProductionConfig",
         app.config["FILE_HANDLE_CACHE_MAX_SIZE"])
     # Setup CORS
     try:
-        cors.CORS(app, allow_headers='Content-Type')
+        CORS(app, allow_headers='Content-Type')
     except AssertionError:
         pass
     app.serverStatus = ServerStatus()
@@ -550,6 +565,9 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException):
         responseObject['status'].append(404)
 
+    except (exceptions.NotAuthorizedException):
+        responseObject['status'].append(401)
+
     # Peer queries
     # Apply federation by default or if it was specifically requested
     if ('Federation' not in request_dictionary.headers or request_dictionary.headers.get('Federation') == 'True'):
@@ -609,8 +627,8 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                                 responseObject['results'] = peer_response
                             else:
                                 for key in peer_response:
-                                    if key == 'nextPageToken':
-                                        if 'nextPageToken' not in responseObject['results']:
+                                    if key in ['nextPageToken', 'total']:
+                                        if key not in responseObject['results']:
                                             responseObject['results'][key] = peer_response[key]
                                         continue
                                     for record in peer_response[key]:
@@ -618,12 +636,18 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
                     except ValueError:
                         pass
 
+    if endpoint == app.backend.runCountQuery:
+        _mergeCounts(responseObject)
+
     # If no result has been found on any of the servers raise an error
-    if not responseObject['results'] or not responseObject['results']:
+    if not responseObject['results']:
         if request_type == 'GET':
             raise exceptions.ObjectWithIdNotFoundException(request)
         elif request_type == 'POST':
             raise exceptions.ObjectWithIdNotFoundException(json.loads(request))
+    else:
+        table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
+        responseObject['results']['total'] = len(responseObject['results'][table])
 
     # Reformat the status response
     responseObject['status'] = {
@@ -703,6 +727,25 @@ def _parseTokenPayload(token):
         decoded_payload = '{}'
 
     return json.loads(decoded_payload)
+
+
+def _mergeCounts(responseObject):
+    table = responseObject['results'].keys()[0]
+    prepare_counts = {}
+    for record in responseObject['results'][table]:
+        for k, v in record.iteritems():
+            if k in prepare_counts:
+                prepare_counts[k].append(Counter(v))
+            else:
+                prepare_counts[k] = [Counter(v)]
+
+    merged_counts = {}
+    for field in prepare_counts:
+        count_total = Counter()
+        for count in prepare_counts[field]:
+            count_total = count_total + count
+        merged_counts[field] = dict(count_total)
+    responseObject['results'][table] = [merged_counts]
 
 
 def handleHttpPost(request, endpoint):
@@ -943,25 +986,36 @@ class DisplayedRoute(object):
 @app.route('/')
 @requires_session
 def index():
-    return flask.render_template('spa.html',
-                                 session_id=flask.session.get('id_token', ''),
-                                 prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
+    return render_candig_template('dashboard.html')
 
 
-@app.route('/candig')
+@app.route('/gene_search')
 @requires_session
-def candig():
-    datasetId = "WyJNRVRBREFUQSJd"
-    return flask.render_template('candig.html',
-                                 session_id=flask.session["id_token"],
-                                 refresh=flask.session["refresh_token"],
-                                 access=flask.session["access_token"],
-                                 datasetId=datasetId)
+def gene_search():
+    return render_candig_template('gene_search.html')
 
 
-@app.route('/info')
+@app.route('/patients_overview')
 @requires_session
-def index_info():
+def patients_overview():
+    return render_candig_template('patients_overview.html')
+
+
+@app.route('/sample_analysis')
+@requires_session
+def sample_analysis():
+    return render_candig_template('sample_analysis.html')
+
+
+@app.route('/custom_visualization')
+@requires_session
+def custom_visualization():
+    return render_candig_template('custom_visualization.html')
+
+
+@app.route('/serverinfo')
+@requires_session
+def server_info():
     response = flask.render_template('index.html',
                                      info=app.serverStatus)
     if app.config.get('AUTH0_ENABLED'):
@@ -987,22 +1041,11 @@ def searchQuery():
         flask.request, app.backend.runSearchQuery)
 
 
-@app.route('/candig_patients')
-@requires_session
-def candig_patients():
-    return flask.render_template('candig_patients.html', session_id=flask.session["id_token"])
-
-
-@app.route('/igv')
-@requires_session
-def candig_igv():
-    return flask.render_template('candig_igv.html', session_id=flask.session["id_token"],
-                                 prepend_path=app.config.get('TYK_LISTEN_PATH', ''))
-
-
-@app.route('/gene_search')
-def candig_gene_search():
-    return flask.render_template('gene_search.html', session_id=flask.session["id_token"])
+@DisplayedRoute('/count', postMethod=True)
+@requires_auth
+def countQuery():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runCountQuery)
 
 
 @DisplayedRoute('/variantsbygenesearch', postMethod=True)
@@ -1017,16 +1060,20 @@ def login_oidc():
     *** GETs to this endpoint should be set to 'ignore' in Tyk Endpoint settings ***
 
     All GET requests without an Authorization header should be proxied through
-    this endpoint (except for API token request).
+    this endpoint by gateway middleware (except for API token request).
 
-    :return: redirect call to the identity provider authentication point
+    Identity Provider should treat this route as the callback url for handling oauth2 protocol
+    using the form_post method
     """
 
     base_url = _generate_base_url()
-    redirect_from = flask.request.args.get('redirectUri', '', type=str).replace(base_url, '')
 
-    # GET request: check if authenticated and redirect root page, otherwise render template
+    # GET request: check if already authenticated, check for a return url to save
     if flask.request.method == "GET":
+
+        return_path = flask.request.args.get('returnUri', '', type=str).replace(base_url, '')
+        if return_path != "/login_oidc":
+            flask.session["return_url"] = base_url + return_path
 
         # check for valid flask session
         if flask.request.cookies.get("session_id"):
@@ -1036,12 +1083,12 @@ def login_oidc():
         else:
             get_endpoints = [x[1].replace('<id>', '') for x in app.serverStatus.getUrls() if x[0] == 'GET']
 
-            if redirect_from.startswith(tuple(get_endpoints)):
+            if return_path.startswith(tuple(get_endpoints)):
                 return getFlaskResponse(json.dumps({'error': 'Key not authorised'}), 403)
 
-            return flask.redirect(_generate_login_url())
+            return flask.redirect(_generate_login_url(base_url + return_path))
 
-    # POST request: successful keycloak authentication else Tyk blocks request
+    # POST request: successful keycloak authentication or gateway blocks request
     elif flask.request.method == "POST":
 
         if flask.request.headers.get('KC-Access'):
@@ -1051,11 +1098,19 @@ def login_oidc():
             flask.session["refresh_token"] = flask.request.headers["KC-Refresh"]
             flask.session["id_token"] = flask.request.headers["Authorization"][7:]
 
-            response = flask.redirect(base_url)
+            # extract token data used in session
             parsed_payload = _parseTokenPayload(flask.session["id_token"])
+            flask.session["username"] = parsed_payload["preferred_username"]
             max_cookie_age = parsed_payload["exp"] - parsed_payload["iat"]
+
+            # redirect user to the page they requested or the default landing page
+            redirect_url = flask.session.pop('return_url') if 'return_url' in flask.session else base_url
+
+            # load response
+            response = flask.redirect(redirect_url)
             response.set_cookie('session_id', flask.session["id_token"], max_age=max_cookie_age,
                                 path=app.config.get('TYK_LISTEN_PATH', '/'), httponly=True)
+
             return response
 
         # refresh/back POST
@@ -1077,12 +1132,11 @@ def gateway_logout():
     End flask login sessions. Tyk will handle remote keycloak session
     :return: redirect to the keycloak login
     """
-    # response = flask.redirect(_generate_base_url()+'/login_oidc')
+
     if not flask.request.cookies.get("session_id"):
         raise exceptions.NotAuthenticatedException
 
-    data = {"redirect": _generate_logout_url()}
-    response = flask.Response(json.dumps(data))
+    response = flask.Response({})
 
     # delete browser cookie
     response.set_cookie('session_id', '', expires=0, path=app.config.get('TYK_LISTEN_PATH', '/'), httponly=True)
@@ -1093,24 +1147,28 @@ def gateway_logout():
     return response
 
 
-def _generate_login_url():
-    '''
+def _generate_login_url(return_url=''):
+    """
+    :param: return_url: URL to return to after successful login
     :return: formatted url for keycloak login
-    '''
-    return '{0}{1}'.format(app.config.get('KC_SERVER'), app.config.get('KC_LOGIN_REDIRECT'))
+    """
+    login_url = '{0}{1}'.format(app.config.get('KC_SERVER'), app.config.get('KC_LOGIN_REDIRECT'))
+    if return_url:
+        login_url += '&return_url=' + return_url
+    return login_url
 
 
 def _generate_base_url():
-    '''
+    """
     :return: formatted url for TYK proxied dashboard homepage
-    '''
+    """
     return '{0}{1}'.format(app.config.get('TYK_SERVER'), app.config.get('TYK_LISTEN_PATH'))
 
 
 def _generate_logout_url():
-    '''
+    """
     :return: formatted url for keycloak logout
-    '''
+    """
     return '{0}/auth/realms/{1}/protocol/openid-connect/logout?redirect_uri={2}'.format(
         app.config.get('KC_SERVER'), app.config.get('KC_REALM'), app.config.get('KC_REDIRECT'))
 
@@ -1149,24 +1207,6 @@ def token():
     return flask.Response(json.dumps(response), status=status, mimetype=mimetype)
 
 
-@app.route('/concordance')
-def concordance():
-    gene = request.args.get('gene', '', type=str)
-    if gene == '':
-        return jsonify(result = 'Gene symbol is missing')
-    concordance, freq, uniq = client.FederatedClient(
-        ServerStatus().getPeers()).get_concordance(gene)
-    abnormality = NCIT.NCIT().get_genetic_abnormalities(gene)
-    disease = NCIT.NCIT().get_diseases(gene)
-    return jsonify(result=render_template(
-        'concordance.html',
-        concordance=concordance,
-        freq=freq,
-        uniq=uniq,
-        abnormality=abnormality,
-        disease=disease))
-
-
 # New configuration added by Kevin Chan
 @app.route("/login")
 def login():
@@ -1195,20 +1235,6 @@ def callback_handling():
             redirect_uri=app.config.get('AUTH0_CALLBACK_URL'))()
     else:
         raise exceptions.NotFoundException()
-
-
-@app.route("/logout")
-@requires_auth
-@cors.cross_origin(headers=['Content-Type', 'Authorization'])
-def logout():
-    key = flask.session['auth0_key']
-    auth.logout(app.cache)
-    url = 'https://{}/v2/logout?access_token={}&?client_id={}'.format(
-        app.config.get('AUTH0_HOST'),
-        key,
-        app.config.get('AUTH0_CLIENT_ID'),
-        app.config.get('AUTH0_CALLBACK_URL'))
-    return flask.redirect(url)
 
 
 @app.route('/favicon.ico')
