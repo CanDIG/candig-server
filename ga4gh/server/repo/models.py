@@ -988,6 +988,320 @@ class ExpressionAnalysis(BaseModel):
         )
 
 
+class Chemotherapy(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    patientIdTier = pw.IntegerField(null=True)
+    courseNumber = pw.TextField(null=True)
+    courseNumberTier = pw.IntegerField(null=True)
+    startDate = pw.TextField(null=True)
+    startDateTier = pw.IntegerField(null=True)
+    stopDate = pw.TextField(null=True)
+    stopDateTier = pw.IntegerField(null=True)
+    systematicTherapyAgentName = pw.TextField(null=True)
+    systematicTherapyAgentNameTier = pw.IntegerField(null=True)
+    route = pw.TextField(null=True)
+    routeTier = pw.IntegerField(null=True)
+    dose = pw.TextField(null=True)
+    doseTier = pw.IntegerField(null=True)
+    doseFrequency = pw.TextField(null=True)
+    doseFrequencyTier = pw.IntegerField(null=True)
+    doseUnit = pw.TextField(null=True)
+    doseUnitTier = pw.IntegerField(null=True)
+    daysPerCycle = pw.TextField(null=True)
+    daysPerCycleTier = pw.IntegerField(null=True)
+    numberOfCycle = pw.TextField(null=True)
+    numberOfCycleTier = pw.IntegerField(null=True)
+    treatmentIntent = pw.TextField(null=True)
+    treatmentIntentTier = pw.IntegerField(null=True)
+    treatingCentreName = pw.TextField(null=True)
+    treatingCentreNameTier = pw.IntegerField(null=True)
+    type = pw.TextField(null=True)
+    typeTier = pw.IntegerField(null=True)
+    protocolCode = pw.TextField(null=True)
+    protocolCodeTier = pw.IntegerField(null=True)
+    recordingDate = pw.TextField(null=True)
+    recordingDateTier = pw.IntegerField(null=True)
+    treatmentPlanId = pw.TextField(null=True)
+    treatmentPlanIdTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Radiotherapy(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    patientIdTier = pw.IntegerField(null=True)
+    courseNumber = pw.TextField(null=True)
+    courseNumberTier = pw.IntegerField(null=True)
+    startDate = pw.TextField(null=True)
+    startDateTier = pw.IntegerField(null=True)
+    stopDate = pw.TextField(null=True)
+    stopDateTier = pw.IntegerField(null=True)
+    therapeuticModality = pw.TextField(null=True)
+    therapeuticModalityTier = pw.IntegerField(null=True)
+    baseline = pw.TextField(null=True)
+    baselineTier = pw.IntegerField(null=True)
+    testResult = pw.TextField(null=True)
+    testResultTier = pw.IntegerField(null=True)
+    testResultStd = pw.TextField(null=True)
+    testResultStdTier = pw.IntegerField(null=True)
+    treatingCentreName = pw.TextField(null=True)
+    treatingCentreNameTier = pw.IntegerField(null=True)
+    startIntervalRad = pw.TextField(null=True)
+    startIntervalRadTier = pw.IntegerField(null=True)
+    startIntervalRadRaw = pw.TextField(null=True)
+    startIntervalRadRawTier = pw.IntegerField(null=True)
+    recordingDate = pw.TextField(null=True)
+    recordingDateTier = pw.IntegerField(null=True)
+    adjacentFields = pw.TextField(null=True)
+    adjacentFieldsTier = pw.IntegerField(null=True)
+    adjacentFractions = pw.TextField(null=True)
+    adjacentFractionsTier = pw.IntegerField(null=True)
+    complete = pw.TextField(null=True)
+    completeTier = pw.IntegerField(null=True)
+    brachytherapyDose = pw.TextField(null=True)
+    brachytherapyDoseTier = pw.IntegerField(null=True)
+    radiotherapyDose = pw.TextField(null=True)
+    radiotherapyDoseTier = pw.IntegerField(null=True)
+    siteNumber = pw.TextField(null=True)
+    siteNumberTier = pw.IntegerField(null=True)
+    technique = pw.TextField(null=True)
+    techniqueTier = pw.IntegerField(null=True)
+    treatedRegion = pw.TextField(null=True)
+    treatedRegionTier = pw.IntegerField(null=True)
+    treatmentPlanId = pw.TextField(null=True)
+    treatmentPlanIdTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Surgery(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    patientIdTier = pw.IntegerField(null=True)
+    startDate = pw.TextField(null=True)
+    startDateTier = pw.IntegerField(null=True)
+    stopDate = pw.TextField(null=True)
+    stopDateTier = pw.IntegerField(null=True)
+    sampleId = pw.TextField(null=True)
+    sampleIdTier = pw.IntegerField(null=True)
+    collectionTimePoint = pw.TextField(null=True)
+    collectionTimePointTier = pw.IntegerField(null=True)
+    diagnosisDate = pw.TextField(null=True)
+    diagnosisDateTier = pw.IntegerField(null=True)
+    site = pw.TextField(null=True)
+    siteTier = pw.IntegerField(null=True)
+    type = pw.TextField(null=True)
+    typeTier = pw.IntegerField(null=True)
+    recordingDate = pw.TextField(null=True)
+    recordingDateTier = pw.IntegerField(null=True)
+    treatmentPlanId = pw.TextField(null=True)
+    treatmentPlanIdTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Immunotherapy(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    patientIdTier = pw.IntegerField(null=True)
+    startDate = pw.TextField(null=True)
+    startDateTier = pw.IntegerField(null=True)
+    immunotherapyType = pw.TextField(null=True)
+    immunotherapyTypeTier = pw.IntegerField(null=True)
+    immunotherapyTarget = pw.TextField(null=True)
+    immunotherapyTargetTier = pw.IntegerField(null=True)
+    immunotherapyDetail = pw.TextField(null=True)
+    immunotherapyDetailTier = pw.IntegerField(null=True)
+    treatmentPlanId = pw.TextField(null=True)
+    treatmentPlanIdTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Celltransplant(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    patientIdTier = pw.IntegerField(null=True)
+    startDate = pw.TextField(null=True)
+    startDateTier = pw.IntegerField(null=True)
+    cellSource = pw.TextField(null=True)
+    cellSourceTier = pw.IntegerField(null=True)
+    donorType = pw.TextField(null=True)
+    donorTypeTier = pw.IntegerField(null=True)
+    treatmentPlanId = pw.TextField(null=True)
+    treatmentPlanIdTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Slide(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    patientIdTier = pw.IntegerField(null=True)
+    sampleId = pw.TextField(null=True)
+    sampleIdTier = pw.IntegerField(null=True)
+    slideId = pw.TextField(null=True)
+    slideIdTier = pw.IntegerField(null=True)
+    slideOtherId = pw.TextField(null=True)
+    slideOtherIdTier = pw.IntegerField(null=True)
+    lymphocyteInfiltrationPercent = pw.TextField(null=True)
+    lymphocyteInfiltrationPercentTier = pw.IntegerField(null=True)
+    tumorNucleiPercent = pw.TextField(null=True)
+    tumorNucleiPercentTier = pw.IntegerField(null=True)
+    monocyteInfiltrationPercent = pw.TextField(null=True)
+    monocyteInfiltrationPercentTier = pw.IntegerField(null=True)
+    normalCellsPercent = pw.TextField(null=True)
+    normalCellsPercentTier = pw.IntegerField(null=True)
+    tumorCellsPercent = pw.TextField(null=True)
+    tumorCellsPercentTier = pw.IntegerField(null=True)
+    stromalCellsPercent = pw.TextField(null=True)
+    stromalCellsPercentTier = pw.IntegerField(null=True)
+    eosinophilInfiltrationPercent = pw.TextField(null=True)
+    eosinophilInfiltrationPercentTier = pw.IntegerField(null=True)
+    neutrophilInfiltrationPercent = pw.TextField(null=True)
+    neutrophilInfiltrationPercentTier = pw.IntegerField(null=True)
+    granulocyteInfiltrationPercent = pw.TextField(null=True)
+    granulocyteInfiltrationPercentTier = pw.IntegerField(null=True)
+    necrosisPercent = pw.TextField(null=True)
+    necrosisPercentTier = pw.IntegerField(null=True)
+    inflammatoryInfiltrationPercent = pw.TextField(null=True)
+    inflammatoryInfiltrationPercentTier = pw.IntegerField(null=True)
+    proliferatingCellsNumber = pw.TextField(null=True)
+    proliferatingCellsNumberTier = pw.IntegerField(null=True)
+    sectionLocation = pw.TextField(null=True)
+    sectionLocationTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Study(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    patientIdTier = pw.IntegerField(null=True)
+    startDate = pw.TextField(null=True)
+    startDateTier = pw.IntegerField(null=True)
+    endDate = pw.TextField(null=True)
+    endDateTier = pw.IntegerField(null=True)
+    status = pw.TextField(null=True)
+    statusTier = pw.IntegerField(null=True)
+    recordingDate = pw.TextField(null=True)
+    recordingDateTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
+class Labtest(BaseModel):
+    # Common fields
+    id = pw.TextField(primary_key=True)
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', rel_model=Dataset, to_field='id')
+    created = pw.TextField()
+    updated = pw.TextField(null=True)
+    name = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    # Unique fields
+    patientId = pw.TextField(null=True)
+    patientIdTier = pw.IntegerField(null=True)
+    startDate = pw.TextField(null=True)
+    startDateTier = pw.IntegerField(null=True)
+    collectionDate = pw.TextField(null=True)
+    collectionDateTier = pw.IntegerField(null=True)
+    endDate = pw.TextField(null=True)
+    endDateTier = pw.IntegerField(null=True)
+    eventType = pw.TextField(null=True)
+    eventTypeTier = pw.IntegerField(null=True)
+    testResults = pw.TextField(null=True)
+    testResultsTier = pw.IntegerField(null=True)
+    timePoint = pw.TextField(null=True)
+    timePointTier = pw.IntegerField(null=True)
+    recordingDate = pw.TextField(null=True)
+    recordingDateTier = pw.IntegerField(null=True)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
 class Individual(BaseModel):
     created = pw.TextField()
     datasetid = pw.ForeignKeyField(

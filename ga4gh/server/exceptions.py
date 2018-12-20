@@ -346,6 +346,54 @@ class TumourboardNotFoundException(NotFoundException):
             tumourboardId)
 
 
+class ChemotherapyNotFoundException(NotFoundException):
+    def __init__(self, chemotherapyId):
+        self.message = "The requested Chemotherapy '{}' was not found".format(
+            chemotherapyId)
+
+
+class RadiotherapyNotFoundException(NotFoundException):
+    def __init__(self, radiotherapyId):
+        self.message = "The requested Radiotherapy '{}' was not found".format(
+            radiotherapyId)
+
+
+class SurgeryNotFoundException(NotFoundException):
+    def __init__(self, surgeryId):
+        self.message = "The requested Surgery '{}' was not found".format(
+            surgeryId)
+
+
+class ImmunotherapyNotFoundException(NotFoundException):
+    def __init__(self, immunotherapyId):
+        self.message = "The requested Immunotherapy '{}' was not found".format(
+            immunotherapyId)
+
+
+class CelltransplantNotFoundException(NotFoundException):
+    def __init__(self, celltransplantId):
+        self.message = "The requested Celltransplant '{}' was not found".format(
+            celltransplantId)
+
+
+class SlideNotFoundException(NotFoundException):
+    def __init__(self, slideId):
+        self.message = "The requested Slide '{}' was not found".format(
+            slideId)
+
+
+class StudyNotFoundException(NotFoundException):
+    def __init__(self, studyId):
+        self.message = "The requested Study '{}' was not found".format(
+            studyId)
+
+
+class LabtestNotFoundException(NotFoundException):
+    def __init__(self, labtestId):
+        self.message = "The requested Labtest '{}' was not found".format(
+            labtestId)
+
+
 class AnnotationSetNotFoundException(NotFoundException):
     def __init__(self, variantAnnotationSetId):
         self.message = "The requested VariantAnnotationSet '{}'" \

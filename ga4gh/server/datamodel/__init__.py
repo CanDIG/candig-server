@@ -422,6 +422,86 @@ class TumourboardCompoundId(DatasetCompoundId):
     differentiator = 'tum'
 
 
+class ChemotherapyCompoundId(DatasetCompoundId):
+    """
+    The compound id for an chemotherapy
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'chemotherapy']
+    containerIds = DatasetCompoundId.containerIds + [('chemotherapy_id', 3)]
+    differentiator = 'che'
+
+
+class RadiotherapyCompoundId(DatasetCompoundId):
+    """
+    The compound id for an radiotherapy
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'radiotherapy']
+    containerIds = DatasetCompoundId.containerIds + [('radiotherapy_id', 3)]
+    differentiator = 'rad'
+
+
+class SurgeryCompoundId(DatasetCompoundId):
+    """
+    The compound id for an surgery
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'surgery']
+    containerIds = DatasetCompoundId.containerIds + [('surgery_id', 3)]
+    differentiator = 'sur'
+
+
+class ImmunotherapyCompoundId(DatasetCompoundId):
+    """
+    The compound id for an immunotherapy
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'immunotherapy']
+    containerIds = DatasetCompoundId.containerIds + [('immunotherapy_id', 3)]
+    differentiator = 'imm'
+
+
+class CelltransplantCompoundId(DatasetCompoundId):
+    """
+    The compound id for an celltransplant
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'celltransplant']
+    containerIds = DatasetCompoundId.containerIds + [('celltransplant_id', 3)]
+    differentiator = 'cel'
+
+
+class SlideCompoundId(DatasetCompoundId):
+    """
+    The compound id for an slide
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'slide']
+    containerIds = DatasetCompoundId.containerIds + [('slide_id', 3)]
+    differentiator = 'sli'
+
+
+class StudyCompoundId(DatasetCompoundId):
+    """
+    The compound id for an study
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'study']
+    containerIds = DatasetCompoundId.containerIds + [('study_id', 3)]
+    differentiator = 'stu'
+
+
+class LabtestCompoundId(DatasetCompoundId):
+    """
+    The compound id for an labtest
+    """
+    fields = DatasetCompoundId.fields + [
+        CompoundId.differentiatorFieldName, 'labtest']
+    containerIds = DatasetCompoundId.containerIds + [('labtest_id', 3)]
+    differentiator = 'lab'
+
+
 class ExtractionCompoundId(DatasetCompoundId):
     """
     The compound id for extraction metadata

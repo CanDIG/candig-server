@@ -3560,3 +3560,2089 @@ class Tumourboard(datamodel.DatamodelObject):
 
     def getSummaryReportTier(self):
         return self._summaryReportTier
+
+
+class Chemotherapy(datamodel.DatamodelObject):
+    """
+    """
+    compoundIdClass = datamodel.ChemotherapyCompoundId
+
+    def __init__(self, parentContainer, localId):
+        """
+        """
+        # Call parent constructor
+        super(Chemotherapy, self).__init__(parentContainer, localId)
+
+        # Common fields
+        self._created = datetime.datetime.now().isoformat()
+        self._updated = datetime.datetime.now().isoformat()
+        self._name = localId
+        self._description = None
+        self._datasetId = parentContainer.getId()
+
+        # Unique fields
+        self._patientId = None
+        self._patientIdTier = None
+        self._courseNumber = None
+        self._courseNumberTier = None
+        self._startDate = None
+        self._startDateTier = None
+        self._stopDate = None
+        self._stopDateTier = None
+        self._systematicTherapyAgentName = None
+        self._systematicTherapyAgentNameTier = None
+        self._route = None
+        self._routeTier = None
+        self._dose = None
+        self._doseTier = None
+        self._doseFrequency = None
+        self._doseFrequencyTier = None
+        self._doseUnit = None
+        self._doseUnitTier = None
+        self._daysPerCycle = None
+        self._daysPerCycleTier = None
+        self._numberOfCycle = None
+        self._numberOfCycleTier = None
+        self._treatmentIntent = None
+        self._treatmentIntentTier = None
+        self._treatingCentreName = None
+        self._treatingCentreNameTier = None
+        self._type = None
+        self._typeTier = None
+        self._protocolCode = None
+        self._protocolCodeTier = None
+        self._recordingDate = None
+        self._recordingDateTier = None
+        self._treatmentPlanId = None
+        self._treatmentPlanIdTier = None
+
+        self._objectAttr = {
+            "patientId": self.getPatientId,
+            "courseNumber": self.getCourseNumber,
+            "startDate": self.getStartDate,
+            "stopDate": self.getStopDate,
+            "systematicTherapyAgentName": self.getSystematicTherapyAgentName,
+            "route": self.getRoute,
+            "dose": self.getDose,
+            "doseFrequency": self.getDoseFrequency,
+            "doseUnit": self.getDoseUnit,
+            "daysPerCycle": self.getDaysPerCycle,
+            "numberOfCycle": self.getNumberOfCycle,
+            "treatmentIntent": self.getTreatmentIntent,
+            "treatingCentreName": self.getTreatingCentreName,
+            "type": self.getType,
+            "protocolCode": self.getProtocolCode,
+            "recordingDate": self.getRecordingDate,
+            "treatmentPlanId": self.getTreatmentPlanId,
+        }
+
+    def toProtocolElement(self, tier=0):
+        """
+        """
+        record = {
+            str('id'): str(self.getId()),
+            str('dataset_id'): str(self._datasetId),
+            str('created'): str(self.getCreated()),
+            str('updated'): str(self.getUpdated()),
+            str('name'): str(self.getName()),
+            str('description'): str(self.getDescription()),
+        }
+
+        # Unique fields
+        if tier >= self.getPatientIdTier():
+            record[str('patientId')] = str(self.getPatientId())
+        if tier >= self.getCourseNumberTier():
+            record[str('courseNumber')] = str(self.getCourseNumber())
+        if tier >= self.getStartDateTier():
+            record[str('startDate')] = str(self.getStartDate())
+        if tier >= self.getStopDateTier():
+            record[str('stopDate')] = str(self.getStopDate())
+        if tier >= self.getSystematicTherapyAgentNameTier():
+            record[str('systematicTherapyAgentName')] = str(self.getSystematicTherapyAgentName())
+        if tier >= self.getRouteTier():
+            record[str('route')] = str(self.getRoute())
+        if tier >= self.getDoseTier():
+            record[str('dose')] = str(self.getDose())
+        if tier >= self.getDoseFrequencyTier():
+            record[str('doseFrequency')] = str(self.getDoseFrequency())
+        if tier >= self.getDoseUnitTier():
+            record[str('doseUnit')] = str(self.getDoseUnit())
+        if tier >= self.getDaysPerCycleTier():
+            record[str('daysPerCycle')] = str(self.getDaysPerCycle())
+        if tier >= self.getNumberOfCycleTier():
+            record[str('numberOfCycle')] = str(self.getNumberOfCycle())
+        if tier >= self.getTreatmentIntentTier():
+            record[str('treatmentIntent')] = str(self.getTreatmentIntent())
+        if tier >= self.getTreatingCentreNameTier():
+            record[str('treatingCentreName')] = str(self.getTreatingCentreName())
+        if tier >= self.getTypeTier():
+            record[str('type')] = str(self.getType())
+        if tier >= self.getProtocolCodeTier():
+            record[str('protocolCode')] = str(self.getProtocolCode())
+        if tier >= self.getRecordingDateTier():
+            record[str('recordingDate')] = str(self.getRecordingDate())
+        if tier >= self.getTreatmentPlanIdTier():
+            record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+
+        Chemotherapy = protocol.Chemotherapy(**record)
+        self.serializeAttributes(Chemotherapy)
+
+        return Chemotherapy
+
+    def populateFromRow(self, ChemotherapyRecord):
+        """
+        """
+        self._created = ChemotherapyRecord.created
+        self._updated = ChemotherapyRecord.updated
+        self._name = ChemotherapyRecord.name
+        self._description = ChemotherapyRecord.description
+        self.setAttributesJson(ChemotherapyRecord.attributes)
+
+        # Unique fields
+        self._patientId = ChemotherapyRecord.patientId
+        self._patientIdTier = ChemotherapyRecord.patientIdTier
+        self._courseNumber = ChemotherapyRecord.courseNumber
+        self._courseNumberTier = ChemotherapyRecord.courseNumberTier
+        self._startDate = ChemotherapyRecord.startDate
+        self._startDateTier = ChemotherapyRecord.startDateTier
+        self._stopDate = ChemotherapyRecord.stopDate
+        self._stopDateTier = ChemotherapyRecord.stopDateTier
+        self._systematicTherapyAgentName = ChemotherapyRecord.systematicTherapyAgentName
+        self._systematicTherapyAgentNameTier = ChemotherapyRecord.systematicTherapyAgentNameTier
+        self._route = ChemotherapyRecord.route
+        self._routeTier = ChemotherapyRecord.routeTier
+        self._dose = ChemotherapyRecord.dose
+        self._doseTier = ChemotherapyRecord.doseTier
+        self._doseFrequency = ChemotherapyRecord.doseFrequency
+        self._doseFrequencyTier = ChemotherapyRecord.doseFrequencyTier
+        self._doseUnit = ChemotherapyRecord.doseUnit
+        self._doseUnitTier = ChemotherapyRecord.doseUnitTier
+        self._daysPerCycle = ChemotherapyRecord.daysPerCycle
+        self._daysPerCycleTier = ChemotherapyRecord.daysPerCycleTier
+        self._numberOfCycle = ChemotherapyRecord.numberOfCycle
+        self._numberOfCycleTier = ChemotherapyRecord.numberOfCycleTier
+        self._treatmentIntent = ChemotherapyRecord.treatmentIntent
+        self._treatmentIntentTier = ChemotherapyRecord.treatmentIntentTier
+        self._treatingCentreName = ChemotherapyRecord.treatingCentreName
+        self._treatingCentreNameTier = ChemotherapyRecord.treatingCentreNameTier
+        self._type = ChemotherapyRecord.type
+        self._typeTier = ChemotherapyRecord.typeTier
+        self._protocolCode = ChemotherapyRecord.protocolCode
+        self._protocolCodeTier = ChemotherapyRecord.protocolCodeTier
+        self._recordingDate = ChemotherapyRecord.recordingDate
+        self._recordingDateTier = ChemotherapyRecord.recordingDateTier
+        self._treatmentPlanId = ChemotherapyRecord.treatmentPlanId
+        self._treatmentPlanIdTier = ChemotherapyRecord.treatmentPlanIdTier
+
+        return self
+
+    def populateFromJson(self, jsonString):
+        """
+        """
+        try:
+            parsed = protocol.fromJson(jsonString, protocol.Chemotherapy)
+        except:
+            raise exceptions.InvalidJsonException(jsonString)
+        self._created = parsed.created
+        self._updated = parsed.updated
+        self._name = parsed.name
+        self._description = parsed.description
+        attributes = {}
+        for key in parsed.attributes.attr:
+            attributes[key] = {
+                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+        self.setAttributes(attributes)
+
+        # Unique fields
+        self._patientId = parsed.patientId
+        self._patientIdTier = parsed.patientIdTier
+        self._courseNumber = parsed.courseNumber
+        self._courseNumberTier = parsed.courseNumberTier
+        self._startDate = parsed.startDate
+        self._startDateTier = parsed.startDateTier
+        self._stopDate = parsed.stopDate
+        self._stopDateTier = parsed.stopDateTier
+        self._systematicTherapyAgentName = parsed.systematicTherapyAgentName
+        self._systematicTherapyAgentNameTier = parsed.systematicTherapyAgentNameTier
+        self._route = parsed.route
+        self._routeTier = parsed.routeTier
+        self._dose = parsed.dose
+        self._doseTier = parsed.doseTier
+        self._doseFrequency = parsed.doseFrequency
+        self._doseFrequencyTier = parsed.doseFrequencyTier
+        self._doseUnit = parsed.doseUnit
+        self._doseUnitTier = parsed.doseUnitTier
+        self._daysPerCycle = parsed.daysPerCycle
+        self._daysPerCycleTier = parsed.daysPerCycleTier
+        self._numberOfCycle = parsed.numberOfCycle
+        self._numberOfCycleTier = parsed.numberOfCycleTier
+        self._treatmentIntent = parsed.treatmentIntent
+        self._treatmentIntentTier = parsed.treatmentIntentTier
+        self._treatingCentreName = parsed.treatingCentreName
+        self._treatingCentreNameTier = parsed.treatingCentreNameTier
+        self._type = parsed.type
+        self._typeTier = parsed.typeTier
+        self._protocolCode = parsed.protocolCode
+        self._protocolCodeTier = parsed.protocolCodeTier
+        self._recordingDate = parsed.recordingDate
+        self._recordingDateTier = parsed.recordingDateTier
+        self._treatmentPlanId = parsed.treatmentPlanId
+        self._treatmentPlanIdTier = parsed.treatmentPlanIdTier
+
+        return self
+
+    def getCreated(self):
+        return self._created
+
+    def getUpdated(self):
+        return self._updated
+
+    def getName(self):
+        return self._name
+
+    def getDescription(self):
+        return self._description
+
+    def setDescription(self, description):
+        self._description = description
+
+    # Unique field getters
+
+    def getPatientId(self):
+        return self._patientId
+
+    def getPatientIdTier(self):
+        return self._patientIdTier
+
+    def getCourseNumber(self):
+        return self._courseNumber
+
+    def getCourseNumberTier(self):
+        return self._courseNumberTier
+
+    def getStartDate(self):
+        return self._startDate
+
+    def getStartDateTier(self):
+        return self._startDateTier
+
+    def getStopDate(self):
+        return self._stopDate
+
+    def getStopDateTier(self):
+        return self._stopDateTier
+
+    def getSystematicTherapyAgentName(self):
+        return self._systematicTherapyAgentName
+
+    def getSystematicTherapyAgentNameTier(self):
+        return self._systematicTherapyAgentNameTier
+
+    def getRoute(self):
+        return self._route
+
+    def getRouteTier(self):
+        return self._routeTier
+
+    def getDose(self):
+        return self._dose
+
+    def getDoseTier(self):
+        return self._doseTier
+
+    def getDoseFrequency(self):
+        return self._doseFrequency
+
+    def getDoseFrequencyTier(self):
+        return self._doseFrequencyTier
+
+    def getDoseUnit(self):
+        return self._doseUnit
+
+    def getDoseUnitTier(self):
+        return self._doseUnitTier
+
+    def getDaysPerCycle(self):
+        return self._daysPerCycle
+
+    def getDaysPerCycleTier(self):
+        return self._daysPerCycleTier
+
+    def getNumberOfCycle(self):
+        return self._numberOfCycle
+
+    def getNumberOfCycleTier(self):
+        return self._numberOfCycleTier
+
+    def getTreatmentIntent(self):
+        return self._treatmentIntent
+
+    def getTreatmentIntentTier(self):
+        return self._treatmentIntentTier
+
+    def getTreatingCentreName(self):
+        return self._treatingCentreName
+
+    def getTreatingCentreNameTier(self):
+        return self._treatingCentreNameTier
+
+    def getType(self):
+        return self._type
+
+    def getTypeTier(self):
+        return self._typeTier
+
+    def getProtocolCode(self):
+        return self._protocolCode
+
+    def getProtocolCodeTier(self):
+        return self._protocolCodeTier
+
+    def getRecordingDate(self):
+        return self._recordingDate
+
+    def getRecordingDateTier(self):
+        return self._recordingDateTier
+
+    def getTreatmentPlanId(self):
+        return self._treatmentPlanId
+
+    def getTreatmentPlanIdTier(self):
+        return self._treatmentPlanIdTier
+
+
+class Radiotherapy(datamodel.DatamodelObject):
+    """
+    """
+    compoundIdClass = datamodel.RadiotherapyCompoundId
+
+    def __init__(self, parentContainer, localId):
+        """
+        """
+        # Call parent constructor
+        super(Radiotherapy, self).__init__(parentContainer, localId)
+
+        # Common fields
+        self._created = datetime.datetime.now().isoformat()
+        self._updated = datetime.datetime.now().isoformat()
+        self._name = localId
+        self._description = None
+        self._datasetId = parentContainer.getId()
+
+        # Unique fields
+        self._patientId = None
+        self._patientIdTier = None
+        self._courseNumber = None
+        self._courseNumberTier = None
+        self._startDate = None
+        self._startDateTier = None
+        self._stopDate = None
+        self._stopDateTier = None
+        self._therapeuticModality = None
+        self._therapeuticModalityTier = None
+        self._baseline = None
+        self._baselineTier = None
+        self._testResult = None
+        self._testResultTier = None
+        self._testResultStd = None
+        self._testResultStdTier = None
+        self._treatingCentreName = None
+        self._treatingCentreNameTier = None
+        self._startIntervalRad = None
+        self._startIntervalRadTier = None
+        self._startIntervalRadRaw = None
+        self._startIntervalRadRawTier = None
+        self._recordingDate = None
+        self._recordingDateTier = None
+        self._adjacentFields = None
+        self._adjacentFieldsTier = None
+        self._adjacentFractions = None
+        self._adjacentFractionsTier = None
+        self._complete = None
+        self._completeTier = None
+        self._brachytherapyDose = None
+        self._brachytherapyDoseTier = None
+        self._radiotherapyDose = None
+        self._radiotherapyDoseTier = None
+        self._siteNumber = None
+        self._siteNumberTier = None
+        self._technique = None
+        self._techniqueTier = None
+        self._treatedRegion = None
+        self._treatedRegionTier = None
+        self._treatmentPlanId = None
+        self._treatmentPlanIdTier = None
+
+        self._objectAttr = {
+            "patientId": self.getPatientId,
+            "courseNumber": self.getCourseNumber,
+            "startDate": self.getStartDate,
+            "stopDate": self.getStopDate,
+            "therapeuticModality": self.getTherapeuticModality,
+            "baseline": self.getBaseline,
+            "testResult": self.getTestResult,
+            "testResultStd": self.getTestResultStd,
+            "treatingCentreName": self.getTreatingCentreName,
+            "startIntervalRad": self.getStartIntervalRad,
+            "startIntervalRadRaw": self.getStartIntervalRadRaw,
+            "recordingDate": self.getRecordingDate,
+            "adjacentFields": self.getAdjacentFields,
+            "adjacentFractions": self.getAdjacentFractions,
+            "complete": self.getComplete,
+            "brachytherapyDose": self.getBrachytherapyDose,
+            "siteNumber": self.getSiteNumber,
+            "technique": self.getTechnique,
+            "treatedRegion": self.getTreatedRegion,
+            "treatmentPlanId": self.getTreatmentPlanId
+        }
+
+    def toProtocolElement(self, tier=0):
+        """
+        """
+        record = {
+            str('id'): str(self.getId()),
+            str('dataset_id'): str(self._datasetId),
+            str('created'): str(self.getCreated()),
+            str('updated'): str(self.getUpdated()),
+            str('name'): str(self.getName()),
+            str('description'): str(self.getDescription()),
+        }
+
+        # Unique fields
+        if tier >= self.getPatientIdTier():
+            record[str('patientId')] = str(self.getPatientId())
+        if tier >= self.getCourseNumberTier():
+            record[str('courseNumber')] = str(self.getCourseNumber())
+        if tier >= self.getStartDateTier():
+            record[str('startDate')] = str(self.getStartDate())
+        if tier >= self.getStopDateTier():
+            record[str('stopDate')] = str(self.getStopDate())
+        if tier >= self.getTherapeuticModalityTier():
+            record[str('therapeuticModality')] = str(self.getTherapeuticModality())
+        if tier >= self.getBaselineTier():
+            record[str('baseline')] = str(self.getBaseline())
+        if tier >= self.getTestResultTier():
+            record[str('testResult')] = str(self.getTestResult())
+        if tier >= self.getTestResultStdTier():
+            record[str('testResultStd')] = str(self.getTestResultStd())
+        if tier >= self.getTreatingCentreNameTier():
+            record[str('treatingCentreName')] = str(self.getTreatingCentreName())
+        if tier >= self.getStartIntervalRadTier():
+            record[str('startIntervalRad')] = str(self.getStartIntervalRad())
+        if tier >= self.getStartIntervalRadRaw():
+            record[str('startIntervalRadRaw')] = str(self.getStartIntervalRadRaw())
+        if tier >= self.getRecordingDateTier():
+            record[str('recordingDate')] = str(self.getRecordingDate())
+        if tier >= self._adjacentFieldsTier():
+            record[str('adjacentFields')] = str(self.getAdjacentFields())
+        if tier >= self.getAdjacentFractionsTier():
+            record[str('adjacentFractions')] = str(self.getAdjacentFractions())
+        if tier >= self.getCompleteTier():
+            record[str('complete')] = str(self.getComplete())
+        if tier >= self.getBrachytherapyDoseTier():
+            record[str('brachytherapyDose')] = str(self.getBrachytherapyDose())
+        if tier >= self.getRadiotherapyDoseTier():
+            record[str('radiotherapyDose')] = str(self.getRadiotherapyDose())
+        if tier >= self.getSiteNumberTier():
+            record[str('siteNumber')] = str(self.getSiteNumber())
+        if tier >= self.getTechniqueTier():
+            record[str('technique')] = str(self.getTechnique())
+        if tier >= self.getTreatedRegionTier():
+            record[str('treatedRegion')] = str(self.getTreatedRegion())
+        if tier >= self.getTreatmentPlanIdTier():
+            record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+
+        Radiotherapy = protocol.Radiotherapy(**record)
+        self.serializeAttributes(Radiotherapy)
+
+        return Radiotherapy
+
+    def populateFromRow(self, RadiotherapyRecord):
+        """
+        """
+        self._created = RadiotherapyRecord.created
+        self._updated = RadiotherapyRecord.updated
+        self._name = RadiotherapyRecord.name
+        self._description = RadiotherapyRecord.description
+        self.setAttributesJson(RadiotherapyRecord.attributes)
+
+        # Unique fields
+        self._patientId = RadiotherapyRecord.patientId
+        self._patientIdTier = RadiotherapyRecord.patientIdTier
+        self._courseNumber = RadiotherapyRecord.courseNumber
+        self._courseNumberTier = RadiotherapyRecord.courseNumberTier
+        self._startDate = RadiotherapyRecord.startDate
+        self._startDateTier = RadiotherapyRecord.startDateTier
+        self._stopDate = RadiotherapyRecord.stopDate
+        self._stopDateTier = RadiotherapyRecord.stopDateTier
+        self._therapeuticModality = RadiotherapyRecord.therapeuticModality
+        self._therapeuticModalityTier = RadiotherapyRecord.therapeuticModalityTier
+        self._baseline = RadiotherapyRecord.baseline
+        self._baselineTier = RadiotherapyRecord.baselineTier
+        self._testResult = RadiotherapyRecord.testResult
+        self._testResultTier = RadiotherapyRecord.testResultTier
+        self._testResultStd = RadiotherapyRecord.testResultStd
+        self._testResultStdTier = RadiotherapyRecord.testResultStdTier
+        self._treatingCentreName = RadiotherapyRecord.treatingCentreName
+        self._treatingCentreNameTier = RadiotherapyRecord.treatingCentreNameTier
+        self._startIntervalRad = RadiotherapyRecord.startIntervalRad
+        self._startIntervalRadTier = RadiotherapyRecord.startIntervalRadTier
+        self._startIntervalRadRaw = RadiotherapyRecord.startIntervalRadRaw
+        self._startIntervalRadRawTier = RadiotherapyRecord.startIntervalRadRawTier
+        self._recordingDate = RadiotherapyRecord.recordingDate
+        self._recordingDateTier = RadiotherapyRecord.recordingDateTier
+        self._adjacentFields = RadiotherapyRecord.adjacentFields
+        self._adjacentFieldsTier = RadiotherapyRecord.adjacentFieldsTier
+        self._adjacentFractions = RadiotherapyRecord.adjacentFractions
+        self._adjacentFractionsTier = RadiotherapyRecord.adjacentFractionsTier
+        self._complete = RadiotherapyRecord.complete
+        self._completeTier = RadiotherapyRecord.completeTier
+        self._brachytherapyDose = RadiotherapyRecord.brachytherapyDose
+        self._brachytherapyDoseTier = RadiotherapyRecord.brachytherapyDoseTier
+        self._radiotherapyDose = RadiotherapyRecord.radiotherapyDose
+        self._radiotherapyDoseTier = RadiotherapyRecord.radiotherapyDoseTier
+        self._siteNumber = RadiotherapyRecord.siteNumber
+        self._siteNumberTier = RadiotherapyRecord.siteNumberTier
+        self._technique = RadiotherapyRecord.technique
+        self._techniqueTier = RadiotherapyRecord.techniqueTier
+        self._treatedRegion = RadiotherapyRecord.treatedRegion
+        self._treatedRegionTier = RadiotherapyRecord.treatedRegionTier
+        self._treatmentPlanId = RadiotherapyRecord.treatmentPlanId
+        self._treatmentPlanIdTier = RadiotherapyRecord.treatmentPlanIdTier
+
+        return self
+
+    def populateFromJson(self, jsonString):
+        """
+        """
+        try:
+            parsed = protocol.fromJson(jsonString, protocol.Radiotherapy)
+        except:
+            raise exceptions.InvalidJsonException(jsonString)
+        self._created = parsed.created
+        self._updated = parsed.updated
+        self._name = parsed.name
+        self._description = parsed.description
+        attributes = {}
+        for key in parsed.attributes.attr:
+            attributes[key] = {
+                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+        self.setAttributes(attributes)
+
+        # Unique fields
+        self._patientId = parsed.patientId
+        self._patientIdTier = parsed.patientIdTier
+        self._courseNumber = parsed.courseNumber
+        self._courseNumberTier = parsed.courseNumberTier
+        self._startDate = parsed.startDate
+        self._startDateTier = parsed.startDateTier
+        self._stopDate = parsed.stopDate
+        self._stopDateTier = parsed.stopDateTier
+        self._therapeuticModality = parsed.therapeuticModality
+        self._therapeuticModalityTier = parsed.therapeuticModalityTier
+        self._baseline = parsed.baseline
+        self._baselineTier = parsed.baselineTier
+        self._testResult = parsed.testResult
+        self._testResultTier = parsed.testResultTier
+        self._testResultStd = parsed.testResultStd
+        self._testResultStdTier = parsed.testResultStdTier
+        self._treatingCentreName = parsed.treatingCentreName
+        self._treatingCentreNameTier = parsed.treatingCentreNameTier
+        self._startIntervalRad = parsed.startIntervalRad
+        self._startIntervalRadTier = parsed.startIntervalRadTier
+        self._startIntervalRadRaw = parsed.startIntervalRadRaw
+        self._startIntervalRadRawTier = parsed.startIntervalRadRawTier
+        self._recordingDate = parsed.recordingDate
+        self._recordingDateTier = parsed.recordingDateTier
+        self._adjacentFields = parsed.adjacentFields
+        self._adjacentFieldsTier = parsed.adjacentFieldsTier
+        self._adjacentFractions = parsed.adjacentFractions
+        self._adjacentFractionsTier = parsed.adjacentFractionsTier
+        self._complete = parsed.complete
+        self._completeTier = parsed.completeTier
+        self._brachytherapyDose = parsed.brachytherapyDose
+        self._brachytherapyDoseTier = parsed.brachytherapyDoseTier
+        self._radiotherapyDose = parsed.radiotherapyDose
+        self._radiotherapyDoseTier = parsed.radiotherapyDoseTier
+        self._siteNumber = parsed.siteNumber
+        self._siteNumberTier = parsed.siteNumberTier
+        self._technique = parsed.technique
+        self._techniqueTier = parsed.techniqueTier
+        self._treatedRegion = parsed.treatedRegion
+        self._treatedRegionTier = parsed.treatedRegionTier
+        self._treatmentPlanId = parsed.treatmentPlanId
+        self._treatmentPlanIdTier = parsed.treatmentPlanIdTier
+
+        return self
+
+    def getCreated(self):
+        return self._created
+
+    def getUpdated(self):
+        return self._updated
+
+    def getName(self):
+        return self._name
+
+    def getDescription(self):
+        return self._description
+
+    def setDescription(self, description):
+        self._description = description
+
+    # Unique field getters
+
+    def getPatientId(self):
+        return self._patientId
+
+    def getPatientIdTier(self):
+        return self._patientIdTier
+
+    def getCourseNumber(self):
+        return self._courseNumber
+
+    def getCourseNumberTier(self):
+        return self._courseNumberTier
+
+    def getStartDate(self):
+        return self._startDate
+
+    def getStartDateTier(self):
+        return self._startDateTier
+
+    def getStopDate(self):
+        return self._stopDate
+
+    def getStopDateTier(self):
+        return self._stopDateTier
+
+    def getTherapeuticModality(self):
+        return self._therapeuticModality
+
+    def getTherapeuticModalityTier(self):
+        return self._therapeuticModalityTier
+
+    def getBaseline(self):
+        return self._baseline
+
+    def getBaselineTier(self):
+        return self._baselineTier
+
+    def getTestResult(self):
+        return self._testResult
+
+    def getTestResultTier(self):
+        return self._testResultTier
+
+    def getTestResultStd(self):
+        return self._testResultStd
+
+    def getTestResultStdTier(self):
+        return self._testResultStdTier
+
+    def getTreatingCentreName(self):
+        return self._treatingCentreName
+
+    def getTreatingCentreNameTier(self):
+        return self._treatingCentreNameTier
+
+    def getStartIntervalRad(self):
+        return self._startIntervalRad
+
+    def getStartIntervalRadTier(self):
+        return self._startIntervalRadTier
+
+    def getStartIntervalRadRaw(self):
+        return self._startIntervalRadRaw
+
+    def getStartIntervalRadRawTier(self):
+        return self._startIntervalRadRawTier
+
+    def getRecordingDate(self):
+        return self._recordingDate
+
+    def getRecordingDateTier(self):
+        return self._recordingDateTier
+
+    def getAdjacentFields(self):
+        return self._adjacentFields
+
+    def getAdjacentFieldsTier(self):
+        return self._adjacentFieldsTier
+
+    def getAdjacentFractions(self):
+        return self._adjacentFractions
+
+    def getAdjacentFractionsTier(self):
+        return self._adjacentFractionsTier
+
+    def getComplete(self):
+        return self._complete
+
+    def getCompleteTier(self):
+        return self._completeTier
+
+    def getBrachytherapyDose(self):
+        return self._brachytherapyDose
+
+    def getBrachytherapyDoseTier(self):
+        return self._brachytherapyDoseTier
+
+    def getRadiotherapyDose(self):
+        return self._radiotherapyDose
+
+    def getRadiotherapyDoseTier(self):
+        return self._radiotherapyDoseTier
+
+    def getSiteNumber(self):
+        return self._siteNumber
+
+    def getSiteNumberTier(self):
+        return self._siteNumberTier
+
+    def getTechnique(self):
+        return self._technique
+
+    def getTechniqueTier(self):
+        return self._techniqueTier
+
+    def getTreatedRegion(self):
+        return self._treatedRegion
+
+    def getTreatedRegionTier(self):
+        return self._treatedRegionTier
+
+    def getTreatmentPlanId(self):
+        return self._treatmentPlanId
+
+    def getTreatmentPlanIdTier(self):
+        return self._treatmentPlanIdTier
+
+
+class Surgery(datamodel.DatamodelObject):
+    """
+    """
+    compoundIdClass = datamodel.SurgeryCompoundId
+
+    def __init__(self, parentContainer, localId):
+        """
+        """
+        # Call parent constructor
+        super(Surgery, self).__init__(parentContainer, localId)
+
+        # Common fields
+        self._created = datetime.datetime.now().isoformat()
+        self._updated = datetime.datetime.now().isoformat()
+        self._name = localId
+        self._description = None
+        self._datasetId = parentContainer.getId()
+
+        # Unique fields
+        self._patientId = None
+        self._patientIdTier = None
+        self._startDate = None
+        self._startDateTier = None
+        self._stopDate = None
+        self._stopDateTier = None
+        self._sampleId = None
+        self._sampleIdTier = None
+        self._collectionTimePoint = None
+        self._collectionTimePointTier = None
+        self._diagnosisDate = None
+        self._diagnosisDateTier = None
+        self._site = None
+        self._siteTier = None
+        self._type = None
+        self._typeTier = None
+        self._recordingDate = None
+        self._recordingDateTier = None
+        self._treatmentPlanId = None
+        self._treatmentPlanIdTier = None
+
+        self._objectAttr = {
+            "patientId": self.getPatientId,
+            "startDate": self.getStartDate,
+            "stopDate": self.getStopDate,
+            "sampleId": self.getSampleId,
+            "collectionTimePoint": self.getCollectionTimePoint,
+            "diagnosisDate": self.getDiagnosisDate,
+            "site": self.getSite,
+            "type": self.getType,
+            "recordingDate": self.getRecordingDate,
+            "treatmentPlanId": self.getTreatmentPlanId
+        }
+
+    def toProtocolElement(self, tier=0):
+        """
+        """
+        record = {
+            str('id'): str(self.getId()),
+            str('dataset_id'): str(self._datasetId),
+            str('created'): str(self.getCreated()),
+            str('updated'): str(self.getUpdated()),
+            str('name'): str(self.getName()),
+            str('description'): str(self.getDescription()),
+        }
+
+        # Unique fields
+        if tier >= self.getPatientIdTier():
+            record[str('patientId')] = str(self.getPatientId())
+        if tier >= self.getStartDateTier():
+            record[str('startDate')] = str(self.getStartDate())
+        if tier >= self.getStopDateTier():
+            record[str('stopDate')] = str(self.getStopDate())
+        if tier >= self.getSampleIdTier():
+            record[str('sampleId')] = str(self.getSampleId())
+        if tier >= self.getCollectionTimePointTier():
+            record[str('collectionTimePoint')] = str(self.getCollectionTimePoint())
+        if tier >= self.getDiagnosisDateTier():
+            record[str('diagnosisDate')] = str(self.getDiagnosisDate())
+        if tier >= self.getSiteTier():
+            record[str('site')] = str(self.getSite())
+        if tier >= self.getTypeTier():
+            record[str('type')] = str(self.getType())
+        if tier >= self.getRecordingDateTier():
+            record[str('recordingDate')] = str(self.getRecordingDate())
+        if tier >= self.getTreatmentPlanIdTier():
+            record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+
+        Surgery = protocol.Surgery(**record)
+        self.serializeAttributes(Surgery)
+
+        return Surgery
+
+    def populateFromRow(self, SurgeryRecord):
+        """
+        """
+        self._created = SurgeryRecord.created
+        self._updated = SurgeryRecord.updated
+        self._name = SurgeryRecord.name
+        self._description = SurgeryRecord.description
+        self.setAttributesJson(SurgeryRecord.attributes)
+
+        # Unique fields
+        self._patientId = SurgeryRecord.patientId
+        self._patientIdTier = SurgeryRecord.patientIdTier
+        self._startDate = SurgeryRecord.startDate
+        self._startDateTier = SurgeryRecord.startDateTier
+        self._stopDate = SurgeryRecord.stopDate
+        self._stopDateTier = SurgeryRecord.stopDateTier
+        self._sampleId = SurgeryRecord.sampleId
+        self._sampleIdTier = SurgeryRecord.sampleIdTier
+        self._collectionTimePoint = SurgeryRecord.collectionTimePoint
+        self._collectionTimePointTier = SurgeryRecord.collectionTimePointTier
+        self._diagnosisDate = SurgeryRecord.diagnosisDate
+        self._diagnosisDateTier = SurgeryRecord.diagnosisDateTier
+        self._site = SurgeryRecord.site
+        self._siteTier = SurgeryRecord.siteTier
+        self._type = SurgeryRecord.type
+        self._typeTier = SurgeryRecord.typeTier
+        self._recordingDate = SurgeryRecord.recordingDate
+        self._recordingDateTier = SurgeryRecord.recordingDateTier
+        self._treatmentPlanId = SurgeryRecord.treatmentPlanId
+        self._treatmentPlanIdTier = SurgeryRecord.treatmentPlanIdTier
+
+        return self
+
+    def populateFromJson(self, jsonString):
+        """
+        """
+        try:
+            parsed = protocol.fromJson(jsonString, protocol.Surgery)
+        except:
+            raise exceptions.InvalidJsonException(jsonString)
+        self._created = parsed.created
+        self._updated = parsed.updated
+        self._name = parsed.name
+        self._description = parsed.description
+        attributes = {}
+        for key in parsed.attributes.attr:
+            attributes[key] = {
+                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+        self.setAttributes(attributes)
+
+        # Unique fields
+        self._patientId = parsed.patientId
+        self._patientIdTier = parsed.patientIdTier
+        self._startDate = parsed.startDate
+        self._startDateTier = parsed.startDateTier
+        self._stopDate = parsed.stopDate
+        self._stopDateTier = parsed.stopDateTier
+        self._sampleId = parsed.sampleId
+        self._sampleIdTier = parsed.sampleIdTier
+        self._collectionTimePoint = parsed.collectionTimePoint
+        self._collectionTimePointTier = parsed.collectionTimePointTier
+        self._diagnosisDate = parsed.diagnosisDate
+        self._diagnosisDateTier = parsed.diagnosisDateTier
+        self._site = parsed.site
+        self._siteTier = parsed.siteTier
+        self._type = parsed.type
+        self._typeTier = parsed.typeTier
+        self._recordingDate = parsed.recordingDate
+        self._recordingDateTier = parsed.recordingDateTier
+        self._treatmentPlanId = parsed.treatmentPlanId
+        self._treatmentPlanIdTier = parsed.treatmentPlanIdTier
+
+        return self
+
+    def getCreated(self):
+        return self._created
+
+    def getUpdated(self):
+        return self._updated
+
+    def getName(self):
+        return self._name
+
+    def getDescription(self):
+        return self._description
+
+    def setDescription(self, description):
+        self._description = description
+
+    # Unique field getters
+
+    def getPatientId(self):
+        return self._patientId
+
+    def getPatientIdTier(self):
+        return self._patientIdTier
+
+    def getStartDate(self):
+        return self._startDate
+
+    def getStartDateTier(self):
+        return self._startDateTier
+
+    def getStopDate(self):
+        return self._stopDate
+
+    def getStopDateTier(self):
+        return self._stopDateTier
+
+    def getSampleId(self):
+        return self._sampleId
+
+    def getSampleIdTier(self):
+        return self._sampleIdTier
+
+    def getCollectionTimePoint(self):
+        return self._collectionTimePoint
+
+    def getCollectionTimePointTier(self):
+        return self._collectionTimePointTier
+
+    def getDiagnosisDate(self):
+        return self._diagnosisDate
+
+    def getDiagnosisDateTier(self):
+        return self._diagnosisDateTier
+
+    def getSite(self):
+        return self._site
+
+    def getSiteTier(self):
+        return self._siteTier
+
+    def getType(self):
+        return self._type
+
+    def getTypeTier(self):
+        return self._typeTier
+
+    def getRecordingDate(self):
+        return self._recordingDate
+
+    def getRecordingDateTier(self):
+        return self._recordingDateTier
+
+    def getTreatmentPlanId(self):
+        return self._treatmentPlanId
+
+    def getTreatmentPlanIdTier(self):
+        return self._treatmentPlanIdTier
+
+
+class Immunotherapy(datamodel.DatamodelObject):
+    """
+    """
+    compoundIdClass = datamodel.ImmunotherapyCompoundId
+
+    def __init__(self, parentContainer, localId):
+        """
+        """
+        # Call parent constructor
+        super(Immunotherapy, self).__init__(parentContainer, localId)
+
+        # Common fields
+        self._created = datetime.datetime.now().isoformat()
+        self._updated = datetime.datetime.now().isoformat()
+        self._name = localId
+        self._description = None
+        self._datasetId = parentContainer.getId()
+
+        # Unique fields
+        self._patientId = None
+        self._patientIdTier = None
+        self._startDate = None
+        self._startDateTier = None
+        self._immunotherapyType = None
+        self._immunotherapyTypeTier = None
+        self._immunotherapyTarget = None
+        self._immunotherapyTargetTier = None
+        self._immunotherapyDetail = None
+        self._immunotherapyDetailTier = None
+        self._treatmentPlanId = None
+        self._treatmentPlanIdTier = None
+
+        self._objectAttr = {
+            "patientId": self.getPatientId,
+            "startDate": self.getStartDate,
+            "immunotherapyType": self.getImmunotherapyType,
+            "immunotherapyTarget": self.getImmunotherapyTarget,
+            "immunotherapyDetail": self.getImmunotherapyDetail,
+            "treatmentPlanId": self.getTreatmentPlanId
+        }
+
+    def toProtocolElement(self, tier=0):
+        """
+        """
+        record = {
+            str('id'): str(self.getId()),
+            str('dataset_id'): str(self._datasetId),
+            str('created'): str(self.getCreated()),
+            str('updated'): str(self.getUpdated()),
+            str('name'): str(self.getName()),
+            str('description'): str(self.getDescription()),
+        }
+
+        # Unique fields
+        if tier >= self.getPatientIdTier():
+            record[str('patientId')] = str(self.getPatientId())
+        if tier >= self.getStartDateTier():
+            record[str('startDate')] = str(self.getStartDate())
+        if tier >= self.getImmunotherapyTypeTier():
+            record[str('immunotherapyType')] = str(self.getImmunotherapyType())
+        if tier >= self.getImmunotherapyTargetTier():
+            record[str('immunotherapyTarget')] = str(self.getImmunotherapyTarget())
+        if tier >= self.getImmunotherapyDetailTier():
+            record[str('immunotherapyDetail')] = str(self.getImmunotherapyDetail())
+        if tier >= self.getTreatmentPlanIdTier():
+            record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+
+        Immunotherapy = protocol.Immunotherapy(**record)
+        self.serializeAttributes(Immunotherapy)
+
+        return Immunotherapy
+
+    def populateFromRow(self, ImmunotherapyRecord):
+        """
+        """
+        self._created = ImmunotherapyRecord.created
+        self._updated = ImmunotherapyRecord.updated
+        self._name = ImmunotherapyRecord.name
+        self._description = ImmunotherapyRecord.description
+        self.setAttributesJson(ImmunotherapyRecord.attributes)
+
+        # Unique fields
+        self._patientId = ImmunotherapyRecord.patientId
+        self._patientIdTier = ImmunotherapyRecord.patientIdTier
+        self._startDate = ImmunotherapyRecord.startDate
+        self._startDateTier = ImmunotherapyRecord.startDateTier
+        self._immunotherapyType = ImmunotherapyRecord.immunotherapyType
+        self._immunotherapyTypeTier = ImmunotherapyRecord.immunotherapyTypeTier
+        self._immunotherapyTarget = ImmunotherapyRecord.immunotherapyTarget
+        self._immunotherapyTargetTier = ImmunotherapyRecord.immunotherapyTargetTier
+        self._immunotherapyDetail = ImmunotherapyRecord.immunotherapyDetail
+        self._immunotherapyDetailTier = ImmunotherapyRecord.immunotherapyDetailTier
+        self._treatmentPlanId = ImmunotherapyRecord.treatmentPlanId
+        self._treatmentPlanIdTier = ImmunotherapyRecord.treatmentPlanIdTier
+
+        return self
+
+    def populateFromJson(self, jsonString):
+        """
+        """
+        try:
+            parsed = protocol.fromJson(jsonString, protocol.Immunotherapy)
+        except:
+            raise exceptions.InvalidJsonException(jsonString)
+        self._created = parsed.created
+        self._updated = parsed.updated
+        self._name = parsed.name
+        self._description = parsed.description
+        attributes = {}
+        for key in parsed.attributes.attr:
+            attributes[key] = {
+                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+        self.setAttributes(attributes)
+
+        # Unique fields
+        self._patientId = parsed.patientId
+        self._patientIdTier = parsed.patientIdTier
+        self._startDate = parsed.startDate
+        self._startDateTier = parsed.startDateTier
+        self._immunotherapyType = parsed.immunotherapyType
+        self._immunotherapyTypeTier = parsed.immunotherapyTypeTier
+        self._immunotherapyTarget = parsed.immunotherapyTarget
+        self._immunotherapyTargetTier = parsed.immunotherapyTargetTier
+        self._immunotherapyDetail = parsed.immunotherapyDetail
+        self._immunotherapyDetailTier = parsed.immunotherapyDetailTier
+        self._treatmentPlanId = parsed.treatmentPlanId
+        self._treatmentPlanIdTier = parsed.treatmentPlanIdTier
+
+        return self
+
+    def getCreated(self):
+        return self._created
+
+    def getUpdated(self):
+        return self._updated
+
+    def getName(self):
+        return self._name
+
+    def getDescription(self):
+        return self._description
+
+    def setDescription(self, description):
+        self._description = description
+
+    # Unique field getters
+
+    def getPatientId(self):
+        return self._patientId
+
+    def getPatientIdTier(self):
+        return self._patientIdTier
+
+    def getStartDate(self):
+        return self._startDate
+
+    def getStartDateTier(self):
+        return self._startDateTier
+
+    def getImmunotherapyType(self):
+        return self._immunotherapyType
+
+    def getImmunotherapyTypeTier(self):
+        return self._immunotherapyTypeTier
+
+    def getImmunotherapyTarget(self):
+        return self._immunotherapyTarget
+
+    def getImmunotherapyTargetTier(self):
+        return self._immunotherapyTargetTier
+
+    def getImmunotherapyDetail(self):
+        return self._immunotherapyDetail
+
+    def getImmunotherapyDetailTier(self):
+        return self._immunotherapyDetailTier
+
+    def getTreatmentPlanId(self):
+        return self._treatmentPlanId
+
+    def getTreatmentPlanIdTier(self):
+        return self._treatmentPlanIdTier
+
+
+class Celltransplant(datamodel.DatamodelObject):
+    """
+    """
+    compoundIdClass = datamodel.CelltransplantCompoundId
+
+    def __init__(self, parentContainer, localId):
+        """
+        """
+        # Call parent constructor
+        super(Celltransplant, self).__init__(parentContainer, localId)
+
+        # Common fields
+        self._created = datetime.datetime.now().isoformat()
+        self._updated = datetime.datetime.now().isoformat()
+        self._name = localId
+        self._description = None
+        self._datasetId = parentContainer.getId()
+
+        # Unique fields
+        self._patientId = None
+        self._patientIdTier = None
+        self._startDate = None
+        self._startDateTier = None
+        self._cellSource = None
+        self._cellSourceTier = None
+        self._donorType = None
+        self._donorTypeTier = None
+        self._treatmentPlanId = None
+        self._treatmentPlanIdTier = None
+
+        self._objectAttr = {
+            "patientId": self.getPatientId,
+            "startDate": self.getStartDate,
+            "cellSource": self.getCellSource,
+            "donorType": self.getDonorType,
+            "treatmentPlanId": self.getTreatmentPlanId
+        }
+
+    def toProtocolElement(self, tier=0):
+        """
+        """
+        record = {
+            str('id'): str(self.getId()),
+            str('dataset_id'): str(self._datasetId),
+            str('created'): str(self.getCreated()),
+            str('updated'): str(self.getUpdated()),
+            str('name'): str(self.getName()),
+            str('description'): str(self.getDescription()),
+        }
+
+        # Unique fields
+        if tier >= self.getPatientIdTier():
+            record[str('patientId')] = str(self.getPatientId())
+        if tier >= self.getStartDateTier():
+            record[str('startDate')] = str(self.getStartDate())
+        if tier >= self.getCellSourceTier():
+            record[str('cellSource')] = str(self.getCellSource())
+        if tier >= self.getDonorTypeTier():
+            record[str('donorType')] = str(self.getDonorType())
+        if tier >= self.getTreatmentPlanIdTier():
+            record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+
+        Celltransplant = protocol.Celltransplant(**record)
+        self.serializeAttributes(Celltransplant)
+
+        return Celltransplant
+
+    def populateFromRow(self, CelltransplantRecord):
+        """
+        """
+        self._created = CelltransplantRecord.created
+        self._updated = CelltransplantRecord.updated
+        self._name = CelltransplantRecord.name
+        self._description = CelltransplantRecord.description
+        self.setAttributesJson(CelltransplantRecord.attributes)
+
+        # Unique fields
+        self._patientId = CelltransplantRecord.patientId
+        self._patientIdTier = CelltransplantRecord.patientIdTier
+        self._startDate = CelltransplantRecord.startDate
+        self._startDateTier = CelltransplantRecord.startDateTier
+        self._cellSource = CelltransplantRecord.cellSource
+        self._cellSourceTier = CelltransplantRecord.cellSourceTier
+        self._donorType = CelltransplantRecord.donorType
+        self._donorTypeTier = CelltransplantRecord.donorTypeTier
+        self._treatmentPlanId = CelltransplantRecord.treatmentPlanId
+        self._treatmentPlanIdTier = CelltransplantRecord.treatmentPlanIdTier
+
+        return self
+
+    def populateFromJson(self, jsonString):
+        """
+        """
+        try:
+            parsed = protocol.fromJson(jsonString, protocol.Celltransplant)
+        except:
+            raise exceptions.InvalidJsonException(jsonString)
+        self._created = parsed.created
+        self._updated = parsed.updated
+        self._name = parsed.name
+        self._description = parsed.description
+        attributes = {}
+        for key in parsed.attributes.attr:
+            attributes[key] = {
+                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+        self.setAttributes(attributes)
+
+        # Unique fields
+        self._patientId = parsed.patientId
+        self._patientIdTier = parsed.patientIdTier
+        self._startDate = parsed.startDate
+        self._startDateTier = parsed.startDateTier
+        self._cellSource = parsed.cellSource
+        self._cellSourceTier = parsed.cellSourceTier
+        self._donorType = parsed.donorType
+        self._donorTypeTier = parsed.donorTypeTier
+        self._treatmentPlanId = parsed.treatmentPlanId
+        self._treatmentPlanIdTier = parsed.treatmentPlanIdTier
+
+        return self
+
+    def getCreated(self):
+        return self._created
+
+    def getUpdated(self):
+        return self._updated
+
+    def getName(self):
+        return self._name
+
+    def getDescription(self):
+        return self._description
+
+    def setDescription(self, description):
+        self._description = description
+
+    # Unique field getters
+
+    def getPatientId(self):
+        return self._patientId
+
+    def getPatientIdTier(self):
+        return self._patientIdTier
+
+    def getStartDate(self):
+        return self._startDate
+
+    def getStartDateTier(self):
+        return self._startDateTier
+
+    def getCellSource(self):
+        return self._cellSource
+
+    def getCellSourceTier(self):
+        return self._cellSourceTier
+
+    def getDonorType(self):
+        return self._donorType
+
+    def getDonorTypeTier(self):
+        return self._donorTypeTier
+
+    def getTreatmentPlanId(self):
+        return self._treatmentPlanId
+
+    def getTreatmentPlanIdTier(self):
+        return self._treatmentPlanIdTier
+
+
+class Slide(datamodel.DatamodelObject):
+    """
+    """
+    compoundIdClass = datamodel.SlideCompoundId
+
+    def __init__(self, parentContainer, localId):
+        """
+        """
+        # Call parent constructor
+        super(Slide, self).__init__(parentContainer, localId)
+
+        # Common fields
+        self._created = datetime.datetime.now().isoformat()
+        self._updated = datetime.datetime.now().isoformat()
+        self._name = localId
+        self._description = None
+        self._datasetId = parentContainer.getId()
+
+        # Unique fields
+        self._patientId = None
+        self._patientIdTier = None
+        self._sampleId = None
+        self._sampleIdTier = None
+        self._slideId = None
+        self._slideIdTier = None
+        self._slideOtherId = None
+        self._slideOtherIdTier = None
+        self._lymphocyteInfiltrationPercent = None
+        self._lymphocyteInfiltrationPercentTier = None
+        self._tumorNucleiPercent = None
+        self._tumorNucleiPercentTier = None
+        self._monocyteInfiltrationPercent = None
+        self._monocyteInfiltrationPercentTier = None
+        self._normalCellsPercent = None
+        self._normalCellsPercentTier = None
+        self._tumorCellsPercent = None
+        self._tumorCellsPercentTier = None
+        self._stromalCellsPercent = None
+        self._stromalCellsPercentTier = None
+        self._eosinophilInfiltrationPercent = None
+        self._eosinophilInfiltrationPercentTier = None
+        self._neutrophilInfiltrationPercent = None
+        self._neutrophilInfiltrationPercentTier = None
+        self._granulocyteInfiltrationPercent = None
+        self._granulocyteInfiltrationPercentTier = None
+        self._necrosisPercent = None
+        self._necrosisPercentTier = None
+        self._inflammatoryInfiltrationPercent = None
+        self._inflammatoryInfiltrationPercentTier = None
+        self._proliferatingCellsNumber = None
+        self._proliferatingCellsNumberTier = None
+        self._sectionLocation = None
+        self._sectionLocationTier = None
+
+        self._objectAttr = {
+            "patientId": self.getPatientId,
+            "sampleId": self.getSampleId,
+            "slideId": self.getSlideId,
+            "slideOtherId": self.getSlideOtherId,
+            "lymphocyteInfiltrationPercent": self.getLymphocyteInfiltrationPercent,
+            "tumorNucleiPercent": self.getTumorNucleiPercent,
+            "monocyteInfiltrationPercent": self.getMonocyteInfiltrationPercent,
+            "normalCellsPercent": self.getNormalCellsPercent,
+            "tumorCellsPercent": self.getTumorCellsPercent,
+            "stromalCellsPercent": self.getStromalCellsPercent,
+            "eosinophilInfiltrationPercent": self.getEosinophilInfiltrationPercent,
+            "neutrophilInfiltrationPercent": self.getNeutrophilInfiltrationPercent,
+            "granulocyteInfiltrationPercent": self.getGranulocyteInfiltrationPercent,
+            "necrosisPercent": self.getNecrosisPercent,
+            "inflammatoryInfiltrationPercent": self.getInflammatoryInfiltrationPercent,
+            "proliferatingCellsNumber": self.getProliferatingCellsNumber,
+            "sectionLocation": self.getSectionLocation,
+        }
+
+    def toProtocolElement(self, tier=0):
+        """
+        """
+        record = {
+            str('id'): str(self.getId()),
+            str('dataset_id'): str(self._datasetId),
+            str('created'): str(self.getCreated()),
+            str('updated'): str(self.getUpdated()),
+            str('name'): str(self.getName()),
+            str('description'): str(self.getDescription()),
+        }
+
+        # Unique fields
+        if tier >= self.getPatientIdTier():
+            record[str('patientId')] = str(self.getPatientId())
+        if tier >= self.getSampleIdTier():
+            record[str('sampleId')] = str(self.getSampleId())
+        if tier >= self.getSlideIdTier():
+            record[str('slideId')] = str(self.getSlideId())
+        if tier >= self.getSlideOtherIdTier():
+            record[str('slideOtherId')] = str(self.getSlideOtherId())
+        if tier >= self.getLymphocyteInfiltrationPercentTier():
+            record[str('lymphocyteInfiltrationPercent')] = str(self.getLymphocyteInfiltrationPercent())
+        if tier >= self.getTumorNucleiPercentTier():
+            record[str('tumorNucleiPercent')] = str(self.getTumorNucleiPercent())
+        if tier >= self.getMonocyteInfiltrationPercentTier():
+            record[str('monocyteInfiltrationPercent')] = str(self.getMonocyteInfiltrationPercent())
+        if tier >= self.getNormalCellsPercentTier():
+            record[str('normalCellsPercent')] = str(self.getNormalCellsPercent())
+        if tier >= self.getTumorCellsPercentTier():
+            record[str('tumorCellsPercent')] = str(self.getTumorCellsPercent())
+        if tier >= self.getStromalCellsPercentTier():
+            record[str('stromalCellsPercent')] = str(self.getStromalCellsPercent())
+        if tier >= self.getEosinophilInfiltrationPercentTier():
+            record[str('eosinophilInfiltrationPercent')] = str(self.getEosinophilInfiltrationPercent())
+        if tier >= self.getNeutrophilInfiltrationPercentTier():
+            record[str('neutrophilInfiltrationPercent')] = str(self.getNeutrophilInfiltrationPercent())
+        if tier >= self.getGranulocyteInfiltrationPercentTier():
+            record[str('granulocyteInfiltrationPercent')] = str(self.getGranulocyteInfiltrationPercent())
+        if tier >= self.getNecrosisPercentTier():
+            record[str('necrosisPercent')] = str(self.getNecrosisPercent())
+        if tier >= self.getInflammatoryInfiltrationPercentTier():
+            record[str('inflammatoryInfiltrationPercent')] = str(self.getInflammatoryInfiltrationPercent())
+        if tier >= self.getProliferatingCellsNumberTier():
+            record[str('proliferatingCellsNumber')] = str(self.getProliferatingCellsNumber())
+        if tier >= self.getSectionLocationTier():
+            record[str('sectionLocation')] = str(self.getSectionLocation())
+
+        Slide = protocol.Slide(**record)
+        self.serializeAttributes(Slide)
+
+        return Slide
+
+    def populateFromRow(self, SlideRecord):
+        """
+        """
+        self._created = SlideRecord.created
+        self._updated = SlideRecord.updated
+        self._name = SlideRecord.name
+        self._description = SlideRecord.description
+        self.setAttributesJson(SlideRecord.attributes)
+
+        # Unique fields
+        self._patientId = SlideRecord.patientId
+        self._patientIdTier = SlideRecord.patientIdTier
+        self._sampleId = SlideRecord.sampleId
+        self._sampleIdTier = SlideRecord.sampleIdTier
+        self._slideId = SlideRecord.slideId
+        self._slideIdTier = SlideRecord.slideIdTier
+        self._slideOtherId = SlideRecord.slideOtherId
+        self._slideOtherIdTier = SlideRecord.slideOtherIdTier
+        self._lymphocyteInfiltrationPercent = SlideRecord.lymphocyteInfiltrationPercent
+        self._lymphocyteInfiltrationPercentTier = SlideRecord.lymphocyteInfiltrationPercentTier
+        self._tumorNucleiPercent = SlideRecord.tumorNucleiPercent
+        self._tumorNucleiPercentTier = SlideRecord.tumorNucleiPercentTier
+        self._monocyteInfiltrationPercent = SlideRecord.monocyteInfiltrationPercent
+        self._monocyteInfiltrationPercentTier = SlideRecord.monocyteInfiltrationPercentTier
+        self._normalCellsPercent = SlideRecord.normalCellsPercent
+        self._normalCellsPercentTier = SlideRecord.normalCellsPercentTier
+        self._tumorCellsPercent = SlideRecord.tumorCellsPercent
+        self._tumorCellsPercentTier = SlideRecord.tumorCellsPercentTier
+        self._stromalCellsPercent = SlideRecord.stromalCellsPercent
+        self._stromalCellsPercentTier = SlideRecord.stromalCellsPercentTier
+        self._eosinophilInfiltrationPercent = SlideRecord.eosinophilInfiltrationPercent
+        self._eosinophilInfiltrationPercentTier = SlideRecord.eosinophilInfiltrationPercentTier
+        self._neutrophilInfiltrationPercent = SlideRecord.neutrophilInfiltrationPercent
+        self._neutrophilInfiltrationPercentTier = SlideRecord.neutrophilInfiltrationPercentTier
+        self._granulocyteInfiltrationPercent = SlideRecord.granulocyteInfiltrationPercent
+        self._granulocyteInfiltrationPercentTier = SlideRecord.granulocyteInfiltrationPercentTier
+        self._necrosisPercent = SlideRecord.necrosisPercent
+        self._necrosisPercentTier = SlideRecord.necrosisPercentTier
+        self._inflammatoryInfiltrationPercent = SlideRecord.inflammatoryInfiltrationPercent
+        self._inflammatoryInfiltrationPercentTier = SlideRecord.inflammatoryInfiltrationPercentTier
+        self._proliferatingCellsNumber = SlideRecord.proliferatingCellsNumber
+        self._proliferatingCellsNumberTier = SlideRecord.proliferatingCellsNumberTier
+        self._sectionLocation = SlideRecord.sectionLocation
+        self._sectionLocationTier = SlideRecord.sectionLocationTier
+
+        return self
+
+    def populateFromJson(self, jsonString):
+        """
+        """
+        try:
+            parsed = protocol.fromJson(jsonString, protocol.Slide)
+        except:
+            raise exceptions.InvalidJsonException(jsonString)
+        self._created = parsed.created
+        self._updated = parsed.updated
+        self._name = parsed.name
+        self._description = parsed.description
+        attributes = {}
+        for key in parsed.attributes.attr:
+            attributes[key] = {
+                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+        self.setAttributes(attributes)
+
+        # Unique fields
+        self._patientId = parsed.patientId
+        self._patientIdTier = parsed.patientIdTier
+        self._sampleId = parsed.sampleId
+        self._sampleIdTier = parsed.sampleIdTier
+        self._slideId = parsed.slideId
+        self._slideIdTier = parsed.slideIdTier
+        self._slideOtherId = parsed.slideOtherId
+        self._slideOtherIdTier = parsed.slideOtherIdTier
+        self._lymphocyteInfiltrationPercent = parsed.lymphocyteInfiltrationPercent
+        self._lymphocyteInfiltrationPercentTier = parsed.lymphocyteInfiltrationPercentTier
+        self._tumorNucleiPercent = parsed.tumorNucleiPercent
+        self._tumorNucleiPercentTier = parsed.tumorNucleiPercentTier
+        self._monocyteInfiltrationPercent = parsed.monocyteInfiltrationPercent
+        self._monocyteInfiltrationPercentTier = parsed.monocyteInfiltrationPercentTier
+        self._normalCellsPercent = parsed.normalCellsPercent
+        self._normalCellsPercentTier = parsed.normalCellsPercentTier
+        self._tumorCellsPercent = parsed.tumorCellsPercent
+        self._tumorCellsPercentTier = parsed.tumorCellsPercentTier
+        self._stromalCellsPercent = parsed.stromalCellsPercent
+        self._stromalCellsPercentTier = parsed.stromalCellsPercentTier
+        self._eosinophilInfiltrationPercent = parsed.eosinophilInfiltrationPercent
+        self._eosinophilInfiltrationPercentTier = parsed.eosinophilInfiltrationPercentTier
+        self._neutrophilInfiltrationPercent = parsed.neutrophilInfiltrationPercent
+        self._neutrophilInfiltrationPercentTier = parsed.neutrophilInfiltrationPercentTier
+        self._granulocyteInfiltrationPercent = parsed.granulocyteInfiltrationPercent
+        self._granulocyteInfiltrationPercentTier = parsed.granulocyteInfiltrationPercentTier
+        self._necrosisPercent = parsed.necrosisPercent
+        self._necrosisPercentTier = parsed.necrosisPercentTier
+        self._inflammatoryInfiltrationPercent = parsed.inflammatoryInfiltrationPercent
+        self._inflammatoryInfiltrationPercentTier = parsed.inflammatoryInfiltrationPercentTier
+        self._proliferatingCellsNumber = parsed.proliferatingCellsNumber
+        self._proliferatingCellsNumberTier = parsed.proliferatingCellsNumberTier
+        self._sectionLocation = parsed.sectionLocation
+        self._sectionLocationTier = parsed.sectionLocationTier
+
+        return self
+
+    def getCreated(self):
+        return self._created
+
+    def getUpdated(self):
+        return self._updated
+
+    def getName(self):
+        return self._name
+
+    def getDescription(self):
+        return self._description
+
+    def setDescription(self, description):
+        self._description = description
+
+    # Unique field getters
+
+    def getPatientId(self):
+        return self._patientId
+
+    def getPatientIdTier(self):
+        return self._patientIdTier
+
+    def getSampleId(self):
+        return self._sampleId
+
+    def getSampleIdTier(self):
+        return self._sampleIdTier
+
+    def getSlideId(self):
+        return self._slideId
+
+    def getSlideIdTier(self):
+        return self._slideIdTier
+
+    def getSlideOtherId(self):
+        return self._slideOtherId
+
+    def getSlideOtherIdTier(self):
+        return self._slideOtherIdTier
+
+    def getLymphocyteInfiltrationPercent(self):
+        return self._lymphocyteInfiltrationPercent
+
+    def getLymphocyteInfiltrationPercentTier(self):
+        return self._lymphocyteInfiltrationPercentTier
+
+    def getTumorNucleiPercent(self):
+        return self._tumorNucleiPercent
+
+    def getTumorNucleiPercentTier(self):
+        return self._tumorNucleiPercentTier
+
+    def getMonocyteInfiltrationPercent(self):
+        return self._monocyteInfiltrationPercent
+
+    def getMonocyteInfiltrationPercentTier(self):
+        return self._monocyteInfiltrationPercentTier
+
+    def getNormalCellsPercent(self):
+        return self._normalCellsPercent
+
+    def getNormalCellsPercentTier(self):
+        return self._normalCellsPercentTier
+
+    def getTumorCellsPercent(self):
+        return self._tumorCellsPercent
+
+    def getTumorCellsPercentTier(self):
+        return self._tumorCellsPercentTier
+
+    def getStromalCellsPercent(self):
+        return self._stromalCellsPercent
+
+    def getStromalCellsPercentTier(self):
+        return self._stromalCellsPercentTier
+
+    def getEosinophilInfiltrationPercent(self):
+        return self._eosinophilInfiltrationPercent
+
+    def getEosinophilInfiltrationPercentTier(self):
+        return self._eosinophilInfiltrationPercentTier
+
+    def getNeutrophilInfiltrationPercent(self):
+        return self._neutrophilInfiltrationPercent
+
+    def getNeutrophilInfiltrationPercentTier(self):
+        return self._neutrophilInfiltrationPercentTier
+
+    def getGranulocyteInfiltrationPercent(self):
+        return self._granulocyteInfiltrationPercent
+
+    def getGranulocyteInfiltrationPercentTier(self):
+        return self._granulocyteInfiltrationPercentTier
+
+    def getNecrosisPercent(self):
+        return self._necrosisPercent
+
+    def getNecrosisPercentTier(self):
+        return self._necrosisPercentTier
+
+    def getInflammatoryInfiltrationPercent(self):
+        return self._inflammatoryInfiltrationPercent
+
+    def getInflammatoryInfiltrationPercentTier(self):
+        return self._inflammatoryInfiltrationPercentTier
+
+    def getProliferatingCellsNumber(self):
+        return self._proliferatingCellsNumber
+
+    def getProliferatingCellsNumberTier(self):
+        return self._proliferatingCellsNumberTier
+
+    def getSectionLocation(self):
+        return self._sectionLocation
+
+    def getSectionLocationTier(self):
+        return self._sectionLocationTier
+
+
+class Study(datamodel.DatamodelObject):
+    """
+    """
+    compoundIdClass = datamodel.StudyCompoundId
+
+    def __init__(self, parentContainer, localId):
+        """
+        """
+        # Call parent constructor
+        super(Study, self).__init__(parentContainer, localId)
+
+        # Common fields
+        self._created = datetime.datetime.now().isoformat()
+        self._updated = datetime.datetime.now().isoformat()
+        self._name = localId
+        self._description = None
+        self._datasetId = parentContainer.getId()
+
+        # Unique fields
+        self._patientId = None
+        self._patientIdTier = None
+        self._startDate = None
+        self._startDateTier = None
+        self._endDate = None
+        self._endDateTier = None
+        self._status = None
+        self._statusTier = None
+        self._recordingDate = None
+        self._recordingDateTier = None
+
+        self._objectAttr = {
+            "patientId": self.getPatientId,
+            "startDate": self.getStartDate,
+            "endDate": self.getEndDate,
+            "status": self.getStatus,
+            "recordingDate": self.getRecordingDate,
+        }
+
+    def toProtocolElement(self, tier=0):
+        """
+        """
+        record = {
+            str('id'): str(self.getId()),
+            str('dataset_id'): str(self._datasetId),
+            str('created'): str(self.getCreated()),
+            str('updated'): str(self.getUpdated()),
+            str('name'): str(self.getName()),
+            str('description'): str(self.getDescription()),
+        }
+
+        # Unique fields
+        if tier >= self.getPatientIdTier():
+            record[str('patientId')] = str(self.getPatientId())
+        if tier >= self.getStartDateTier():
+            record[str('startDate')] = str(self.getStartDate())
+        if tier >= self.getEndDateTier():
+            record[str('endDate')] = str(self.getEndDate())
+        if tier >= self.getStatusTier():
+            record[str('status')] = str(self.getStatus())
+        if tier >= self.getRecordingDateTier():
+            record[str('recordingDate')] = str(self.getRecordingDate())
+
+        Study = protocol.Study(**record)
+        self.serializeAttributes(Study)
+
+        return Study
+
+    def populateFromRow(self, StudyRecord):
+        """
+        """
+        self._created = StudyRecord.created
+        self._updated = StudyRecord.updated
+        self._name = StudyRecord.name
+        self._description = StudyRecord.description
+        self.setAttributesJson(StudyRecord.attributes)
+
+        # Unique fields
+        self._patientId = StudyRecord.patientId
+        self._patientIdTier = StudyRecord.patientIdTier
+        self._startDate = StudyRecord.startDate
+        self._startDateTier = StudyRecord.startDateTier
+        self._endDate = StudyRecord.endDate
+        self._endDateTier = StudyRecord.endDateTier
+        self._status = StudyRecord.status
+        self._statusTier = StudyRecord.statusTier
+        self._recordingDate = StudyRecord.recordingDate
+        self._recordingDateTier = StudyRecord.recordingDateTier
+
+        return self
+
+    def populateFromJson(self, jsonString):
+        """
+        """
+        try:
+            parsed = protocol.fromJson(jsonString, protocol.Study)
+        except:
+            raise exceptions.InvalidJsonException(jsonString)
+        self._created = parsed.created
+        self._updated = parsed.updated
+        self._name = parsed.name
+        self._description = parsed.description
+        attributes = {}
+        for key in parsed.attributes.attr:
+            attributes[key] = {
+                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+        self.setAttributes(attributes)
+
+        # Unique fields
+        self._patientId = parsed.patientId
+        self._patientIdTier = parsed.patientIdTier
+        self._startDate = parsed.startDate
+        self._startDateTier = parsed.startDateTier
+        self._endDate = parsed.endDate
+        self._endDateTier = parsed.endDateTier
+        self._status = parsed.status
+        self._statusTier = parsed.statusTier
+        self._recordingDate = parsed.recordingDate
+        self._recordingDateTier = parsed.recordingDateTier
+
+        return self
+
+    def getCreated(self):
+        return self._created
+
+    def getUpdated(self):
+        return self._updated
+
+    def getName(self):
+        return self._name
+
+    def getDescription(self):
+        return self._description
+
+    def setDescription(self, description):
+        self._description = description
+
+    # Unique field getters
+
+    def getPatientId(self):
+        return self._patientId
+
+    def getPatientIdTier(self):
+        return self._patientIdTier
+
+    def getStartDate(self):
+        return self._startDate
+
+    def getStartDateTier(self):
+        return self._startDateTier
+
+    def getEndDate(self):
+        return self._endDate
+
+    def getEndDateTier(self):
+        return self._endDateTier
+
+    def getStatus(self):
+        return self._status
+
+    def getStatusTier(self):
+        return self._statusTier
+
+    def getRecordingDate(self):
+        return self._recordingDate
+
+    def getRecordingDateTier(self):
+        return self._recordingDateTier
+
+
+class Labtest(datamodel.DatamodelObject):
+    """
+    """
+    compoundIdClass = datamodel.LabtestCompoundId
+
+    def __init__(self, parentContainer, localId):
+        """
+        """
+        # Call parent constructor
+        super(Labtest, self).__init__(parentContainer, localId)
+
+        # Common fields
+        self._created = datetime.datetime.now().isoformat()
+        self._updated = datetime.datetime.now().isoformat()
+        self._name = localId
+        self._description = None
+        self._datasetId = parentContainer.getId()
+
+        # Unique fields
+        self._patientId = None
+        self._patientIdTier = None
+        self._startDate = None
+        self._startDateTier = None
+        self._collectionDate = None
+        self._collectionDateTier = None
+        self._endDate = None
+        self._endDateTier = None
+        self._eventType = None
+        self._eventTypeTier = None
+        self._testResults = None
+        self._testResultsTier = None
+        self._timePoint = None
+        self._timePointTier = None
+        self._recordingDate = None
+        self._recordingDateTier = None
+
+        self._objectAttr = {
+            "patientId": self.getPatientId,
+            "startDate": self.getStartDate,
+            "endDate": self.getEndDate,
+            "collectionDate": self.getCollectionDate,
+            "eventType": self.getEventType,
+            "testResults": self.getTestResults,
+            "timePoint": self.getTimePoint,
+            "recordingDate": self.getRecordingDate,
+        }
+
+    def toProtocolElement(self, tier=0):
+        """
+        """
+        record = {
+            str('id'): str(self.getId()),
+            str('dataset_id'): str(self._datasetId),
+            str('created'): str(self.getCreated()),
+            str('updated'): str(self.getUpdated()),
+            str('name'): str(self.getName()),
+            str('description'): str(self.getDescription()),
+        }
+
+        # Unique fields
+        if tier >= self.getPatientIdTier():
+            record[str('patientId')] = str(self.getPatientId())
+        if tier >= self.getStartDateTier():
+            record[str('startDate')] = str(self.getStartDate())
+        if tier >= self.getEndDateTier():
+            record[str('endDate')] = str(self.getEndDate())
+        if tier >= self.getStatusTier():
+            record[str('collectionDate')] = str(self.getStatus())
+        if tier >= self.getEventTypeTier():
+            record[str('eventType')] = str(self.getEventType())
+        if tier >= self.getTestResultsTier():
+            record[str('testResults')] = str(self.getTestResults())
+        if tier >= self.getTimePointTier():
+            record[str('timePoint')] = str(self.getTimePoint())
+        if tier >= self.getRecordingDateTier():
+            record[str('recordingDate')] = str(self.getRecordingDate())
+
+        Labtest = protocol.Labtest(**record)
+        self.serializeAttributes(Labtest)
+
+        return Labtest
+
+    def populateFromRow(self, LabtestRecord):
+        """
+        """
+        self._created = LabtestRecord.created
+        self._updated = LabtestRecord.updated
+        self._name = LabtestRecord.name
+        self._description = LabtestRecord.description
+        self.setAttributesJson(LabtestRecord.attributes)
+
+        # Unique fields
+        self._patientId = LabtestRecord.patientId
+        self._patientIdTier = LabtestRecord.patientIdTier
+        self._startDate = LabtestRecord.startDate
+        self._startDateTier = LabtestRecord.startDateTier
+        self._collectionDate = LabtestRecord.collectionDate
+        self._collectionDateTier = LabtestRecord.collectionDateTier
+        self._endDate = LabtestRecord.endDate
+        self._endDateTier = LabtestRecord.endDateTier
+        self._eventType = LabtestRecord.eventType
+        self._eventTypeTier = LabtestRecord.eventTypeTier
+        self._testResults = LabtestRecord.testResults
+        self._testResultsTier = LabtestRecord.testResultsTier
+        self._timePoint = LabtestRecord.timePoint
+        self._timePointTier = LabtestRecord.timePointTier
+        self._recordingDate = LabtestRecord.recordingDate
+        self._recordingDateTier = LabtestRecord.recordingDateTier
+
+        return self
+
+    def populateFromJson(self, jsonString):
+        """
+        """
+        try:
+            parsed = protocol.fromJson(jsonString, protocol.Labtest)
+        except:
+            raise exceptions.InvalidJsonException(jsonString)
+        self._created = parsed.created
+        self._updated = parsed.updated
+        self._name = parsed.name
+        self._description = parsed.description
+        attributes = {}
+        for key in parsed.attributes.attr:
+            attributes[key] = {
+                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+        self.setAttributes(attributes)
+
+        # Unique fields
+        self._patientId = parsed.patientId
+        self._patientIdTier = parsed.patientIdTier
+        self._startDate = parsed.startDate
+        self._startDateTier = parsed.startDateTier
+        self._collectionDate = parsed.collectionDate
+        self._collectionDateTier = parsed.collectionDateTier
+        self._endDate = parsed.endDate
+        self._endDateTier = parsed.endDateTier
+        self._eventType = parsed.eventType
+        self._eventTypeTier = parsed.eventTypeTier
+        self._testResults = parsed.testResults
+        self._testResultsTier = parsed.testResultsTier
+        self._timePoint = parsed.timePoint
+        self._timePointTier = parsed.timePointTier
+        self._recordingDate = parsed.recordingDate
+        self._recordingDateTier = parsed.recordingDateTier
+
+        return self
+
+    def getCreated(self):
+        return self._created
+
+    def getUpdated(self):
+        return self._updated
+
+    def getName(self):
+        return self._name
+
+    def getDescription(self):
+        return self._description
+
+    def setDescription(self, description):
+        self._description = description
+
+    # Unique field getters
+
+    def getPatientId(self):
+        return self._patientId
+
+    def getPatientIdTier(self):
+        return self._patientIdTier
+
+    def getStartDate(self):
+        return self._startDate
+
+    def getStartDateTier(self):
+        return self._startDateTier
+
+    def getCollectionDate(self):
+        return self._collectionDate
+
+    def getCollectionDateTier(self):
+        return self._collectionDateTier
+
+    def getEndDate(self):
+        return self._endDate
+
+    def getEndDateTier(self):
+        return self._endDateTier
+
+    def getEventType(self):
+        return self._eventType
+
+    def getEventTypeTier(self):
+        return self._eventTypeTier
+
+    def getTestResults(self):
+        return self._testResults
+
+    def getTestResultsTier(self):
+        return self._testResultsTier
+
+    def getTimePoint(self):
+        return self._timePoint
+
+    def getTimePointTier(self):
+        return self._timePointTier
+
+    def getRecordingDate(self):
+        return self._recordingDate
+
+    def getRecordingDateTier(self):
+        return self._recordingDateTier
