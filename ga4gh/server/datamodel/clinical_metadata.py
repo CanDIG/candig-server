@@ -1704,6 +1704,10 @@ class Sample(datamodel.DatamodelObject):
         self._sopFollowedTier = None
         self._ifNotExplainAnyDeviation = None
         self._ifNotExplainAnyDeviationTier = None
+        self._recordingDate = None
+        self._recordingDateTier = None
+        self._startInterval = None
+        self._startIntervalTier = None
 
         self._objectAttr = {
             "patientId": self.getPatientId,
@@ -1730,6 +1734,8 @@ class Sample(datamodel.DatamodelObject):
             "otherBiobank": self.getOtherBiobank,
             "sopFollowed": self.getSopFollowed,
             "ifNotExplainAnyDeviation": self.getIfNotExplainAnyDeviation,
+            "recordingDate": self.getRecordingDate,
+            "startInterval": self.getStartInterval
         }
 
     def toProtocolElement(self, tier=0):
@@ -1793,6 +1799,10 @@ class Sample(datamodel.DatamodelObject):
             record[str('sopFollowed')] = str(self.getSopFollowed())
         if tier >= self.getIfNotExplainAnyDeviationTier():
             record[str('ifNotExplainAnyDeviation')] = str(self.getIfNotExplainAnyDeviation())
+        if tier >= self.getRecordingDateTier():
+            record[str('recordingDate')] = str(self.getRecordingDate())
+        if tier >= self.getStartIntervalTier():
+            record[str('startInterval')] = str(self.getStartInterval())
 
         Sample = protocol.Sample(**record)
         self.serializeAttributes(Sample)
@@ -1857,6 +1867,10 @@ class Sample(datamodel.DatamodelObject):
         self._sopFollowedTier = SampleRecord.sopFollowedTier
         self._ifNotExplainAnyDeviation = SampleRecord.ifNotExplainAnyDeviation
         self._ifNotExplainAnyDeviationTier = SampleRecord.ifNotExplainAnyDeviationTier
+        self._recordingDate = SampleRecord.recordingDate
+        self._recordingDateTier = SampleRecord.recordingDateTier
+        self._startInterval = SampleRecord.startInterval
+        self._startIntervalTier = SampleRecord.startIntervalTier
 
         return self
 
@@ -1926,6 +1940,10 @@ class Sample(datamodel.DatamodelObject):
         self._sopFollowedTier = parsed.sopFollowedTier
         self._ifNotExplainAnyDeviation = parsed.ifNotExplainAnyDeviation
         self._ifNotExplainAnyDeviationTier = parsed.ifNotExplainAnyDeviationTier
+        self._recordingDate = parsed.recordingDate
+        self._recordingDateTier = parsed.recordingDateTier
+        self._startInterval = parsed.startInterval
+        self._startIntervalTier = parsed.startIntervalTier
 
         return self
 
@@ -2090,6 +2108,17 @@ class Sample(datamodel.DatamodelObject):
     def getIfNotExplainAnyDeviationTier(self):
         return self._ifNotExplainAnyDeviationTier
 
+    def getRecordingDate(self):
+        return self._recordingDate
+
+    def getRecordingDateTier(self):
+        return self._recordingDateTier
+
+    def getStartInterval(self):
+        return self._startInterval
+
+    def getStartIntervalTier(self):
+        return self._startIntervalTier
 
 class Treatment(datamodel.DatamodelObject):
     """
@@ -2116,8 +2145,6 @@ class Treatment(datamodel.DatamodelObject):
         self._courseNumberTier = None
         self._therapeuticModality = None
         self._therapeuticModalityTier = None
-        self._systematicTherapyAgentName = None
-        self._systematicTherapyAgentNameTier = None
         self._treatmentPlanType = None
         self._treatmentPlanTypeTier = None
         self._treatmentIntent = None
@@ -2128,18 +2155,6 @@ class Treatment(datamodel.DatamodelObject):
         self._stopDateTier = None
         self._reasonForEndingTheTreatment = None
         self._reasonForEndingTheTreatmentTier = None
-        self._protocolNumberOrCode = None
-        self._protocolNumberOrCodeTier = None
-        self._surgeryDetails = None
-        self._surgeryDetailsTier = None
-        self._radiotherapyDetails = None
-        self._radiotherapyDetailsTier = None
-        self._chemotherapyDetails = None
-        self._chemotherapyDetailsTier = None
-        self._hematopoieticCellTransplant = None
-        self._hematopoieticCellTransplantTier = None
-        self._immunotherapyDetails = None
-        self._immunotherapyDetailsTier = None
         self._responseToTreatment = None
         self._responseToTreatmentTier = None
         self._responseCriteriaUsed = None
@@ -2148,33 +2163,26 @@ class Treatment(datamodel.DatamodelObject):
         self._dateOfRecurrenceOrProgressionAfterThisTreatmentTier = None
         self._unexpectedOrUnusualToxicityDuringTreatment = None
         self._unexpectedOrUnusualToxicityDuringTreatmentTier = None
-        self._drugListOrAgent = None
-        self._drugListOrAgentTier = None
-        self._drugIdNumbers = None
-        self._drugIdNumbersTier = None
+        self._diagnosisId = None
+        self._diagnosisIdTier = None
+        self._treatmentPlanId = None
+        self._treatmentPlanIdTier = None
 
         self._objectAttr = {
             "patientId": self.getPatientId,
             "courseNumber": self.getCourseNumber,
             "therapeuticModality": self.getTherapeuticModality,
-            "systematicTherapyAgentName": self.getSystematicTherapyAgentName,
             "treatmentPlanType": self.getTreatmentPlanType,
             "treatmentIntent": self.getTreatmentIntent,
             "startDate": self.getStartDate,
             "stopDate": self.getStopDate,
             "reasonForEndingTheTreatment": self.getReasonForEndingTheTreatment,
-            "protocolNumberOrCode": self.getProtocolNumberOrCode,
-            "surgeryDetails": self.getSurgeryDetails,
-            "radiotherapyDetails": self.getRadiotherapyDetails,
-            "chemotherapyDetails": self.getChemotherapyDetails,
-            "hematopoieticCellTransplant": self.getHematopoieticCellTransplant,
-            "immunotherapyDetails": self.getImmunotherapyDetails,
             "responseToTreatment": self.getResponseToTreatment,
             "responseCriteriaUsed": self.getResponseCriteriaUsed,
             "dateOfRecurrenceOrProgressionAfterThisTreatment": self.getDateOfRecurrenceOrProgressionAfterThisTreatment,
             'unexpectedOrUnusualToxicityDuringTreatment': self.getUnexpectedOrUnusualToxicityDuringTreatment,
-            "drugListOrAgent": self.getDrugListOrAgent,
-            "drugIdNumbers": self.getDrugIdNumbers,
+            "diagnosisId": self.getDiagnosisId,
+            "treatmentPlanId": self.getTreatmentPlanId,
         }
 
     def toProtocolElement(self, tier=0):
@@ -2196,8 +2204,6 @@ class Treatment(datamodel.DatamodelObject):
             record[str('courseNumber')] = str(self.getCourseNumber())
         if tier >= self.getTherapeuticModalityTier():
             record[str('therapeuticModality')] = str(self.getTherapeuticModality())
-        if tier >= self.getSystematicTherapyAgentNameTier():
-            record[str('systematicTherapyAgentName')] = str(self.getSystematicTherapyAgentName())
         if tier >= self.getTreatmentPlanTypeTier():
             record[str('treatmentPlanType')] = str(self.getTreatmentPlanType())
         if tier >= self.getTreatmentIntentTier():
@@ -2208,18 +2214,6 @@ class Treatment(datamodel.DatamodelObject):
             record[str('stopDate')] = str(self.getStopDate())
         if tier >= self.getReasonForEndingTheTreatmentTier():
             record[str('reasonForEndingTheTreatment')] = str(self.getReasonForEndingTheTreatment())
-        if tier >= self.getProtocolNumberOrCodeTier():
-            record[str('protocolNumberOrCode')] = str(self.getProtocolNumberOrCode())
-        if tier >= self.getSurgeryDetailsTier():
-            record[str('surgeryDetails')] = str(self.getSurgeryDetails())
-        if tier >= self.getRadiotherapyDetailsTier():
-            record[str('radiotherapyDetails')] = str(self.getRadiotherapyDetails())
-        if tier >= self.getChemotherapyDetailsTier():
-            record[str('chemotherapyDetails')] = str(self.getChemotherapyDetails())
-        if tier >= self.getHematopoieticCellTransplantTier():
-            record[str('hematopoieticCellTransplant')] = str(self.getHematopoieticCellTransplant())
-        if tier >= self.getImmunotherapyDetailsTier():
-            record[str('immunotherapyDetails')] = str(self.getImmunotherapyDetails())
         if tier >= self.getResponseToTreatmentTier():
             record[str('responseToTreatment')] = str(self.getResponseToTreatment())
         if tier >= self.getResponseCriteriaUsedTier():
@@ -2228,10 +2222,10 @@ class Treatment(datamodel.DatamodelObject):
             record[str('dateOfRecurrenceOrProgressionAfterThisTreatment')] = str(self.getDateOfRecurrenceOrProgressionAfterThisTreatment())
         if tier >= self.getUnexpectedOrUnusualToxicityDuringTreatmentTier():
             record[str('unexpectedOrUnusualToxicityDuringTreatment')] = str(self.getUnexpectedOrUnusualToxicityDuringTreatment())
-        if tier >= self.getDrugListOrAgentTier():
-            record[str('drugListOrAgent')] = str(self.getDrugListOrAgent())
-        if tier >= self.getDrugIdNumbersTier():
-            record[str('drugIdNumbers')] = str(self.getDrugIdNumbers())
+        if tier >= self.getDiagnosisIdTier():
+            record[str('diagnosisId')] = str(self.getDiagnosisId())
+        if tier >= self.getTreatmentPlanIdTier():
+            record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
 
         Treatment = protocol.Treatment(**record)
         self.serializeAttributes(Treatment)
@@ -2254,8 +2248,6 @@ class Treatment(datamodel.DatamodelObject):
         self._courseNumberTier = TreatmentRecord.courseNumberTier
         self._therapeuticModality = TreatmentRecord.therapeuticModality
         self._therapeuticModalityTier = TreatmentRecord.therapeuticModalityTier
-        self._systematicTherapyAgentName = TreatmentRecord.systematicTherapyAgentName
-        self._systematicTherapyAgentNameTier = TreatmentRecord.systematicTherapyAgentNameTier
         self._treatmentPlanType = TreatmentRecord.treatmentPlanType
         self._treatmentPlanTypeTier = TreatmentRecord.treatmentPlanTypeTier
         self._treatmentIntent = TreatmentRecord.treatmentIntent
@@ -2266,18 +2258,6 @@ class Treatment(datamodel.DatamodelObject):
         self._stopDateTier = TreatmentRecord.stopDateTier
         self._reasonForEndingTheTreatment = TreatmentRecord.reasonForEndingTheTreatment
         self._reasonForEndingTheTreatmentTier = TreatmentRecord.reasonForEndingTheTreatmentTier
-        self._protocolNumberOrCode = TreatmentRecord.protocolNumberOrCode
-        self._protocolNumberOrCodeTier = TreatmentRecord.protocolNumberOrCodeTier
-        self._surgeryDetails = TreatmentRecord.surgeryDetails
-        self._surgeryDetailsTier = TreatmentRecord.surgeryDetailsTier
-        self._radiotherapyDetails = TreatmentRecord.radiotherapyDetails
-        self._radiotherapyDetailsTier = TreatmentRecord.radiotherapyDetailsTier
-        self._chemotherapyDetails = TreatmentRecord.chemotherapyDetails
-        self._chemotherapyDetailsTier = TreatmentRecord.chemotherapyDetailsTier
-        self._hematopoieticCellTransplant = TreatmentRecord.hematopoieticCellTransplant
-        self._hematopoieticCellTransplantTier = TreatmentRecord.hematopoieticCellTransplantTier
-        self._immunotherapyDetails = TreatmentRecord.immunotherapyDetails
-        self._immunotherapyDetailsTier = TreatmentRecord.immunotherapyDetailsTier
         self._responseToTreatment = TreatmentRecord.responseToTreatment
         self._responseToTreatmentTier = TreatmentRecord.responseToTreatmentTier
         self._responseCriteriaUsed = TreatmentRecord.responseCriteriaUsed
@@ -2286,10 +2266,10 @@ class Treatment(datamodel.DatamodelObject):
         self._dateOfRecurrenceOrProgressionAfterThisTreatmentTier = TreatmentRecord.dateOfRecurrenceOrProgressionAfterThisTreatmentTier
         self._unexpectedOrUnusualToxicityDuringTreatment = TreatmentRecord.unexpectedOrUnusualToxicityDuringTreatment
         self._unexpectedOrUnusualToxicityDuringTreatmentTier = TreatmentRecord.unexpectedOrUnusualToxicityDuringTreatmentTier
-        self._drugListOrAgent = TreatmentRecord.drugListOrAgent
-        self._drugListOrAgentTier = TreatmentRecord.drugListOrAgentTier
-        self._drugIdNumbers = TreatmentRecord.drugIdNumbers
-        self._drugIdNumbersTier = TreatmentRecord.drugIdNumbersTier
+        self._diagnosisId = TreatmentRecord.diagnosisId
+        self._diagnosisIdTier = TreatmentRecord.diagnosisIdTier
+        self._treatmentPlanId = TreatmentRecord.treatmentPlanId
+        self._treatmentPlanIdTier = TreatmentRecord.treatmentPlanIdTier
 
         return self
 
@@ -2317,8 +2297,6 @@ class Treatment(datamodel.DatamodelObject):
         self._courseNumberTier = parsed.courseNumberTier
         self._therapeuticModality = parsed.therapeuticModality
         self._therapeuticModalityTier = parsed.therapeuticModalityTier
-        self._systematicTherapyAgentName = parsed.systematicTherapyAgentName
-        self._systematicTherapyAgentNameTier = parsed.systematicTherapyAgentNameTier
         self._treatmentPlanType = parsed.treatmentPlanType
         self._treatmentPlanTypeTier = parsed.treatmentPlanTypeTier
         self._treatmentIntent = parsed.treatmentIntent
@@ -2329,18 +2307,6 @@ class Treatment(datamodel.DatamodelObject):
         self._stopDateTier = parsed.stopDateTier
         self._reasonForEndingTheTreatment = parsed.reasonForEndingTheTreatment
         self._reasonForEndingTheTreatmentTier = parsed.reasonForEndingTheTreatmentTier
-        self._protocolNumberOrCode = parsed.protocolNumberOrCode
-        self._protocolNumberOrCodeTier = parsed.protocolNumberOrCodeTier
-        self._surgeryDetails = parsed.surgeryDetails
-        self._surgeryDetailsTier = parsed.surgeryDetailsTier
-        self._radiotherapyDetails = parsed.radiotherapyDetails
-        self._radiotherapyDetailsTier = parsed.radiotherapyDetailsTier
-        self._chemotherapyDetails = parsed.chemotherapyDetails
-        self._chemotherapyDetailsTier = parsed.chemotherapyDetailsTier
-        self._hematopoieticCellTransplant = parsed.hematopoieticCellTransplant
-        self._hematopoieticCellTransplantTier = parsed.hematopoieticCellTransplantTier
-        self._immunotherapyDetails = parsed.immunotherapyDetails
-        self._immunotherapyDetailsTier = parsed.immunotherapyDetailsTier
         self._responseToTreatment = parsed.responseToTreatment
         self._responseToTreatmentTier = parsed.responseToTreatmentTier
         self._responseCriteriaUsed = parsed.responseCriteriaUsed
@@ -2349,10 +2315,10 @@ class Treatment(datamodel.DatamodelObject):
         self._dateOfRecurrenceOrProgressionAfterThisTreatmentTier = parsed.dateOfRecurrenceOrProgressionAfterThisTreatmentTier
         self._unexpectedOrUnusualToxicityDuringTreatment = parsed.unexpectedOrUnusualToxicityDuringTreatment
         self._unexpectedOrUnusualToxicityDuringTreatmentTier = parsed.unexpectedOrUnusualToxicityDuringTreatmentTier
-        self._drugListOrAgent = parsed.drugListOrAgent
-        self._drugListOrAgentTier = parsed.drugListOrAgentTier
-        self._drugIdNumbers = parsed.drugIdNumbers
-        self._drugIdNumbersTier = parsed.drugIdNumbersTier
+        self._diagnosisId = parsed.diagnosisId
+        self._diagnosisIdTier = parsed.diagnosisIdTier
+        self._treatmentPlanId = parsed.treatmentPlanId
+        self._treatmentPlanIdTier = parsed.treatmentPlanIdTier
 
         return self
 
@@ -2391,12 +2357,6 @@ class Treatment(datamodel.DatamodelObject):
     def getTherapeuticModalityTier(self):
         return self._therapeuticModalityTier
 
-    def getSystematicTherapyAgentName(self):
-        return self._systematicTherapyAgentName
-
-    def getSystematicTherapyAgentNameTier(self):
-        return self._systematicTherapyAgentNameTier
-
     def getTreatmentPlanType(self):
         return self._treatmentPlanType
 
@@ -2427,42 +2387,6 @@ class Treatment(datamodel.DatamodelObject):
     def getReasonForEndingTheTreatmentTier(self):
         return self._reasonForEndingTheTreatmentTier
 
-    def getProtocolNumberOrCode(self):
-        return self._protocolNumberOrCode
-
-    def getProtocolNumberOrCodeTier(self):
-        return self._protocolNumberOrCodeTier
-
-    def getSurgeryDetails(self):
-        return self._surgeryDetails
-
-    def getSurgeryDetailsTier(self):
-        return self._surgeryDetailsTier
-
-    def getRadiotherapyDetails(self):
-        return self._radiotherapyDetails
-
-    def getRadiotherapyDetailsTier(self):
-        return self._radiotherapyDetailsTier
-
-    def getChemotherapyDetails(self):
-        return self._chemotherapyDetails
-
-    def getChemotherapyDetailsTier(self):
-        return self._chemotherapyDetailsTier
-
-    def getHematopoieticCellTransplant(self):
-        return self._hematopoieticCellTransplant
-
-    def getHematopoieticCellTransplantTier(self):
-        return self._hematopoieticCellTransplantTier
-
-    def getImmunotherapyDetails(self):
-        return self._immunotherapyDetails
-
-    def getImmunotherapyDetailsTier(self):
-        return self._immunotherapyDetailsTier
-
     def getResponseToTreatment(self):
         return self._responseToTreatment
 
@@ -2487,17 +2411,17 @@ class Treatment(datamodel.DatamodelObject):
     def getUnexpectedOrUnusualToxicityDuringTreatmentTier(self):
         return self._unexpectedOrUnusualToxicityDuringTreatmentTier
 
-    def getDrugListOrAgent(self):
-        return self._drugListOrAgent
+    def getDiagnosisId(self):
+        return self._diagnosisId
 
-    def getDrugListOrAgentTier(self):
-        return self._drugListOrAgentTier
+    def getDiagnosisIdTier(self):
+        return self._diagnosisIdTier
 
-    def getDrugIdNumbers(self):
-        return self._drugIdNumbers
+    def getTreatmentPlanId(self):
+        return self._treatmentPlanId
 
-    def getDrugIdNumbersTier(self):
-        return self._drugIdNumbersTier
+    def getTreatmentPlanIdTier(self):
+        return self._treatmentPlanIdTier
 
 
 class Outcome(datamodel.DatamodelObject):
@@ -2551,6 +2475,10 @@ class Outcome(datamodel.DatamodelObject):
         self._weightUnitsTier = None
         self._performanceStatus = None
         self._performanceStatusTier = None
+        self._overallSurvivalInMonths = None
+        self._overallSurvivalInMonthsTier = None
+        self._diseaseFreeSurvivalInMonths = None
+        self._diseaseFreeSurvivalInMonthsTier = None
 
         self._objectAttr = {
             "patientId": self.getPatientId,
@@ -2568,7 +2496,9 @@ class Outcome(datamodel.DatamodelObject):
             "weight": self.getWeight,
             "heightUnits": self.getHeightUnits,
             "weightUnits": self.getWeightUnits,
-            "performanceStatus": self.getPerformanceStatus
+            "performanceStatus": self.getPerformanceStatus,
+            "overallSurvivalInMonths": self.getOverallSurvivalInMonths,
+            "diseaseFreeSurvivalInMonths": self.getDiseaseFreeSurvivalInMonths
         }
 
     def toProtocolElement(self, tier=0):
@@ -2616,6 +2546,10 @@ class Outcome(datamodel.DatamodelObject):
             record[str('weightUnits')] = str(self.getWeightUnits())
         if tier >= self.getPerformanceStatusTier():
             record[str('performanceStatus')] = str(self.getPerformanceStatus())
+        if tier >= self.getOverallSurvivalInMonthsTier():
+            record[str('overallSurvivalInMonths')] = str(self.getOverallSurvivalInMonths())
+        if tier >= self.getDiseaseFreeSurvivalInMonthsTier():
+            record[str('diseaseFreeSurvivalInMonths')] = str(self.getDiseaseFreeSurvivalInMonths())
 
         Outcome = protocol.Outcome(**record)
         self.serializeAttributes(Outcome)
@@ -2664,6 +2598,10 @@ class Outcome(datamodel.DatamodelObject):
         self._weightUnitsTier = OutcomeRecord.weightUnitsTier
         self._performanceStatus = OutcomeRecord.performanceStatus
         self._performanceStatusTier = OutcomeRecord.performanceStatusTier
+        self._overallSurvivalInMonths = OutcomeRecord.overallSurvivalInMonths
+        self._overallSurvivalInMonthsTier = OutcomeRecord.overallSurvivalInMonthsTier
+        self._diseaseFreeSurvivalInMonths = OutcomeRecord.diseaseFreeSurvivalInMonths
+        self._diseaseFreeSurvivalInMonthsTier = OutcomeRecord.diseaseFreeSurvivalInMonthsTier
 
         return self
 
@@ -2717,6 +2655,10 @@ class Outcome(datamodel.DatamodelObject):
         self._weightUnitsTier = parsed.weightUnitsTier
         self._performanceStatus = parsed.performanceStatus
         self._performanceStatusTier = parsed.performanceStatusTier
+        self._overallSurvivalInMonths = parsed.overallSurvivalInMonths
+        self._overallSurvivalInMonthsTier = parsed.overallSurvivalInMonthsTier
+        self._diseaseFreeSurvivalInMonths = parsed.diseaseFreeSurvivalInMonths
+        self._diseaseFreeSurvivalInMonthsTier = parsed.diseaseFreeSurvivalInMonthsTier
 
         return self
 
@@ -2832,6 +2774,18 @@ class Outcome(datamodel.DatamodelObject):
 
     def getPerformanceStatusTier(self):
         return self._performanceStatusTier
+
+    def getOverallSurvivalInMonths(self):
+        return self._overallSurvivalInMonths
+
+    def getOverallSurvivalInMonthsTier(self):
+        return self._overallSurvivalInMonthsTier
+
+    def getDiseaseFreeSurvivalInMonths(self):
+        return self._diseaseFreeSurvivalInMonths
+
+    def getDiseaseFreeSurvivalInMonthsTier(self):
+        return self._diseaseFreeSurvivalInMonthsTier
 
 
 class Complication(datamodel.DatamodelObject):

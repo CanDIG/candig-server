@@ -937,7 +937,6 @@ class RepoManager(object):
             self._updateRepo(self._repo.removeLabtest, labtest)
         self._confirmDelete("Labtest", labtest.getLocalId(), func)
 
-
     def addExtraction(self):
         """
         Adds a new extraction into this repo

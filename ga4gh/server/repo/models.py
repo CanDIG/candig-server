@@ -523,6 +523,10 @@ class Sample(BaseModel):
     sopFollowedTier = pw.IntegerField(null=True)
     ifNotExplainAnyDeviation = pw.TextField(null=True)
     ifNotExplainAnyDeviationTier = pw.IntegerField(null=True)
+    recordingDate = pw.TextField(null=True)
+    recordingDateTier = pw.IntegerField(null=True)
+    startInterval = pw.TextField(null=True)
+    startIntervalTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
@@ -558,18 +562,6 @@ class Treatment(BaseModel):
     stopDateTier = pw.IntegerField(null=True)
     reasonForEndingTheTreatment = pw.TextField(null=True)
     reasonForEndingTheTreatmentTier = pw.IntegerField(null=True)
-    protocolNumberOrCode = pw.TextField(null=True)
-    protocolNumberOrCodeTier = pw.IntegerField(null=True)
-    surgeryDetails = pw.TextField(null=True)
-    surgeryDetailsTier = pw.IntegerField(null=True)
-    radiotherapyDetails = pw.TextField(null=True)
-    radiotherapyDetailsTier = pw.IntegerField(null=True)
-    chemotherapyDetails = pw.TextField(null=True)
-    chemotherapyDetailsTier = pw.IntegerField(null=True)
-    hematopoieticCellTransplant = pw.TextField(null=True)
-    hematopoieticCellTransplantTier = pw.IntegerField(null=True)
-    immunotherapyDetails = pw.TextField(null=True)
-    immunotherapyDetailsTier = pw.IntegerField(null=True)
     responseToTreatment = pw.TextField(null=True)
     responseToTreatmentTier = pw.IntegerField(null=True)
     responseCriteriaUsed = pw.TextField(null=True)
@@ -578,10 +570,12 @@ class Treatment(BaseModel):
     dateOfRecurrenceOrProgressionAfterThisTreatmentTier = pw.IntegerField(null=True)
     unexpectedOrUnusualToxicityDuringTreatment = pw.TextField(null=True)
     unexpectedOrUnusualToxicityDuringTreatmentTier = pw.IntegerField(null=True)
-    drugListOrAgent = pw.TextField(null=True)
-    drugListOrAgentTier = pw.IntegerField(null=True)
     drugIdNumbers = pw.TextField(null=True)
     drugIdNumbersTier = pw.IntegerField(null=True)
+    diagnosisId = pw.TextField(null=True)
+    diagnosisIdTier = pw.IntegerField(null=True)
+    treatmentPlanId = pw.TextField(null=True)
+    treatmentPlanIdTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
@@ -631,6 +625,10 @@ class Outcome(BaseModel):
     weightUnitsTier = pw.IntegerField(null=True)
     performanceStatus = pw.TextField(null=True)
     performanceStatusTier = pw.IntegerField(null=True)
+    overallSurvivalInMonths = pw.TextField(null=True)
+    overallSurvivalInMonthsTier = pw.IntegerField(null=True)
+    diseaseFreeSurvivalInMonths = pw.TextField(null=True)
+    diseaseFreeSurvivalInMonthsTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
