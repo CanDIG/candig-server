@@ -2120,6 +2120,7 @@ class Sample(datamodel.DatamodelObject):
     def getStartIntervalTier(self):
         return self._startIntervalTier
 
+
 class Treatment(datamodel.DatamodelObject):
     """
     """
@@ -3987,7 +3988,7 @@ class Radiotherapy(datamodel.DatamodelObject):
             record[str('startIntervalRadRaw')] = str(self.getStartIntervalRadRaw())
         if tier >= self.getRecordingDateTier():
             record[str('recordingDate')] = str(self.getRecordingDate())
-        if tier >= self._adjacentFieldsTier():
+        if tier >= self.getAdjacentFieldsTier():
             record[str('adjacentFields')] = str(self.getAdjacentFields())
         if tier >= self.getAdjacentFractionsTier():
             record[str('adjacentFractions')] = str(self.getAdjacentFractions())
@@ -5454,8 +5455,8 @@ class Labtest(datamodel.DatamodelObject):
             record[str('startDate')] = str(self.getStartDate())
         if tier >= self.getEndDateTier():
             record[str('endDate')] = str(self.getEndDate())
-        if tier >= self.getStatusTier():
-            record[str('collectionDate')] = str(self.getStatus())
+        if tier >= self.getCollectionDateTier():
+            record[str('collectionDate')] = str(self.getCollectionDate())
         if tier >= self.getEventTypeTier():
             record[str('eventType')] = str(self.getEventType())
         if tier >= self.getTestResultsTier():
