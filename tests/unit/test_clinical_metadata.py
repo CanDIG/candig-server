@@ -696,6 +696,7 @@ class TestTumourboard(unittest.TestCase):
             tumourboard.populateFromJson,
             invalidTumourboard)
 
+
 class TestStudy(unittest.TestCase):
     """
     Test the Study class
@@ -742,6 +743,7 @@ class TestStudy(unittest.TestCase):
             exceptions.InvalidJsonException,
             study.populateFromJson,
             invalidStudy)
+
 
 class TestLabtest(unittest.TestCase):
     """
@@ -795,6 +797,7 @@ class TestLabtest(unittest.TestCase):
             exceptions.InvalidJsonException,
             labtest.populateFromJson,
             invalidLabtest)
+
 
 class TestSlide(unittest.TestCase):
     """
@@ -867,6 +870,7 @@ class TestSlide(unittest.TestCase):
             slide.populateFromJson,
             invalidSlide)
 
+
 class TestChemotherapy(unittest.TestCase):
     """
     Test the Chemotherapy class
@@ -937,6 +941,7 @@ class TestChemotherapy(unittest.TestCase):
             exceptions.InvalidJsonException,
             chemotherapy.populateFromJson,
             invalidChemotherapy)
+
 
 class TestRadiotherapy(unittest.TestCase):
     """
@@ -1016,6 +1021,7 @@ class TestRadiotherapy(unittest.TestCase):
             exceptions.InvalidJsonException,
             radiotherapy.populateFromJson,
             invalidRadiotherapy)
+
 
 class TestSurgery(unittest.TestCase):
     """

@@ -230,8 +230,8 @@ class TestSearchGenerator(unittest.TestCase):
         responseStr = self.backend.runCountQuery(request, "application/json", self.access_map)
         response = json.loads(responseStr)
         fieldResponse = response["patients"][0]["provinceOfResidence"]
-        self.assertGreater(fieldResponse["British Columbia"], fieldResponse.get("Quebec",0))
-        self.assertGreater(fieldResponse["British Columbia"], fieldResponse.get("New Brunswick",0))
+        self.assertGreater(fieldResponse["British Columbia"], fieldResponse.get("Quebec", 0))
+        self.assertGreater(fieldResponse["British Columbia"], fieldResponse.get("New Brunswick", 0))
 
     def testSearchQuery2(self):
         dataset_id = self.dataset.getId()
