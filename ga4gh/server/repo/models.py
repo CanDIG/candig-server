@@ -1089,6 +1089,16 @@ class Radiotherapy(BaseModel):
     treatedRegionTier = pw.IntegerField(null=True)
     treatmentPlanId = pw.TextField(null=True)
     treatmentPlanIdTier = pw.IntegerField(null=True)
+    radiationType = pw.TextField(null=True)
+    radiationTypeTier = pw.IntegerField(null=True)
+    radiationSite = pw.TextField(null=True)
+    radiationSiteTier = pw.IntegerField(null=True)
+    totalDose = pw.TextField(null=True)
+    totalDoseTier = pw.IntegerField(null=True)
+    boostSite = pw.TextField(null=True)
+    boostSiteTier = pw.IntegerField(null=True)
+    boostDose = pw.TextField(null=True)
+    boostDoseTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
@@ -1126,6 +1136,8 @@ class Surgery(BaseModel):
     recordingDateTier = pw.IntegerField(null=True)
     treatmentPlanId = pw.TextField(null=True)
     treatmentPlanIdTier = pw.IntegerField(null=True)
+    courseNumber = pw.TextField(null=True)
+    courseNumberTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
@@ -1155,6 +1167,8 @@ class Immunotherapy(BaseModel):
     immunotherapyDetailTier = pw.IntegerField(null=True)
     treatmentPlanId = pw.TextField(null=True)
     treatmentPlanIdTier = pw.IntegerField(null=True)
+    courseNumber = pw.TextField(null=True)
+    courseNumberTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (
@@ -1182,6 +1196,8 @@ class Celltransplant(BaseModel):
     donorTypeTier = pw.IntegerField(null=True)
     treatmentPlanId = pw.TextField(null=True)
     treatmentPlanIdTier = pw.IntegerField(null=True)
+    courseNumber = pw.TextField(null=True)
+    courseNumberTier = pw.IntegerField(null=True)
 
     class Meta:
         indexes = (

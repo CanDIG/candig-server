@@ -3927,6 +3927,16 @@ class Radiotherapy(datamodel.DatamodelObject):
         self._treatedRegionTier = None
         self._treatmentPlanId = None
         self._treatmentPlanIdTier = None
+        self._radiationType = None
+        self._radiationTypeTier = None
+        self._radiationSite = None
+        self._radiationSiteTier = None
+        self._totalDose = None
+        self._totalDoseTier = None
+        self._boostSite = None
+        self._boostSiteTier = None
+        self._boostDose = None
+        self._boostDoseTier = None
 
         self._objectAttr = {
             "patientId": self.getPatientId,
@@ -3948,7 +3958,12 @@ class Radiotherapy(datamodel.DatamodelObject):
             "siteNumber": self.getSiteNumber,
             "technique": self.getTechnique,
             "treatedRegion": self.getTreatedRegion,
-            "treatmentPlanId": self.getTreatmentPlanId
+            "treatmentPlanId": self.getTreatmentPlanId,
+            "radiationType": self.getRadiationType,
+            "radiationSite": self.getRadiationSite,
+            "totalDose": self.getTotalDose,
+            "boostSite": self.getBoostSite,
+            "boostDose": self.getBoostDose
         }
 
     def toProtocolElement(self, tier=0):
@@ -4006,6 +4021,16 @@ class Radiotherapy(datamodel.DatamodelObject):
             record[str('treatedRegion')] = str(self.getTreatedRegion())
         if tier >= self.getTreatmentPlanIdTier():
             record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+        if tier >= self.getRadiationTypeTier():
+            record[str('radiationType')] = str(self.getRadiationType())
+        if tier >= self.getRadiationSiteTier():
+            record[str('radiationSite')] = str(self.getRadiationSite())
+        if tier >= self.getTotalDoseTier():
+            record[str('totalDose')] = str(self.getTotalDose())
+        if tier >= self.getBoostSiteTier():
+            record[str('boostSite')] = str(self.getBoostSite())
+        if tier >= self.getBoostDoseTier():
+            record[str('boostDose')] = str(self.getBoostDose())
 
         Radiotherapy = protocol.Radiotherapy(**record)
         self.serializeAttributes(Radiotherapy)
@@ -4064,6 +4089,16 @@ class Radiotherapy(datamodel.DatamodelObject):
         self._treatedRegionTier = RadiotherapyRecord.treatedRegionTier
         self._treatmentPlanId = RadiotherapyRecord.treatmentPlanId
         self._treatmentPlanIdTier = RadiotherapyRecord.treatmentPlanIdTier
+        self._radiationType = RadiotherapyRecord.radiationType
+        self._radiationTypeTier = RadiotherapyRecord.radiationTypeTier
+        self._radiationSite = RadiotherapyRecord.radiationSite
+        self._radiationSiteTier = RadiotherapyRecord.radiationSiteTier
+        self._totalDose = RadiotherapyRecord.totalDose
+        self._totalDoseTier = RadiotherapyRecord.totalDoseTier
+        self._boostSite = RadiotherapyRecord.boostSite
+        self._boostSiteTier = RadiotherapyRecord.boostSiteTier
+        self._boostDose = RadiotherapyRecord.boostDose
+        self._boostDoseTier = RadiotherapyRecord.boostDoseTier
 
         return self
 
@@ -4127,6 +4162,16 @@ class Radiotherapy(datamodel.DatamodelObject):
         self._treatedRegionTier = parsed.treatedRegionTier
         self._treatmentPlanId = parsed.treatmentPlanId
         self._treatmentPlanIdTier = parsed.treatmentPlanIdTier
+        self._radiationType = parsed.radiationType
+        self._radiationTypeTier = parsed.radiationTypeTier
+        self._radiationSite = parsed.radiationSite
+        self._radiationSiteTier = parsed.radiationSiteTier
+        self._totalDose = parsed.totalDose
+        self._totalDoseTier = parsed.totalDoseTier
+        self._boostSite = parsed.boostSite
+        self._boostSiteTier = parsed.boostSiteTier
+        self._boostDose = parsed.boostDose
+        self._boostDoseTier = parsed.boostDoseTier
 
         return self
 
@@ -4273,6 +4318,36 @@ class Radiotherapy(datamodel.DatamodelObject):
     def getTreatmentPlanIdTier(self):
         return self._treatmentPlanIdTier
 
+    def getRadiationType(self):
+        return self._radiationType
+
+    def getRadiationTypeTier(self):
+        return self._radiationTypeTier
+
+    def getRadiationSite(self):
+        return self._radiationSite
+
+    def getRadiationSiteTier(self):
+        return self._radiationSiteTier
+
+    def getTotalDose(self):
+        return self._totalDose
+
+    def getTotalDoseTier(self):
+        return self._totalDoseTier
+
+    def getBoostSite(self):
+        return self._boostSite
+
+    def getBoostSiteTier(self):
+        return self._boostSiteTier
+
+    def getBoostDose(self):
+        return self._boostDose
+
+    def getBoostDoseTier(self):
+        return self._boostDoseTier
+
 
 class Surgery(datamodel.DatamodelObject):
     """
@@ -4313,6 +4388,8 @@ class Surgery(datamodel.DatamodelObject):
         self._recordingDateTier = None
         self._treatmentPlanId = None
         self._treatmentPlanIdTier = None
+        self._courseNumber = None
+        self._courseNumberTier = None
 
         self._objectAttr = {
             "patientId": self.getPatientId,
@@ -4324,7 +4401,8 @@ class Surgery(datamodel.DatamodelObject):
             "site": self.getSite,
             "type": self.getType,
             "recordingDate": self.getRecordingDate,
-            "treatmentPlanId": self.getTreatmentPlanId
+            "treatmentPlanId": self.getTreatmentPlanId,
+            "courseNumber": self.getCourseNumber
         }
 
     def toProtocolElement(self, tier=0):
@@ -4360,6 +4438,8 @@ class Surgery(datamodel.DatamodelObject):
             record[str('recordingDate')] = str(self.getRecordingDate())
         if tier >= self.getTreatmentPlanIdTier():
             record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+        if tier >= self.getCourseNumberTier():
+            record[str('courseNumber')] = str(self.getCourseNumber())
 
         Surgery = protocol.Surgery(**record)
         self.serializeAttributes(Surgery)
@@ -4396,6 +4476,8 @@ class Surgery(datamodel.DatamodelObject):
         self._recordingDateTier = SurgeryRecord.recordingDateTier
         self._treatmentPlanId = SurgeryRecord.treatmentPlanId
         self._treatmentPlanIdTier = SurgeryRecord.treatmentPlanIdTier
+        self._courseNumber = SurgeryRecord.courseNumber
+        self._courseNumberTier = SurgeryRecord.courseNumberTier
 
         return self
 
@@ -4437,6 +4519,8 @@ class Surgery(datamodel.DatamodelObject):
         self._recordingDateTier = parsed.recordingDateTier
         self._treatmentPlanId = parsed.treatmentPlanId
         self._treatmentPlanIdTier = parsed.treatmentPlanIdTier
+        self._courseNumber = parsed.courseNumber
+        self._courseNumberTier = parsed.courseNumberTier
 
         return self
 
@@ -4517,6 +4601,12 @@ class Surgery(datamodel.DatamodelObject):
     def getTreatmentPlanIdTier(self):
         return self._treatmentPlanIdTier
 
+    def getCourseNumber(self):
+        return self._courseNumber
+
+    def getCourseNumberTier(self):
+        return self._courseNumberTier
+
 
 class Immunotherapy(datamodel.DatamodelObject):
     """
@@ -4549,6 +4639,8 @@ class Immunotherapy(datamodel.DatamodelObject):
         self._immunotherapyDetailTier = None
         self._treatmentPlanId = None
         self._treatmentPlanIdTier = None
+        self._courseNumber = None
+        self._courseNumberTier = None
 
         self._objectAttr = {
             "patientId": self.getPatientId,
@@ -4556,7 +4648,8 @@ class Immunotherapy(datamodel.DatamodelObject):
             "immunotherapyType": self.getImmunotherapyType,
             "immunotherapyTarget": self.getImmunotherapyTarget,
             "immunotherapyDetail": self.getImmunotherapyDetail,
-            "treatmentPlanId": self.getTreatmentPlanId
+            "treatmentPlanId": self.getTreatmentPlanId,
+            "courseNumber": self.getCourseNumber
         }
 
     def toProtocolElement(self, tier=0):
@@ -4584,6 +4677,8 @@ class Immunotherapy(datamodel.DatamodelObject):
             record[str('immunotherapyDetail')] = str(self.getImmunotherapyDetail())
         if tier >= self.getTreatmentPlanIdTier():
             record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+        if tier >= self.getCourseNumberTier():
+            record[str('courseNumber')] = str(self.getCourseNumber())
 
         Immunotherapy = protocol.Immunotherapy(**record)
         self.serializeAttributes(Immunotherapy)
@@ -4612,6 +4707,8 @@ class Immunotherapy(datamodel.DatamodelObject):
         self._immunotherapyDetailTier = ImmunotherapyRecord.immunotherapyDetailTier
         self._treatmentPlanId = ImmunotherapyRecord.treatmentPlanId
         self._treatmentPlanIdTier = ImmunotherapyRecord.treatmentPlanIdTier
+        self._courseNumber = ImmunotherapyRecord.courseNumber
+        self._courseNumberTier = ImmunotherapyRecord.courseNumberTier
 
         return self
 
@@ -4645,6 +4742,8 @@ class Immunotherapy(datamodel.DatamodelObject):
         self._immunotherapyDetailTier = parsed.immunotherapyDetailTier
         self._treatmentPlanId = parsed.treatmentPlanId
         self._treatmentPlanIdTier = parsed.treatmentPlanIdTier
+        self._courseNumber = parsed.courseNumber
+        self._courseNumberTier = parsed.courseNumberTier
 
         return self
 
@@ -4701,6 +4800,12 @@ class Immunotherapy(datamodel.DatamodelObject):
     def getTreatmentPlanIdTier(self):
         return self._treatmentPlanIdTier
 
+    def getCourseNumber(self):
+        return self._courseNumber
+
+    def getCourseNumberTier(self):
+        return self._courseNumberTier
+
 
 class Celltransplant(datamodel.DatamodelObject):
     """
@@ -4731,13 +4836,16 @@ class Celltransplant(datamodel.DatamodelObject):
         self._donorTypeTier = None
         self._treatmentPlanId = None
         self._treatmentPlanIdTier = None
+        self._courseNumber = None
+        self._courseNumberTier = None
 
         self._objectAttr = {
             "patientId": self.getPatientId,
             "startDate": self.getStartDate,
             "cellSource": self.getCellSource,
             "donorType": self.getDonorType,
-            "treatmentPlanId": self.getTreatmentPlanId
+            "treatmentPlanId": self.getTreatmentPlanId,
+            "courseNumber": self.getCourseNumber
         }
 
     def toProtocolElement(self, tier=0):
@@ -4763,6 +4871,8 @@ class Celltransplant(datamodel.DatamodelObject):
             record[str('donorType')] = str(self.getDonorType())
         if tier >= self.getTreatmentPlanIdTier():
             record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+        if tier >= self.getCourseNumberTier():
+            record[str('courseNumber')] = str(self.getCourseNumber())
 
         Celltransplant = protocol.Celltransplant(**record)
         self.serializeAttributes(Celltransplant)
@@ -4789,6 +4899,8 @@ class Celltransplant(datamodel.DatamodelObject):
         self._donorTypeTier = CelltransplantRecord.donorTypeTier
         self._treatmentPlanId = CelltransplantRecord.treatmentPlanId
         self._treatmentPlanIdTier = CelltransplantRecord.treatmentPlanIdTier
+        self._courseNumber = CelltransplantRecord.courseNumber
+        self._courseNumberTier = CelltransplantRecord.courseNumberTier
 
         return self
 
@@ -4820,6 +4932,8 @@ class Celltransplant(datamodel.DatamodelObject):
         self._donorTypeTier = parsed.donorTypeTier
         self._treatmentPlanId = parsed.treatmentPlanId
         self._treatmentPlanIdTier = parsed.treatmentPlanIdTier
+        self._courseNumber = parsed.courseNumber
+        self._courseNumberTier = parsed.courseNumberTier
 
         return self
 
@@ -4869,6 +4983,12 @@ class Celltransplant(datamodel.DatamodelObject):
 
     def getTreatmentPlanIdTier(self):
         return self._treatmentPlanIdTier
+
+    def getCourseNumber(self):
+        return self._courseNumber
+
+    def getCourseNumberTier(self):
+        return self._courseNumberTier
 
 
 class Slide(datamodel.DatamodelObject):

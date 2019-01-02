@@ -2592,6 +2592,16 @@ class SqlDataRepository(AbstractDataRepository):
                 treatedRegionTier=radiotherapy.getTreatedRegionTier(),
                 treatmentPlanId=radiotherapy.getTreatmentPlanId(),
                 treatmentPlanIdTier=radiotherapy.getTreatmentPlanIdTier(),
+                radiationType=radiotherapy.getRadiationType(),
+                radiationTypeTier=radiotherapy.getRadiationTypeTier(),
+                radiationSite=radiotherapy.getRadiationSite(),
+                radiationSiteTier=radiotherapy.getRadiationSiteTier(),
+                totalDose=radiotherapy.getTotalDose(),
+                totalDoseTier=radiotherapy.getTotalDoseTier(),
+                boostSite=radiotherapy.getBoostSite(),
+                boostSiteTier=radiotherapy.getBoostSiteTier(),
+                boostDose=radiotherapy.getBoostDose(),
+                boostDoseTier=radiotherapy.getBoostDoseTier()
 
             )
         except Exception:
@@ -2649,6 +2659,8 @@ class SqlDataRepository(AbstractDataRepository):
                 recordingDateTier=surgery.getRecordingDateTier(),
                 treatmentPlanId=surgery.getTreatmentPlanId(),
                 treatmentPlanIdTier=surgery.getTreatmentPlanIdTier(),
+                courseNumber=surgery.getCourseNumber(),
+                courseNumberTier=surgery.getCourseNumberTier()
 
             )
         except Exception:
@@ -2698,6 +2710,8 @@ class SqlDataRepository(AbstractDataRepository):
                 immunotherapyDetailTier=immunotherapy.getImmunotherapyDetailTier(),
                 treatmentPlanId=immunotherapy.getTreatmentPlanId(),
                 treatmentPlanIdTier=immunotherapy.getTreatmentPlanIdTier(),
+                courseNumber=immunotherapy.getCourseNumber(),
+                courseNumberTier=immunotherapy.getCourseNumberTier()
 
             )
         except Exception:
@@ -2745,6 +2759,8 @@ class SqlDataRepository(AbstractDataRepository):
                 donorTypeTier=celltransplant.getDonorTypeTier(),
                 treatmentPlanId=celltransplant.getTreatmentPlanId(),
                 treatmentPlanIdTier=celltransplant.getTreatmentPlanIdTier(),
+                courseNumber=celltransplant.getCourseNumber(),
+                courseNumberTier=celltransplant.getCourseNumberTier()
 
             )
         except Exception:

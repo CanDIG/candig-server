@@ -994,7 +994,17 @@ class TestRadiotherapy(unittest.TestCase):
             treatedRegion="n/a",
             treatedRegionTier=0,
             treatmentPlanId="n/a",
-            treatmentPlanIdTier=0
+            treatmentPlanIdTier=0,
+            radiationType="n/a",
+            radiationTypeTier=0,
+            radiationSite="n/a",
+            radiationSiteTier=0,
+            totalDose="n/a",
+            totalDoseTier=0,
+            boostSite="n/a",
+            boostSiteTier=0,
+            boostDose="n/a",
+            boostDoseTier=0
         )
 
         validRadiotherapy.attributes.attr['test']. \
@@ -1052,7 +1062,9 @@ class TestSurgery(unittest.TestCase):
             recordingDate="n/a",
             recordingDateTier=0,
             treatmentPlanId="n/a",
-            treatmentPlanIdTier=0
+            treatmentPlanIdTier=0,
+            courseNumber="1",
+            courseNumberTier=0
         )
 
         validSurgery.attributes.attr['test']. \
@@ -1102,7 +1114,9 @@ class TestImmunotherapy(unittest.TestCase):
             immunotherapyDetail="n/a",
             immunotherapyDetailTier=0,
             treatmentPlanId="n/a",
-            treatmentPlanIdTier=0
+            treatmentPlanIdTier=0,
+            courseNumber="1",
+            courseNumberTier=0
         )
 
         validImmunotherapy.attributes.attr['test']. \
@@ -1129,3 +1143,54 @@ class TestImmunotherapy(unittest.TestCase):
             exceptions.InvalidJsonException,
             immunotherapy.populateFromJson,
             invalidImmunotherapy)
+
+
+class TestCelltransplant(unittest.TestCase):
+    """
+        Test the Celltransplant class
+        """
+
+    def testToProtocolElement(self):
+        dataset = datasets.Dataset('dataset1')
+        validCelltransplant = protocol.Celltransplant(
+            name="test",
+            created="2016-05-19T21:00:19Z",
+            updated="2016-05-19T21:00:19Z",
+            patientId="PATIENT_TEST",
+            patientIdTier=0,
+            startDate="n/a",
+            startDateTier=0,
+            cellSource="n/a",
+            cellSourceTier=0,
+            donorType="n/a",
+            donorTypeTier=0,
+            treatmentPlanId="PATIENT_TEST_1",
+            treatmentPlanIdTier=0,
+            courseNumber="1",
+            courseNumberTier=0
+        )
+
+        validCelltransplant.attributes.attr['test']. \
+            values.add().string_value = 'test-info'
+
+        # pass through protocol creation
+        celltransplant = clinMetadata.Celltransplant(
+            dataset, "test")
+        celltransplant.populateFromJson(protocol.toJson(validCelltransplant))
+        gaCelltransplant = celltransplant.toProtocolElement()
+        # Verify select elements exist
+        self.assertEqual(gaCelltransplant.created, validCelltransplant.created)
+        self.assertEqual(gaCelltransplant.updated, validCelltransplant.updated)
+        self.assertEqual(gaCelltransplant.patientId, validCelltransplant.patientId)
+        self.assertEqual(gaCelltransplant.cellSource, validCelltransplant.cellSource)
+        self.assertEqual(gaCelltransplant.courseNumber, validCelltransplant.courseNumber)
+        self.assertEqual(gaCelltransplant.treatmentPlanId, validCelltransplant.treatmentPlanId)
+
+        # Invalid input
+        invalidCelltransplant = '{"bad:", "json"}'
+        celltransplant = clinMetadata.Celltransplant(dataset, "test")
+        # Should fail
+        self.assertRaises(
+            exceptions.InvalidJsonException,
+            celltransplant.populateFromJson,
+            invalidCelltransplant)
