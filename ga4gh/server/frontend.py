@@ -721,7 +721,7 @@ class FederationResponse(object):
                 except ValueError:
                     pass
 
-        if self.endpoint == app.backend.runCountQuery:
+        if self.endpoint == app.backend.runCountQuery and self.results:
             self.mergeCounts()
 
     def mergeCounts(self):
