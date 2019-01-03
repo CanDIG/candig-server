@@ -58,7 +58,15 @@ class Backend(object):
             "complications": self.runSearchComplications,
             "tumourboards": self.runSearchTumourboards,
             "variantsByGene": self.runSearchVariantsByGeneName,
-            "variants": self.runSearchVariants
+            "variants": self.runSearchVariants,
+            "slides": self.runSearchSlides,
+            "studies": self.runSearchStudies,
+            "labtests": self.runSearchLabtests,
+            "surgeries": self.runSearchSurgeries,
+            "chemotherapies": self.runSearchChemotherapies,
+            "immunotherapies": self.runSearchImmunotherapies,
+            "radiotherapies": self.runSearchRadiotherapies,
+            "celltransplants": self.runSearchCelltransplants
         }
 
     def getDataRepository(self):
