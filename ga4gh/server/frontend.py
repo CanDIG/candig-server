@@ -635,9 +635,8 @@ class FederationResponse(object):
                 username = parsed_payload.get('preferred_username')
                 if username:
                     access_map = app.access_map.getUserAccessMap().get(username, {})
-                else:
-                    if app.logger:
-                        app.logger.warn("Token does not contain a valid username")
+                elif app.logger:
+                    app.logger.warn("Token does not contain a valid username")
             else:
                 raise exceptions.NotAuthenticatedException
         else:
