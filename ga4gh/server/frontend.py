@@ -42,6 +42,7 @@ import ga4gh.schemas.protocol as protocol
 
 import base64
 from collections import Counter
+from requests_futures.sessions import FuturesSession
 
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
@@ -520,8 +521,8 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         "Valid response": <true|false>,
         "Queried peers": <number>
         },
-    "results": [
-            {
+    "results": {
+            "total": N
             "datasets": [
                     {record1},
                     {record2},
@@ -534,110 +535,14 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
 
     """
     request_dictionary = flask.request
+    federationResponse = FederationResponse(request, endpoint, return_mimetype, request_dictionary)
+    federationResponse.handleLocalRequest()
 
-    if app.config.get("TYK_ENABLED"):
-        # Check authorization if using gateway
-        if 'Authorization' in request_dictionary.headers:
-            authz_token = request_dictionary.headers['Authorization']
-            access_map = getAccessMap(authz_token[7:])
-        else:
-            raise exceptions.NotAuthenticatedException
-    else:
-        authz_token = ''
-        access_map = getAccessMap(authz_token)
-
-    # Self query
-    responseObject = {}
-    responseObject['results'] = {}
-    responseObject['status'] = list()
-
-    try:
-        responseObject['results'] = json.loads(
-            endpoint(
-                request,
-                return_mimetype=return_mimetype,
-                access_map=access_map
-            )
-        )
-
-        responseObject['status'].append(200)
-
-    except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException):
-        responseObject['status'].append(404)
-
-    except (exceptions.NotAuthorizedException):
-        responseObject['status'].append(401)
-
-    # Peer queries
     # Apply federation by default or if it was specifically requested
     if ('Federation' not in request_dictionary.headers or request_dictionary.headers.get('Federation') == 'True'):
+        federationResponse.handlePeerRequest(request_type)
 
-        # Iterate through all peers
-        for peer in app.serverStatus.getPeers():
-            # Generate the same call on the peer
-            uri = request_dictionary.url.replace(
-                request_dictionary.host_url,
-                peer.getUrl(),
-            )
-            # federation field must be set to False to avoid infinite loop
-            header = {
-                'Content-Type': return_mimetype,
-                'Accept': return_mimetype,
-                'Federation': 'False',
-                'Authorization': authz_token,
-            }
-
-            # Make the call
-            try:
-                if request_type == 'GET':
-                    response = requests.Session().get(
-                        uri,
-                        headers=header,
-                    )
-                elif request_type == 'POST':
-                    response = requests.Session().post(
-                        uri,
-                        json=json.loads(request),
-                        headers=header,
-                    )
-                else:
-                    # TODO: Raise error
-                    pass
-
-                print('  >> peer call: {0} - {1}'.format(uri, response.status_code))
-
-            except (requests.exceptions.ConnectionError,
-                    requests.exceptions.Timeout,
-                    requests.exceptions.HTTPError):
-                responseObject['status'].append(503)
-
-                print('  >> peer call: {0} - {1}'.format(uri, 'SERVER IS DOWN OR DID NOT RESPONSE!'))
-            else:
-                responseObject['status'].append(response.status_code)
-                # If the call was successful append the results
-                if response.status_code == 200:
-                    try:
-                        if request_type == 'GET':
-                            responseObject['results'] = response.json()['results']
-
-                        elif request_type == 'POST':
-                            peer_response = response.json()['results']
-
-                            if not responseObject['results']:
-                                responseObject['results'] = peer_response
-                            else:
-                                for key in peer_response:
-                                    if key in ['nextPageToken', 'total']:
-                                        if key not in responseObject['results']:
-                                            responseObject['results'][key] = peer_response[key]
-                                        continue
-                                    for record in peer_response[key]:
-                                        responseObject['results'][key].append(record)
-                    except ValueError:
-                        pass
-
-    if endpoint == app.backend.runCountQuery:
-        _mergeCounts(responseObject)
+    responseObject = federationResponse.getResponseObject()
 
     # If no result has been found on any of the servers raise an error
     if not responseObject['results']:
@@ -646,6 +551,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         elif request_type == 'POST':
             raise exceptions.ObjectWithIdNotFoundException(json.loads(request))
     else:
+        # Update total
         table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
         responseObject['results']['total'] = len(responseObject['results'][table])
 
@@ -679,39 +585,6 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     return json.dumps(responseObject)
 
 
-# testing method for access roles through token id + access_list.txt
-def getAccessMap(token):
-    """
-    user roles are loaded in to the server from the access_list.txt
-    a user-specific access map is generated here based on the id_token and
-    the server side access map generated during on server startup
-
-    if running NoAuth config, user has full access to local dataset
-
-    :param token: raw keycloak oidc id_token containing user info
-    :return: python dict in the form {"project" : "access tier", ...}
-    """
-
-    access_map = {}
-
-    if app.config.get("TYK_ENABLED"):
-        parsed_payload = _parseTokenPayload(token)
-
-        username = parsed_payload.get('preferred_username')
-        if username:
-            access_map = app.access_map.getUserAccessMap().get(username, {})
-        else:
-            if app.logger:
-                app.logger.warn("Token does not contain a valid username")
-
-    else:
-        # mock full access to local dataset
-        for dataset in app.serverStatus.getDatasets():
-            access_map[dataset.getLocalId()] = 4
-
-    return access_map
-
-
 def _parseTokenPayload(token):
 
     try:
@@ -729,23 +602,173 @@ def _parseTokenPayload(token):
     return json.loads(decoded_payload)
 
 
-def _mergeCounts(responseObject):
-    table = responseObject['results'].keys()[0]
-    prepare_counts = {}
-    for record in responseObject['results'][table]:
-        for k, v in record.iteritems():
-            if k in prepare_counts:
-                prepare_counts[k].append(Counter(v))
-            else:
-                prepare_counts[k] = [Counter(v)]
+class FederationResponse(object):
 
-    merged_counts = {}
-    for field in prepare_counts:
-        count_total = Counter()
-        for count in prepare_counts[field]:
-            count_total = count_total + count
-        merged_counts[field] = dict(count_total)
-    responseObject['results'][table] = [merged_counts]
+    def __init__(self, request, endpoint, return_mimetype, request_dict):
+        self.results = {}
+        self.status = []
+        self.request = request
+        self.endpoint = endpoint
+        self.return_mimetype = return_mimetype
+        self.request_dict = request_dict
+        self.token, self.access_map = self.handleAccessPermission()
+
+    def handleAccessPermission(self):
+        """
+        user roles are loaded in to the server from the access_list.txt
+        a user-specific access map is generated here based on the id_token and
+        the in-memory server side access map
+
+        if running NoAuth config, user has full access to local datasets
+
+        :return: jwt token, python dict in the form {"project" : "access tier", ...}
+        """
+
+        access_map = {}
+
+        if app.config.get("TYK_ENABLED"):
+            if 'Authorization' in self.request_dict.headers:
+                access_map = {}
+                token = self.request_dict.headers['Authorization']
+                parsed_payload = _parseTokenPayload(token)
+
+                username = parsed_payload.get('preferred_username')
+                if username:
+                    access_map = app.access_map.getUserAccessMap().get(username, {})
+                elif app.logger:
+                    app.logger.warn("Token does not contain a valid username")
+            else:
+                raise exceptions.NotAuthenticatedException
+        else:
+            # for dev: mock full access when not using TYK config
+            token = None
+            for dataset in app.serverStatus.getDatasets():
+                access_map[dataset.getLocalId()] = 4
+
+        return token, access_map
+
+    def handleLocalRequest(self):
+        """
+        make local data request and set the results and status for a FederationResponse
+        """
+        try:
+            self.results = json.loads(
+                self.endpoint(
+                    self.request,
+                    return_mimetype=self.return_mimetype,
+                    access_map=self.access_map
+                )
+            )
+
+            self.status.append(200)
+
+        except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException):
+            self.status.append(404)
+
+        except (exceptions.NotAuthorizedException):
+            self.status.append(401)
+
+        print(">>> Local Response: " + str(self.status[0]))
+
+    def handlePeerRequest(self, request_type):
+        """
+        make peer data requests and update the results and status for a FederationResponse
+        """
+
+        header = {
+            'Content-Type': self.return_mimetype,
+            'Accept': self.return_mimetype,
+            'Federation': 'False',
+            'Authorization': self.token,
+        }
+
+        # generate peer uri
+        uri_list = []
+        for peer in app.serverStatus.getPeers():
+            uri = self.request_dict.url.replace(
+                self.request_dict.host_url,
+                peer.getUrl(),
+            )
+            uri_list.append(uri)
+
+        for future_response in self.async_requests(uri_list, request_type, header):
+            try:
+                response = future_response.result()
+            except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+                self.status.append(503)
+                continue
+            self.status.append(response.status_code)
+            # If the call was successful append the results
+            if response.status_code == 200:
+                try:
+                    if request_type == 'GET':
+                        self.results = response.json()['results']
+
+                    elif request_type == 'POST':
+                        peer_response = response.json()['results']
+
+                        if not self.results:
+                            self.results = peer_response
+                        else:
+                            for key in peer_response:
+                                if key in ['nextPageToken', 'total']:
+                                    if key not in self.results:
+                                        self.results[key] = peer_response[key]
+                                    continue
+                                for record in peer_response[key]:
+                                    self.results[key].append(record)
+                except ValueError:
+                    pass
+
+        if self.endpoint == app.backend.runCountQuery and self.results:
+            self.mergeCounts()
+
+    def mergeCounts(self):
+        """
+        merge federated counts and set results for a FederationResponse
+        """
+        table = list(set(self.results.keys()) - {"nextPageToken", "total"})[0]
+        prepare_counts = {}
+        for record in self.results[table]:
+            for k, v in record.iteritems():
+                if k in prepare_counts:
+                    prepare_counts[k].append(Counter(v))
+                else:
+                    prepare_counts[k] = [Counter(v)]
+
+        merged_counts = {}
+        for field in prepare_counts:
+            count_total = Counter()
+            for count in prepare_counts[field]:
+                count_total = count_total + count
+            merged_counts[field] = dict(count_total)
+        self.results[table] = [merged_counts]
+
+    def getResponseObject(self):
+        """
+        :return: formatted dict that can be returned as application/json response
+        """
+        return {'status': self.status, 'results': self.results}
+
+    def async_requests(self, uri_list, request_type, header):
+        """
+        Use futures session type to async process peer requests
+        :return: list of future responses
+        """
+        async_session = FuturesSession(max_workers=10)  # capping max threads
+        if request_type == "GET":
+            responses = [
+                async_session.get(uri, headers=header)
+                for uri in uri_list
+            ]
+        elif request_type == "POST":
+            responses = [
+                async_session.post(uri, json=json.loads(self.request), headers=header)
+                for uri in uri_list
+            ]
+        else:
+            responses = []
+        return responses
 
 
 def handleHttpPost(request, endpoint):

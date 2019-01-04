@@ -209,6 +209,9 @@ class AbstractRnaQuantification(datamodel.DatamodelObject):
         self._referenceSet = None
         self._programs = []
         self._biosampleId = ""
+        # New attributes
+        self._sampleId = ""
+        self._patientId = ""
 
     def toProtocolElement(self, tier=0):
         """
@@ -224,7 +227,12 @@ class AbstractRnaQuantification(datamodel.DatamodelObject):
         protocolElement.feature_set_ids.extend(self._featureSetIds)
         protocolElement.rna_quantification_set_id = \
             self._parentContainer.getId()
+
+        # New attributes
+        protocolElement.sampleId = self._sampleId
+        protocolElement.patientId = self._patientId
         self.serializeAttributes(protocolElement)
+
         return protocolElement
 
     def addRnaQuantMetadata(self, fields):
@@ -237,6 +245,8 @@ class AbstractRnaQuantification(datamodel.DatamodelObject):
         self._description = fields["description"]
         self._name = fields["name"]
         self._biosampleId = fields.get("biosample_id", "")
+        self._sampleId = fields.get("sampleId", "")
+        self._patientId = fields.get("patientId", "")
         if fields["read_group_ids"] == "":
             self._readGroupIds = []
         else:
