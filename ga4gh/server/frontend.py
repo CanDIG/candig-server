@@ -553,7 +553,8 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     else:
         # Update total
         table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
-        responseObject['results']['total'] = len(responseObject['results'][table])
+        if endpoint != app.backend.runCountQuery:
+            responseObject['results']['total'] = len(responseObject['results'][table])
 
     # Reformat the status response
     responseObject['status'] = {
