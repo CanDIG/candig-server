@@ -53,32 +53,31 @@ var selectPopulated = 0;
 let currentDatasetName;
 
 const categories = {
-    "patients": ["patientId", "otherIds", "dateOfBirth", "gender", "ethnicity", "race", "provinceOfResidence", "dateOfDeath",
+    "patients": ["dateOfBirth", "gender", "ethnicity", "race", "provinceOfResidence", "dateOfDeath",
         "causeOfDeath", "autopsyTissueForResearch", "priorMalignancy", "dateOfPriorMalignancy", "familyHistoryAndRiskFactors",
         "familyHistoryOfPredispositionSyndrome", "detailsOfPredispositionSyndrome", "geneticCancerSyndrome",
         "otherGeneticConditionOrSignificantComorbidity", "occupationalOrEnvironmentalExposure"
     ],
-    "enrollments": ["patientId", "enrollmentInstitution", "enrollmentApprovalDate", "crossEnrollment", "otherPersonalizedMedicineStudyName",
+    "enrollments": ["enrollmentInstitution", "enrollmentApprovalDate", "crossEnrollment", "otherPersonalizedMedicineStudyName",
         "otherPersonalizedMedicineStudyId", "ageAtEnrollment", "eligibilityCategory", "statusAtEnrollment", "primaryOncologistName",
         "primaryOncologistContact", "referringPhysicianName", "referringPhysicianContact", "summaryOfIdRequest", "treatingCentreName", "treatingCentreProvince"
     ],
-    "treatments": ["patientId", "courseNumber", "therapeuticModality", "systematicTherapyAgentName", "treatmentPlanType", "treatmentIntent",
-        "startDate", "stopDate", "reasonForEndingTheTreatment", "protocolNumberOrCode", "surgeryDetails", "radiotherapyDetails", "chemotherapyDetails",
-        "hematopoieticCellTransplant", "immunotherapyDetails", "responseToTreatment", "responseCriteriaUsed", "dateOfRecurrenceOrProgressionAfterThisTreatment",
-        "unexpectedOrUnusualToxicityDuringTreatment", "drugListOrAgent", "drugIdNumbers"
+    "treatments": ["courseNumber", "therapeuticModality", "treatmentPlanType", "treatmentIntent",
+        "startDate", "stopDate", "reasonForEndingTheTreatment", "responseToTreatment", "responseCriteriaUsed", "dateOfRecurrenceOrProgressionAfterThisTreatment",
+        "unexpectedOrUnusualToxicityDuringTreatment"
     ],
-    "samples": ["patientId", "sampleId", "diagnosisId", "localBiobankId", "collectionDate", "collectionHospital", "sampleType", "tissueDiseaseState",
+    "samples": ["collectionDate", "collectionHospital", "sampleType", "tissueDiseaseState",
         "anatomicSiteTheSampleObtainedFrom", "cancerType", "cancerSubtype", "pathologyReportId", "morphologicalCode", "topologicalCode",
         "shippingDate", "receivedDate", "qualityControlPerformed", "estimatedTumorContent", "quantity", "units", "associatedBiobank",
         "otherBiobank", "sopFollowed", "ifNotExplainAnyDeviation"
     ],
-    "diagnoses": ["patientId", "diagnosisId", "diagnosisDate", "ageAtDiagnosis", "cancerType", "classification", "cancerSite", "histology",
+    "diagnoses": ["diagnosisDate", "ageAtDiagnosis", "cancerType", "classification", "cancerSite", "histology",
         "methodOfDefinitiveDiagnosis", "sampleType", "sampleSite", "tumorGrade", "gradingSystemUsed", "sitesOfMetastases", "stagingSystem",
         "versionOrEditionOfTheStagingSystem", "specificTumorStageAtDiagnosis", "prognosticBiomarkers", "biomarkerQuantification",
         "additionalMolecularTesting", "additionalTestType", "laboratoryName", "laboratoryAddress", "siteOfMetastases",
         "stagingSystemVersion", "specificStage", "cancerSpecificBiomarkers", "additionalMolecularDiagnosticTestingPerformed", "additionalTest"
     ],
-    "tumourboards": ["patientId", "dateOfMolecularTumorBoard", "typeOfSampleAnalyzed", "typeOfTumourSampleAnalyzed", "analysesDiscussed",
+    "tumourboards": ["dateOfMolecularTumorBoard", "typeOfSampleAnalyzed", "typeOfTumourSampleAnalyzed", "analysesDiscussed",
         "somaticSampleType", "normalExpressionComparator", "diseaseExpressionComparator",
         "hasAGermlineVariantBeenIdentifiedByProfilingThatMayPredisposeToCancer", "actionableTargetFound",
         "molecularTumorBoardRecommendation", "germlineDnaSampleId", "tumorDnaSampleId", "tumorRnaSampleId",
@@ -89,20 +88,29 @@ const categories = {
         "detailsOfTreatmentPlanImpact", "patientOrFamilyInformedOfGermlineVariant",
         "patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling", "summaryReport"
     ],
-    "outcomes": ["patientId", "physicalExamId", "dateOfAssessment", "diseaseResponseOrStatus", "otherResponseClassification",
+    "outcomes": ["dateOfAssessment", "diseaseResponseOrStatus", "otherResponseClassification",
         "minimalResidualDiseaseAssessment", "methodOfResponseEvaluation", "responseCriteriaUsed", "summaryStage",
-        "sitesOfAnyProgressionOrRecurrence", "vitalStatus", "height", "weight", "heightUnits", "weightUnits", "performanceStatus"
+        "sitesOfAnyProgressionOrRecurrence", "vitalStatus", "height", "weight", "heightUnits", "weightUnits", "performanceStatus", "overallSurvivalInMonths",
+        "diseaseFreeSurvivalInMonths"
     ],
-    "complications": ["patientId", "date", "lateComplicationOfTherapyDeveloped", "lateToxicityDetail", "suspectedTreatmentInducedNeoplasmDeveloped", "treatmentInducedNeoplasmDetails"],
-    "consents": ["patientId", "consentId", "consentDate", "consentVersion", "patientConsentedTo", "reasonForRejection",
+    "complications": ["date", "lateComplicationOfTherapyDeveloped", "lateToxicityDetail", "suspectedTreatmentInducedNeoplasmDeveloped", "treatmentInducedNeoplasmDetails"],
+    "consents": ["consentDate", "consentVersion", "patientConsentedTo", "reasonForRejection",
         "wasAssentObtained", "dateOfAssent", "assentFormVersion", "ifAssentNotObtainedWhyNot", "reconsentDate", "reconsentVersion",
         "consentingCoordinatorName", "previouslyConsented", "nameOfOtherBiobank", "hasConsentBeenWithdrawn",
         "dateOfConsentWithdrawal", "typeOfConsentWithdrawal", "reasonForConsentWithdrawal", "consentFormComplete"
-    ]
+    ],
+    "chemotherapies": ['startDate', 'doseFrequency', 'numberOfCycle', 'treatingCentreName', 'doseUnit', 'treatmentIntent', 'route', 'protocolCode', 'stopDate', 'dose', 'daysPerCycle', 'type', 'recordingDate', 'courseNumber', 'systematicTherapyAgentName'],
+    "radiotherapies": ['radiationSite', 'siteNumber', 'startDate', 'adjacentFractions', 'radiationType', 'boostDose', 'testResult', 'startIntervalRadRaw', 'adjacentFields', 'baseline', 'technique', 'stopDate', 'courseNumber', 'brachytherapyDose', 'testResultStd', 'complete', 'boostSite', 'treatedRegion', 'startIntervalRad', 'treatingCentreName', 'totalDose', 'therapeuticModality', 'recordingDate', 'radiotherapyDose'],
+    "immunotherapies": ['startDate', 'immunotherapyType', 'immunotherapyTarget', 'immunotherapyDetail', 'courseNumber'],
+    "surgeries": ['collectionTimePoint', 'startDate', 'site', 'diagnosisDate', 'type', 'stopDate', 'recordingDate', 'courseNumber'],
+    "celltransplants": ['startDate', 'cellSource', 'courseNumber', 'donorType'],
+    "slides": ['tumorNucleiPercent', 'inflammatoryInfiltrationPercent', 'necrosisPercent', 'neutrophilInfiltrationPercent', 'proliferatingCellsNumber', 'monocyteInfiltrationPercent', 'lymphocyteInfiltrationPercent', 'eosinophilInfiltrationPercent', 'tumorCellsPercent', 'stromalCellsPercent', 'normalCellsPercent', 'sectionLocation', 'granulocyteInfiltrationPercent'],
+    "studies": ['status', 'startDate', 'recordingDate', 'endDate'],
+    "labtests": ['startDate', 'endDate', 'testResults', 'collectionDate', 'recordingDate', 'eventType', 'timePoint']
 }
 alertCloser();
 
-let endpoints = ["patients", "enrollments", "treatments", "samples", "diagnoses", "tumourboards", "outcomes", "complications", "consents"];
+let endpoints = ["patients", "enrollments", "treatments", "samples", "diagnoses", "tumourboards", "outcomes", "complications", "consents", "chemotherapies", "immunotherapies", "radiotherapies", "celltransplants", "surgeries", "studies", "slides", "labtests"];
 let types = ["bar", "column", "pie", "scatter"]
 let type1 = types[Math.floor(Math.random() * types.length)];
 let type2 = types[Math.floor(Math.random() * types.length)];
