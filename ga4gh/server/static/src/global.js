@@ -1,7 +1,10 @@
 "use strict";
-/*
-Input: A list of objects, and the property to query on
-Output: An object with different values of the queried property being the key, and frequency being the value
+
+/**
+ * Return the aggregation value of a key from an array of objects.
+ * @param {array} objectArray: An array of objects.
+ * @param {object} property: The key to aggregate on.
+ * @return an object with different values of the queried property being the key, and frequency being the value.
 */
 function groupBy(objectArray, property) {
     return objectArray.reduce(function(acc, obj) {
@@ -15,9 +18,12 @@ function groupBy(objectArray, property) {
     }, {});
 }
 
-/*
-Input: API endpoint request path and request body
-Output: A complete response from the server
+
+/**
+ * Make a request to the requested endpoint
+ * @param {string} path: The path to send the query to.
+ * @param {object} body: The body of the xhr request.
+ * @return a Promise with a complete response from the server
 */
 function makeRequest(path, body) {
     return new Promise(function(resolve, reject) {
@@ -149,17 +155,32 @@ function setCookie(name, value) {
     document.cookie = name + "=" + value;
 }
 
+// Sugur-coated complexRequestHelper for /search request
+function searchRequest(table, keys, datasetId, filter = {}, returnTable) {
+    return complexRequestHelper(table, keys, datasetId, filter, false, returnTable)
+}
+
+// Sugur-coated complexRequestHelper for /count request
+function countRequest(table, keys, datasetId, filter = {}) {
+    return complexRequestHelper(table, keys, datasetId, filter, true, table)
+}
+
 
 /**
- * Make a request to the /count endpoint
- * @param {string} table The table of the request
- * @param {array} keys A list of fields to aggregate on
- * @param {string} datasetId The current chosen datasetId 
- * @return a Promise with an object that contains aggregation values from the server
+ * Make a simple one-component request to the /count or /search endpoint
+ * @param {string} table: The table of the request
+ * @param {array} keys: A list of fields to aggregate on or return
+ * @param {string} datasetId: The current chosen datasetId 
+ * @param {object} filter: An object that contains filter, defaults to empty.
+ * @param {boolean} requestCount: When it's true, make request to /count, otherwise to /search. Defaults to true.
+ * @param {string} returnTable: The table that is requested to return.
+ * @return a Promise with an object that contains aggregation or filtered values from the server
 */
-
-function countRequest(table, keys, datasetId) {
+function complexRequestHelper(table, keys, datasetId, filter = {}, requestCount = true, returnTable) {
     return new Promise(function(resolve, reject) {
+
+    // Default endpoint is count unless otherwise specified.
+    let endpoint = "/count"
 
     let body = {
         "dataset_id": datasetId,
@@ -173,7 +194,7 @@ function countRequest(table, keys, datasetId) {
         ],
         "results": [
             {
-                "table": table,
+                "table": returnTable,
                 "field": keys
             }
         ]
@@ -181,11 +202,25 @@ function countRequest(table, keys, datasetId) {
     // Assign the requested table to be the key of the first component
     body["components"][0][table] = {}
 
-    makeRequest("/count", body).then(function(response) {
+    // If filter is specified
+    if (Object.keys(filter).length != 0){
+        body["components"][0][table]["filters"] = []
+        body["components"][0][table]["filters"].push(filter)
+    }
 
-        let listOfCounts = JSON.parse(response)["results"][table][0];
+    // If a query to the /search endpoint is specified
+    if (!requestCount) {
+        endpoint = "/search"
+    }
 
-        resolve(listOfCounts);
+    makeRequest(endpoint, body).then(function(response) {
+
+        if (endpoint == "/count") {
+            let listOfCounts = JSON.parse(response)["results"][returnTable][0];
+            resolve(listOfCounts);
+        }
+
+        else resolve(JSON.parse(response)["results"][returnTable]);
 
     }), function(Error) {
 
@@ -193,3 +228,4 @@ function countRequest(table, keys, datasetId) {
         
     }
 })}
+

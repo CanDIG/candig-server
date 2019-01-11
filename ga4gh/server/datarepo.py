@@ -513,6 +513,70 @@ class AbstractDataRepository(object):
             for tumourboard in dataset.getTumourboard():
                 yield tumourboard
 
+    def allChemotherapy(self):
+        """
+        Return an iterator over all Chemotherapy in the data repo
+        """
+        for dataset in self.getDatasets():
+            for chemotherapy in dataset.getChemotherapy():
+                yield chemotherapy
+
+    def allRadiotherapy(self):
+        """
+        Return an iterator over all Radiotherapy in the data repo
+        """
+        for dataset in self.getDatasets():
+            for radiotherapy in dataset.getRadiotherapy():
+                yield radiotherapy
+
+    def allSurgery(self):
+        """
+        Return an iterator over all Surgery in the data repo
+        """
+        for dataset in self.getDatasets():
+            for surgery in dataset.getSurgery():
+                yield surgery
+
+    def allImmunotherapy(self):
+        """
+        Return an iterator over all Immunotherapy in the data repo
+        """
+        for dataset in self.getDatasets():
+            for immunotherapy in dataset.getImmunotherapy():
+                yield immunotherapy
+
+    def allCelltransplant(self):
+        """
+        Return an iterator over all Celltransplant in the data repo
+        """
+        for dataset in self.getDatasets():
+            for celltransplant in dataset.getCelltransplant():
+                yield celltransplant
+
+    def allSlide(self):
+        """
+        Return an iterator over all Slide in the data repo
+        """
+        for dataset in self.getDatasets():
+            for slide in dataset.getSlide():
+                yield slide
+
+    def allStudy(self):
+        """
+        Return an iterator over all Study in the data repo
+        """
+        for dataset in self.getDatasets():
+            for study in dataset.getStudy():
+                yield study
+
+    def allLabtest(self):
+        """
+        Return an iterator over all Labtest in the data repo
+        """
+        for dataset in self.getDatasets():
+            for labtest in dataset.getLabtest():
+                yield labtest
+
     def allReadGroupSets(self):
         """
         Return an iterator over all read group sets in the data repo
@@ -1244,6 +1308,70 @@ class SqlDataRepository(AbstractDataRepository):
         """
         q = models.Tumourboard.delete().where(
             models.Tumourboard.id == tumourboard.getId())
+        q.execute()
+
+    def removeChemotherapy(self, chemotherapy):
+        """
+        Removes the specified chemotherapy from this repository.
+        """
+        q = models.Chemotherapy.delete().where(
+            models.Chemotherapy.id == chemotherapy.getId())
+        q.execute()
+
+    def removeRadiotherapy(self, radiotherapy):
+        """
+        Removes the specified radiotherapy from this repository.
+        """
+        q = models.Radiotherapy.delete().where(
+            models.Radiotherapy.id == radiotherapy.getId())
+        q.execute()
+
+    def removeSurgery(self, surgery):
+        """
+        Removes the specified surgery from this repository.
+        """
+        q = models.Surgery.delete().where(
+            models.Surgery.id == surgery.getId())
+        q.execute()
+
+    def removeImmunotherapy(self, immunotherapy):
+        """
+        Removes the specified immunotherapy from this repository.
+        """
+        q = models.Immunotherapy.delete().where(
+            models.Immunotherapy.id == immunotherapy.getId())
+        q.execute()
+
+    def removeCelltransplant(self, celltransplant):
+        """
+        Removes the specified celltransplant from this repository.
+        """
+        q = models.Celltransplant.delete().where(
+            models.Celltransplant.id == celltransplant.getId())
+        q.execute()
+
+    def removeSlide(self, slide):
+        """
+        Removes the specified slide from this repository.
+        """
+        q = models.Slide.delete().where(
+            models.Slide.id == slide.getId())
+        q.execute()
+
+    def removeStudy(self, study):
+        """
+        Removes the specified study from this repository.
+        """
+        q = models.Study.delete().where(
+            models.Study.id == study.getId())
+        q.execute()
+
+    def removeLabtest(self, labtest):
+        """
+        Removes the specified labtest from this repository.
+        """
+        q = models.Labtest.delete().where(
+            models.Labtest.id == labtest.getId())
         q.execute()
 
     def removeExtraction(self, extraction):
@@ -2086,8 +2214,6 @@ class SqlDataRepository(AbstractDataRepository):
                 courseNumberTier = treatment.getCourseNumberTier(),
                 therapeuticModality = treatment.getTherapeuticModality(),
                 therapeuticModalityTier = treatment.getTherapeuticModalityTier(),
-                systematicTherapyAgentName = treatment.getSystematicTherapyAgentName(),
-                systematicTherapyAgentNameTier = treatment.getSystematicTherapyAgentNameTier(),
                 treatmentPlanType = treatment.getTreatmentPlanType(),
                 treatmentPlanTypeTier = treatment.getTreatmentPlanTypeTier(),
                 treatmentIntent = treatment.getTreatmentIntent(),
@@ -2098,18 +2224,6 @@ class SqlDataRepository(AbstractDataRepository):
                 stopDateTier = treatment.getStopDateTier(),
                 reasonForEndingTheTreatment = treatment.getReasonForEndingTheTreatment(),
                 reasonForEndingTheTreatmentTier = treatment.getReasonForEndingTheTreatmentTier(),
-                protocolNumberOrCode = treatment.getProtocolNumberOrCode(),
-                protocolNumberOrCodeTier = treatment.getProtocolNumberOrCodeTier(),
-                surgeryDetails = treatment.getSurgeryDetails(),
-                surgeryDetailsTier = treatment.getSurgeryDetailsTier(),
-                radiotherapyDetails = treatment.getRadiotherapyDetails(),
-                radiotherapyDetailsTier = treatment.getRadiotherapyDetailsTier(),
-                chemotherapyDetails = treatment.getChemotherapyDetails(),
-                chemotherapyDetailsTier = treatment.getChemotherapyDetailsTier(),
-                hematopoieticCellTransplant = treatment.getHematopoieticCellTransplant(),
-                hematopoieticCellTransplantTier = treatment.getHematopoieticCellTransplantTier(),
-                immunotherapyDetails = treatment.getImmunotherapyDetails(),
-                immunotherapyDetailsTier = treatment.getImmunotherapyDetailsTier(),
                 responseToTreatment = treatment.getResponseToTreatment(),
                 responseToTreatmentTier = treatment.getResponseToTreatmentTier(),
                 responseCriteriaUsed = treatment.getResponseCriteriaUsed(),
@@ -2117,11 +2231,7 @@ class SqlDataRepository(AbstractDataRepository):
                 dateOfRecurrenceOrProgressionAfterThisTreatment = treatment.getDateOfRecurrenceOrProgressionAfterThisTreatment(),
                 dateOfRecurrenceOrProgressionAfterThisTreatmentTier = treatment.getDateOfRecurrenceOrProgressionAfterThisTreatmentTier(),
                 unexpectedOrUnusualToxicityDuringTreatment = treatment.getUnexpectedOrUnusualToxicityDuringTreatment(),
-                unexpectedOrUnusualToxicityDuringTreatmentTier = treatment.getUnexpectedOrUnusualToxicityDuringTreatmentTier(),
-                drugListOrAgent = treatment.getDrugListOrAgent(),
-                drugListOrAgentTier = treatment.getDrugListOrAgentTier(),
-                drugIdNumbers = treatment.getDrugIdNumbers(),
-                drugIdNumbersTier = treatment.getDrugIdNumbersTier(),
+                unexpectedOrUnusualToxicityDuringTreatmentTier = treatment.getUnexpectedOrUnusualToxicityDuringTreatmentTier()
             )
         except Exception:
             raise exceptions.DuplicateNameException(
@@ -2351,6 +2461,495 @@ class SqlDataRepository(AbstractDataRepository):
             tumourboard.populateFromRow(tumourboardRecord)
             assert tumourboard.getId() == tumourboardRecord.id
             dataset.addTumourboard(tumourboard)
+
+    def _createChemotherapyTable(self):
+        self.database.create_table(models.Chemotherapy)
+
+    def insertChemotherapy(self, chemotherapy):
+        """
+        Inserts the specified chemotherapy into this repository.
+        """
+        try:
+            models.Chemotherapy.create(
+                # Common fields
+                id=chemotherapy.getId(),
+                datasetId=chemotherapy.getParentContainer().getId(),
+                created=chemotherapy.getCreated(),
+                updated=chemotherapy.getUpdated(),
+                name=chemotherapy.getLocalId(),
+                description=chemotherapy.getDescription(),
+
+                # Unique fields
+                patientId=chemotherapy.getPatientId(),
+                patientIdTier=chemotherapy.getPatientIdTier(),
+                courseNumber=chemotherapy.getCourseNumber(),
+                courseNumberTier=chemotherapy.getCourseNumberTier(),
+                startDate=chemotherapy.getStartDate(),
+                startDateTier=chemotherapy.getStartDateTier(),
+                stopDate=chemotherapy.getStopDate(),
+                stopDateTier=chemotherapy.getStopDateTier(),
+                systematicTherapyAgentName=chemotherapy.getSystematicTherapyAgentName(),
+                systematicTherapyAgentNameTier=chemotherapy.getSystematicTherapyAgentNameTier(),
+                route=chemotherapy.getRoute(),
+                routeTier=chemotherapy.getRouteTier(),
+                dose=chemotherapy.getDose(),
+                doseTier=chemotherapy.getDoseTier(),
+                doseFrequency=chemotherapy.getDoseFrequency(),
+                doseFrequencyTier=chemotherapy.getDoseFrequencyTier(),
+                doseUnit=chemotherapy.getDoseUnit(),
+                doseUnitTier=chemotherapy.getDoseUnitTier(),
+                daysPerCycle=chemotherapy.getDaysPerCycle(),
+                daysPerCycleTier=chemotherapy.getDaysPerCycleTier(),
+                numberOfCycle=chemotherapy.getNumberOfCycle(),
+                numberOfCycleTier=chemotherapy.getNumberOfCycleTier(),
+                treatmentIntent=chemotherapy.getTreatmentIntent(),
+                treatmentIntentTier=chemotherapy.getTreatmentIntentTier(),
+                treatingCentreName=chemotherapy.getTreatingCentreName(),
+                treatingCentreNameTier=chemotherapy.getTreatingCentreNameTier(),
+                type=chemotherapy.getType(),
+                typeTier=chemotherapy.getTypeTier(),
+                protocolCode=chemotherapy.getProtocolCode(),
+                protocolCodeTier=chemotherapy.getProtocolCodeTier(),
+                recordingDate=chemotherapy.getRecordingDate(),
+                recordingDateTier=chemotherapy.getRecordingDateTier(),
+                treatmentPlanId=chemotherapy.getTreatmentPlanId(),
+                treatmentPlanIdTier=chemotherapy.getTreatmentPlanIdTier(),
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                chemotherapy.getLocalId(),
+                chemotherapy.getParentContainer().getLocalId())
+
+    def _readChemotherapyTable(self):
+        """
+        Read the Chemotherapy table upon load
+        """
+        for chemotherapyRecord in models.Chemotherapy.select():
+            dataset = self.getDataset(chemotherapyRecord.datasetid.id)
+            chemotherapy = clinical_metadata.Chemotherapy(
+                dataset, chemotherapyRecord.name)
+            chemotherapy.populateFromRow(chemotherapyRecord)
+            assert chemotherapy.getId() == chemotherapyRecord.id
+            dataset.addChemotherapy(chemotherapy)
+
+    def _createRadiotherapyTable(self):
+        self.database.create_table(models.Radiotherapy)
+
+    def insertRadiotherapy(self, radiotherapy):
+        """
+        Inserts the specified radiotherapy into this repository.
+        """
+        try:
+            models.Radiotherapy.create(
+                # Common fields
+                id=radiotherapy.getId(),
+                datasetId=radiotherapy.getParentContainer().getId(),
+                created=radiotherapy.getCreated(),
+                updated=radiotherapy.getUpdated(),
+                name=radiotherapy.getLocalId(),
+                description=radiotherapy.getDescription(),
+
+                # Unique fields
+                patientId=radiotherapy.getPatientId(),
+                patientIdTier=radiotherapy.getPatientIdTier(),
+                courseNumber=radiotherapy.getCourseNumber(),
+                courseNumberTier=radiotherapy.getCourseNumberTier(),
+                startDate=radiotherapy.getStartDate(),
+                startDateTier=radiotherapy.getStartDateTier(),
+                stopDate=radiotherapy.getStopDate(),
+                stopDateTier=radiotherapy.getStopDateTier(),
+                therapeuticModality=radiotherapy.getTherapeuticModality(),
+                therapeuticModalityTier=radiotherapy.getTherapeuticModalityTier(),
+                baseline=radiotherapy.getBaseline(),
+                baselineTier=radiotherapy.getBaselineTier(),
+                testResult=radiotherapy.getTestResult(),
+                testResultTier=radiotherapy.getTestResultTier(),
+                testResultStd=radiotherapy.getTestResultStd(),
+                testResultStdTier=radiotherapy.getTestResultStdTier(),
+                treatingCentreName=radiotherapy.getTreatingCentreName(),
+                treatingCentreNameTier=radiotherapy.getTreatingCentreNameTier(),
+                startIntervalRad=radiotherapy.getStartIntervalRad(),
+                startIntervalRadTier=radiotherapy.getStartIntervalRadTier(),
+                startIntervalRadRaw=radiotherapy.getStartIntervalRadRaw(),
+                startIntervalRadRawTier=radiotherapy.getStartIntervalRadRawTier(),
+                recordingDate=radiotherapy.getRecordingDate(),
+                recordingDateTier=radiotherapy.getRecordingDateTier(),
+                adjacentFields=radiotherapy.getAdjacentFields(),
+                adjacentFieldsTier=radiotherapy.getAdjacentFieldsTier(),
+                adjacentFractions=radiotherapy.getAdjacentFractions(),
+                adjacentFractionsTier=radiotherapy.getAdjacentFractionsTier(),
+                complete=radiotherapy.getComplete(),
+                completeTier=radiotherapy.getCompleteTier(),
+                brachytherapyDose=radiotherapy.getBrachytherapyDose(),
+                brachytherapyDoseTier=radiotherapy.getBrachytherapyDoseTier(),
+                radiotherapyDose=radiotherapy.getRadiotherapyDose(),
+                radiotherapyDoseTier=radiotherapy.getRadiotherapyDoseTier(),
+                siteNumber=radiotherapy.getSiteNumber(),
+                siteNumberTier=radiotherapy.getSiteNumberTier(),
+                technique=radiotherapy.getTechnique(),
+                techniqueTier=radiotherapy.getTechniqueTier(),
+                treatedRegion=radiotherapy.getTreatedRegion(),
+                treatedRegionTier=radiotherapy.getTreatedRegionTier(),
+                treatmentPlanId=radiotherapy.getTreatmentPlanId(),
+                treatmentPlanIdTier=radiotherapy.getTreatmentPlanIdTier(),
+                radiationType=radiotherapy.getRadiationType(),
+                radiationTypeTier=radiotherapy.getRadiationTypeTier(),
+                radiationSite=radiotherapy.getRadiationSite(),
+                radiationSiteTier=radiotherapy.getRadiationSiteTier(),
+                totalDose=radiotherapy.getTotalDose(),
+                totalDoseTier=radiotherapy.getTotalDoseTier(),
+                boostSite=radiotherapy.getBoostSite(),
+                boostSiteTier=radiotherapy.getBoostSiteTier(),
+                boostDose=radiotherapy.getBoostDose(),
+                boostDoseTier=radiotherapy.getBoostDoseTier()
+
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                radiotherapy.getLocalId(),
+                radiotherapy.getParentContainer().getLocalId())
+
+    def _readRadiotherapyTable(self):
+        """
+        Read the Radiotherapy table upon load
+        """
+        for radiotherapyRecord in models.Radiotherapy.select():
+            dataset = self.getDataset(radiotherapyRecord.datasetid.id)
+            radiotherapy = clinical_metadata.Radiotherapy(
+                dataset, radiotherapyRecord.name)
+            radiotherapy.populateFromRow(radiotherapyRecord)
+            assert radiotherapy.getId() == radiotherapyRecord.id
+            dataset.addRadiotherapy(radiotherapy)
+
+    def _createSurgeryTable(self):
+        self.database.create_table(models.Surgery)
+
+    def insertSurgery(self, surgery):
+        """
+        Inserts the specified surgery into this repository.
+        """
+        try:
+            models.Surgery.create(
+                # Common fields
+                id=surgery.getId(),
+                datasetId=surgery.getParentContainer().getId(),
+                created=surgery.getCreated(),
+                updated=surgery.getUpdated(),
+                name=surgery.getLocalId(),
+                description=surgery.getDescription(),
+
+                # Unique fields
+                patientId=surgery.getPatientId(),
+                patientIdTier=surgery.getPatientIdTier(),
+                startDate=surgery.getStartDate(),
+                startDateTier=surgery.getStartDateTier(),
+                stopDate=surgery.getStopDate(),
+                stopDateTier=surgery.getStopDateTier(),
+                sampleId=surgery.getSampleId(),
+                sampleIdTier=surgery.getSampleIdTier(),
+                collectionTimePoint=surgery.getCollectionTimePoint(),
+                collectionTimePointTier=surgery.getCollectionTimePointTier(),
+                diagnosisDate=surgery.getDiagnosisDate(),
+                diagnosisDateTier=surgery.getDiagnosisDateTier(),
+                site=surgery.getSite(),
+                siteTier=surgery.getSiteTier(),
+                type=surgery.getType(),
+                typeTier=surgery.getTypeTier(),
+                recordingDate=surgery.getRecordingDate(),
+                recordingDateTier=surgery.getRecordingDateTier(),
+                treatmentPlanId=surgery.getTreatmentPlanId(),
+                treatmentPlanIdTier=surgery.getTreatmentPlanIdTier(),
+                courseNumber=surgery.getCourseNumber(),
+                courseNumberTier=surgery.getCourseNumberTier()
+
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                surgery.getLocalId(),
+                surgery.getParentContainer().getLocalId())
+
+    def _readSurgeryTable(self):
+        """
+        Read the Surgery table upon load
+        """
+        for surgeryRecord in models.Surgery.select():
+            dataset = self.getDataset(surgeryRecord.datasetid.id)
+            surgery = clinical_metadata.Surgery(
+                dataset, surgeryRecord.name)
+            surgery.populateFromRow(surgeryRecord)
+            assert surgery.getId() == surgeryRecord.id
+            dataset.addSurgery(surgery)
+
+    def _createImmunotherapyTable(self):
+        self.database.create_table(models.Immunotherapy)
+
+    def insertImmunotherapy(self, immunotherapy):
+        """
+        Inserts the specified immunotherapy into this repository.
+        """
+        try:
+            models.Immunotherapy.create(
+                # Common fields
+                id=immunotherapy.getId(),
+                datasetId=immunotherapy.getParentContainer().getId(),
+                created=immunotherapy.getCreated(),
+                updated=immunotherapy.getUpdated(),
+                name=immunotherapy.getLocalId(),
+                description=immunotherapy.getDescription(),
+
+                # Unique fields
+                patientId=immunotherapy.getPatientId(),
+                patientIdTier=immunotherapy.getPatientIdTier(),
+                startDate=immunotherapy.getStartDate(),
+                startDateTier=immunotherapy.getStartDateTier(),
+                immunotherapyType=immunotherapy.getImmunotherapyType(),
+                immunotherapyTypeTier=immunotherapy.getImmunotherapyTypeTier(),
+                immunotherapyTarget=immunotherapy.getImmunotherapyTarget(),
+                immunotherapyTargetTier=immunotherapy.getImmunotherapyTargetTier(),
+                immunotherapyDetail=immunotherapy.getImmunotherapyDetail(),
+                immunotherapyDetailTier=immunotherapy.getImmunotherapyDetailTier(),
+                treatmentPlanId=immunotherapy.getTreatmentPlanId(),
+                treatmentPlanIdTier=immunotherapy.getTreatmentPlanIdTier(),
+                courseNumber=immunotherapy.getCourseNumber(),
+                courseNumberTier=immunotherapy.getCourseNumberTier()
+
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                immunotherapy.getLocalId(),
+                immunotherapy.getParentContainer().getLocalId())
+
+    def _readImmunotherapyTable(self):
+        """
+        Read the Immunotherapy table upon load
+        """
+        for immunotherapyRecord in models.Immunotherapy.select():
+            dataset = self.getDataset(immunotherapyRecord.datasetid.id)
+            immunotherapy = clinical_metadata.Immunotherapy(
+                dataset, immunotherapyRecord.name)
+            immunotherapy.populateFromRow(immunotherapyRecord)
+            assert immunotherapy.getId() == immunotherapyRecord.id
+            dataset.addImmunotherapy(immunotherapy)
+
+    def _createCelltransplantTable(self):
+        self.database.create_table(models.Celltransplant)
+
+    def insertCelltransplant(self, celltransplant):
+        """
+        Inserts the specified celltransplant into this repository.
+        """
+        try:
+            models.Celltransplant.create(
+                # Common fields
+                id=celltransplant.getId(),
+                datasetId=celltransplant.getParentContainer().getId(),
+                created=celltransplant.getCreated(),
+                updated=celltransplant.getUpdated(),
+                name=celltransplant.getLocalId(),
+                description=celltransplant.getDescription(),
+
+                # Unique fields
+                patientId=celltransplant.getPatientId(),
+                patientIdTier=celltransplant.getPatientIdTier(),
+                startDate=celltransplant.getStartDate(),
+                startDateTier=celltransplant.getStartDateTier(),
+                cellSource=celltransplant.getCellSource(),
+                cellSourceTier=celltransplant.getCellSourceTier(),
+                donorType=celltransplant.getDonorType(),
+                donorTypeTier=celltransplant.getDonorTypeTier(),
+                treatmentPlanId=celltransplant.getTreatmentPlanId(),
+                treatmentPlanIdTier=celltransplant.getTreatmentPlanIdTier(),
+                courseNumber=celltransplant.getCourseNumber(),
+                courseNumberTier=celltransplant.getCourseNumberTier()
+
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                celltransplant.getLocalId(),
+                celltransplant.getParentContainer().getLocalId())
+
+    def _readCelltransplantTable(self):
+        """
+        Read the Celltransplant table upon load
+        """
+        for celltransplantRecord in models.Celltransplant.select():
+            dataset = self.getDataset(celltransplantRecord.datasetid.id)
+            celltransplant = clinical_metadata.Celltransplant(
+                dataset, celltransplantRecord.name)
+            celltransplant.populateFromRow(celltransplantRecord)
+            assert celltransplant.getId() == celltransplantRecord.id
+            dataset.addCelltransplant(celltransplant)
+
+    def _createSlideTable(self):
+        self.database.create_table(models.Slide)
+
+    def insertSlide(self, slide):
+        """
+        Inserts the specified slide into this repository.
+        """
+        try:
+            models.Slide.create(
+                # Common fields
+                id=slide.getId(),
+                datasetId=slide.getParentContainer().getId(),
+                created=slide.getCreated(),
+                updated=slide.getUpdated(),
+                name=slide.getLocalId(),
+                description=slide.getDescription(),
+
+                # Unique fields
+                patientId=slide.getPatientId(),
+                patientIdTier=slide.getPatientIdTier(),
+                sampleId=slide.getSampleId(),
+                sampleIdTier=slide.getSampleIdTier(),
+                slideId=slide.getSlideId(),
+                slideIdTier=slide.getSlideIdTier(),
+                slideOtherId=slide.getSlideOtherId(),
+                slideOtherIdTier=slide.getSlideOtherIdTier(),
+                lymphocyteInfiltrationPercent=slide.getLymphocyteInfiltrationPercent(),
+                lymphocyteInfiltrationPercentTier=slide.getLymphocyteInfiltrationPercentTier(),
+                tumorNucleiPercent=slide.getTumorNucleiPercent(),
+                tumorNucleiPercentTier=slide.getTumorNucleiPercentTier(),
+                monocyteInfiltrationPercent=slide.getMonocyteInfiltrationPercent(),
+                monocyteInfiltrationPercentTier=slide.getMonocyteInfiltrationPercentTier(),
+                normalCellsPercent=slide.getNormalCellsPercent(),
+                normalCellsPercentTier=slide.getNormalCellsPercentTier(),
+                tumorCellsPercent=slide.getTumorCellsPercent(),
+                tumorCellsPercentTier=slide.getTumorCellsPercentTier(),
+                stromalCellsPercent=slide.getStromalCellsPercent(),
+                stromalCellsPercentTier=slide.getStromalCellsPercentTier(),
+                eosinophilInfiltrationPercent=slide.getEosinophilInfiltrationPercent(),
+                eosinophilInfiltrationPercentTier=slide.getEosinophilInfiltrationPercentTier(),
+                neutrophilInfiltrationPercent=slide.getNeutrophilInfiltrationPercent(),
+                neutrophilInfiltrationPercentTier=slide.getNeutrophilInfiltrationPercentTier(),
+                granulocyteInfiltrationPercent=slide.getGranulocyteInfiltrationPercent(),
+                granulocyteInfiltrationPercentTier=slide.getGranulocyteInfiltrationPercentTier(),
+                necrosisPercent=slide.getNecrosisPercent(),
+                necrosisPercentTier=slide.getNecrosisPercentTier(),
+                inflammatoryInfiltrationPercent=slide.getInflammatoryInfiltrationPercent(),
+                inflammatoryInfiltrationPercentTier=slide.getInflammatoryInfiltrationPercentTier(),
+                proliferatingCellsNumber=slide.getProliferatingCellsNumber(),
+                proliferatingCellsNumberTier=slide.getProliferatingCellsNumberTier(),
+                sectionLocation=slide.getSectionLocation(),
+                sectionLocationTier=slide.getSectionLocationTier(),
+
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                slide.getLocalId(),
+                slide.getParentContainer().getLocalId())
+
+    def _readSlideTable(self):
+        """
+        Read the Slide table upon load
+        """
+        for slideRecord in models.Slide.select():
+            dataset = self.getDataset(slideRecord.datasetid.id)
+            slide = clinical_metadata.Slide(
+                dataset, slideRecord.name)
+            slide.populateFromRow(slideRecord)
+            assert slide.getId() == slideRecord.id
+            dataset.addSlide(slide)
+
+    def _createStudyTable(self):
+        self.database.create_table(models.Study)
+
+    def insertStudy(self, study):
+        """
+        Inserts the specified study into this repository.
+        """
+        try:
+            models.Study.create(
+                # Common fields
+                id=study.getId(),
+                datasetId=study.getParentContainer().getId(),
+                created=study.getCreated(),
+                updated=study.getUpdated(),
+                name=study.getLocalId(),
+                description=study.getDescription(),
+
+                # Unique fields
+                patientId=study.getPatientId(),
+                patientIdTier=study.getPatientIdTier(),
+                startDate=study.getStartDate(),
+                startDateTier=study.getStartDateTier(),
+                endDate=study.getEndDate(),
+                endDateTier=study.getEndDateTier(),
+                status=study.getStatus(),
+                statusTier=study.getStatusTier(),
+                recordingDate=study.getRecordingDate(),
+                recordingDateTier=study.getRecordingDateTier(),
+
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                study.getLocalId(),
+                study.getParentContainer().getLocalId())
+
+    def _readStudyTable(self):
+        """
+        Read the Study table upon load
+        """
+        for studyRecord in models.Study.select():
+            dataset = self.getDataset(studyRecord.datasetid.id)
+            study = clinical_metadata.Study(
+                dataset, studyRecord.name)
+            study.populateFromRow(studyRecord)
+            assert study.getId() == studyRecord.id
+            dataset.addStudy(study)
+
+    def _createLabtestTable(self):
+        self.database.create_table(models.Labtest)
+
+    def insertLabtest(self, labtest):
+        """
+        Inserts the specified labtest into this repository.
+        """
+        try:
+            models.Labtest.create(
+                # Common fields
+                id=labtest.getId(),
+                datasetId=labtest.getParentContainer().getId(),
+                created=labtest.getCreated(),
+                updated=labtest.getUpdated(),
+                name=labtest.getLocalId(),
+                description=labtest.getDescription(),
+
+                # Unique fields
+                patientId=labtest.getPatientId(),
+                patientIdTier=labtest.getPatientIdTier(),
+                startDate=labtest.getStartDate(),
+                startDateTier=labtest.getStartDateTier(),
+                collectionDate=labtest.getCollectionDate(),
+                collectionDateTier=labtest.getCollectionDateTier(),
+                endDate=labtest.getEndDate(),
+                endDateTier=labtest.getEndDateTier(),
+                eventType=labtest.getEventType(),
+                eventTypeTier=labtest.getEventTypeTier(),
+                testResults=labtest.getTestResults(),
+                testResultsTier=labtest.getTestResultsTier(),
+                timePoint=labtest.getTimePoint(),
+                timePointTier=labtest.getTimePointTier(),
+                recordingDate=labtest.getRecordingDate(),
+                recordingDateTier=labtest.getRecordingDateTier(),
+
+            )
+        except Exception:
+            raise exceptions.DuplicateNameException(
+                labtest.getLocalId(),
+                labtest.getParentContainer().getLocalId())
+
+    def _readLabtestTable(self):
+        """
+        Read the Labtest table upon load
+        """
+        for labtestRecord in models.Labtest.select():
+            dataset = self.getDataset(labtestRecord.datasetid.id)
+            labtest = clinical_metadata.Labtest(
+                dataset, labtestRecord.name)
+            labtest.populateFromRow(labtestRecord)
+            assert labtest.getId() == labtestRecord.id
+            dataset.addLabtest(labtest)
 
     def _createExtractionTable(self):
         self.database.create_table(models.Extraction)
@@ -2874,6 +3473,14 @@ class SqlDataRepository(AbstractDataRepository):
         self._createOutcomeTable()
         self._createComplicationTable()
         self._createTumourboardTable()
+        self._createChemotherapyTable()
+        self._createRadiotherapyTable()
+        self._createSurgeryTable()
+        self._createImmunotherapyTable()
+        self._createCelltransplantTable()
+        self._createSlideTable()
+        self._createStudyTable()
+        self._createLabtestTable()
         self._createExtractionTable()
         self._createSequencingTable()
         self._createAlignmentTable()
@@ -2932,6 +3539,14 @@ class SqlDataRepository(AbstractDataRepository):
         self._readOutcomeTable()
         self._readComplicationTable()
         self._readTumourboardTable()
+        self._readChemotherapyTable()
+        self._readRadiotherapyTable()
+        self._readSurgeryTable()
+        self._readImmunotherapyTable()
+        self._readCelltransplantTable()
+        self._readSlideTable()
+        self._readStudyTable()
+        self._readLabtestTable()
         self._readExtractionTable()
         self._readSequencingTable()
         self._readAlignmentTable()

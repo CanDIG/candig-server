@@ -58,7 +58,15 @@ class Backend(object):
             "complications": self.runSearchComplications,
             "tumourboards": self.runSearchTumourboards,
             "variantsByGene": self.runSearchVariantsByGeneName,
-            "variants": self.runSearchVariants
+            "variants": self.runSearchVariants,
+            "slides": self.runSearchSlides,
+            "studies": self.runSearchStudies,
+            "labtests": self.runSearchLabtests,
+            "surgeries": self.runSearchSurgeries,
+            "chemotherapies": self.runSearchChemotherapies,
+            "immunotherapies": self.runSearchImmunotherapies,
+            "radiotherapies": self.runSearchRadiotherapies,
+            "celltransplants": self.runSearchCelltransplants
         }
 
     def getDataRepository(self):
@@ -761,6 +769,118 @@ class Backend(object):
         results = []
 
         for obj in dataset.getTumourboards():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def chemotherapiesGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+
+        for obj in dataset.getChemotherapies():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def radiotherapiesGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+
+        for obj in dataset.getRadiotherapies():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def surgeriesGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+
+        for obj in dataset.getSurgeries():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def immunotherapiesGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+
+        for obj in dataset.getImmunotherapies():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def celltransplantsGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+
+        for obj in dataset.getCelltransplants():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def slidesGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+
+        for obj in dataset.getSlides():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def studiesGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+
+        for obj in dataset.getStudies():
+            qualified = self.comparisonGenerator(obj, request)
+
+            if qualified:
+                results.append(obj)
+        return self._objectListGenerator(request, results, tier=tier)
+
+    def labtestsGenerator(self, request, access_map):
+        """
+        """
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        results = []
+
+        for obj in dataset.getLabtests():
             qualified = self.comparisonGenerator(obj, request)
 
             if qualified:
@@ -1608,6 +1728,86 @@ class Backend(object):
         tumourboard = dataset.getTumourboard(id_)
         return self.runGetRequest(tumourboard, return_mimetype, tier=tier)
 
+    def runGetChemotherapy(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getChemotherapy request for the specified ID.
+        """
+        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        chemotherapy = dataset.getChemotherapy(id_)
+        return self.runGetRequest(chemotherapy, return_mimetype, tier=tier)
+
+    def runGetRadiotherapy(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getRadiotherapy request for the specified ID.
+        """
+        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        radiotherapy = dataset.getRadiotherapy(id_)
+        return self.runGetRequest(radiotherapy, return_mimetype, tier=tier)
+
+    def runGetSurgery(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getSurgery request for the specified ID.
+        """
+        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        surgery = dataset.getSurgery(id_)
+        return self.runGetRequest(surgery, return_mimetype, tier=tier)
+
+    def runGetImmunotherapy(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getImmunotherapy request for the specified ID.
+        """
+        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        immunotherapy = dataset.getImmunotherapy(id_)
+        return self.runGetRequest(immunotherapy, return_mimetype, tier=tier)
+
+    def runGetCelltransplant(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getCelltransplant request for the specified ID.
+        """
+        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        celltransplant = dataset.getCelltransplant(id_)
+        return self.runGetRequest(celltransplant, return_mimetype, tier=tier)
+
+    def runGetSlide(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getSlide request for the specified ID.
+        """
+        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        slide = dataset.getSlide(id_)
+        return self.runGetRequest(slide, return_mimetype, tier=tier)
+
+    def runGetStudy(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getStudy request for the specified ID.
+        """
+        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        study = dataset.getStudy(id_)
+        return self.runGetRequest(study, return_mimetype, tier=tier)
+
+    def runGetLabtest(self, id_, access_map, return_mimetype="application/json"):
+        """
+        Runs a getLabtest request for the specified ID.
+        """
+        compoundId = datamodel.BiosampleCompoundId.parse(id_)
+        dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        tier = self.getUserAccessTier(dataset, access_map)
+        labtest = dataset.getLabtest(id_)
+        return self.runGetRequest(labtest, return_mimetype, tier=tier)
+
     def runGetExtraction(self, id_, access_map, return_mimetype="application/json"):
         """
         Runs a getExtraction request for the specified ID.
@@ -1972,6 +2172,94 @@ class Backend(object):
             access_map,
             return_mimetype
         )
+
+    def runSearchChemotherapies(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchChemotherapiesRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchChemotherapiesRequest,
+            protocol.SearchChemotherapiesResponse,
+            self.chemotherapiesGenerator,
+            access_map,
+            return_mimetype)
+
+    def runSearchRadiotherapies(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchRadiotherapiesRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchRadiotherapiesRequest,
+            protocol.SearchRadiotherapiesResponse,
+            self.radiotherapiesGenerator,
+            access_map,
+            return_mimetype)
+
+    def runSearchSurgeries(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchSurgeriesRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchSurgeriesRequest,
+            protocol.SearchSurgeriesResponse,
+            self.surgeriesGenerator,
+            access_map,
+            return_mimetype)
+
+    def runSearchImmunotherapies(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchImmunotherapiesRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchImmunotherapiesRequest,
+            protocol.SearchImmunotherapiesResponse,
+            self.immunotherapiesGenerator,
+            access_map,
+            return_mimetype)
+
+    def runSearchCelltransplants(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchCelltransplantsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchCelltransplantsRequest,
+            protocol.SearchCelltransplantsResponse,
+            self.celltransplantsGenerator,
+            access_map,
+            return_mimetype)
+
+    def runSearchSlides(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchSlidesRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchSlidesRequest,
+            protocol.SearchSlidesResponse,
+            self.slidesGenerator,
+            access_map,
+            return_mimetype)
+
+    def runSearchStudies(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchStudiesRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchStudiesRequest,
+            protocol.SearchStudiesResponse,
+            self.studiesGenerator,
+            access_map,
+            return_mimetype)
+
+    def runSearchLabtests(self, request, return_mimetype, access_map):
+        """
+        Runs the specified search SearchLabtestsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchLabtestsRequest,
+            protocol.SearchLabtestsResponse,
+            self.labtestsGenerator,
+            access_map,
+            return_mimetype)
 
     def runSearchExtractions(self, request, return_mimetype, access_map):
         """

@@ -553,7 +553,8 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
     else:
         # Update total
         table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
-        responseObject['results']['total'] = len(responseObject['results'][table])
+        if endpoint != app.backend.runCountQuery:
+            responseObject['results']['total'] = len(responseObject['results'][table])
 
     # Reformat the status response
     responseObject['status'] = {
@@ -1480,6 +1481,62 @@ def searchTumourboards():
         flask.request, app.backend.runSearchTumourboards)
 
 
+@DisplayedRoute('/chemotherapies/search', postMethod=True)
+@requires_auth
+def searchChemotherapies():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchChemotherapies)
+
+
+@DisplayedRoute('/radiotherapies/search', postMethod=True)
+@requires_auth
+def searchRadiotherapies():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchRadiotherapies)
+
+
+@DisplayedRoute('/surgeries/search', postMethod=True)
+@requires_auth
+def searchSurgeries():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchSurgeries)
+
+
+@DisplayedRoute('/immunotherapies/search', postMethod=True)
+@requires_auth
+def searchImmunotherapies():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchImmunotherapies)
+
+
+@DisplayedRoute('/celltransplants/search', postMethod=True)
+@requires_auth
+def searchCelltransplants():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchCelltransplants)
+
+
+@DisplayedRoute('/slides/search', postMethod=True)
+@requires_auth
+def searchSlides():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchSlides)
+
+
+@DisplayedRoute('/studies/search', postMethod=True)
+@requires_auth
+def searchStudies():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchStudies)
+
+
+@DisplayedRoute('/labtests/search', postMethod=True)
+@requires_auth
+def searchLabtests():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchLabtests)
+
+
 @DisplayedRoute('/extractions/search', postMethod=True)
 @requires_auth
 def searchExtractions():
@@ -1635,6 +1692,78 @@ def getComplication(id):
 def getTumourboard(id):
     return handleFlaskGetRequest(
         id, flask.request, app.backend.runGetTumourboard)
+
+
+@DisplayedRoute(
+    '/chemotherapies/<no(search):id>',
+    pathDisplay='/chemotherapies/<id>')
+@requires_auth
+def getChemotherapy(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetChemotherapy)
+
+
+@DisplayedRoute(
+    '/radiotherapies/<no(search):id>',
+    pathDisplay='/radiotherapies/<id>')
+@requires_auth
+def getRadiotherapy(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetRadiotherapy)
+
+
+@DisplayedRoute(
+    '/surgeries/<no(search):id>',
+    pathDisplay='/surgeries/<id>')
+@requires_auth
+def getSurgery(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetSurgery)
+
+
+@DisplayedRoute(
+    '/immunotherapies/<no(search):id>',
+    pathDisplay='/immunotherapies/<id>')
+@requires_auth
+def getImmunotherapy(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetImmunotherapy)
+
+
+@DisplayedRoute(
+    '/celltransplants/<no(search):id>',
+    pathDisplay='/celltransplants/<id>')
+@requires_auth
+def getCelltransplant(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetCelltransplant)
+
+
+@DisplayedRoute(
+    '/slides/<no(search):id>',
+    pathDisplay='/slides/<id>')
+@requires_auth
+def getSlide(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetSlide)
+
+
+@DisplayedRoute(
+    '/studies/<no(search):id>',
+    pathDisplay='/studies/<id>')
+@requires_auth
+def getStudy(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetStudy)
+
+
+@DisplayedRoute(
+    '/labtests/<no(search):id>',
+    pathDisplay='/labtests/<id>')
+@requires_auth
+def getLabtest(id):
+    return handleFlaskGetRequest(
+        id, flask.request, app.backend.runGetLabtest)
 
 
 @DisplayedRoute(

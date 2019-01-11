@@ -51,7 +51,7 @@ class TestSearchGenerator(unittest.TestCase):
             self.backend.runCountQuery(request, "application/json", {})
         responseStr = self.backend.runCountQuery(request, "application/json", self.access_map)
         response = json.loads(responseStr)
-        self.assertEqual(response["patients"][0]["gender"]["male"], 10)
+        self.assertEqual(response["patients"][0]["gender"]["male"], 5)
 
     def testSearchQuery(self):
         request = {
@@ -114,11 +114,7 @@ class TestSearchGenerator(unittest.TestCase):
             ],
             "results": [
                 {
-                    "table": "samples",
-                    "field": [
-                        "sampleType",
-                        "quantity"
-                    ]
+                    "table": "patients"
                 }
             ]
         }
@@ -128,7 +124,7 @@ class TestSearchGenerator(unittest.TestCase):
             self.backend.runSearchQuery(request, "application/json", {})
         responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
         response = json.loads(responseStr)
-        self.assertEqual(len(response["samples"]), 3)
+        self.assertEqual(len(response["patients"]), 3)
 
     def testSequencingSearch(self):
         test_sample = "SAMPLE_74122"
@@ -234,8 +230,8 @@ class TestSearchGenerator(unittest.TestCase):
         responseStr = self.backend.runCountQuery(request, "application/json", self.access_map)
         response = json.loads(responseStr)
         fieldResponse = response["patients"][0]["provinceOfResidence"]
-        self.assertGreater(fieldResponse["British Columbia"], fieldResponse["Quebec"])
-        self.assertGreater(fieldResponse["British Columbia"], fieldResponse["Northwest Territories"])
+        self.assertGreater(fieldResponse["British Columbia"], fieldResponse.get("Quebec", 0))
+        self.assertGreater(fieldResponse["British Columbia"], fieldResponse.get("New Brunswick", 0))
 
     def testSearchQuery2(self):
         dataset_id = self.dataset.getId()
@@ -316,41 +312,41 @@ class TestSearchGenerator(unittest.TestCase):
 
     def testClinicalGetQuery(self):
 
-        responseStr = self.backend.runGetPatient("WyJkYXRhc2V0MSIsInBhdCIsIlBBVElFTlRfNzc5ODAiXQ", self.access_map, "application/json")
+        responseStr = self.backend.runGetPatient("WyJkYXRhc2V0MSIsInBhdCIsIlBBVElFTlRfNDk4NDUiXQ", self.access_map, "application/json")
         response = json.loads(responseStr)
-        self.assertEqual(response["causeOfDeath"], "Coronary artery disease")
+        self.assertEqual(response["causeOfDeath"], "Pneumonia")
 
-        responseStr = self.backend.runGetEnrollment("WyJkYXRhc2V0MSIsImVuciIsIlBBVElFTlRfODM0MDZfMDgvMjIvMjAxMiJd", self.access_map, "application/json")
+        responseStr = self.backend.runGetEnrollment("WyJkYXRhc2V0MSIsImVuciIsIlBBVElFTlRfMTI0NTdfMTIvMTkvMjAxMCJd", self.access_map, "application/json")
         response = json.loads(responseStr)
-        self.assertEqual(response["referringPhysicianName"], "Dr. Mai Alfaro")
+        self.assertEqual(response["referringPhysicianName"], "Dr. Abdullahi Horne")
 
-        responseStr = self.backend.runGetTreatment("WyJkYXRhc2V0MSIsInRyZSIsIlBBVElFTlRfOTI5NzZfMDUvMTQvMjAwNCJd", self.access_map, "application/json")
+        responseStr = self.backend.runGetTreatment("WyJkYXRhc2V0MSIsInRyZSIsIlBBVElFTlRfMzIxNTVfMDIvMjIvMjAwNiJd", self.access_map, "application/json")
         response = json.loads(responseStr)
-        self.assertEqual(response["drugListOrAgent"], "Enzalutamide, Alectinib, Nilotinib, Streptozocin, Olaratumab")
+        self.assertEqual(response["therapeuticModality"], "Immunotherapy")
 
-        responseStr = self.backend.runGetSample("WyJkYXRhc2V0MSIsInNhbSIsIlBBVElFTlRfOTI5NzZfU0FNUExFXzg3NDA5Il0", self.access_map, "application/json")
+        responseStr = self.backend.runGetSample("WyJkYXRhc2V0MSIsInNhbSIsIlBBVElFTlRfNDk4NDVfU0FNUExFXzU4NjI4Il0", self.access_map, "application/json")
         response = json.loads(responseStr)
-        self.assertEqual(response["cancerType"], "Skin cancer")
+        self.assertEqual(response["cancerType"], "Cervical cancer")
 
-        responseStr = self.backend.runGetDiagnosis("WyJkYXRhc2V0MSIsImRpYSIsIlBBVElFTlRfOTI5NzZfMDUvMTcvMjAwNSJd", self.access_map, "application/json")
+        responseStr = self.backend.runGetDiagnosis("WyJkYXRhc2V0MSIsImRpYSIsIlBBVElFTlRfNDk4NDVfMTEvMDgvMjAwOCJd", self.access_map, "application/json")
         response = json.loads(responseStr)
-        self.assertEqual(response["tumorGrade"], "G1: Well differentiated (low grade)")
+        self.assertEqual(response["tumorGrade"], "GX: Grade cannot be assessed (undetermined grade)")
 
-        responseStr = self.backend.runGetTumourboard("WyJkYXRhc2V0MSIsInR1bSIsIlBBVElFTlRfOTI5NzZfMDYvMTUvMjAwOCJd", self.access_map, "application/json")
+        responseStr = self.backend.runGetTumourboard("WyJkYXRhc2V0MSIsInR1bSIsIlBBVElFTlRfNDk4NDVfMDcvMDkvMjAxNCJd", self.access_map, "application/json")
         response = json.loads(responseStr)
-        self.assertEqual(response["typeOfSampleAnalyzed"], "bone marrow")
+        self.assertEqual(response["typeOfSampleAnalyzed"], "metastatic")
 
-        responseStr = self.backend.runGetOutcome("WyJkYXRhc2V0MSIsIm91dCIsIlBBVElFTlRfOTI5NzZfMTAvMTcvMjAxMSJd", self.access_map, "application/json")
+        responseStr = self.backend.runGetOutcome("WyJkYXRhc2V0MSIsIm91dCIsIlBBVElFTlRfNDk4NDVfMDgvMjIvMjAxMiJd", self.access_map, "application/json")
         response = json.loads(responseStr)
-        self.assertEqual(response["diseaseResponseOrStatus"], "Partial Response")
+        self.assertEqual(response["diseaseResponseOrStatus"], "Complete Response")
 
-        responseStr = self.backend.runGetComplication("WyJkYXRhc2V0MSIsImNvbSIsIlBBVElFTlRfOTI5NzZfMTEvMDIvMjAxMyJd", self.access_map, "application/json")
+        responseStr = self.backend.runGetComplication("WyJkYXRhc2V0MSIsImNvbSIsIlBBVElFTlRfNDk4NDVfMTAvMTgvMjAwNiJd", self.access_map, "application/json")
         response = json.loads(responseStr)
-        self.assertEqual(response["date"], "11/02/2013")
+        self.assertEqual(response["date"], "10/18/2006")
 
-        responseStr = self.backend.runGetConsent("WyJkYXRhc2V0MSIsImNvbiIsIlBBVElFTlRfOTI5NzZfMDYvMzAvMjAwNSJd", self.access_map, "application/json")
+        responseStr = self.backend.runGetConsent("WyJkYXRhc2V0MSIsImNvbiIsIlBBVElFTlRfNDk4NDVfMDMvMDYvMjAwNyJd", self.access_map, "application/json")
         response = json.loads(responseStr)
-        self.assertEqual(response["consentDate"], "06/30/2005")
+        self.assertEqual(response["consentDate"], "03/06/2007")
 
     def testVariantsByGeneSearch(self):
         dataset_id = self.dataset.getId()
