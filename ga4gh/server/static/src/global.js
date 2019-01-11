@@ -1,5 +1,5 @@
 "use strict";
-/*
+
 /**
  * Return the aggregation value of a key from an array of objects.
  * @param {array} objectArray: An array of objects.

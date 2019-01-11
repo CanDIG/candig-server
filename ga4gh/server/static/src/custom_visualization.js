@@ -153,14 +153,16 @@ function initialize() {
     if (selectPopulated == 0) {
         selectPopulator("table1", endpoints);
         selectPopulator("table2", endpoints);
-        selectPopulator("key1", categories["patients"]);
-        selectPopulator("key2", categories["patients"]);
+        selectPopulator("key1", categories["enrollments"]);
+        selectPopulator("key2", categories["enrollments"]);
         selectPopulator("type1", types);
         selectPopulator("type2", types);
         selectPopulated = 1;
 
-        document.getElementById("key1").selectedIndex = "6";
-        document.getElementById("key2").selectedIndex = "6";
+        document.getElementById("table1").selectedIndex = endpoints.indexOf("enrollments").toString();
+        document.getElementById("table2").selectedIndex = endpoints.indexOf("enrollments").toString();
+        document.getElementById("key1").selectedIndex = categories.enrollments.indexOf("treatingCentreProvince").toString();
+        document.getElementById("key2").selectedIndex = categories.enrollments.indexOf("treatingCentreProvince").toString();
         document.getElementById("type1").selectedIndex = JSON.stringify(types.indexOf(type1));
         document.getElementById("type2").selectedIndex = JSON.stringify(types.indexOf(type2));
 
@@ -169,8 +171,8 @@ function initialize() {
                 document.getElementById("adv1").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
                 document.getElementById("adv2").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
             } else {
-                singleLayerDrawer("adv1", type1, "Distribution of Province Of Residence", currentDatasetName + " " + "Patients", response[$("#key1").val()])
-                singleLayerDrawer("adv2", type2, "Distribution of Province Of Residence", currentDatasetName + " " + "Patients", response[$("#key2").val()])
+                singleLayerDrawer("adv1", type1, "Distribution of Treating Centre Province", currentDatasetName + " " + "Enrollments", response[$("#key1").val()])
+                singleLayerDrawer("adv2", type2, "Distribution of Treating Centre Province", currentDatasetName + " " + "Enrollments", response[$("#key2").val()])
             }
         })
     }
