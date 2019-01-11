@@ -257,14 +257,16 @@ class UserAccessMap(object):
                 for line in access_list:
                     parsed_line = line.split(":")
                     if len(parsed_line) != 3:
-                        raise exceptions.MalformedAccessException
+                        # skip incorrectly formatted lines
+                        continue
                     username = parsed_line[0]
                     project = parsed_line[1]
                     level = parsed_line[2].strip('\n')
                     try:
                         int(level)
                     except ValueError:
-                        exceptions.MalformedAccessException("Non-integer access level provided")
+                        # skip non int tier lines
+                        continue
                     if username not in self.user_access_map:
                         self.user_access_map[username] = {}
                     if any(project in role for role in self.user_access_map[username]):
@@ -275,7 +277,7 @@ class UserAccessMap(object):
                     else:
                         self.user_access_map[username][project] = level
         except:
-            raise exceptions.MalformedAccessException
+            raise exceptions.MalformedException
 
     def getUserAccessMap(self):
         return self.user_access_map
