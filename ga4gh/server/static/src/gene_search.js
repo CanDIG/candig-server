@@ -234,7 +234,14 @@ var statusCode = 0; // Initial value, table is empty
                 let referencesList = data['results']["references"];
 
                 for (let i = 0; i < referencesList.length; i++) {
-                    if (referencesList[i]["name"] == chromesomeId) {
+                    let currReferenceId = referencesList[i]["name"];
+
+                    // If the referenceId contains chr, remove it
+                    if (currReferenceId.includes("chr")) {
+                        currReferenceId = currReferenceId.replace("chr", "");
+                    }
+
+                    if (currReferenceId == chromesomeId) {
                         referenceId = referencesList[i]["id"];
                     }
                 }
