@@ -5,7 +5,6 @@
     {% block head %}
       <title>CanDIG Dashboard</title>
       {{ super() }}
-      <script src="https://www.distributedgenomics.ca/static/drilldown.js"></script>
     {% endblock %}
    </head>
    <!-- A grey horizontal navbar that becomes vertical on small screens -->
@@ -70,7 +69,7 @@
               </div>
               <div class="col-sm-12">
                   <div class="card" style="height: 30rem; margin-top: 50px">
-                      <div id="drugScatter" style="min-width: 310px; height: 400px; auto;">
+                      <div id="drugScatter" style="min-width: 310px; height: 800px; auto;">
                           <div class="loader_bar"></div>
                       </div>
                   </div>
@@ -81,6 +80,7 @@
 
     {% block footer %}
       {{ super() }}
+      <script src="https://www.distributedgenomics.ca/static/drilldown.js"></script>
       <script src="{{prepend_path}}/static/dist/dashboard.js"></script>
     {% endblock %}
 </html>

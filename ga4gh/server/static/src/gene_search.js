@@ -79,7 +79,6 @@ var statusCode = 0; // Initial value, table is empty
 
         document.getElementById("loader").style.display = "block";
         document.getElementById("geneTable").innerHTML = "";
-
         document.getElementById("readGroupSelector").style.display = "none"
         var geneRequest = document.getElementById("request").value;
 
@@ -112,62 +111,48 @@ var statusCode = 0; // Initial value, table is empty
             }
             ++result[arrayToCount[j]];
         }
-
         return result;
     }
 
-    let readGroupDict = {}
+    let readGroupsetsDict = {}
 
+    /**
+     * Request a list of readGroupsets, and populate the select fields.
+     * @param {string} geneRequest: The responses returned by all promises.
+     * @param {string} geneDataset: The response returned for the previous user input.
+    */
     function readGroupFetcher(geneRequest, geneDataset) {
         makeRequest("readgroupsets/search", {"datasetId": datasetId}).then(function(response) {
-            var data = JSON.parse(response);
-            var readGroupIds = [];
-            var referenceSetIds = [];
+            var listOfReadGroupSets = JSON.parse(response)['results']["readGroupSets"];
+            readGroupsetsDict = {}
 
             try {
-                let finalChrId;
-                let tempBody = data['results']["readGroupSets"]; //an array of readgroupsets
-                let readGroupSetId = [];
-                let readGroupSetName = []
+                // It takes the first element of geneDataset because the variants of the same gene are assumed to be positioned in the same chromosome
+                let chromesomeId = geneDataset[0]['referenceName'].replace('chr', '')
 
+                for (let i = 0; i < listOfReadGroupSets.length; i++) {
 
-                for (let i = 0; i < tempBody.length; i++) {
-                    readGroupSetId.push(tempBody[i]["id"]);
-                    readGroupIds.push(tempBody[i]["readGroups"][0]["id"]);
-                    referenceSetIds.push(tempBody[i]["readGroups"][0]["referenceSetId"])
-                    readGroupSetName.push(tempBody[i]["name"])
-                }
-
-                for (var j = 0; j < 1; j++) {
-                    let tempCurrData = geneDataset[j];
-                    let tempChrId = tempCurrData['referenceName'];
-
-                    if (tempChrId.includes('chr')) {
-                        finalChrId = tempChrId.replace("chr", "");
-                    } else if (parseInt(tempChrId) != NaN) {
-                        finalChrId = tempChrId;
+                    let temp_rg_igv = {
+                        referenceId: "",
+                        referenceSetId: listOfReadGroupSets[i]["readGroups"][0]["referenceSetId"],
+                        readGroupIds: listOfReadGroupSets[i]["readGroups"][0]["id"],
+                        readGroupSetIds: listOfReadGroupSets[i]["id"],
+                        name: listOfReadGroupSets[i]["name"]
                     }
 
-                    else {
-                        alertBuilder("We are sorry, but some parts of IGV may not work correctly.")
-                    }
-
+                    readGroupsetsDict[listOfReadGroupSets[i]["name"]] = temp_rg_igv;
                 }
 
-                readGroupDict["geneRequest"] = geneRequest
-                readGroupDict["referenceSetIds"] = referenceSetIds[0]
-                readGroupDict["chromesomeId"] = finalChrId
-                readGroupDict["readGroupIds"] = readGroupIds
-                readGroupDict["readGroupSetId"] = readGroupSetId
-                readGroupDict["readGroupName"] = readGroupSetName
+                readGroupsetsDict["chromesomeId"] = chromesomeId;
+                readGroupsetsDict["geneRequest"] = geneRequest;
 
-                let selectRG1 = document.getElementById("firstRG");
-                let selectRG2 = document.getElementById("secondRG");
+                let rgSelect = document.getElementById("rgSelect");
 
-                for (let i = 0; i < readGroupSetId.length; i++){
-                    selectRG1.options[selectRG1.options.length] = new Option(readGroupSetName[i], readGroupSetId[i])
-                    selectRG2.options[selectRG2.options.length] = new Option(readGroupSetName[i], readGroupSetId[i])
+                for (let i = 0; i < listOfReadGroupSets.length; i++){
+                    rgSelect.options[rgSelect.options.length] = new Option(listOfReadGroupSets[i]['name'], listOfReadGroupSets[i]['name'])
                 }
+
+                $('.selectpicker').selectpicker('refresh');
 
                 document.getElementById("readGroupSelector").style.display = "block"
 
@@ -179,98 +164,222 @@ var statusCode = 0; // Initial value, table is empty
         })
     }
 
+
+    /**
+     * Generate multiple promises to contruct IGV alignment and variants objects on user submission.
+    */
+
     function rg_submit() {
 
-        var secondRgObj;
+        let selectedValues = $('.selectpicker').val();
 
-        try {
-            let firstRG = document.getElementById("firstRG").value
-            let secondRG = document.getElementById("secondRG").value
+        alertCloser();
 
-            if (firstRG == secondRG) {
-                secondRgObj = ""
+        if (selectedValues == null || selectedValues.length > 3) {
+            alertBuilder("Please specify at least one, but no more than three read group sets.");
+        }
+
+        else {
+            try {
+
+                let promises = []
+
+                // One promise is needed for every reference ID search.
+                for (let i = 0; i < selectedValues.length; i++) {
+                    let newPromise = referenceIdFetcher(readGroupsetsDict[selectedValues[i]]['referenceSetId'], selectedValues[i], readGroupsetsDict['chromesomeId']);
+                    promises.push(newPromise);
+                }
+
+                // Only one promise is needed for all variant sets.
+                promises.push(variantSetIdFetcher(selectedValues));
+
+                Promise.all(promises).then(function(values){
+                    igvCaller(values, readGroupsetsDict['chromesomeId'], selectedValues, readGroupsetsDict['geneRequest']);
+                })
             }
 
-            else secondRgObj = {
+            catch (err) {
+                alertBuilder("The IGV Browser cannot be rendered for the selected read group sets.")
+            }            
+        }
+
+
+    }
+
+    /**
+     * Construct the tracks object that includes both alignments and variants.
+     * @param {string} values: The responses returned by all promises.
+     * @param {string} chromesomeId: The responses returned by all 3 promises.
+     * @param {array} selectedValues: The list of readGroupSets selected by the user.
+     * @param {string} geneRequest: The gene searched by the user.
+    */
+
+    function igvCaller(values, chromesomeId, selectedValues, geneRequest) {
+
+        let track = [];
+        let trackOfVariants;
+        let trackOfAlignments;
+
+        for (let i = 0; i < values.length; i++) {
+            // case 1: referenceId
+            if (values[i]['referenceId']) {
+                readGroupsetsDict[values[i]['name']]['referenceId'] = values[i]['referenceId'];
+            }
+            // case 2: variantSetId
+            else {
+                trackOfVariants = variantsTrackGenerator(values[i], chromesomeId);
+            }
+        }
+
+        trackOfAlignments = alignmentTrackGenerator(selectedValues);
+
+        let tracks = track.concat(trackOfVariants, trackOfAlignments);
+
+        tracks.push({
+            name: "Genes",
+            type: "annotation",
+            format: "bed",
+            sourceType: "file",
+            url: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg19/genes/refGene.hg19.bed.gz",
+            indexURL: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg19/genes/refGene.hg19.bed.gz.tbi",
+            order: Number.MAX_VALUE,
+            visibilityWindow: 300000000,
+            displayMode: "EXPANDED",
+            height: 300
+        })
+
+        igvSearch(geneRequest, tracks);
+    }
+
+    /**
+     * Generate alignment track objects used by IGV browser.
+     * @param {array} listOfAlignments: A list of alignments' names.
+     * @return a Promise with the constructed IGV alignment object
+    */
+    function alignmentTrackGenerator(listOfAlignments) {
+
+        let trackOfAlignments = []
+
+        for (let i = 0; i < listOfAlignments.length; i++) {
+            let igv_alignment_object = {
                 sourceType: "ga4gh",
                 type: "alignment",
                 url: prepend_path + "",
-                referenceId: "",
-                readGroupIds: "",
-                readGroupSetIds: "",
-                name: ""
+                referenceId: readGroupsetsDict[listOfAlignments[i]]['referenceId'],
+                readGroupIds: readGroupsetsDict[listOfAlignments[i]]['readGroupIds'],
+                readGroupSetIds: readGroupsetsDict[listOfAlignments[i]]['readGroupSetIds'],
+                name: listOfAlignments[i]
+            };
+
+            if (trackOfAlignments.length == 0){
+                trackOfAlignments.push(igv_alignment_object);
             }
-
-            let firstRgReadGroupId = readGroupDict["readGroupIds"][readGroupDict["readGroupSetId"].indexOf(firstRG)]
-            let firstRgReadGroupName = readGroupDict["readGroupName"][readGroupDict["readGroupSetId"].indexOf(firstRG)]
-
-            let secondRgReadGroupId = readGroupDict["readGroupIds"][readGroupDict["readGroupSetId"].indexOf(secondRG)]
-            let secondRgReadGroupName = readGroupDict["readGroupName"][readGroupDict["readGroupSetId"].indexOf(secondRG)]
-
-            let firstRgObj = {"readGroupSetId": firstRG, "readGroupIds": firstRgReadGroupId, "name": firstRgReadGroupName}
-
-            if (secondRgObj != ""){
-                secondRgObj["readGroupIds"] = secondRgReadGroupId
-                secondRgObj["readGroupSetIds"] = secondRG
-                secondRgObj["name"] = secondRgReadGroupName
+            else if (trackOfAlignments[0]['name'] != igv_alignment_object['name']) {
+                trackOfAlignments.push(igv_alignment_object);
             }
-
-            referenceIdFetcher(readGroupDict["geneRequest"], readGroupDict["referenceSetIds"], firstRgObj, secondRgObj, readGroupDict["chromesomeId"])
         }
 
-        catch (err) {
-            console.log("we are having problems fetching info")
-        }
-
+        return trackOfAlignments;
     }
 
-    function referenceIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgObj, chromesomeId) {
-        makeRequest("references/search", {'referenceSetId': referenceSetIds,}).then(function(response) {
+    /**
+     * Request referenceId given the names of variantSets.
+     * @param {array} listOfVariantSets: A list of variantsets' names.
+     * @param {string} chromesomeId: The chromosomeId.
+     * @return a Promise with the constructed IGV variants object
+    */
+    function variantsTrackGenerator(listOfVariantSets, chromesomeId) {
+        let trackOfVariants = []
 
-            let data = JSON.parse(response);
-            let referenceId = "";
+        for (let j = 0; j < listOfVariantSets.length; j++) {
 
-            try {
-                let referencesList = data['results']["references"];
+            let igv_variant_object = {
+                sourceType: "ga4gh",
+                type: "variant",
+                url: prepend_path + "",
+                referenceName: chromesomeId,
+                variantSetId: "",
+                name: "",
+                pageSize: 10000,
+                visibilityWindow: 100000
+            };
 
-                for (let i = 0; i < referencesList.length; i++) {
-                    let currReferenceId = referencesList[i]["name"];
+            igv_variant_object['name'] = listOfVariantSets[j]['name'];
+            igv_variant_object['variantSetId'] = listOfVariantSets[j]['variantSetId'];
 
-                    // If the referenceId contains chr, remove it
-                    currReferenceId = currReferenceId.replace("chr", "");
+            trackOfVariants.push(igv_variant_object);
+        }
 
-                    if (currReferenceId == chromesomeId) {
-                        referenceId = referencesList[i]["id"];
+        return trackOfVariants;
+    }
+
+
+    /**
+     * Request referenceId given the names of variantSets.
+     * @param {string} referenceSetId: The referenceSetId.
+     * @param {string} readGroupSetName: The readGroupSetName.
+     * @param {string} chromesomeId: The chromosomeId.
+     * @return a Promise with readGroupSets' names being the keys, and their referenceId being the value.
+    */
+    function referenceIdFetcher(referenceSetId, readGroupSetName, chromesomeId) {
+        return new Promise(function(resolve, reject) {
+            makeRequest("references/search", {'referenceSetId': referenceSetId}).then(function(response) {
+
+                let referenceId = "";
+
+                try {
+                    let referencesList = JSON.parse(response)['results']["references"];
+
+                    for (let i = 0; i < referencesList.length; i++) {
+                        let currReferenceId = referencesList[i]["name"].replace("chr", "");
+
+                        if (currReferenceId == chromesomeId) {
+                            referenceId = referencesList[i]["id"];
+                        }
+                    }
+
+                    resolve({"name": readGroupSetName, "referenceId": referenceId})
+                } catch (err) {
+                    reject({"name": readGroupSetName, "referenceId": ""})
+                    alertBuilder("We are sorry, but some parts of IGV may not work correctly.");
+                }
+            }, function(Error) {
+                reject({"name": readGroupSetName, "referenceId": ""})
+                alertBuilder("We are sorry, but some parts of IGV may not work correctly.");
+            })
+        })
+    }
+
+    /**
+     * Request variantsetIds given the names of variantSets.
+     * @param {array} listOfSelectedRG: List of selectedRG.
+     * @return a Promise with readGroupSets' names being the keys, and their variantSetId being the value.
+    */
+    function variantSetIdFetcher(listOfSelectedRG) {
+        return new Promise(function(resolve, reject) {
+            makeRequest("variantsets/search", {'datasetId': datasetId}).then(function(response) {
+                let listOfVariantSets = JSON.parse(response)['results']['variantSets'];
+                let responseObjList = [];
+
+                for (let i = 0; i < listOfVariantSets.length; i++) {
+                    if (listOfSelectedRG.includes(listOfVariantSets[i]['name'])) {
+                        let responseObj = {};
+                        responseObj['name'] = listOfVariantSets[i]['name']
+                        responseObj['variantSetId'] = listOfVariantSets[i]['id'];
+                        responseObjList.push(responseObj)
                     }
                 }
-
-                if (secondRgObj != "") {
-                    secondRgObj["referenceId"] = referenceId
-                }
-
-                variantSetIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgObj, referenceId, chromesomeId);
-            } catch (err) {
-                alertBuilder("We are sorry, but some parts of IGV may not work correctly.");
-            }
-        }, function(Error) {
-            alertBuilder("We are sorry, but some parts of IGV may not work correctly.");
+                resolve(responseObjList)
+            })
         })
     }
 
-    function variantSetIdFetcher(geneRequest, referenceSetIds, firstRgObj, secondRgObj, referenceId, chromesomeId) {
-        makeRequest("variantsets/search", {'datasetId': datasetId}).then(function(response) {
-            let data = JSON.parse(response);
-            let variantsetId;
-            if (data['results']["variantSets"][0]["id"] != undefined) {
-                variantsetId = data['results']["variantSets"][0]["id"];
-
-                igvSearch(variantsetId, geneRequest, referenceSetIds, firstRgObj, secondRgObj, referenceId, chromesomeId);
-            }
-        })
-    }
-
-
-    function igvSearch(variantsetId, geneRequest, referenceSetIds, firstRgObj, secondRgObj, referenceId, chromesomeId) {
+    /**
+     * Invoke a new IGV browser instance.
+     * @param {string} geneRequest: The gene searched by the user.
+     * @param {tracks} a list of IGV alignment and variant sobjects.
+    */
+    function igvSearch(geneRequest, tracks) {
         var div = document.getElementById('igvSample')
 
         var options = {
@@ -283,45 +392,8 @@ var statusCode = 0; // Initial value, table is empty
             },
             oauthToken: session_id,
             showRuler: true,
-            tracks: [{
-                    sourceType: "ga4gh",
-                    type: "variant",
-                    url: prepend_path + "",
-                    referenceName: chromesomeId,
-                    variantSetId: variantsetId,
-                    name: "Variants",
-                    pageSize: 10000,
-                    visibilityWindow: 100000
-                },
-                {
-                    sourceType: "ga4gh",
-                    type: "alignment",
-                    url: prepend_path + "",
-                    referenceId: referenceId,
-                    readGroupIds: firstRgObj["readGroupIds"],
-                    readGroupSetIds: firstRgObj["readGroupSetId"],
-                    name: firstRgObj["name"]
-                },
-                secondRgObj,
-                {
-                    name: "Genes",
-                    type: "annotation",
-                    format: "bed",
-                    sourceType: "file",
-                    url: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg19/genes/refGene.hg19.bed.gz",
-                    indexURL: "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/hg19/genes/refGene.hg19.bed.gz.tbi",
-                    order: Number.MAX_VALUE,
-                    visibilityWindow: 300000000,
-                    displayMode: "EXPANDED",
-                    height: 300
-                }
-
-            ]
+            tracks: tracks
         };
-
-        if (secondRgObj == "") {
-            options["tracks"].splice(2, 1)
-        }
 
         let browser = igv.createBrowser(div, options);
     }

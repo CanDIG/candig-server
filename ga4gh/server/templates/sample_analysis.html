@@ -5,7 +5,6 @@
     {% block head %}
       <title>Sample Analysis</title>
       {{ super() }}
-      <script src="https://www.distributedgenomics.ca/static/ag-grid-community.min.noStyle.js"></script>
       <link rel="stylesheet" href="https://www.distributedgenomics.ca/static/ag-grid.css">
       <link rel="stylesheet" href="https://www.distributedgenomics.ca/static/ag-theme-balham.css">
    </head>
@@ -34,6 +33,7 @@
 
    {% block footer %}
       {{ super() }}
+      <script src="https://www.distributedgenomics.ca/static/ag-grid-community.min.noStyle.js"></script>
       <script src="{{prepend_path}}/static/dist/sample_analysis.js"></script>
     {% endblock %}
 </html>

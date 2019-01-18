@@ -204,3 +204,7 @@
 .dropdown-toggle {
     white-space: nowrap;
 }
+
+#confirmRG {
+    margin-left: 15px;
+}
