@@ -6,7 +6,6 @@
       <title>Patients Overview</title>
       {{ super() }}
       <link rel=stylesheet type=text/css href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
-      <script src="https://www.distributedgenomics.ca/static/jquery.dataTables.min.js"></script>
    </head>
    {% endblock %}
    {% block nav %}
@@ -37,6 +36,7 @@
 
     {% block footer %}
       {{ super() }}
+      <script src="https://www.distributedgenomics.ca/static/jquery.dataTables.min.js"></script>
       <script src="{{prepend_path}}/static/dist/patients_overview.js"></script>
     {% endblock %}
 </html>

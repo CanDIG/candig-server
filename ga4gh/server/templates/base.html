@@ -4,9 +4,6 @@
     {% block head %}
       <link type="text/css" rel="stylesheet" href="{{prepend_path}}/static/loader.css">
       <link rel=stylesheet type=text/css href="https://www.distributedgenomics.ca/static/bootstrap.min.css">
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-      <script src="https://www.distributedgenomics.ca/static/bootstrap.min.js"></script>
-      <script src="https://www.distributedgenomics.ca/static/highcharts.js"></script>
       <link type="text/css" rel="stylesheet" href="{{prepend_path}}/static/dashboard.css">
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     {% endblock %}
@@ -20,19 +17,19 @@
       <!-- Links -->
       <ul class="nav col-9" id="topTabs" style="border-bottom:0px;">
          <li class="active">
-            <a class="nav-link" href="/"><i class="fas fa-tachometer-alt"></i> Homepage</a>
+            <a class="nav-link" href="{{prepend_path}}/"><i class="fas fa-tachometer-alt"></i> Homepage</a>
          </li>
          <li>
-            <a class="nav-link" href="/gene_search"><i class="fas fa-search"></i> Gene Search</a>
+            <a class="nav-link" href="{{prepend_path}}/gene_search"><i class="fas fa-search"></i> Gene Search</a>
          </li>
          <li>
-            <a class="nav-link" href="/patients_overview"><i class="fas fa-users"></i> Patient Overview</a>
+            <a class="nav-link" href="{{prepend_path}}/patients_overview"><i class="fas fa-users"></i> Patient Overview</a>
          </li>
          <li>
-            <a class="nav-link" href="/sample_analysis"><i class="fas fa-chart-bar"></i> Sample Analysis</a>
+            <a class="nav-link" href="{{prepend_path}}/sample_analysis"><i class="fas fa-chart-bar"></i> Sample Analysis</a>
          </li>
           <li>
-            <a class="nav-link" href="/custom_visualization"><i class="fas fa-chart-pie"></i> Custom Visualization</a>
+            <a class="nav-link" href="{{prepend_path}}/custom_visualization"><i class="fas fa-chart-pie"></i> Custom Visualization</a>
          </li>
       </ul>
       <span class="dropdown show col-1">
@@ -45,7 +42,7 @@
          <a class="dropdown-toggle" href="#" role="button" id="user-dropdown-top" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="text"><i class="fas fa-user-circle"></i> {{ username }}</a></span>
          <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="/serverinfo"><i class="fas fa-info-circle"></i> info</a>
+            <a class="dropdown-item" href="{{prepend_path}}/serverinfo"><i class="fas fa-info-circle"></i> info</a>
             <a class="dropdown-item" onclick="logout()" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
          </ul>
       </div>
@@ -68,7 +65,11 @@
   {% block content %}{% endblock %}
 
   {% block footer %}
-    <script type="text/javascript">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+      <script src="https://www.distributedgenomics.ca/static/bootstrap.min.js"></script>
+      <script src="https://www.distributedgenomics.ca/static/highcharts.js"></script>
+      <script type="text/javascript">
       let datasetId;
       let finalDatasetName = [];
       let finalDatasetId = [];
