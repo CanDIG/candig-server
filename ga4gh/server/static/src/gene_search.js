@@ -147,6 +147,7 @@ var statusCode = 0; // Initial value, table is empty
                 readGroupsetsDict["geneRequest"] = geneRequest;
 
                 let rgSelect = document.getElementById("rgSelect");
+                rgSelect.innerHTML = "";
 
                 for (let i = 0; i < listOfReadGroupSets.length; i++){
                     rgSelect.options[rgSelect.options.length] = new Option(listOfReadGroupSets[i]['name'], listOfReadGroupSets[i]['name'])
