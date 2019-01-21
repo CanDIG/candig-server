@@ -5,11 +5,9 @@
       {% block head %}
       <title>Gene search</title>
       {{ super() }}
-      <script src="https://www.distributedgenomics.ca/static/jquery-ui.min.js"></script>
       <link rel=stylesheet type=text/css href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
-      <script src="https://www.distributedgenomics.ca/static/jquery.dataTables.min.js"></script>
       <link rel=stylesheet type=text/css href="https://www.distributedgenomics.ca/static/igv.css">
-      <script type="text/javascript" src="https://www.distributedgenomics.ca/static/igv-2.0.0-rc3.js"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/css/bootstrap-select.min.css">
         {% endblock %}
    </head>
 <body>
@@ -31,13 +29,9 @@
             <div class="container wrapper">
                <div id="readGroupSelector" class="form-inline" style="display: none; margin-top: 50px; margin-bottom: 50px">
                    <div class="form-group">
-                     <label for="firstRG">Select the first readGroupSet:</label>
-                     <select class="form-control" id="firstRG">
-                     </select>
-
-                     <label for="secondRG">Select the second readGroupSet:</label>
-                     <select class="form-control" id="secondRG">
-                     </select>
+                    <label for="rgSelect">Select up to three read group sets: </label>
+                    <select class="selectpicker" id="rgSelect" multiple data-max-options="3">
+                    </select>
                      <button class="btn btn-primary" id="confirmRG">Confirm</button>
                   </div>
                </div>
@@ -50,6 +44,10 @@
 
     {% block footer %}
       {{ super() }}
+      <script src="https://www.distributedgenomics.ca/static/jquery-ui.min.js"></script>
+      <script src="https://www.distributedgenomics.ca/static/jquery.dataTables.min.js"></script>
+      <script type="text/javascript" src="https://www.distributedgenomics.ca/static/igv-2.0.0-rc3.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/js/bootstrap-select.min.js"></script>
       <script src="{{prepend_path}}/static/dist/gene_search.js"></script>
     {% endblock %}
 </html>
