@@ -1039,6 +1039,12 @@ def custom_visualization():
     return render_candig_template('custom_visualization.html')
 
 
+@app.route('/api_info')
+@requires_session
+def swagger():
+    return render_candig_template('swagger.html')
+
+
 @app.route('/serverinfo')
 @requires_session
 def server_info():
