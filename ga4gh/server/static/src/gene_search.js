@@ -84,7 +84,8 @@ var statusCode = 0; // Initial value, table is empty
 
         var geneRequestObj = {
             'datasetId': datasetId,
-            'gene': geneRequest
+            'gene': geneRequest,
+            'pageSize': '10000'
         }
 
         makeRequest("/variantsbygenesearch", geneRequestObj).then(function(response) {
@@ -132,14 +133,21 @@ var statusCode = 0; // Initial value, table is empty
                 let chromesomeId = geneDataset[0]['referenceName'].replace('chr', '')
 
                 for (let i = 0; i < listOfReadGroupSets.length; i++) {
+                    let readGroupIds = []
 
                     let temp_rg_igv = {
                         referenceId: "",
                         referenceSetId: listOfReadGroupSets[i]["readGroups"][0]["referenceSetId"],
-                        readGroupIds: listOfReadGroupSets[i]["readGroups"][0]["id"],
                         readGroupSetIds: listOfReadGroupSets[i]["id"],
                         name: listOfReadGroupSets[i]["name"]
                     }
+
+                    // Iterate through readGroups to find all readGroupIds
+                    for (let j = 0; j < listOfReadGroupSets[i]["readGroups"].length; j++) {
+                        readGroupIds.push(listOfReadGroupSets[i]["readGroups"][j]["id"]);
+                    }
+
+                    temp_rg_igv["readGroupIds"] = readGroupIds;
 
                     readGroupsetsDict[listOfReadGroupSets[i]["name"]] = temp_rg_igv;
                 }
