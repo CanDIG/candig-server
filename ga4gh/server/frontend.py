@@ -384,7 +384,7 @@ def _configure_backend(app):
 
 
 def configure(configFile=None, baseConfig="ProductionConfig",
-              port=8000, extraConfig={}):
+              port=8000, extraConfig={}, epsilon=None):
     """
     TODO Document this critical function! What does it do? What does
     it assume?
@@ -399,6 +399,8 @@ def configure(configFile=None, baseConfig="ProductionConfig",
     if configFile is not None:
         app.config.from_pyfile(configFile)
     app.config.update(extraConfig.items())
+    if epsilon:
+        app.config["DP_EPSILON"] = epsilon
     # Setup file handle cache max size
     datamodel.fileHandleCache.setMaxCacheSize(
         app.config["FILE_HANDLE_CACHE_MAX_SIZE"])

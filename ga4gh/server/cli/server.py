@@ -61,6 +61,10 @@ def addServerOptions(parser):
         "--worker_class", "-k", default='sync',
         help="The type of worker process to run. "
              "gevent or sync (default)")
+    parser.add_argument(
+        "--epsilon", "-e", default=None,
+        help="The epsilon value used in differentially private queries."
+    )
 
     cli.addVersionArgument(parser)
     cli.addDisableUrllibWarningsArgument(parser)
@@ -79,7 +83,9 @@ def server_main(args=None):
         requests.packages.urllib3.disable_warnings()
 
     frontend.configure(
-        parsedArgs.config_file, parsedArgs.config, parsedArgs.port)
+        parsedArgs.config_file, parsedArgs.config, parsedArgs.port,
+        epsilon=parsedArgs.epsilon
+    )
 
     sslContext = None
 
@@ -96,7 +102,8 @@ def server_main(args=None):
             'reload': not parsedArgs.dont_use_reloader,
         }
 
-        frontend.configure(configFile=parsedArgs.config_file, baseConfig="BaseConfig")
+        frontend.configure(configFile=parsedArgs.config_file, baseConfig="BaseConfig",
+                           epsilon=parsedArgs.epsilon)
         app = StandaloneApplication(frontend.app, options)
         app.run()
     else:
