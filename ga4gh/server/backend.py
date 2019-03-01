@@ -971,6 +971,7 @@ class Backend(object):
         pairs defined by the specified request
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         return self._topLevelObjectGenerator(
             request, dataset.getNumPhenotypeAssociationSets(),
             dataset.getPhenotypeAssociationSetByIndex)
@@ -981,6 +982,7 @@ class Backend(object):
         defined by the specified request.
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         return self._readGroupSetsGenerator(
             request, dataset.getNumReadGroupSets(),
             dataset.getReadGroupSetByIndex)
@@ -1069,6 +1071,7 @@ class Backend(object):
         by the specified request.
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         return self._topLevelObjectGenerator(
             request, dataset.getNumVariantSets(),
             dataset.getVariantSetByIndex)
@@ -1081,6 +1084,7 @@ class Backend(object):
         compoundId = datamodel.VariantSetCompoundId.parse(
             request.variant_set_id)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         variantSet = dataset.getVariantSet(request.variant_set_id)
         return self._topLevelObjectGenerator(
             request, variantSet.getNumVariantAnnotationSets(),
@@ -1105,6 +1109,7 @@ class Backend(object):
         compoundId = datamodel.ReadGroupCompoundId.parse(
             request.read_group_ids[0])
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         readGroupSet = dataset.getReadGroupSet(compoundId.read_group_set_id)
         referenceSet = readGroupSet.getReferenceSet()
         if referenceSet is None:
@@ -1120,6 +1125,7 @@ class Backend(object):
         compoundId = datamodel.ReadGroupCompoundId.parse(
             request.read_group_ids[0])
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         readGroupSet = dataset.getReadGroupSet(compoundId.read_group_set_id)
         referenceSet = readGroupSet.getReferenceSet()
         if referenceSet is None:
@@ -1146,6 +1152,7 @@ class Backend(object):
             compoundId = datamodel.VariantSetCompoundId \
                 .parse(request.variant_set_id)
             dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+            self.getUserAccessTier(dataset, access_map)
             variantSet = dataset.getVariantSet(compoundId.variant_set_id)
             intervalIterator = paging.VariantsIntervalIterator(request, variantSet)
             return intervalIterator
@@ -1156,8 +1163,9 @@ class Backend(object):
                 compoundId = datamodel.VariantSetCompoundId \
                     .parse(variantsetId)
                 dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
-                item = dataset.getVariantSet(variantsetId)
-                variantSets.append(item)
+                if dataset.getLocalId() in access_map:
+                    item = dataset.getVariantSet(variantsetId)
+                    variantSets.append(item)
 
             iterators = []
             for item in variantSets:
@@ -1173,6 +1181,7 @@ class Backend(object):
         compoundId = datamodel.VariantSetCompoundId \
             .parse(request.variant_set_id)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         variantSet = dataset.getVariantSet(compoundId.variant_set_id)
         intervalIterator = paging.GenotypesIntervalIterator(
             request, variantSet)
@@ -1186,6 +1195,7 @@ class Backend(object):
         compoundId = datamodel.VariantAnnotationSetCompoundId.parse(
             request.variant_annotation_set_id)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         variantSet = dataset.getVariantSet(compoundId.variant_set_id)
         variantAnnotationSet = variantSet.getVariantAnnotationSet(
             request.variant_annotation_set_id)
@@ -1227,6 +1237,7 @@ class Backend(object):
 
         dataset = self.getDataRepository().getDataset(
             compoundId.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         featureSet = dataset.getFeatureSet(compoundId.feature_set_id)
         iterator = paging.FeaturesIterator(
             request, featureSet, parentId)
@@ -1246,6 +1257,8 @@ class Backend(object):
 
         dataset = self.getDataRepository().getDataset(
             compoundId.dataset_id)
+        # check user acce
+        self.getUserAccessTier(dataset, access_map)
         continuousSet = dataset.getContinuousSet(request.continuous_set_id)
         iterator = paging.ContinuousIterator(request, continuousSet)
         return iterator
@@ -1259,6 +1272,7 @@ class Backend(object):
         compoundId = datamodel.PhenotypeAssociationSetCompoundId.parse(
             request.phenotype_association_set_id)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         phenotypeAssociationSet = dataset.getPhenotypeAssociationSet(
             compoundId.phenotypeAssociationSetId)
         associations = phenotypeAssociationSet.getAssociations(request)
@@ -1275,6 +1289,7 @@ class Backend(object):
         compoundId = datamodel.PhenotypeAssociationSetCompoundId.parse(
             request.phenotype_association_set_id)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         phenotypeAssociationSet = dataset.getPhenotypeAssociationSet(
             compoundId.phenotypeAssociationSetId)
         featureSets = dataset.getFeatureSets()
@@ -1290,6 +1305,7 @@ class Backend(object):
         compoundId = datamodel.VariantSetCompoundId.parse(
             request.variant_set_id)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         variantSet = dataset.getVariantSet(compoundId.variant_set_id)
         results = []
         for obj in variantSet.getCallSets():
@@ -1310,6 +1326,7 @@ class Backend(object):
         defined by the specified request.
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         return self._topLevelObjectGenerator(
             request, dataset.getNumFeatureSets(),
             dataset.getFeatureSetByIndex)
@@ -1320,6 +1337,7 @@ class Backend(object):
         defined by the specified request.
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         return self._topLevelObjectGenerator(
             request, dataset.getNumContinuousSets(),
             dataset.getContinuousSetByIndex)
@@ -1330,6 +1348,7 @@ class Backend(object):
         pairs defined by the specified request.
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         return self._topLevelObjectGenerator(
             request, dataset.getNumRnaQuantificationSets(),
             dataset.getRnaQuantificationSetByIndex)
@@ -1370,6 +1389,7 @@ class Backend(object):
         compoundId = datamodel.RnaQuantificationCompoundId.parse(
             request.rna_quantification_id)
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         rnaQuantSet = dataset.getRnaQuantificationSet(
             compoundId.rna_quantification_set_id)
         rnaQuant = rnaQuantSet.getRnaQuantification(rnaQuantificationId)
