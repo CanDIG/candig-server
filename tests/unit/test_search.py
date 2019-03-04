@@ -371,7 +371,7 @@ class TestSearchGenerator(unittest.TestCase):
         request = json.dumps(request)
         responseStr = self.backend.runSearchVariantsByGeneName(request, "application/json", self.access_map)
         response = json.loads(responseStr)
-        self.assertEqual(len(response["variants"]), 300)
+        self.assertEqual(len(response["variants"]), 1800)
 
     def testSearchQueryWithVariants(self):
         dataset_id = self.dataset.getId()
@@ -433,7 +433,7 @@ class TestSearchGenerator(unittest.TestCase):
         request = json.dumps(request)
         responseStr = self.backend.runSearchVariants(request, "application/json", self.access_map)
         response = json.loads(responseStr)
-        self.assertEqual(len(response["variants"]), 300)
+        self.assertEqual(len(response["variants"]), 1800)
 
     def testInvalidSearchQuery(self):
         dataset_id = self.dataset.getId()
