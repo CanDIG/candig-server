@@ -19,7 +19,7 @@ class BaseConfig(object):
     MAX_CONTENT_LENGTH = 2 * 1024 * 1024  # 2MB
     MAX_RESPONSE_LENGTH = 1024 * 1024  # 1MB
     REQUEST_VALIDATION = True
-    DEFAULT_PAGE_SIZE = 2000
+    DEFAULT_PAGE_SIZE = 1800
     DATA_SOURCE = "empty://"
 
     # Options for the simulated backend.

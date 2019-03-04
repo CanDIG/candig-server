@@ -25,7 +25,7 @@ class Backend(object):
     """
     def __init__(self, dataRepository):
         self._requestValidation = False
-        self._defaultPageSize = 2000
+        self._defaultPageSize = 1800
         self._maxResponseLength = 2**20  # 1 MiB
         self._dataRepository = dataRepository
         self._dpEpsilon = None
