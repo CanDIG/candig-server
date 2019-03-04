@@ -139,7 +139,7 @@ $("#adv1_confirm").off('click').click(function() {
 
 $("#adv2_confirm").off('click').click(function() {
     document.getElementById("adv2").innerHTML = '<div class="loader_bar"></div>';
-    countRequest($("#table2").val(), [$("#key1").val()], datasetId).then(function(response) {
+    countRequest($("#table2").val(), [$("#key2").val()], datasetId).then(function(response) {
         if (response[$("#key2").val()] == undefined) {
             document.getElementById("adv2").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
         } else {
