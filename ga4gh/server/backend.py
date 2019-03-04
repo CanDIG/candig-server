@@ -1101,11 +1101,11 @@ class Backend(object):
             raise exceptions.BadRequestException(
                 "At least one readGroupId must be specified")
         elif len(request.read_group_ids) == 1:
-            return self._readsGeneratorSingle(request)
+            return self._readsGeneratorSingle(request, access_map)
         else:
-            return self._readsGeneratorMultiple(request)
+            return self._readsGeneratorMultiple(request, access_map)
 
-    def _readsGeneratorSingle(self, request):
+    def _readsGeneratorSingle(self, request, access_map):
         compoundId = datamodel.ReadGroupCompoundId.parse(
             request.read_group_ids[0])
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
@@ -1121,7 +1121,7 @@ class Backend(object):
             request, readGroup, reference)
         return intervalIterator
 
-    def _readsGeneratorMultiple(self, request):
+    def _readsGeneratorMultiple(self, request, access_map):
         compoundId = datamodel.ReadGroupCompoundId.parse(
             request.read_group_ids[0])
         dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
@@ -2051,6 +2051,7 @@ class Backend(object):
             request, protocol.SearchReadGroupSetsRequest,
             protocol.SearchReadGroupSetsResponse,
             self.readGroupSetsGenerator,
+            access_map,
             return_mimetype)
 
     def runSearchIndividuals(self, request, return_mimetype, access_map):
@@ -2061,6 +2062,7 @@ class Backend(object):
             request, protocol.SearchIndividualsRequest,
             protocol.SearchIndividualsResponse,
             self.individualsGenerator,
+            access_map,
             return_mimetype)
 
     # Search requests
