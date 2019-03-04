@@ -2051,6 +2051,7 @@ class Backend(object):
             request, protocol.SearchReadGroupSetsRequest,
             protocol.SearchReadGroupSetsResponse,
             self.readGroupSetsGenerator,
+            access_map,
             return_mimetype)
 
     def runSearchIndividuals(self, request, return_mimetype, access_map):
@@ -2061,6 +2062,7 @@ class Backend(object):
             request, protocol.SearchIndividualsRequest,
             protocol.SearchIndividualsResponse,
             self.individualsGenerator,
+            access_map,
             return_mimetype)
 
     # Search requests

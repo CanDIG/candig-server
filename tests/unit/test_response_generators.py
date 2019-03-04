@@ -120,6 +120,7 @@ class TestReadsGenerator(unittest.TestCase):
         self.request.reference_id = reference.getId()
         self.dataset = dataRepo.getDatasets()[0]
         self.readGroupSet = self.dataset.getReadGroupSets()[0]
+        self.access_map = {self.dataset.getLocalId(): 4}
 
     def testNoReadGroupsNotSupported(self):
         # a request for no read groups should throw an exception
