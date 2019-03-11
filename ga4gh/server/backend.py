@@ -498,6 +498,11 @@ class Backend(object):
                     if k in field:
                         if k not in field_value_counts:
                             field_value_counts[k] = {}
+
+                        if type(v) == list:
+                            v.sort()
+                            v = ','.join(v)
+
                         if v not in field_value_counts[k]:
                             field_value_counts[k][v] = 1
                         else:
