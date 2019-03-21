@@ -414,7 +414,7 @@ class TestSearchGenerator(unittest.TestCase):
         self.assertEqual(len(response["variants"]), 0)
 
     def testVariantsWithListOfVariantSetIds(self):
-        dataset_id = self.dataset.getId()
+        # dataset_id = self.dataset.getId()
 
         variantSets = self.dataset.getVariantSets()
         listOfIds = []
