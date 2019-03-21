@@ -170,7 +170,7 @@ class TestSimulatedStack(unittest.TestCase):
         variantSet = callSet.getParentContainer()
         self.assertEqual(gaCallSet.id, callSet.getId())
         self.assertEqual(gaCallSet.name, callSet.getLocalId())
-        self.assertEqual(gaCallSet.variant_set_id, variantSet.getId())
+        self.assertEqual(gaCallSet.variant_set_ids, [variantSet.getId()])
         for key, value in gaCallSet.attributes.attr.items():
             self.assertEqual(
                 protocol.getValueFromValue(value.values[0]),

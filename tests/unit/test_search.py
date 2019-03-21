@@ -484,7 +484,7 @@ class TestSearchGenerator(unittest.TestCase):
                 {
                     "id": "A",
                     "variants": {
-                        "variantSetId": variantSetId,
+                        "variantSetIds": [variantSetId],
                         "table": "variants",
                         "start": "1",
                         "end": "1000000",
