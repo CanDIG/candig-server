@@ -108,6 +108,7 @@ class BadRequestException(RuntimeException):
         if msg is not None:
             self.message += ": " + msg
 
+
 class BadFilterKeyException(BadRequestException):
     """
     A request that includes one or more invalid filter keys
