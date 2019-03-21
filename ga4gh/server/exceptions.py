@@ -102,8 +102,11 @@ class BadRequestException(RuntimeException):
     A request that we don't like was sent to the server.
     """
     httpStatus = 400
-    message = "Bad request"
 
+    def __init__(self, msg=None):
+        self.message = "Bad request"
+        if msg is not None:
+            self.message += ": " + msg
 
 class BadFilterKeyException(BadRequestException):
     """

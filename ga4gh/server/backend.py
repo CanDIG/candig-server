@@ -44,7 +44,7 @@ class Backend(object):
             "==": operator.eq,
             "!=": operator.ne,
             "ne": operator.ne,
-            "in": operator.contains
+            "contains": operator.contains
         }
 
         self.endpointMapper = {
@@ -326,8 +326,8 @@ class Backend(object):
                     request["referenceName"] = component[endpoint]["referenceName"]
                     if "variantSetIds" in component[endpoint]:
                         request["variantSetIds"] = component[endpoint]["variantSetIds"]
-                    else:
-                        request["variantSetId"] = component[endpoint]["variantSetId"]
+                        # variants/search will throw 400 is both datasetId and variantSetIds are specified
+                        request.pop('datasetId', None)
 
                 elif endpoint == "variantsByGene":
                     request["gene"] = component[endpoint]["gene"]
@@ -414,15 +414,24 @@ class Backend(object):
         # }
 
         table = results[0].get("table")
-        field = results[0].get("field")
+        field = results[0].get("fields")
 
         if count and not field:
-            raise exceptions.MissingFieldNameException("Field list required for count query")
+            raise exceptions.MissingFieldNameException("Fields list required for count query")
 
         if table is None:
             raise exceptions.MissingFieldNameException("table")
         elif table not in self.endpointMapper:
             raise exceptions.MissingFieldNameException("Invalid results table specified")
+
+        # If patient list is empty, return an empty response
+        if len(patient_list) == 0:
+            if table == "variantsByGene":
+                table = "variants"
+
+            results = {}
+            results[table] = []
+            return json.dumps(results)
 
         # TODO: Handle returning other table types e.g. variants
         if table == "variantsByGene" or table == "variants":
@@ -620,15 +629,14 @@ class Backend(object):
                 results.append(obj)
         return self._objectListGenerator(request, results)
 
-    def comparisonGenerator(self, obj, request):
+    def comparisonGenerator(self, obj, filters):
         """
         Apply the specified operator to determine if an object is valid for the request
         :param obj: The candidate object
-        :param request: The request protobuf object
+        :param filters: The filters
         :return: True if the object is qualified, False otherwise.
         """
         qualified = True
-        filters = MessageToDict(request).get("filters", [])
 
         try:
             for filter in filters:
@@ -637,7 +645,7 @@ class Backend(object):
                         qualified = False
                         break
                     else:
-                        if not obj.mapper(filter["field"]) in filter["values"]:
+                        if obj.mapper(filter["field"]) not in filter["values"]:
                             qualified = False
                             break
                 elif not self.ops[filter["operator"].lower()](obj.mapper(filter["field"]), filter["value"]):
@@ -650,15 +658,43 @@ class Backend(object):
 
         return qualified
 
+    def filtersValidator(self, request):
+
+        filters = MessageToDict(request).get("filters", [])
+
+        for filt in filters:
+
+            if "field" not in filt or "operator" not in filt:
+                raise exceptions.BadRequestException("Please specify field and/or operator in your filters.")
+
+            elif "value" in filt and "values" in filt:
+                raise exceptions.BadRequestException("You can only specify one of value or values in one filter.")
+
+            elif "value" in filt:
+                if filt["operator"] == "in":
+                    raise exceptions.BadRequestException("You can only use the in operator when you supply a list of values in your filter, specify 'values' instead of 'value'.")
+
+            elif "values" in filt:
+                if filt["operator"] != "in":
+                    raise exceptions.BadRequestException("If you specify a list of values in your filter, the operator has to be in.")
+
+                filt["values"] = set(filt["values"])
+
+            else:
+                raise exceptions.BadRequestException("You need to specify one of value or values in one filter.")
+
+        return filters
+
     def patientsGenerator(self, request, access_map):
         """
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getPatients():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -671,9 +707,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getEnrollments():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -686,9 +723,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getConsents():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -701,9 +739,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getDiagnoses():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -716,9 +755,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getSamples():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -730,9 +770,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getTreatments():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -744,9 +785,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getOutcomes():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -758,9 +800,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getComplications():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -772,9 +815,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getTumourboards():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -786,9 +830,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getChemotherapies():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -800,9 +845,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getRadiotherapies():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -814,9 +860,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getSurgeries():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -828,9 +875,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getImmunotherapies():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -842,9 +890,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getCelltransplants():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -856,9 +905,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getSlides():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -870,9 +920,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getStudies():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -884,9 +935,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
 
         for obj in dataset.getLabtests():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -898,8 +950,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
+
         for obj in dataset.getExtractions():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -911,8 +965,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
+
         for obj in dataset.getSequencings():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -924,8 +980,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
+
         for obj in dataset.getAlignments():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -937,8 +995,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
+
         for obj in dataset.getVariantCallings():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -950,8 +1010,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
+
         for obj in dataset.getFusionDetections():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -963,8 +1025,10 @@ class Backend(object):
         dataset = self.getDataRepository().getDataset(request.dataset_id)
         tier = self.getUserAccessTier(dataset, access_map)
         results = []
+        filters = self.filtersValidator(request)
+
         for obj in dataset.getExpressionAnalyses():
-            qualified = self.comparisonGenerator(obj, request)
+            qualified = self.comparisonGenerator(obj, filters)
 
             if qualified:
                 results.append(obj)
@@ -976,7 +1040,6 @@ class Backend(object):
         pairs defined by the specified request
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
-        self.getUserAccessTier(dataset, access_map)
         return self._topLevelObjectGenerator(
             request, dataset.getNumPhenotypeAssociationSets(),
             dataset.getPhenotypeAssociationSetByIndex)
@@ -987,7 +1050,6 @@ class Backend(object):
         defined by the specified request.
         """
         dataset = self.getDataRepository().getDataset(request.dataset_id)
-        self.getUserAccessTier(dataset, access_map)
         return self._readGroupSetsGenerator(
             request, dataset.getNumReadGroupSets(),
             dataset.getReadGroupSetByIndex)
@@ -1152,31 +1214,38 @@ class Backend(object):
         by the specified request.
         """
         variantSetIds = MessageToDict(request).get("variantSetIds", None)
+        datasetId = MessageToDict(request).get("datasetId", None)
 
-        if variantSetIds is None:
-            compoundId = datamodel.VariantSetCompoundId \
-                .parse(request.variant_set_id)
-            dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
-            self.getUserAccessTier(dataset, access_map)
-            variantSet = dataset.getVariantSet(compoundId.variant_set_id)
-            intervalIterator = paging.VariantsIntervalIterator(request, variantSet)
-            return intervalIterator
+        # If none of them were specified
+        if (datasetId or variantSetIds) is None:
+            raise exceptions.BadRequestException("You need to specify one of datasetId or variantSetIds.")
 
-        else:
+        # If both of them were specified
+        if (datasetId and variantSetIds) is not None:
+            raise exceptions.BadRequestException("You can only specify one of datasetId or variantSetIds.")
+
+        # When variantSetIds are specified
+        if variantSetIds is not None:
             variantSets = []
             for variantsetId in variantSetIds:
-                compoundId = datamodel.VariantSetCompoundId \
-                    .parse(variantsetId)
+                compoundId = datamodel.VariantSetCompoundId.parse(variantsetId)
                 dataset = self.getDataRepository().getDataset(compoundId.dataset_id)
-                if dataset.getLocalId() in access_map:
-                    item = dataset.getVariantSet(variantsetId)
-                    variantSets.append(item)
+                self.getUserAccessTier(dataset, access_map)
+                item = dataset.getVariantSet(variantsetId)
+                variantSets.append(item)
 
-            iterators = []
-            for item in variantSets:
-                iterators.append(paging.VariantsIntervalIterator(request, item))
+        # When datasetId is specified, get a list of variantSets associated with it
+        else:
+            dataset = self.getDataRepository().getDataset(request.dataset_id)
+            self.getUserAccessTier(dataset, access_map)
+            variantSets = dataset.getVariantSets()
+        
+        iterators = []
 
-            return itertools.chain.from_iterable(iterators)
+        for item in variantSets:
+            iterators.append(list(paging.VariantsIntervalIterator(request, item)))
+
+        return itertools.chain.from_iterable(iterators)
 
     def genotypeMatrixGenerator(self, request, access_map):
         """
@@ -2632,6 +2701,7 @@ class Backend(object):
         results = []
         processedVariantsets = []
         dataset = self.getDataRepository().getDataset(request.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
         variantsets = dataset.getVariantSets()
         patientList = MessageToDict(request).get("patientList", None)
 
@@ -2642,8 +2712,8 @@ class Backend(object):
                 if variantset.getPatientId() in patientList:
                     processedVariantsets.append(variantset)
 
-        if request.gene == "" and request.start == "":
-            raise exceptions.BadRequestException
+        if request.gene == "" and (request.start == 0 or request.end == 0 or request.reference_name == ""):
+            raise exceptions.BadRequestException("You have to specify a gene.")
 
         if request.gene != "":
             for featureset in dataset.getFeatureSets():
@@ -2661,7 +2731,7 @@ class Backend(object):
         elif request.start != "":
             iterators = []
             for item in processedVariantsets:
-                iterators.append(paging.VariantsIntervalIterator(request, item))
+                iterators.append(list(paging.VariantsIntervalIterator(request, item)))
 
             return itertools.chain.from_iterable(iterators)
 
