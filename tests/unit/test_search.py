@@ -41,7 +41,7 @@ class TestSearchGenerator(unittest.TestCase):
             "results": [
                 {
                     "table": "patients",
-                    "field": ["gender"]
+                    "fields": ["gender"]
                 }
             ]
         }
@@ -220,7 +220,7 @@ class TestSearchGenerator(unittest.TestCase):
             "results": [
                 {
                     "table": "patients",
-                    "field": ["provinceOfResidence"]
+                    "fields": ["provinceOfResidence"]
                 }
             ]
         }
@@ -296,7 +296,7 @@ class TestSearchGenerator(unittest.TestCase):
             "results": [
                 {
                     "table": "tumourboards",
-                    "field": [
+                    "fields": [
                         "typeOfSampleAnalyzed"
                     ]
                 }
@@ -423,7 +423,6 @@ class TestSearchGenerator(unittest.TestCase):
             listOfIds.append(item.getId())
 
         request = {
-            "dataset_id": dataset_id,
             "variantSetIds": listOfIds,
             "start": "1",
             "end": "1000000",
