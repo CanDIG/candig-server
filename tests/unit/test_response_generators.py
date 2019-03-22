@@ -48,7 +48,7 @@ class TestVariantsGenerator(unittest.TestCase):
         # a request for a variant set that doesn't exist should throw an error
         variantSet = variants.AbstractVariantSet(
             self.dataset, 'notFound')
-        self.request.variant_set_id = variantSet.getId()
+        self.request.variant_set_ids.append(variantSet.getId())
         with self.assertRaises(exceptions.VariantSetNotFoundException):
             self.backend.variantsGenerator(self.request, self.access_map)
 
@@ -84,7 +84,7 @@ class TestVariantsGenerator(unittest.TestCase):
         variantSet = MockVariantSet(
             self.dataset, "mockvs", numVariants)
         self.dataset.addVariantSet(variantSet)
-        self.request.variant_set_id = variantSet.getId()
+        self.request.variant_set_ids.append(variantSet.getId())
 
 
 def generateReadAlignment(position=0, sequence='abc'):

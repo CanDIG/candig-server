@@ -41,7 +41,7 @@ class TestSearchGenerator(unittest.TestCase):
             "results": [
                 {
                     "table": "patients",
-                    "field": ["gender"]
+                    "fields": ["gender"]
                 }
             ]
         }
@@ -220,7 +220,7 @@ class TestSearchGenerator(unittest.TestCase):
             "results": [
                 {
                     "table": "patients",
-                    "field": ["provinceOfResidence"]
+                    "fields": ["provinceOfResidence"]
                 }
             ]
         }
@@ -296,7 +296,7 @@ class TestSearchGenerator(unittest.TestCase):
             "results": [
                 {
                     "table": "tumourboards",
-                    "field": [
+                    "fields": [
                         "typeOfSampleAnalyzed"
                     ]
                 }
@@ -414,7 +414,7 @@ class TestSearchGenerator(unittest.TestCase):
         self.assertEqual(len(response["variants"]), 0)
 
     def testVariantsWithListOfVariantSetIds(self):
-        dataset_id = self.dataset.getId()
+        # dataset_id = self.dataset.getId()
 
         variantSets = self.dataset.getVariantSets()
         listOfIds = []
@@ -423,7 +423,6 @@ class TestSearchGenerator(unittest.TestCase):
             listOfIds.append(item.getId())
 
         request = {
-            "dataset_id": dataset_id,
             "variantSetIds": listOfIds,
             "start": "1",
             "end": "1000000",
@@ -485,7 +484,7 @@ class TestSearchGenerator(unittest.TestCase):
                 {
                     "id": "A",
                     "variants": {
-                        "variantSetId": variantSetId,
+                        "variantSetIds": [variantSetId],
                         "table": "variants",
                         "start": "1",
                         "end": "1000000",

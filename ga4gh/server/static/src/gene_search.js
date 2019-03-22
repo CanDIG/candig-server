@@ -312,7 +312,7 @@ var statusCode = 0; // Initial value, table is empty
                 type: "variant",
                 url: prepend_path + "",
                 referenceName: chromesomeId,
-                variantSetId: "",
+                variantSetIds: "",
                 name: "",
                 pageSize: 10000,
                 visibilityWindow: 100000

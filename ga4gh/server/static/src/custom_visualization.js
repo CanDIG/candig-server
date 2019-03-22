@@ -129,7 +129,7 @@ $("#adv1_confirm").off('click').click(function() {
     document.getElementById("adv1").innerHTML = '<div class="loader_bar"></div>';
     countRequest($("#table1").val(), [$("#key1").val()], datasetId).then(function(response) {
         if (response[$("#key1").val()] == undefined) {
-            document.getElementById("adv1").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
+            document.getElementById("adv1").innerHTML = "<p class='noPermission'>No data available</p>";
         } else {
             var selectedKey = $("#key1").val();
             singleLayerDrawer("adv1", $("#type1").val(), "Distribution of " + splitString(selectedKey), currentDatasetName + " " + splitString($("#table1").val()), response[$("#key1").val()])
@@ -141,7 +141,7 @@ $("#adv2_confirm").off('click').click(function() {
     document.getElementById("adv2").innerHTML = '<div class="loader_bar"></div>';
     countRequest($("#table2").val(), [$("#key2").val()], datasetId).then(function(response) {
         if (response[$("#key2").val()] == undefined) {
-            document.getElementById("adv2").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
+            document.getElementById("adv2").innerHTML = "<p class='noPermission'>No data available</p>";
         } else {
             var selectedKey = $("#key2").val();
             singleLayerDrawer("adv2", $("#type2").val(), "Distribution of " + splitString(selectedKey), currentDatasetName + " " + splitString($("#table2").val()), response[$("#key2").val()])
@@ -168,8 +168,8 @@ function initialize() {
 
         countRequest($("#table1").val(), [$("#key1").val()], datasetId).then(function(response) {
             if (response[$("#key1").val()] == undefined) {
-                document.getElementById("adv1").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
-                document.getElementById("adv2").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
+                document.getElementById("adv1").innerHTML = "<p class='noPermission'>No data available</p>";
+                document.getElementById("adv2").innerHTML = "<p class='noPermission'>No data available</p>";
             } else {
                 singleLayerDrawer("adv1", type1, "Distribution of Treating Centre Province", currentDatasetName + " " + "Enrollments", response[$("#key1").val()])
                 singleLayerDrawer("adv2", type2, "Distribution of Treating Centre Province", currentDatasetName + " " + "Enrollments", response[$("#key2").val()])

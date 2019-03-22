@@ -83,6 +83,7 @@ function makeRequest(path, body) {
                             " If problems persist, please contact your system administrators for assistance.");
                     } else if (xhr.status == 404) {
                         alertBuilder("One or more resources you requested do not exist.");
+                        resolve(xhr.response);
                     }
                     reject(Error(xhr.response));
                 }
@@ -195,7 +196,7 @@ function complexRequestHelper(table, keys, datasetId, filter = {}, requestCount 
         "results": [
             {
                 "table": returnTable,
-                "field": keys
+                "fields": keys
             }
         ]
     }

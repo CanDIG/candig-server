@@ -68,9 +68,12 @@ function dashboard() {
             cancerTypeDrawer('cancerTypes', "pie", "cancer types and corresponding treatment drugs", response["cancerType"]);
 
             // Render a random drug frequence plot on load
-            let listOfCancerTypes = Object.keys(response["cancerType"]);
-            var selectedCancerType = listOfCancerTypes[Math.floor(Math.random() * listOfCancerTypes.length)];
-            drugScatter(selectedCancerType);
+            if (response["cancerType"]) {
+                let listOfCancerTypes = Object.keys(response["cancerType"]);
+                var selectedCancerType = listOfCancerTypes[Math.floor(Math.random() * listOfCancerTypes.length)];
+                drugScatter(selectedCancerType);
+            }
+            else noPermissionMessage("drugScatter")
         })
 
     }
@@ -87,7 +90,7 @@ function dashboard() {
     }
 
     function noPermissionMessage(id) {
-        let message = "<p class='noPermission'>You don't have access to this data.</p>";
+        let message = "<p class='noPermission'>No data available</p>";
         document.getElementById(id).innerHTML = message;
     }
 
@@ -110,6 +113,14 @@ function dashboard() {
             "datasetId": datasetId
         }).then(function(response) {
             var data = JSON.parse(response);
+
+            if (data['results'] == undefined) {
+                noPermissionMessage('hospitals');
+                noPermissionMessage('timelineSamples');
+                noPermissionMessage('queryStatus');
+                return; // Quit the function.
+            }
+
             var sampleDataset = data['results']['enrollments'];
             var collectionDateArray = [];
             var hospitalFrequency;
@@ -129,7 +140,7 @@ function dashboard() {
             else singleLayerDrawer("hospitals", 'bar', 'Hospital distribution', hospitalFrequency);
 
             if (sampleDataset[0]["enrollmentApprovalDate"] == undefined) {
-                document.getElementById("timelineSamples").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
+                document.getElementById("timelineSamples").innerHTML = "<p class='noPermission'>No data available</p>";
             } else {
                 for (var i = 0; i < sampleDataset.length; i++) {
                     if (sampleDataset[i]['enrollmentApprovalDate']) {
@@ -230,7 +241,7 @@ function dashboard() {
             {"field": "cancerType", "operator": "==", "value": cancerType}, "chemotherapies").then(function (response){
 
             if (response.length == 0) {
-            	noPermissionMessage("drugScatter")
+            	noPermissionMessage("drugScatter");
             }
 
             else {

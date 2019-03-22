@@ -119,7 +119,7 @@ class TestFrontend(unittest.TestCase):
         variantSets = self.deserialize(
             response, protocol.SearchVariantSetsResponse).variant_sets
         request = protocol.SearchVariantsRequest()
-        request.variant_set_id = variantSets[0].id
+        request.variant_set_ids.append(variantSets[0].id)
         request.reference_name = "1"
         request.start = 0
         request.end = 1
