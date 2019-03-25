@@ -434,8 +434,6 @@ class TestTreatment(unittest.TestCase):
             courseNumberTier = 0,
             therapeuticModality = "n/a",
             therapeuticModalityTier = 0,
-            systematicTherapyAgentName = "n/a",
-            systematicTherapyAgentNameTier = 0,
             treatmentPlanType = "n/a",
             treatmentPlanTypeTier = 0,
             treatmentIntent = "n/a",
@@ -446,18 +444,6 @@ class TestTreatment(unittest.TestCase):
             stopDateTier = 0,
             reasonForEndingTheTreatment = "n/a",
             reasonForEndingTheTreatmentTier = 0,
-            protocolNumberOrCode = "n/a",
-            protocolNumberOrCodeTier = 0,
-            surgeryDetails = "n/a",
-            surgeryDetailsTier = 0,
-            radiotherapyDetails = "n/a",
-            radiotherapyDetailsTier = 0,
-            chemotherapyDetails = "n/a",
-            chemotherapyDetailsTier = 0,
-            hematopoieticCellTransplant = "n/a",
-            hematopoieticCellTransplantTier = 0,
-            immunotherapyDetails = "n/a",
-            immunotherapyDetailsTier = 0,
             responseToTreatment = "n/a",
             responseToTreatmentTier = 0,
             responseCriteriaUsed = "n/a",
@@ -465,11 +451,7 @@ class TestTreatment(unittest.TestCase):
             dateOfRecurrenceOrProgressionAfterThisTreatment = "n/a",
             dateOfRecurrenceOrProgressionAfterThisTreatmentTier = 0,
             unexpectedOrUnusualToxicityDuringTreatment = "n/a",
-            unexpectedOrUnusualToxicityDuringTreatmentTier = 0,
-            drugListOrAgent = "n/a",
-            drugListOrAgentTier = 0,
-            drugIdNumbers = "n/a",
-            drugIdNumbersTier = 0
+            unexpectedOrUnusualToxicityDuringTreatmentTier = 0
         )
 
         validTreatment.attributes.attr['test']. \
@@ -486,7 +468,6 @@ class TestTreatment(unittest.TestCase):
         self.assertEqual(gaTreatment.patientId, validTreatment.patientId)
         self.assertEqual(gaTreatment.courseNumber, validTreatment.courseNumber)
         self.assertEqual(gaTreatment.startDate, validTreatment.startDate)
-        self.assertEqual(gaTreatment.drugIdNumbersTier, validTreatment.drugIdNumbersTier)
 
         # Invalid input
         invalidTreatment = '{"bad:", "json"}'
@@ -714,3 +695,502 @@ class TestTumourboard(unittest.TestCase):
             exceptions.InvalidJsonException,
             tumourboard.populateFromJson,
             invalidTumourboard)
+
+
+class TestStudy(unittest.TestCase):
+    """
+    Test the Study class
+    """
+    def testToProtocolElement(self):
+        dataset = datasets.Dataset('dataset1')
+        validStudy = protocol.Study(
+            name="test",
+            created="2016-05-19T21:00:19Z",
+            updated="2016-05-19T21:00:19Z",
+            patientId="PATIENT_TEST",
+            patientIdTier=0,
+            startDate = "n/a",
+            startDateTier=0,
+            endDate="n/a",
+            endDateTier=0,
+            status="n/a",
+            statusTier=0,
+            recordingDate="n/a",
+            recordingDateTier=0
+        )
+
+        validStudy.attributes.attr['test']. \
+            values.add().string_value = 'test-info'
+
+        # pass through protocol creation
+        study = clinMetadata.Study(
+            dataset, "test")
+        study.populateFromJson(protocol.toJson(validStudy))
+        gaStudy = study.toProtocolElement()
+        # Verify select elements exist
+        self.assertEqual(gaStudy.created, validStudy.created)
+        self.assertEqual(gaStudy.updated, validStudy.updated)
+        self.assertEqual(gaStudy.patientId, validStudy.patientId)
+        self.assertEqual(gaStudy.startDate, validStudy.startDate)
+        self.assertEqual(gaStudy.status, validStudy.status)
+        self.assertEqual(gaStudy.recordingDateTier, validStudy.recordingDateTier)
+
+        # Invalid input
+        invalidStudy = '{"bad:", "json"}'
+        study = clinMetadata.Study(dataset, "test")
+        # Should fail
+        self.assertRaises(
+            exceptions.InvalidJsonException,
+            study.populateFromJson,
+            invalidStudy)
+
+
+class TestLabtest(unittest.TestCase):
+    """
+    Test the Labtest class
+    """
+    def testToProtocolElement(self):
+        dataset = datasets.Dataset('dataset1')
+        validLabtest = protocol.Labtest(
+            name="test",
+            created="2016-05-19T21:00:19Z",
+            updated="2016-05-19T21:00:19Z",
+            patientId="PATIENT_TEST",
+            patientIdTier=0,
+            startDate="n/a",
+            startDateTier = 0,
+            collectionDate ="n/a",
+            collectionDateTier=0,
+            endDate ="n/a",
+            endDateTier=0,
+            eventType ="n/a",
+            eventTypeTier=0,
+            testResults ="n/a",
+            testResultsTier=0,
+            timePoint ="n/a",
+            timePointTier=0,
+            recordingDate ="n/a",
+            recordingDateTier=0,
+        )
+
+        validLabtest.attributes.attr['test']. \
+            values.add().string_value = 'test-info'
+
+        # pass through protocol creation
+        labtest = clinMetadata.Labtest(
+            dataset, "test")
+        labtest.populateFromJson(protocol.toJson(validLabtest))
+        gaLabtest = labtest.toProtocolElement()
+        # Verify select elements exist
+        self.assertEqual(gaLabtest.created, validLabtest.created)
+        self.assertEqual(gaLabtest.updated, validLabtest.updated)
+        self.assertEqual(gaLabtest.patientId, validLabtest.patientId)
+        self.assertEqual(gaLabtest.eventType, validLabtest.eventType)
+        self.assertEqual(gaLabtest.collectionDate, validLabtest.collectionDate)
+        self.assertEqual(gaLabtest.recordingDateTier, validLabtest.recordingDateTier)
+
+        # Invalid input
+        invalidLabtest = '{"bad:", "json"}'
+        labtest = clinMetadata.Labtest(dataset, "test")
+        # Should fail
+        self.assertRaises(
+            exceptions.InvalidJsonException,
+            labtest.populateFromJson,
+            invalidLabtest)
+
+
+class TestSlide(unittest.TestCase):
+    """
+    Test the Slide class
+    """
+    def testToProtocolElement(self):
+        dataset = datasets.Dataset('dataset1')
+        validSlide = protocol.Slide(
+            name="test",
+            created="2016-05-19T21:00:19Z",
+            updated="2016-05-19T21:00:19Z",
+            patientId="PATIENT_TEST",
+            patientIdTier=0,
+            sampleId ="n/a",
+            sampleIdTier=0,
+            slideId ="n/a",
+            slideIdTier=0,
+            slideOtherId ="n/a",
+            slideOtherIdTier=0,
+            lymphocyteInfiltrationPercent ="n/a",
+            lymphocyteInfiltrationPercentTier=0,
+            tumorNucleiPercent ="n/a",
+            tumorNucleiPercentTier=0,
+            monocyteInfiltrationPercent ="n/a",
+            monocyteInfiltrationPercentTier=0,
+            normalCellsPercent ="n/a",
+            normalCellsPercentTier=0,
+            tumorCellsPercent ="n/a",
+            tumorCellsPercentTier=0,
+            stromalCellsPercent ="n/a",
+            stromalCellsPercentTier=0,
+            eosinophilInfiltrationPercent ="n/a",
+            eosinophilInfiltrationPercentTier=0,
+            neutrophilInfiltrationPercent ="n/a",
+            neutrophilInfiltrationPercentTier=0,
+            granulocyteInfiltrationPercent ="n/a",
+            granulocyteInfiltrationPercentTier=0,
+            necrosisPercent ="n/a",
+            necrosisPercentTier=0,
+            inflammatoryInfiltrationPercent ="n/a",
+            inflammatoryInfiltrationPercentTier=0,
+            proliferatingCellsNumber ="n/a",
+            proliferatingCellsNumberTier=0,
+            sectionLocation ="n/a",
+            sectionLocationTier=0
+        )
+
+        validSlide.attributes.attr['test']. \
+            values.add().string_value = 'test-info'
+
+        # pass through protocol creation
+        slide = clinMetadata.Slide(
+            dataset, "test")
+        slide.populateFromJson(protocol.toJson(validSlide))
+        gaSlide = slide.toProtocolElement()
+        # Verify select elements exist
+        self.assertEqual(gaSlide.created, validSlide.created)
+        self.assertEqual(gaSlide.updated, validSlide.updated)
+        self.assertEqual(gaSlide.patientId, validSlide.patientId)
+        self.assertEqual(gaSlide.slideId, validSlide.slideId)
+        self.assertEqual(gaSlide.granulocyteInfiltrationPercent, validSlide.granulocyteInfiltrationPercent)
+        self.assertEqual(gaSlide.sectionLocationTier, validSlide.sectionLocationTier)
+
+        # Invalid input
+        invalidSlide = '{"bad:", "json"}'
+        slide = clinMetadata.Slide(dataset, "test")
+        # Should fail
+        self.assertRaises(
+            exceptions.InvalidJsonException,
+            slide.populateFromJson,
+            invalidSlide)
+
+
+class TestChemotherapy(unittest.TestCase):
+    """
+    Test the Chemotherapy class
+    """
+    def testToProtocolElement(self):
+        dataset = datasets.Dataset('dataset1')
+        validChemotherapy = protocol.Chemotherapy(
+            name="test",
+            created="2016-05-19T21:00:19Z",
+            updated="2016-05-19T21:00:19Z",
+            patientId="PATIENT_TEST",
+            patientIdTier=0,
+            courseNumber="n/a",
+            courseNumberTier=0,
+            startDate="n/a",
+            startDateTier=0,
+            stopDate="n/a",
+            stopDateTier=0,
+            systematicTherapyAgentName="n/a",
+            systematicTherapyAgentNameTier=0,
+            route="n/a",
+            routeTier=0,
+            dose="n/a",
+            doseTier=0,
+            doseFrequency="n/a",
+            doseFrequencyTier=0,
+            doseUnit="n/a",
+            doseUnitTier=0,
+            daysPerCycle="n/a",
+            daysPerCycleTier=0,
+            numberOfCycle="n/a",
+            numberOfCycleTier=0,
+            treatmentIntent="n/a",
+            treatmentIntentTier=0,
+            treatingCentreName="n/a",
+            treatingCentreNameTier=0,
+            type="n/a",
+            typeTier=0,
+            protocolCode="n/a",
+            protocolCodeTier=0,
+            recordingDate="n/a",
+            recordingDateTier=0,
+            treatmentPlanId="n/a",
+            treatmentPlanIdTier=0
+        )
+
+        validChemotherapy.attributes.attr['test']. \
+            values.add().string_value = 'test-info'
+
+        # pass through protocol creation
+        chemotherapy = clinMetadata.Chemotherapy(
+            dataset, "test")
+        chemotherapy.populateFromJson(protocol.toJson(validChemotherapy))
+        gaChemotherapy = chemotherapy.toProtocolElement()
+        # Verify select elements exist
+        self.assertEqual(gaChemotherapy.created, validChemotherapy.created)
+        self.assertEqual(gaChemotherapy.updated, validChemotherapy.updated)
+        self.assertEqual(gaChemotherapy.patientId, validChemotherapy.patientId)
+        self.assertEqual(gaChemotherapy.systematicTherapyAgentName, validChemotherapy.systematicTherapyAgentName)
+        self.assertEqual(gaChemotherapy.protocolCode, validChemotherapy.protocolCode)
+        self.assertEqual(gaChemotherapy.treatmentPlanIdTier, validChemotherapy.treatmentPlanIdTier)
+
+        # Invalid input
+        invalidChemotherapy = '{"bad:", "json"}'
+        chemotherapy = clinMetadata.Chemotherapy(dataset, "test")
+        # Should fail
+        self.assertRaises(
+            exceptions.InvalidJsonException,
+            chemotherapy.populateFromJson,
+            invalidChemotherapy)
+
+
+class TestRadiotherapy(unittest.TestCase):
+    """
+    Test the Radiotherapy class
+    """
+    def testToProtocolElement(self):
+        dataset = datasets.Dataset('dataset1')
+        validRadiotherapy = protocol.Radiotherapy(
+            name="test",
+            created="2016-05-19T21:00:19Z",
+            updated="2016-05-19T21:00:19Z",
+            patientId="PATIENT_TEST",
+            patientIdTier=0,
+            courseNumber="n/a",
+            courseNumberTier=0,
+            startDate="n/a",
+            startDateTier=0,
+            stopDate="n/a",
+            stopDateTier=0,
+            therapeuticModality="n/a",
+            therapeuticModalityTier=0,
+            baseline="n/a",
+            baselineTier=0,
+            testResult="n/a",
+            testResultTier=0,
+            testResultStd="n/a",
+            testResultStdTier=0,
+            treatingCentreName="n/a",
+            treatingCentreNameTier=0,
+            startIntervalRad="n/a",
+            startIntervalRadTier=0,
+            startIntervalRadRaw="n/a",
+            startIntervalRadRawTier=0,
+            recordingDate="n/a",
+            recordingDateTier=0,
+            adjacentFields="n/a",
+            adjacentFieldsTier=0,
+            adjacentFractions="n/a",
+            adjacentFractionsTier=0,
+            complete="n/a",
+            completeTier=0,
+            brachytherapyDose="n/a",
+            brachytherapyDoseTier=0,
+            radiotherapyDose="n/a",
+            radiotherapyDoseTier=0,
+            siteNumber="n/a",
+            siteNumberTier=0,
+            technique="n/a",
+            techniqueTier=0,
+            treatedRegion="n/a",
+            treatedRegionTier=0,
+            treatmentPlanId="n/a",
+            treatmentPlanIdTier=0,
+            radiationType="n/a",
+            radiationTypeTier=0,
+            radiationSite="n/a",
+            radiationSiteTier=0,
+            totalDose="n/a",
+            totalDoseTier=0,
+            boostSite="n/a",
+            boostSiteTier=0,
+            boostDose="n/a",
+            boostDoseTier=0
+        )
+
+        validRadiotherapy.attributes.attr['test']. \
+            values.add().string_value = 'test-info'
+
+        # pass through protocol creation
+        radiotherapy = clinMetadata.Radiotherapy(
+            dataset, "test")
+        radiotherapy.populateFromJson(protocol.toJson(validRadiotherapy))
+        gaRadiotherapy = radiotherapy.toProtocolElement()
+        # Verify select elements exist
+        self.assertEqual(gaRadiotherapy.created, validRadiotherapy.created)
+        self.assertEqual(gaRadiotherapy.updated, validRadiotherapy.updated)
+        self.assertEqual(gaRadiotherapy.patientId, validRadiotherapy.patientId)
+        self.assertEqual(gaRadiotherapy.brachytherapyDose, validRadiotherapy.brachytherapyDose)
+        self.assertEqual(gaRadiotherapy.adjacentFractions, validRadiotherapy.adjacentFractions)
+        self.assertEqual(gaRadiotherapy.treatmentPlanIdTier, validRadiotherapy.treatmentPlanIdTier)
+
+        # Invalid input
+        invalidRadiotherapy = '{"bad:", "json"}'
+        radiotherapy = clinMetadata.Radiotherapy(dataset, "test")
+        # Should fail
+        self.assertRaises(
+            exceptions.InvalidJsonException,
+            radiotherapy.populateFromJson,
+            invalidRadiotherapy)
+
+
+class TestSurgery(unittest.TestCase):
+    """
+    Test the Surgery class
+    """
+    def testToProtocolElement(self):
+        dataset = datasets.Dataset('dataset1')
+        validSurgery = protocol.Surgery(
+            name="test",
+            created="2016-05-19T21:00:19Z",
+            updated="2016-05-19T21:00:19Z",
+            patientId="PATIENT_TEST",
+            patientIdTier=0,
+            startDate="n/a",
+            startDateTier=0,
+            stopDate="n/a",
+            stopDateTier=0,
+            sampleId="n/a",
+            sampleIdTier=0,
+            collectionTimePoint="n/a",
+            collectionTimePointTier=0,
+            diagnosisDate="n/a",
+            diagnosisDateTier=0,
+            site="n/a",
+            siteTier=0,
+            type="n/a",
+            typeTier=0,
+            recordingDate="n/a",
+            recordingDateTier=0,
+            treatmentPlanId="n/a",
+            treatmentPlanIdTier=0,
+            courseNumber="1",
+            courseNumberTier=0
+        )
+
+        validSurgery.attributes.attr['test']. \
+            values.add().string_value = 'test-info'
+
+        # pass through protocol creation
+        surgery = clinMetadata.Surgery(
+            dataset, "test")
+        surgery.populateFromJson(protocol.toJson(validSurgery))
+        gaSurgery = surgery.toProtocolElement()
+        # Verify select elements exist
+        self.assertEqual(gaSurgery.created, validSurgery.created)
+        self.assertEqual(gaSurgery.updated, validSurgery.updated)
+        self.assertEqual(gaSurgery.patientId, validSurgery.patientId)
+        self.assertEqual(gaSurgery.collectionTimePoint, validSurgery.collectionTimePoint)
+        self.assertEqual(gaSurgery.recordingDate, validSurgery.recordingDate)
+        self.assertEqual(gaSurgery.treatmentPlanIdTier, validSurgery.treatmentPlanIdTier)
+
+        # Invalid input
+        invalidSurgery = '{"bad:", "json"}'
+        surgery = clinMetadata.Surgery(dataset, "test")
+        # Should fail
+        self.assertRaises(
+            exceptions.InvalidJsonException,
+            surgery.populateFromJson,
+            invalidSurgery)
+
+
+class TestImmunotherapy(unittest.TestCase):
+    """
+    Test the Immunotherapy class
+    """
+    def testToProtocolElement(self):
+        dataset = datasets.Dataset('dataset1')
+        validImmunotherapy = protocol.Immunotherapy(
+            name="test",
+            created="2016-05-19T21:00:19Z",
+            updated="2016-05-19T21:00:19Z",
+            patientId="PATIENT_TEST",
+            patientIdTier=0,
+            startDate="n/a",
+            startDateTier=0,
+            immunotherapyType="n/a",
+            immunotherapyTypeTier=0,
+            immunotherapyTarget="n/a",
+            immunotherapyTargetTier=0,
+            immunotherapyDetail="n/a",
+            immunotherapyDetailTier=0,
+            treatmentPlanId="n/a",
+            treatmentPlanIdTier=0,
+            courseNumber="1",
+            courseNumberTier=0
+        )
+
+        validImmunotherapy.attributes.attr['test']. \
+            values.add().string_value = 'test-info'
+
+        # pass through protocol creation
+        immunotherapy = clinMetadata.Immunotherapy(
+            dataset, "test")
+        immunotherapy.populateFromJson(protocol.toJson(validImmunotherapy))
+        gaImmunotherapy = immunotherapy.toProtocolElement()
+        # Verify select elements exist
+        self.assertEqual(gaImmunotherapy.created, validImmunotherapy.created)
+        self.assertEqual(gaImmunotherapy.updated, validImmunotherapy.updated)
+        self.assertEqual(gaImmunotherapy.patientId, validImmunotherapy.patientId)
+        self.assertEqual(gaImmunotherapy.immunotherapyType, validImmunotherapy.immunotherapyType)
+        self.assertEqual(gaImmunotherapy.immunotherapyDetailTier, validImmunotherapy.immunotherapyDetailTier)
+        self.assertEqual(gaImmunotherapy.treatmentPlanId, validImmunotherapy.treatmentPlanId)
+
+        # Invalid input
+        invalidImmunotherapy = '{"bad:", "json"}'
+        immunotherapy = clinMetadata.Immunotherapy(dataset, "test")
+        # Should fail
+        self.assertRaises(
+            exceptions.InvalidJsonException,
+            immunotherapy.populateFromJson,
+            invalidImmunotherapy)
+
+
+class TestCelltransplant(unittest.TestCase):
+    """
+        Test the Celltransplant class
+        """
+
+    def testToProtocolElement(self):
+        dataset = datasets.Dataset('dataset1')
+        validCelltransplant = protocol.Celltransplant(
+            name="test",
+            created="2016-05-19T21:00:19Z",
+            updated="2016-05-19T21:00:19Z",
+            patientId="PATIENT_TEST",
+            patientIdTier=0,
+            startDate="n/a",
+            startDateTier=0,
+            cellSource="n/a",
+            cellSourceTier=0,
+            donorType="n/a",
+            donorTypeTier=0,
+            treatmentPlanId="PATIENT_TEST_1",
+            treatmentPlanIdTier=0,
+            courseNumber="1",
+            courseNumberTier=0
+        )
+
+        validCelltransplant.attributes.attr['test']. \
+            values.add().string_value = 'test-info'
+
+        # pass through protocol creation
+        celltransplant = clinMetadata.Celltransplant(
+            dataset, "test")
+        celltransplant.populateFromJson(protocol.toJson(validCelltransplant))
+        gaCelltransplant = celltransplant.toProtocolElement()
+        # Verify select elements exist
+        self.assertEqual(gaCelltransplant.created, validCelltransplant.created)
+        self.assertEqual(gaCelltransplant.updated, validCelltransplant.updated)
+        self.assertEqual(gaCelltransplant.patientId, validCelltransplant.patientId)
+        self.assertEqual(gaCelltransplant.cellSource, validCelltransplant.cellSource)
+        self.assertEqual(gaCelltransplant.courseNumber, validCelltransplant.courseNumber)
+        self.assertEqual(gaCelltransplant.treatmentPlanId, validCelltransplant.treatmentPlanId)
+
+        # Invalid input
+        invalidCelltransplant = '{"bad:", "json"}'
+        celltransplant = clinMetadata.Celltransplant(dataset, "test")
+        # Should fail
+        self.assertRaises(
+            exceptions.InvalidJsonException,
+            celltransplant.populateFromJson,
+            invalidCelltransplant)

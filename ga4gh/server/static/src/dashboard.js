@@ -54,23 +54,28 @@ function dashboard() {
     this.initialize = function() {
         alertCloser();
         loadingBarInitiator();
-        samplesFetcher();
-        makeRequest("treatments/search", {
-            "datasetId": datasetId
-        }).then(function(response) {
-            var data = JSON.parse(response);
-            var statusObj = {
-                "Known Peers": data['status']['Known peers'],
-                "Queried Peers": data['status']['Queried peers'],
-                "Successful Communications": data['status']['Successful communications']
+        enrollmentsFetcher();
+
+        countRequest("treatments", 
+            ["responseToTreatment", "therapeuticModality"], 
+            datasetId
+        ).then(function(response) {
+            singleLayerDrawer("responseToTreatment", 'bar', 'Response to treatments', response["responseToTreatment"]);
+            singleLayerDrawer("therapeuticToResponses", 'bar', 'Therapeutic Types', response["therapeuticModality"]);
+        })
+
+        countRequest("diagnoses", ["cancerType"], datasetId).then(function(response) {
+            cancerTypeDrawer('cancerTypes', "pie", "cancer types and corresponding treatment drugs", response["cancerType"]);
+
+            // Render a random drug frequence plot on load
+            if (response["cancerType"]) {
+                let listOfCancerTypes = Object.keys(response["cancerType"]);
+                var selectedCancerType = listOfCancerTypes[Math.floor(Math.random() * listOfCancerTypes.length)];
+                drugScatter(selectedCancerType);
             }
-            singleLayerDrawer("queryStatus", 'bar', 'Server status', statusObj);
-            treatments = data['results']['treatments'];
-            if (treatments[0]["responseToTreatment"] != undefined) {
-                cancerTypeDruglistFetcher();
-                treatmentsFetcher(treatments);
-            } else noPermissionMsg();
-        })        
+            else noPermissionMessage("drugScatter")
+        })
+
     }
 
     function loadingBarInitiator() {
@@ -84,13 +89,9 @@ function dashboard() {
         document.getElementById("timelineSamples").innerHTML = loader;
     }
 
-    function noPermissionMsg() {
-        let message = "<p class='noPermission'>You don't have access to this data.</p>";
-        document.getElementById("responseToTreatment").innerHTML = message;
-        document.getElementById("therapeuticToResponses").innerHTML = message;
-        document.getElementById("cancerTypes").innerHTML = message;
-        document.getElementById("drugScatter").innerHTML = message;
-        document.getElementById("hospitals").innerHTML = message;
+    function noPermissionMessage(id) {
+        let message = "<p class='noPermission'>No data available</p>";
+        document.getElementById(id).innerHTML = message;
     }
 
 
@@ -107,37 +108,48 @@ function dashboard() {
         return seriesObjList;
     }
 
-    function treatmentsFetcher(treatments) {
-        singleLayerDrawer("responseToTreatment", 'bar', 'Response to treatments', groupBy(treatments, "responseToTreatment"));
-        singleLayerDrawer("therapeuticToResponses", 'bar', 'Therapeutic Types', groupBy(treatments, "therapeuticModality"));
-    }
-
-    function samplesFetcher() {
-        makeRequest("samples/search", {
+    function enrollmentsFetcher() {
+        makeRequest("enrollments/search", {
             "datasetId": datasetId
         }).then(function(response) {
             var data = JSON.parse(response);
-            var sampleDataset = data['results']['samples'];
+
+            if (data['results'] == undefined) {
+                noPermissionMessage('hospitals');
+                noPermissionMessage('timelineSamples');
+                noPermissionMessage('queryStatus');
+                return; // Quit the function.
+            }
+
+            var sampleDataset = data['results']['enrollments'];
             var collectionDateArray = [];
             var hospitalFrequency;
 
-            if (sampleDataset[0]["collectionHospital"] != undefined) {
-                hospitalFrequency = groupBy(sampleDataset, "collectionHospital")
-                singleLayerDrawer("hospitals", 'bar', 'Hospital distribution', hospitalFrequency);
+            var statusObj = {
+                "Known Peers": data['status']['Known peers'],
+                "Queried Peers": data['status']['Queried peers'],
+                "Successful Communications": data['status']['Successful communications']
             }
+            singleLayerDrawer("queryStatus", 'bar', 'Server status', statusObj);
 
-            if (sampleDataset[0]["collectionDate"] == undefined) {
-                document.getElementById("timelineSamples").innerHTML = "<p class='noPermission'>You don't have access to this data.</p>";
+            hospitalFrequency = groupBy(sampleDataset, "treatingCentreName")
+
+            if (Object.keys(hospitalFrequency).length == 0) {
+            	noPermissionMessage("hospitals")
+            }
+            else singleLayerDrawer("hospitals", 'bar', 'Hospital distribution', hospitalFrequency);
+
+            if (sampleDataset[0]["enrollmentApprovalDate"] == undefined) {
+                document.getElementById("timelineSamples").innerHTML = "<p class='noPermission'>No data available</p>";
             } else {
                 for (var i = 0; i < sampleDataset.length; i++) {
-                    if (sampleDataset[i]['collectionDate']) {
-                        var tempDate = sampleDataset[i]['collectionDate'];
-                        sampleDataset[i]['collectionDate'] = tempDate.substr(tempDate.length - 4);
+                    if (sampleDataset[i]['enrollmentApprovalDate']) {
+                        let tempDate = new Date(sampleDataset[i]['enrollmentApprovalDate']);
+                        sampleDataset[i]['enrollmentApprovalDate'] = tempDate.getFullYear();
                     }
                 }
 
-                collectionDateArray = groupBy(sampleDataset, "collectionDate")
-
+                collectionDateArray = groupBy(sampleDataset, "enrollmentApprovalDate")
 
                 var years = Object.keys(collectionDateArray);
                 var yearsCount = Object.values(collectionDateArray);
@@ -215,243 +227,211 @@ function dashboard() {
         });
     }
 
-    function drillDownDrawer(elementId, titleText, seriesName, seriesList, cancerTypeWithDrug) {
-        Highcharts.chart(elementId, {
-            chart: {
-                type: 'bar'
-            },
-            title: {
-                text: titleText
-            },
-            credits: {
-                enabled: false
-            },
-            exporting: {
-                enabled: false
-            },
-            xAxis: {
-                type: 'category'
-            },
-            legend: {
-                enabled: false
-            },
-            plotOptions: {
-                series: {
-                    borderWidth: 0,
-                    dataLabels: {
-                        enabled: true
-                    }
-                }
-            },
-            series: [{
-                type: 'pie',
-                name: seriesName,
-                colorByPoint: true,
-                data: seriesList,
-                cursor: 'pointer',
-                point: {
-                    events: {
-                        click: function() {
-                            drugScatter(cancerTypeWithDrug, this.name);
-                        }
-                    }
-                }
-            }],
-        });
-    }
 
-    function cancerTypeDruglistFetcher() {
-        makeRequest("diagnoses/search", {
-            "datasetId": datasetId
-        }).then(function(response) {
-            var data = JSON.parse(response);
-            var diagnosesDatasets = data['results']['diagnoses'];
-            var seriesList = [];
-            var seriesObj = {};
-            var tempCancerList = [];
+    // Draw the drug scatter plot
+    function drugScatter(cancerType) {
 
-            var cancerTypeWithDrug = {}
-            var filteredDiagDataset = []
+        let listOfDrugsWithLength = {}
 
-            for (var i = 0; i < diagnosesDatasets.length; i++) {
-                // only the record that has both values will be included
-                if (diagnosesDatasets[i]['cancerType'] && diagnosesDatasets[i]['patientId']) {
-                    filteredDiagDataset.push(diagnosesDatasets[i])
-                }
+        // Format: [[0, y1], [0, y2], [1, y3] ...] to render the scatter plot.
+        let indexedDrugList = []
+        let day = 1000 * 60 * 60 * 24
+
+        searchRequest("diagnoses", ["systematicTherapyAgentName", "startDate", "stopDate"], datasetId, 
+            {"field": "cancerType", "operator": "==", "value": cancerType}, "chemotherapies").then(function (response){
+
+            if (response.length == 0) {
+            	noPermissionMessage("drugScatter");
             }
 
-            // A merged array of diagnoses and treatments, with a left join performed
-            var mergedData = filteredDiagDataset.map(x => Object.assign(x, treatments.find(y => y.patientId == x.patientId)));
+            else {
+	            for (let i = 0; i < response.length; i++) {
+	                let curr = response[i]
+	                
+	                let startDate = new Date(curr["startDate"]);
+	                let stopDate = new Date(curr["stopDate"]);
+	                let duration = Math.floor((stopDate - startDate) / day);
+	                let drug = curr["systematicTherapyAgentName"]
 
-            // Length of a day
-            let day = 1000 * 60 * 60 * 24
+	                if (!listOfDrugsWithLength[drug]) {
+	                   listOfDrugsWithLength[drug] = [];
+	                   listOfDrugsWithLength[drug].push(duration);
+	                }
+	                else listOfDrugsWithLength[drug].push(duration);
+	            }
 
-            /*
-            Build a dict that stores cancerType, drug and duration information.
-            Format: {"cancerType1": {"drug1": ["duration1", "duration2", ...]}}
-            */
-            for (let i = 0; i < mergedData.length; i++) {
-                let curr = mergedData[i];
+	        	let drugList = Object.keys(listOfDrugsWithLength);
 
-                if (curr["drugListOrAgent"] && curr["startDate"] && curr["stopDate"]) {
-                    let startDate = new Date(curr["startDate"]);
-                    let stopDate = new Date(curr["stopDate"]);
-                    let duration = Math.floor((stopDate - startDate) / day);
+	            for (let i = 0; i < drugList.length; i++) {
 
-                    let currDrugList = curr["drugListOrAgent"].split(", ");
+	            	for (let j = 0; j < listOfDrugsWithLength[drugList[i]].length; j++) {
+	            		let tempDrugDate = [];
+	            		tempDrugDate.push(i);
+	            		tempDrugDate.push(listOfDrugsWithLength[drugList[i]][j]);
+	            		indexedDrugList.push(tempDrugDate);
+	            	}
+	            }
 
-                    for (let j = 0; j < currDrugList.length; j++) {
-                        if (!cancerTypeWithDrug[curr["cancerType"]]) {
-                            cancerTypeWithDrug[curr["cancerType"]] = {}
-                        }
+		        Highcharts.chart("drugScatter", {
+		            chart: {
+		                renderTo: 'drugScatter',
+		                type: 'scatter',
+		                zoomType: 'xy'
+		            },
+		            title: {
+		                text: 'Time of drug treatment for ' + cancerType
+		            },
+		            credits: {
+		                enabled: false
+		            },
+		            exporting: {
+		                enabled: false
+		            },
+		            xAxis: {
+		                categories: drugList
+		            },
+		            yAxis: {
+		                title: {
+		                    text: 'days'
+		                }
+		            },
+		            tooltip: {
+		                formatter: function() {
+		                    return '' +
+		                        this.x + ', ' + this.y + ' days';
+		                }
+		            },
+		            plotOptions: {
+		                scatter: {
+		                    marker: {
+		                        symbol: 'circle',
+		                        radius: 5,
+		                        states: {
+		                            hover: {
+		                                enabled: true,
+		                                lineColor: 'rgb(100,100,100)'
+		                            }
+		                        }
+		                    },
+		                    states: {
+		                        hover: {
+		                            marker: {
+		                                enabled: false
+		                            }
+		                        }
+		                    }
+		                }
+		            },
+		            series: [{
+		                name: 'Drugs',
+		                color: 'rgba(223, 83, 83, .75)',
+		                data: indexedDrugList
 
-                        // If the list that stores duration of drug has not been initialized
-                        if (!cancerTypeWithDrug[curr["cancerType"]][currDrugList[j]]) {
-                            cancerTypeWithDrug[curr["cancerType"]][currDrugList[j]] = []
-                        }
-                        cancerTypeWithDrug[curr["cancerType"]][currDrugList[j]].push(duration)
-                    }
-                }
+		            }]
+		        });
             }
-            var cancerTypes = Object.keys(cancerTypeWithDrug)
 
-            // A random scatter plot is generated at first
-            let randomNum = Math.floor(Math.random() * cancerTypes.length);
-            let randomCancer = cancerTypes[randomNum];
-            drugScatter(cancerTypeWithDrug, randomCancer);
-
-            // Calculate the frequency of cancer types
-            var tempCancerObj = groupBy(diagnosesDatasets, "cancerType")
-            var cancerTypesList = Object.keys(tempCancerObj);
-            var cancerTypeFreq = Object.values(tempCancerObj);
-
-            for (var i = 0; i < cancerTypesList.length; i++) {
-                seriesObj = {};
-                seriesObj['name'] = cancerTypesList[i];
-                seriesObj['y'] = cancerTypeFreq[i];
-                seriesObj['drilldown'] = cancerTypesList[i];
-                seriesList.push(seriesObj);
-            }
-
-            drillDownDrawer('cancerTypes', "cancer types and corresponding treatment drugs", 'cancer types', seriesList, cancerTypeWithDrug);
         })
     }
 
+    function cancerTypeDrawer(id, type, title, count) {
+    	if (count == undefined) {
+        	noPermissionMessage(id);
+    	}
 
-    // Draw the drug scatter plot
-    function drugScatter(cancerTypeWithDrug, cancerType) {
-        // list of drugs used in the current cancer type
+    	else {
+	        var categories = Object.keys(count);
+	        var values = Object.values(count);
+	        var seriesArray = highChartSeriesObjectMaker(categories, values);
 
-        let listOfDrugs = Object.keys(cancerTypeWithDrug[cancerType])
-        let listOfDrugsWithLength = []
-
-        for (var i = 0; i < listOfDrugs.length; i++) {
-            let temp;
-            for (var j = 0; j < cancerTypeWithDrug[cancerType][listOfDrugs[i]].length; j++) {
-                temp = []
-                temp.push(i)
-                temp.push(cancerTypeWithDrug[cancerType][listOfDrugs[i]][j])
-
-                listOfDrugsWithLength.push(temp)
-            }
-        }
-
-        Highcharts.chart("drugScatter", {
-            chart: {
-                renderTo: 'drugScatter',
-                type: 'scatter',
-                zoomType: 'xy'
-            },
-            title: {
-                text: 'Time of drug treatment for ' + cancerType
-            },
-            credits: {
-                enabled: false
-            },
-            exporting: {
-                enabled: false
-            },
-            xAxis: {
-                categories: listOfDrugs
-            },
-            yAxis: {
-                title: {
-                    text: 'days'
-                }
-            },
-            tooltip: {
-                formatter: function() {
-                    return '' +
-                        this.x + ', ' + this.y + ' days';
-                }
-            },
-            plotOptions: {
-                scatter: {
-                    marker: {
-                        symbol: 'circle',
-                        radius: 5,
-                        states: {
-                            hover: {
-                                enabled: true,
-                                lineColor: 'rgb(100,100,100)'
-                            }
-                        }
-                    },
-                    states: {
-                        hover: {
-                            marker: {
-                                enabled: false
-                            }
-                        }
-                    }
-                }
-            },
-            series: [{
-                name: 'Drugs',
-                color: 'rgba(223, 83, 83, .75)',
-                data: listOfDrugsWithLength
-
-            }]
-        });
+	        Highcharts.chart(id, {
+	            chart: {
+	                type: type
+	            },
+	            credits: {
+	                enabled: false
+	            },
+	            exporting: {
+	                enabled: false
+	            },
+	            title: {
+	                text: title
+	            },
+	            xAxis: {
+	                type: 'category'
+	            },
+	            legend: {
+	                enabled: false
+	            },
+	            plotOptions: {
+	                series: {
+	                    borderWidth: 0,
+	                    dataLabels: {
+	                        enabled: true
+	                    }
+	                }
+	            },
+	            series: [{
+	                name: 'count',
+	                colorByPoint: true,
+	                data: seriesArray,
+	                cursor: 'pointer',
+	                point:{
+	                  events:{
+	                      click: function (event) {
+	                          drugScatter(this.name);
+	                      }
+	                  }
+	              }
+	            }]
+	        });
+    	}
     }
 
     function singleLayerDrawer(id, type, title, count) {
-        var categories = Object.keys(count);
-        var values = Object.values(count);
-        var seriesArray = highChartSeriesObjectMaker(categories, values);
 
-        Highcharts.chart(id, {
-            chart: {
-                type: type
-            },
-            credits: {
-                enabled: false
-            },
-            exporting: {
-                enabled: false
-            },
-            title: {
-                text: title
-            },
-            xAxis: {
-                type: 'category'
-            },
-            legend: {
-                enabled: false
-            },
-            plotOptions: {
-                series: {
-                    borderWidth: 0,
-                    dataLabels: {
-                        enabled: true
-                    }
-                }
-            },
-            series: [{
-                name: 'count',
-                colorByPoint: true,
-                data: seriesArray
-            }]
-        });
+    	if (count == undefined) {
+        	noPermissionMessage(id);
+    	}
+
+    	else {
+	        var categories = Object.keys(count);
+	        var values = Object.values(count);
+	        var seriesArray = highChartSeriesObjectMaker(categories, values);
+
+	        Highcharts.chart(id, {
+	            chart: {
+	                type: type
+	            },
+	            credits: {
+	                enabled: false
+	            },
+	            exporting: {
+	                enabled: false
+	            },
+	            title: {
+	                text: title
+	            },
+	            xAxis: {
+	                type: 'category'
+	            },
+	            legend: {
+	                enabled: false
+	            },
+	            plotOptions: {
+	                series: {
+	                    borderWidth: 0,
+	                    dataLabels: {
+	                        enabled: true
+	                    }
+	                }
+	            },
+	            series: [{
+	                name: 'count',
+	                colorByPoint: true,
+	                data: seriesArray
+	            }]
+	        });
+    	}
     }
 }

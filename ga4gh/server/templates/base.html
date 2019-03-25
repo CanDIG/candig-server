@@ -42,7 +42,8 @@
          <a class="dropdown-toggle" href="#" role="button" id="user-dropdown-top" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="text"><i class="fas fa-user-circle"></i> {{ username }}</a></span>
          <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{{prepend_path}}/serverinfo"><i class="fas fa-info-circle"></i> info</a>
+            <a class="dropdown-item" href="{{prepend_path}}/serverinfo"><i class="fas fa-info-circle"></i> Server info</a>
+            <a class="dropdown-item" href="{{prepend_path}}/api_info"><i class="fas fa-file-alt"></i> API info</a>
             <a class="dropdown-item" onclick="logout()" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
          </ul>
       </div>

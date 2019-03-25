@@ -753,6 +753,190 @@ class RepoManager(object):
             self._updateRepo(self._repo.removeTumourboard, tumourboard)
         self._confirmDelete("Tumourboard", tumourboard.getLocalId(), func)
 
+    def addChemotherapy(self):
+        """
+        Adds a new chemotherapy into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        chemotherapy = bio_metadata.Chemotherapy(
+            dataset, self._args.chemotherapyName)
+        chemotherapy.populateFromJson(self._args.chemotherapy)
+        self._updateRepo(self._repo.insertChemotherapy, chemotherapy)
+
+    def removeChemotherapy(self):
+        """
+        Removes an chemotherapy from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        chemotherapy = dataset.getChemotherapyByName(self._args.chemotherapyName)
+
+        def func():
+            self._updateRepo(self._repo.removeChemotherapy, chemotherapy)
+        self._confirmDelete("Chemotherapy", chemotherapy.getLocalId(), func)
+
+    def addRadiotherapy(self):
+        """
+        Adds a new radiotherapy into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        radiotherapy = bio_metadata.Radiotherapy(
+            dataset, self._args.radiotherapyName)
+        radiotherapy.populateFromJson(self._args.radiotherapy)
+        self._updateRepo(self._repo.insertRadiotherapy, radiotherapy)
+
+    def removeRadiotherapy(self):
+        """
+        Removes an radiotherapy from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        radiotherapy = dataset.getRadiotherapyByName(self._args.radiotherapyName)
+
+        def func():
+            self._updateRepo(self._repo.removeRadiotherapy, radiotherapy)
+        self._confirmDelete("Radiotherapy", radiotherapy.getLocalId(), func)
+
+    def addSurgery(self):
+        """
+        Adds a new surgery into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        surgery = bio_metadata.Surgery(
+            dataset, self._args.surgeryName)
+        surgery.populateFromJson(self._args.surgery)
+        self._updateRepo(self._repo.insertSurgery, surgery)
+
+    def removeSurgery(self):
+        """
+        Removes an surgery from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        surgery = dataset.getSurgeryByName(self._args.surgeryName)
+
+        def func():
+            self._updateRepo(self._repo.removeSurgery, surgery)
+        self._confirmDelete("Surgery", surgery.getLocalId(), func)
+
+    def addImmunotherapy(self):
+        """
+        Adds a new immunotherapy into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        immunotherapy = bio_metadata.Immunotherapy(
+            dataset, self._args.immunotherapyName)
+        immunotherapy.populateFromJson(self._args.immunotherapy)
+        self._updateRepo(self._repo.insertImmunotherapy, immunotherapy)
+
+    def removeImmunotherapy(self):
+        """
+        Removes an immunotherapy from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        immunotherapy = dataset.getImmunotherapyByName(self._args.immunotherapyName)
+
+        def func():
+            self._updateRepo(self._repo.removeImmunotherapy, immunotherapy)
+        self._confirmDelete("Immunotherapy", immunotherapy.getLocalId(), func)
+
+    def addCelltransplant(self):
+        """
+        Adds a new celltransplant into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        celltransplant = bio_metadata.Celltransplant(
+            dataset, self._args.celltransplantName)
+        celltransplant.populateFromJson(self._args.celltransplant)
+        self._updateRepo(self._repo.insertCelltransplant, celltransplant)
+
+    def removeCelltransplant(self):
+        """
+        Removes an celltransplant from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        celltransplant = dataset.getCelltransplantByName(self._args.celltransplantName)
+
+        def func():
+            self._updateRepo(self._repo.removeCelltransplant, celltransplant)
+        self._confirmDelete("Celltransplant", celltransplant.getLocalId(), func)
+
+    def addSlide(self):
+        """
+        Adds a new slide into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        slide = bio_metadata.Slide(
+            dataset, self._args.slideName)
+        slide.populateFromJson(self._args.slide)
+        self._updateRepo(self._repo.insertSlide, slide)
+
+    def removeSlide(self):
+        """
+        Removes an slide from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        slide = dataset.getSlideByName(self._args.slideName)
+
+        def func():
+            self._updateRepo(self._repo.removeSlide, slide)
+        self._confirmDelete("Slide", slide.getLocalId(), func)
+
+    def addStudy(self):
+        """
+        Adds a new study into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        study = bio_metadata.Study(
+            dataset, self._args.studyName)
+        study.populateFromJson(self._args.study)
+        self._updateRepo(self._repo.insertStudy, study)
+
+    def removeStudy(self):
+        """
+        Removes an study from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        study = dataset.getStudyByName(self._args.studyName)
+
+        def func():
+            self._updateRepo(self._repo.removeStudy, study)
+        self._confirmDelete("Study", study.getLocalId(), func)
+
+    def addLabtest(self):
+        """
+        Adds a new labtest into this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        labtest = bio_metadata.Labtest(
+            dataset, self._args.labtestName)
+        labtest.populateFromJson(self._args.labtest)
+        self._updateRepo(self._repo.insertLabtest, labtest)
+
+    def removeLabtest(self):
+        """
+        Removes an labtest from this repo
+        """
+        self._openRepo()
+        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        labtest = dataset.getLabtestByName(self._args.labtestName)
+
+        def func():
+            self._updateRepo(self._repo.removeLabtest, labtest)
+        self._confirmDelete("Labtest", labtest.getLocalId(), func)
+
     def addExtraction(self):
         """
         Adds a new extraction into this repo
@@ -993,17 +1177,28 @@ class RepoManager(object):
         else:
             name = self._args.name
         # TODO: programs not fully supported by GA4GH yet
+        sampleId = self._args.sampleId
+        patientId = self._args.patientId
         programs = ""
         featureType = "gene"
         if self._args.transcript:
             featureType = "transcript"
+
+        if patientId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding patient ID"
+            )
+        if sampleId is None:
+            raise exceptions.RepoManagerException(
+                "Please provide a corresponding sample ID"
+            )
         rnaseq2ga.rnaseq2ga(
             self._args.quantificationFilePath, self._args.filePath, name,
             self._args.format, dataset=dataset, featureType=featureType,
             description=self._args.description, programs=programs,
             featureSetNames=self._args.featureSetNames,
             readGroupSetNames=self._args.readGroupSetName,
-            biosampleId=biosampleId)
+            biosampleId=biosampleId, sampleId=sampleId, patientId=patientId)
 
     def initRnaQuantificationSet(self):
         """
@@ -1268,6 +1463,102 @@ class RepoManager(object):
         subparser.add_argument(
             "tumourboard",
             help="the JSON of the tumourboard")
+
+    @classmethod
+    def addChemotherapyNameArgument(cls, subparser):
+        subparser.add_argument(
+            "chemotherapyName",
+            help="the name of the chemotherapy")
+
+    @classmethod
+    def addChemotherapyArgument(cls, subparser):
+        subparser.add_argument(
+            "chemotherapy",
+            help="the JSON of the chemotherapy")
+
+    @classmethod
+    def addRadiotherapyNameArgument(cls, subparser):
+        subparser.add_argument(
+            "radiotherapyName",
+            help="the name of the radiotherapy")
+
+    @classmethod
+    def addRadiotherapyArgument(cls, subparser):
+        subparser.add_argument(
+            "radiotherapy",
+            help="the JSON of the radiotherapy")
+
+    @classmethod
+    def addSurgeryNameArgument(cls, subparser):
+        subparser.add_argument(
+            "surgeryName",
+            help="the name of the surgery")
+
+    @classmethod
+    def addSurgeryArgument(cls, subparser):
+        subparser.add_argument(
+            "surgery",
+            help="the JSON of the surgery")
+
+    @classmethod
+    def addImmunotherapyNameArgument(cls, subparser):
+        subparser.add_argument(
+            "immunotherapyName",
+            help="the name of the immunotherapy")
+
+    @classmethod
+    def addImmunotherapyArgument(cls, subparser):
+        subparser.add_argument(
+            "immunotherapy",
+            help="the JSON of the immunotherapy")
+
+    @classmethod
+    def addCelltransplantNameArgument(cls, subparser):
+        subparser.add_argument(
+            "celltransplantName",
+            help="the name of the celltransplant")
+
+    @classmethod
+    def addCelltransplantArgument(cls, subparser):
+        subparser.add_argument(
+            "celltransplant",
+            help="the JSON of the celltransplant")
+
+    @classmethod
+    def addSlideNameArgument(cls, subparser):
+        subparser.add_argument(
+            "slideName",
+            help="the name of the slide")
+
+    @classmethod
+    def addSlideArgument(cls, subparser):
+        subparser.add_argument(
+            "slide",
+            help="the JSON of the slide")
+
+    @classmethod
+    def addStudyNameArgument(cls, subparser):
+        subparser.add_argument(
+            "studyName",
+            help="the name of the study")
+
+    @classmethod
+    def addStudyArgument(cls, subparser):
+        subparser.add_argument(
+            "study",
+            help="the JSON of the study")
+
+    @classmethod
+    def addLabtestNameArgument(cls, subparser):
+        subparser.add_argument(
+            "labtestName",
+            help="the name of the labtest")
+
+    @classmethod
+    def addLabtestArgument(cls, subparser):
+        subparser.add_argument(
+            "labtest",
+            help="the JSON of the labtest")
 
     @classmethod
     def addExtractionNameArgument(cls, subparser):
@@ -1918,6 +2209,142 @@ class RepoManager(object):
         cls.addTumourboardNameArgument(removeTumourboardParser)
         cls.addForceOption(removeTumourboardParser)
 
+        addChemotherapyParser = common_cli.addSubparser(
+            subparsers, "add-chemotherapy", "Add an Chemotherapy to the dataset")
+        addChemotherapyParser.set_defaults(runner="addChemotherapy")
+        cls.addRepoArgument(addChemotherapyParser)
+        cls.addDatasetNameArgument(addChemotherapyParser)
+        cls.addChemotherapyNameArgument(addChemotherapyParser)
+        cls.addChemotherapyArgument(addChemotherapyParser)
+
+        removeChemotherapyParser = common_cli.addSubparser(
+            subparsers, "remove-chemotherapy",
+            "Remove an Chemotherapy from the repo")
+        removeChemotherapyParser.set_defaults(runner="removeChemotherapy")
+        cls.addRepoArgument(removeChemotherapyParser)
+        cls.addDatasetNameArgument(removeChemotherapyParser)
+        cls.addChemotherapyNameArgument(removeChemotherapyParser)
+        cls.addForceOption(removeChemotherapyParser)
+
+        addRadiotherapyParser = common_cli.addSubparser(
+            subparsers, "add-radiotherapy", "Add an Radiotherapy to the dataset")
+        addRadiotherapyParser.set_defaults(runner="addRadiotherapy")
+        cls.addRepoArgument(addRadiotherapyParser)
+        cls.addDatasetNameArgument(addRadiotherapyParser)
+        cls.addRadiotherapyNameArgument(addRadiotherapyParser)
+        cls.addRadiotherapyArgument(addRadiotherapyParser)
+
+        removeRadiotherapyParser = common_cli.addSubparser(
+            subparsers, "remove-radiotherapy",
+            "Remove an Radiotherapy from the repo")
+        removeRadiotherapyParser.set_defaults(runner="removeRadiotherapy")
+        cls.addRepoArgument(removeRadiotherapyParser)
+        cls.addDatasetNameArgument(removeRadiotherapyParser)
+        cls.addRadiotherapyNameArgument(removeRadiotherapyParser)
+        cls.addForceOption(removeRadiotherapyParser)
+
+        addSurgeryParser = common_cli.addSubparser(
+            subparsers, "add-surgery", "Add an Surgery to the dataset")
+        addSurgeryParser.set_defaults(runner="addSurgery")
+        cls.addRepoArgument(addSurgeryParser)
+        cls.addDatasetNameArgument(addSurgeryParser)
+        cls.addSurgeryNameArgument(addSurgeryParser)
+        cls.addSurgeryArgument(addSurgeryParser)
+
+        removeSurgeryParser = common_cli.addSubparser(
+            subparsers, "remove-surgery",
+            "Remove an Surgery from the repo")
+        removeSurgeryParser.set_defaults(runner="removeSurgery")
+        cls.addRepoArgument(removeSurgeryParser)
+        cls.addDatasetNameArgument(removeSurgeryParser)
+        cls.addSurgeryNameArgument(removeSurgeryParser)
+        cls.addForceOption(removeSurgeryParser)
+
+        addImmunotherapyParser = common_cli.addSubparser(
+            subparsers, "add-immunotherapy", "Add an Immunotherapy to the dataset")
+        addImmunotherapyParser.set_defaults(runner="addImmunotherapy")
+        cls.addRepoArgument(addImmunotherapyParser)
+        cls.addDatasetNameArgument(addImmunotherapyParser)
+        cls.addImmunotherapyNameArgument(addImmunotherapyParser)
+        cls.addImmunotherapyArgument(addImmunotherapyParser)
+
+        removeImmunotherapyParser = common_cli.addSubparser(
+            subparsers, "remove-immunotherapy",
+            "Remove an Immunotherapy from the repo")
+        removeImmunotherapyParser.set_defaults(runner="removeImmunotherapy")
+        cls.addRepoArgument(removeImmunotherapyParser)
+        cls.addDatasetNameArgument(removeImmunotherapyParser)
+        cls.addImmunotherapyNameArgument(removeImmunotherapyParser)
+        cls.addForceOption(removeImmunotherapyParser)
+
+        addCelltransplantParser = common_cli.addSubparser(
+            subparsers, "add-celltransplant", "Add an Celltransplant to the dataset")
+        addCelltransplantParser.set_defaults(runner="addCelltransplant")
+        cls.addRepoArgument(addCelltransplantParser)
+        cls.addDatasetNameArgument(addCelltransplantParser)
+        cls.addCelltransplantNameArgument(addCelltransplantParser)
+        cls.addCelltransplantArgument(addCelltransplantParser)
+
+        removeCelltransplantParser = common_cli.addSubparser(
+            subparsers, "remove-celltransplant",
+            "Remove an Celltransplant from the repo")
+        removeCelltransplantParser.set_defaults(runner="removeCelltransplant")
+        cls.addRepoArgument(removeCelltransplantParser)
+        cls.addDatasetNameArgument(removeCelltransplantParser)
+        cls.addCelltransplantNameArgument(removeCelltransplantParser)
+        cls.addForceOption(removeCelltransplantParser)
+
+        addSlideParser = common_cli.addSubparser(
+            subparsers, "add-slide", "Add an Slide to the dataset")
+        addSlideParser.set_defaults(runner="addSlide")
+        cls.addRepoArgument(addSlideParser)
+        cls.addDatasetNameArgument(addSlideParser)
+        cls.addSlideNameArgument(addSlideParser)
+        cls.addSlideArgument(addSlideParser)
+
+        removeSlideParser = common_cli.addSubparser(
+            subparsers, "remove-slide",
+            "Remove an Slide from the repo")
+        removeSlideParser.set_defaults(runner="removeSlide")
+        cls.addRepoArgument(removeSlideParser)
+        cls.addDatasetNameArgument(removeSlideParser)
+        cls.addSlideNameArgument(removeSlideParser)
+        cls.addForceOption(removeSlideParser)
+
+        addStudyParser = common_cli.addSubparser(
+            subparsers, "add-study", "Add an Study to the dataset")
+        addStudyParser.set_defaults(runner="addStudy")
+        cls.addRepoArgument(addStudyParser)
+        cls.addDatasetNameArgument(addStudyParser)
+        cls.addStudyNameArgument(addStudyParser)
+        cls.addStudyArgument(addStudyParser)
+
+        removeStudyParser = common_cli.addSubparser(
+            subparsers, "remove-study",
+            "Remove an Study from the repo")
+        removeStudyParser.set_defaults(runner="removeStudy")
+        cls.addRepoArgument(removeStudyParser)
+        cls.addDatasetNameArgument(removeStudyParser)
+        cls.addStudyNameArgument(removeStudyParser)
+        cls.addForceOption(removeStudyParser)
+
+        addLabtestParser = common_cli.addSubparser(
+            subparsers, "add-labtest", "Add an Labtest to the dataset")
+        addLabtestParser.set_defaults(runner="addLabtest")
+        cls.addRepoArgument(addLabtestParser)
+        cls.addDatasetNameArgument(addLabtestParser)
+        cls.addLabtestNameArgument(addLabtestParser)
+        cls.addLabtestArgument(addLabtestParser)
+
+        removeLabtestParser = common_cli.addSubparser(
+            subparsers, "remove-labtest",
+            "Remove an Labtest from the repo")
+        removeLabtestParser.set_defaults(runner="removeLabtest")
+        cls.addRepoArgument(removeLabtestParser)
+        cls.addDatasetNameArgument(removeLabtestParser)
+        cls.addLabtestNameArgument(removeLabtestParser)
+        cls.addForceOption(removeLabtestParser)
+
         addExtractionParser = common_cli.addSubparser(
             subparsers, "add-extraction", "Add a Extraction to the dataset")
         addExtractionParser.set_defaults(runner="addExtraction")
@@ -2036,6 +2463,10 @@ class RepoManager(object):
         cls.addDatasetNameArgument(addRnaQuantificationParser)
         addRnaQuantificationParser.add_argument(
             "--biosampleName", default=None, help="Biosample Name")
+        addRnaQuantificationParser.add_argument(
+            "--sampleId", default=None, help="SampleId")
+        addRnaQuantificationParser.add_argument(
+            "--patientId", default=None, help="PatientId")
         addRnaQuantificationParser.add_argument(
             "--readGroupSetName", default=None, help="Read Group Set Name")
         addRnaQuantificationParser.add_argument(

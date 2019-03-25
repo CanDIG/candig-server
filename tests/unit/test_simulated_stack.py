@@ -527,7 +527,7 @@ class TestSimulatedStack(unittest.TestCase):
         referenceName = '1'
         start = 2**15
         request = protocol.SearchVariantsRequest()
-        request.variant_set_id = self.variantSet.getId()
+        request.variant_set_ids.append(self.variantSet.getId())
         request.reference_name = referenceName
         request.start = start
         request.end = 2**16
@@ -603,7 +603,7 @@ class TestSimulatedStack(unittest.TestCase):
         request.reference_name = referenceName
         request.start = 0
         request.end = 0
-        request.variant_set_id = self.variantSet.getId()
+        request.variant_set_ids.append(self.variantSet.getId())
 
         # Request windows is too small, no results
         path = '/variants/search'

@@ -84,7 +84,8 @@ var statusCode = 0; // Initial value, table is empty
 
         var geneRequestObj = {
             'datasetId': datasetId,
-            'gene': geneRequest
+            'gene': geneRequest,
+            'pageSize': '10000'
         }
 
         makeRequest("/variantsbygenesearch", geneRequestObj).then(function(response) {
@@ -124,6 +125,7 @@ var statusCode = 0; // Initial value, table is empty
     function readGroupFetcher(geneRequest, geneDataset) {
         makeRequest("readgroupsets/search", {"datasetId": datasetId}).then(function(response) {
             var listOfReadGroupSets = JSON.parse(response)['results']["readGroupSets"];
+            let listOfReadGroupSetsNames = []
             readGroupsetsDict = {}
 
             try {
@@ -131,14 +133,21 @@ var statusCode = 0; // Initial value, table is empty
                 let chromesomeId = geneDataset[0]['referenceName'].replace('chr', '')
 
                 for (let i = 0; i < listOfReadGroupSets.length; i++) {
+                    let readGroupIds = []
 
                     let temp_rg_igv = {
                         referenceId: "",
                         referenceSetId: listOfReadGroupSets[i]["readGroups"][0]["referenceSetId"],
-                        readGroupIds: listOfReadGroupSets[i]["readGroups"][0]["id"],
                         readGroupSetIds: listOfReadGroupSets[i]["id"],
                         name: listOfReadGroupSets[i]["name"]
                     }
+
+                    // Iterate through readGroups to find all readGroupIds
+                    for (let j = 0; j < listOfReadGroupSets[i]["readGroups"].length; j++) {
+                        readGroupIds.push(listOfReadGroupSets[i]["readGroups"][j]["id"]);
+                    }
+
+                    temp_rg_igv["readGroupIds"] = readGroupIds;
 
                     readGroupsetsDict[listOfReadGroupSets[i]["name"]] = temp_rg_igv;
                 }
@@ -149,8 +158,15 @@ var statusCode = 0; // Initial value, table is empty
                 let rgSelect = document.getElementById("rgSelect");
                 rgSelect.innerHTML = "";
 
+                // Sort the list of readGroupSets
                 for (let i = 0; i < listOfReadGroupSets.length; i++){
-                    rgSelect.options[rgSelect.options.length] = new Option(listOfReadGroupSets[i]['name'], listOfReadGroupSets[i]['name'])
+                    listOfReadGroupSetsNames.push(listOfReadGroupSets[i]['name']);
+                }
+
+                listOfReadGroupSetsNames.sort();
+
+                for (let i = 0; i < listOfReadGroupSetsNames.length; i++) {
+                    rgSelect.options[rgSelect.options.length] = new Option(listOfReadGroupSetsNames[i], listOfReadGroupSetsNames[i])
                 }
 
                 $('.selectpicker').selectpicker('refresh');
@@ -183,7 +199,7 @@ var statusCode = 0; // Initial value, table is empty
         else {
             try {
 
-                let promises = []
+                let promises = [];
 
                 // One promise is needed for every reference ID search.
                 for (let i = 0; i < selectedValues.length; i++) {
@@ -198,13 +214,10 @@ var statusCode = 0; // Initial value, table is empty
                     igvCaller(values, readGroupsetsDict['chromesomeId'], selectedValues, readGroupsetsDict['geneRequest']);
                 })
             }
-
             catch (err) {
                 alertBuilder("The IGV Browser cannot be rendered for the selected read group sets.")
             }            
         }
-
-
     }
 
     /**
@@ -259,7 +272,7 @@ var statusCode = 0; // Initial value, table is empty
     */
     function alignmentTrackGenerator(listOfAlignments) {
 
-        let trackOfAlignments = []
+        let trackOfAlignments = [];
 
         for (let i = 0; i < listOfAlignments.length; i++) {
             let igv_alignment_object = {
@@ -290,7 +303,7 @@ var statusCode = 0; // Initial value, table is empty
      * @return a Promise with the constructed IGV variants object
     */
     function variantsTrackGenerator(listOfVariantSets, chromesomeId) {
-        let trackOfVariants = []
+        let trackOfVariants = [];
 
         for (let j = 0; j < listOfVariantSets.length; j++) {
 
@@ -299,7 +312,7 @@ var statusCode = 0; // Initial value, table is empty
                 type: "variant",
                 url: prepend_path + "",
                 referenceName: chromesomeId,
-                variantSetId: "",
+                variantSetIds: "",
                 name: "",
                 pageSize: 10000,
                 visibilityWindow: 100000
@@ -370,7 +383,7 @@ var statusCode = 0; // Initial value, table is empty
                         responseObjList.push(responseObj)
                     }
                 }
-                resolve(responseObjList)
+                resolve(responseObjList);
             })
         })
     }
@@ -378,7 +391,7 @@ var statusCode = 0; // Initial value, table is empty
     /**
      * Invoke a new IGV browser instance.
      * @param {string} geneRequest: The gene searched by the user.
-     * @param {tracks} a list of IGV alignment and variant sobjects.
+     * @param {array} tracks: a list of IGV alignment and variant sobjects.
     */
     function igvSearch(geneRequest, tracks) {
         var div = document.getElementById('igvSample')

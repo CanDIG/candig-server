@@ -97,6 +97,46 @@ class Dataset(datamodel.DatamodelObject):
         self._tumourboardIds = []
         self._tumourboardIdMap = {}
         self._tumourboardNameMap = {}
+
+        # Chemotherapy
+        self._chemotherapyIds = []
+        self._chemotherapyIdMap = {}
+        self._chemotherapyNameMap = {}
+
+        # Radiotherapy
+        self._radiotherapyIds = []
+        self._radiotherapyIdMap = {}
+        self._radiotherapyNameMap = {}
+
+        # Surgery
+        self._surgeryIds = []
+        self._surgeryIdMap = {}
+        self._surgeryNameMap = {}
+
+        # Immunotherapy
+        self._immunotherapyIds = []
+        self._immunotherapyIdMap = {}
+        self._immunotherapyNameMap = {}
+
+        # Celltransplant
+        self._celltransplantIds = []
+        self._celltransplantIdMap = {}
+        self._celltransplantNameMap = {}
+
+        # Slide
+        self._slideIds = []
+        self._slideIdMap = {}
+        self._slideNameMap = {}
+
+        # Study
+        self._studyIds = []
+        self._studyIdMap = {}
+        self._studyNameMap = {}
+
+        # Labtest
+        self._labtestIds = []
+        self._labtestIdMap = {}
+        self._labtestNameMap = {}
         
         # Extraction
         self._extractionIds = []
@@ -249,7 +289,79 @@ class Dataset(datamodel.DatamodelObject):
         self._tumourboardIdMap[id_] = tumourboard
         self._tumourboardIds.append(id_)
         self._tumourboardNameMap[tumourboard.getName()] = tumourboard
-        
+
+    def addChemotherapy(self, chemotherapy):
+        """
+        Adds the specified chemotherapy to this dataset.
+        """
+        id_ = chemotherapy.getId()
+        self._chemotherapyIdMap[id_] = chemotherapy
+        self._chemotherapyIds.append(id_)
+        self._chemotherapyNameMap[chemotherapy.getName()] = chemotherapy
+
+    def addRadiotherapy(self, radiotherapy):
+        """
+        Adds the specified radiotherapy to this dataset.
+        """
+        id_ = radiotherapy.getId()
+        self._radiotherapyIdMap[id_] = radiotherapy
+        self._radiotherapyIds.append(id_)
+        self._radiotherapyNameMap[radiotherapy.getName()] = radiotherapy
+
+    def addSurgery(self, surgery):
+        """
+        Adds the specified surgery to this dataset.
+        """
+        id_ = surgery.getId()
+        self._surgeryIdMap[id_] = surgery
+        self._surgeryIds.append(id_)
+        self._surgeryNameMap[surgery.getName()] = surgery
+
+    def addImmunotherapy(self, immunotherapy):
+        """
+        Adds the specified immunotherapy to this dataset.
+        """
+        id_ = immunotherapy.getId()
+        self._immunotherapyIdMap[id_] = immunotherapy
+        self._immunotherapyIds.append(id_)
+        self._immunotherapyNameMap[immunotherapy.getName()] = immunotherapy
+
+    def addCelltransplant(self, celltransplant):
+        """
+        Adds the specified celltransplant to this dataset.
+        """
+        id_ = celltransplant.getId()
+        self._celltransplantIdMap[id_] = celltransplant
+        self._celltransplantIds.append(id_)
+        self._celltransplantNameMap[celltransplant.getName()] = celltransplant
+
+    def addSlide(self, slide):
+        """
+        Adds the specified slide to this dataset.
+        """
+        id_ = slide.getId()
+        self._slideIdMap[id_] = slide
+        self._slideIds.append(id_)
+        self._slideNameMap[slide.getName()] = slide
+
+    def addStudy(self, study):
+        """
+        Adds the specified study to this dataset.
+        """
+        id_ = study.getId()
+        self._studyIdMap[id_] = study
+        self._studyIds.append(id_)
+        self._studyNameMap[study.getName()] = study
+
+    def addLabtest(self, labtest):
+        """
+        Adds the specified labtest to this dataset.
+        """
+        id_ = labtest.getId()
+        self._labtestIdMap[id_] = labtest
+        self._labtestIds.append(id_)
+        self._labtestNameMap[labtest.getName()] = labtest
+
     def addExtraction(self, extraction):
         """
         Adds the specified extraction to this dataset.
@@ -755,6 +867,198 @@ class Dataset(datamodel.DatamodelObject):
         if id_ not in self._tumourboardIdMap:
             raise exceptions.TumourboardNotFoundException(id_)
         return self._tumourboardIdMap[id_]
+
+    def getChemotherapies(self):
+        """
+        Returns the list of chemotherapys in this dataset
+        """
+        return [self._chemotherapyIdMap[id_] for id_ in self._chemotherapyIds]
+
+    def getChemotherapyByName(self, name):
+        """
+        Returns an chemotherapy with the specified name, or raises a
+        ChemotherapyNameNotFoundException if it does not exist.
+        """
+        if name not in self._chemotherapyNameMap:
+            raise exceptions.ChemotherapyNameNotFoundException(name)
+        return self._chemotherapyNameMap[name]
+
+    def getChemotherapy(self, id_):
+        """
+        Returns the Chemotherapy with the specified id, or raises
+        a ChemotherapyNotFoundException otherwise.
+        """
+        if id_ not in self._chemotherapyIdMap:
+            raise exceptions.ChemotherapyNotFoundException(id_)
+        return self._chemotherapyIdMap[id_]
+
+    def getRadiotherapies(self):
+        """
+        Returns the list of radiotherapys in this dataset
+        """
+        return [self._radiotherapyIdMap[id_] for id_ in self._radiotherapyIds]
+
+    def getRadiotherapyByName(self, name):
+        """
+        Returns an radiotherapy with the specified name, or raises a
+        RadiotherapyNameNotFoundException if it does not exist.
+        """
+        if name not in self._radiotherapyNameMap:
+            raise exceptions.RadiotherapyNameNotFoundException(name)
+        return self._radiotherapyNameMap[name]
+
+    def getRadiotherapy(self, id_):
+        """
+        Returns the Radiotherapy with the specified id, or raises
+        a RadiotherapyNotFoundException otherwise.
+        """
+        if id_ not in self._radiotherapyIdMap:
+            raise exceptions.RadiotherapyNotFoundException(id_)
+        return self._radiotherapyIdMap[id_]
+
+    def getSurgeries(self):
+        """
+        Returns the list of surgerys in this dataset
+        """
+        return [self._surgeryIdMap[id_] for id_ in self._surgeryIds]
+
+    def getSurgeryByName(self, name):
+        """
+        Returns an surgery with the specified name, or raises a
+        SurgeryNameNotFoundException if it does not exist.
+        """
+        if name not in self._surgeryNameMap:
+            raise exceptions.SurgeryNameNotFoundException(name)
+        return self._surgeryNameMap[name]
+
+    def getSurgery(self, id_):
+        """
+        Returns the Surgery with the specified id, or raises
+        a SurgeryNotFoundException otherwise.
+        """
+        if id_ not in self._surgeryIdMap:
+            raise exceptions.SurgeryNotFoundException(id_)
+        return self._surgeryIdMap[id_]
+
+    def getImmunotherapies(self):
+        """
+        Returns the list of immunotherapys in this dataset
+        """
+        return [self._immunotherapyIdMap[id_] for id_ in self._immunotherapyIds]
+
+    def getImmunotherapyByName(self, name):
+        """
+        Returns an immunotherapy with the specified name, or raises a
+        ImmunotherapyNameNotFoundException if it does not exist.
+        """
+        if name not in self._immunotherapyNameMap:
+            raise exceptions.ImmunotherapyNameNotFoundException(name)
+        return self._immunotherapyNameMap[name]
+
+    def getImmunotherapy(self, id_):
+        """
+        Returns the Immunotherapy with the specified id, or raises
+        a ImmunotherapyNotFoundException otherwise.
+        """
+        if id_ not in self._immunotherapyIdMap:
+            raise exceptions.ImmunotherapyNotFoundException(id_)
+        return self._immunotherapyIdMap[id_]
+
+    def getCelltransplants(self):
+        """
+        Returns the list of celltransplants in this dataset
+        """
+        return [self._celltransplantIdMap[id_] for id_ in self._celltransplantIds]
+
+    def getCelltransplantByName(self, name):
+        """
+        Returns an celltransplant with the specified name, or raises a
+        CelltransplantNameNotFoundException if it does not exist.
+        """
+        if name not in self._celltransplantNameMap:
+            raise exceptions.CelltransplantNameNotFoundException(name)
+        return self._celltransplantNameMap[name]
+
+    def getCelltransplant(self, id_):
+        """
+        Returns the Celltransplant with the specified id, or raises
+        a CelltransplantNotFoundException otherwise.
+        """
+        if id_ not in self._celltransplantIdMap:
+            raise exceptions.CelltransplantNotFoundException(id_)
+        return self._celltransplantIdMap[id_]
+
+    def getSlides(self):
+        """
+        Returns the list of slides in this dataset
+        """
+        return [self._slideIdMap[id_] for id_ in self._slideIds]
+
+    def getSlideByName(self, name):
+        """
+        Returns an slide with the specified name, or raises a
+        SlideNameNotFoundException if it does not exist.
+        """
+        if name not in self._slideNameMap:
+            raise exceptions.SlideNameNotFoundException(name)
+        return self._slideNameMap[name]
+
+    def getSlide(self, id_):
+        """
+        Returns the Slide with the specified id, or raises
+        a SlideNotFoundException otherwise.
+        """
+        if id_ not in self._slideIdMap:
+            raise exceptions.SlideNotFoundException(id_)
+        return self._slideIdMap[id_]
+
+    def getStudies(self):
+        """
+        Returns the list of studys in this dataset
+        """
+        return [self._studyIdMap[id_] for id_ in self._studyIds]
+
+    def getStudyByName(self, name):
+        """
+        Returns an study with the specified name, or raises a
+        StudyNameNotFoundException if it does not exist.
+        """
+        if name not in self._studyNameMap:
+            raise exceptions.StudyNameNotFoundException(name)
+        return self._studyNameMap[name]
+
+    def getStudy(self, id_):
+        """
+        Returns the Study with the specified id, or raises
+        a StudyNotFoundException otherwise.
+        """
+        if id_ not in self._studyIdMap:
+            raise exceptions.StudyNotFoundException(id_)
+        return self._studyIdMap[id_]
+
+    def getLabtests(self):
+        """
+        Returns the list of labtests in this dataset
+        """
+        return [self._labtestIdMap[id_] for id_ in self._labtestIds]
+
+    def getLabtestByName(self, name):
+        """
+        Returns an labtest with the specified name, or raises a
+        LabtestNameNotFoundException if it does not exist.
+        """
+        if name not in self._labtestNameMap:
+            raise exceptions.LabtestNameNotFoundException(name)
+        return self._labtestNameMap[name]
+
+    def getLabtest(self, id_):
+        """
+        Returns the Labtest with the specified id, or raises
+        a LabtestNotFoundException otherwise.
+        """
+        if id_ not in self._labtestIdMap:
+            raise exceptions.LabtestNotFoundException(id_)
+        return self._labtestIdMap[id_]
 
     def getExtractions(self):
         """
