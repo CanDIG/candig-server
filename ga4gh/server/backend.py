@@ -252,17 +252,17 @@ class Backend(object):
             return patient_array
 
         elif logic_key == 'id':
-            id_list = []
+            id_set = set()
 
             try:
                 for response in responses[logic[logic_key]]:
                     patient_id = self.getResponsePatientId(response, dataset_id)
-                    if patient_id not in id_list:
-                        id_list.append(patient_id)
+                    id_set.add(patient_id)
                 if logic_negate:
                     id_list_all = self.getAllPatientId(dataset_id, access_map)
-                    id_set = set(id_list_all) - set(id_list)
-                    id_list = list(id_set)
+                    id_set = set(id_list_all) - id_set
+                
+                id_list = list(id_set)
                 return id_list
 
             except KeyError:

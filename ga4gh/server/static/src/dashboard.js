@@ -73,7 +73,7 @@ function dashboard() {
                 var selectedCancerType = listOfCancerTypes[Math.floor(Math.random() * listOfCancerTypes.length)];
                 drugScatter(selectedCancerType);
             }
-            else noPermissionMessage("drugScatter")
+            else noPermissionMessage("drugScatter");
         })
 
     }
@@ -113,13 +113,6 @@ function dashboard() {
             "datasetId": datasetId
         }).then(function(response) {
             var data = JSON.parse(response);
-
-            if (data['results'] == undefined) {
-                noPermissionMessage('hospitals');
-                noPermissionMessage('timelineSamples');
-                noPermissionMessage('queryStatus');
-                return; // Quit the function.
-            }
 
             var sampleDataset = data['results']['enrollments'];
             var collectionDateArray = [];
@@ -164,6 +157,10 @@ function dashboard() {
 
                 timelineDrawer(yearsCount, years, cumulativeYearCounts);
             }
+        }, function(Error) {
+                noPermissionMessage('hospitals');
+                noPermissionMessage('timelineSamples');
+                noPermissionMessage('queryStatus');
         })
     }
 
