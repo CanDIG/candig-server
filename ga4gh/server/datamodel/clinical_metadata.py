@@ -3680,7 +3680,6 @@ class Chemotherapy(datamodel.DatamodelObject):
         self._treatmentPlanId = ChemotherapyRecord.treatmentPlanId
         self._treatmentPlanIdTier = ChemotherapyRecord.treatmentPlanIdTier
 
-
         return self
 
     def populateFromJson(self, jsonString):
