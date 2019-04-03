@@ -793,7 +793,7 @@ class DatamodelObject(object):
         Return True if the access level is higher than the required, False otherwise.
         """
 
-        if "Tier" in attribute_name:
+        if attribute_name.endswith("Tier"):
             return False
 
         else:
