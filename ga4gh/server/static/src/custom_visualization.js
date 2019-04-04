@@ -219,7 +219,10 @@ function singleLayerDrawer(id, type, title, subtitle, count) {
     Highcharts.chart(id, {
         chart: {
             type: type,
-            zoomType: 'xy'
+            zoomType: 'xy',
+            style: {
+                fontFamily: "Roboto"
+            }
         },
         credits: {
             enabled: false
