@@ -89,7 +89,7 @@ class Extraction(datamodel.DatamodelObject):
             record[str('site')] = str(self.getSite())
 
         Extraction = protocol.Extraction(**record)
-        self.serializeAttributes(Extraction)
+        self.serializeMetadataAttributes(Extraction)
 
         return Extraction
 
@@ -133,8 +133,7 @@ class Extraction(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -306,7 +305,7 @@ class Sequencing(datamodel.DatamodelObject):
             record[str('site')] = str(self.getSite())
 
         Sequencing = protocol.Sequencing(**record)
-        self.serializeAttributes(Sequencing)
+        self.serializeMetadataAttributes(Sequencing)
 
         return Sequencing
 
@@ -358,8 +357,7 @@ class Sequencing(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -598,7 +596,7 @@ class Alignment(datamodel.DatamodelObject):
             record[str('site')] = str(self.getSite())
 
         Alignment = protocol.Alignment(**record)
-        self.serializeAttributes(Alignment)
+        self.serializeMetadataAttributes(Alignment)
 
         return Alignment
 
@@ -664,8 +662,7 @@ class Alignment(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -943,7 +940,7 @@ class VariantCalling(datamodel.DatamodelObject):
             record[str('site')] = str(self.getSite())
 
         VariantCalling = protocol.VariantCalling(**record)
-        self.serializeAttributes(VariantCalling)
+        self.serializeMetadataAttributes(VariantCalling)
 
         return VariantCalling
 
@@ -1003,8 +1000,7 @@ class VariantCalling(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -1240,7 +1236,7 @@ class FusionDetection(datamodel.DatamodelObject):
             record[str('site')] = str(self.getSite())
 
         FusionDetection = protocol.FusionDetection(**record)
-        self.serializeAttributes(FusionDetection)
+        self.serializeMetadataAttributes(FusionDetection)
 
         return FusionDetection
 
@@ -1292,8 +1288,7 @@ class FusionDetection(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -1487,7 +1482,7 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
             record[str('site')] = str(self.getSite())
 
         ExpressionAnalysis = protocol.ExpressionAnalysis(**record)
-        self.serializeAttributes(ExpressionAnalysis)
+        self.serializeMetadataAttributes(ExpressionAnalysis)
 
         return ExpressionAnalysis
 
@@ -1535,8 +1530,7 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields

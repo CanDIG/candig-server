@@ -788,6 +788,44 @@ class DatamodelObject(object):
         else:
             self._attributes = {}
 
+    def validateAttribute(self, attribute_name, attributes, tier=0):
+        """
+        Return True if the access level is higher than the required, False otherwise.
+        """
+
+        if attribute_name.endswith("Tier"):
+            return False
+
+        else:
+            attrTierObj = attributes.get(attribute_name + 'Tier', None)
+
+            if attrTierObj is not None:
+                attrTier = attrTierObj[0].get('int32Value', None)
+
+            if attrTierObj is None or attrTier is None or tier < attrTier:
+                return False
+
+            else:
+                return True
+
+    def serializeMetadataAttributes(self, msg, tier=0):
+        """
+        Sets the attrbutes of a message for metadata during serialization.
+        """
+        attributes = self.getAttributes()
+
+        for attribute_name in attributes:
+            if self.validateAttribute(attribute_name, attributes, tier) is True:
+                values = []
+                for dictionary in attributes[attribute_name]:
+                    for key in dictionary:
+                        values.append(dictionary[key])
+
+                protocol.setAttribute(
+                    msg.attributes.attr[attribute_name].values, values)
+
+        return msg
+
     def serializeAttributes(self, msg):
         """
         Sets the attrbutes of a message during serialization.
