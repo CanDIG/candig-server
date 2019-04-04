@@ -50,7 +50,6 @@
      display: none;
 }
  table {
-     font-family: arial, sans-serif;
      border-collapse: collapse;
      width: 100%;
      text-align: center;
@@ -150,9 +149,6 @@
  #mergedTreatmentsDiagnosesTable_paginate {
      display: none;
 }
- .card {
-
-}
 
  #readGroupSelector select {
      margin-right: 20px;
@@ -207,4 +203,13 @@
 
 #confirmRG {
     margin-left: 15px;
+}
+
+.navbar {
+    box-shadow: 0 0 4px rgba(0,0,0,.14), 0 2px 4px rgba(0,0,0,.28);
+    padding: .3rem 1rem;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
 }

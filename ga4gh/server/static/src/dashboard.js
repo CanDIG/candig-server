@@ -65,7 +65,7 @@ function dashboard() {
         })
 
         countRequest("diagnoses", ["cancerType"], datasetId).then(function(response) {
-            cancerTypeDrawer('cancerTypes', "pie", "cancer types and corresponding treatment drugs", response["cancerType"]);
+            cancerTypeDrawer('cancerTypes', "pie", "Cancer types and corresponding treatment drugs", response["cancerType"]);
 
             // Render a random drug frequence plot on load
             if (response["cancerType"]) {
@@ -169,7 +169,10 @@ function dashboard() {
         Highcharts.chart('timelineSamples', {
             chart: {
                 type: 'area',
-                zoomType: 'xy'
+                zoomType: 'xy',
+                style: {
+                    fontFamily: "Roboto"
+                }
             },
             title: {
                 text: 'Samples received by years'
@@ -273,7 +276,10 @@ function dashboard() {
 		            chart: {
 		                renderTo: 'drugScatter',
 		                type: 'scatter',
-		                zoomType: 'xy'
+		                zoomType: 'xy',
+                        style: {
+                            fontFamily: "Roboto"
+                        }
 		            },
 		            title: {
 		                text: 'Time of drug treatment for ' + cancerType
@@ -343,7 +349,10 @@ function dashboard() {
 
 	        Highcharts.chart(id, {
 	            chart: {
-	                type: type
+	                type: type,
+                    style: {
+                        fontFamily: "Roboto"
+                    }
 	            },
 	            credits: {
 	                enabled: false
@@ -398,7 +407,10 @@ function dashboard() {
 
 	        Highcharts.chart(id, {
 	            chart: {
-	                type: type
+	                type: type,
+                    style: {
+                        fontFamily: "Roboto"
+                    }
 	            },
 	            credits: {
 	                enabled: false
