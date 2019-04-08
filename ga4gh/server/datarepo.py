@@ -1813,6 +1813,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=patient.getUpdated(),
                 name=patient.getLocalId(),
                 description=patient.getDescription(),
+                attributes=json.dumps(patient.getAttributes()),
                 # Unique fields
                 patientId = patient.getPatientId(),
                 patientIdTier = patient.getPatientIdTier(),
@@ -1884,6 +1885,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=enrollment.getUpdated(),
                 name=enrollment.getLocalId(),
                 description=enrollment.getDescription(),
+                attributes=json.dumps(enrollment.getAttributes()),
 
                 # Unique fields
                 patientId = enrollment.getPatientId(),
@@ -1952,6 +1954,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=consent.getUpdated(),
                 name=consent.getLocalId(),
                 description=consent.getDescription(),
+                attributes=json.dumps(consent.getAttributes()),
 
                 # Unique fields
                 patientId = consent.getPatientId(),
@@ -2028,6 +2031,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=diagnosis.getUpdated(),
                 name=diagnosis.getLocalId(),
                 description=diagnosis.getDescription(),
+                attributes=json.dumps(diagnosis.getAttributes()),
 
                 # Unique fields
                 patientId = diagnosis.getPatientId(),
@@ -2122,6 +2126,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=sample.getUpdated(),
                 name=sample.getLocalId(),
                 description=sample.getDescription(),
+                attributes=json.dumps(sample.getAttributes()),
 
                 # Unique fields
                 patientId = sample.getPatientId(),
@@ -2206,6 +2211,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=treatment.getUpdated(),
                 name=treatment.getLocalId(),
                 description=treatment.getDescription(),
+                attributes=json.dumps(treatment.getAttributes()),
 
                 # Unique fields
                 patientId = treatment.getPatientId(),
@@ -2266,6 +2272,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=outcome.getUpdated(),
                 name=outcome.getLocalId(),
                 description=outcome.getDescription(),
+                attributes=json.dumps(outcome.getAttributes()),
 
                 # Unique fields
                 patientId = outcome.getPatientId(),
@@ -2334,6 +2341,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=complication.getUpdated(),
                 name=complication.getLocalId(),
                 description=complication.getDescription(),
+                attributes=json.dumps(complication.getAttributes()),
 
                 # Unique fields
                 patientId = complication.getPatientId(),
@@ -2382,6 +2390,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=tumourboard.getUpdated(),
                 name=tumourboard.getLocalId(),
                 description=tumourboard.getDescription(),
+                attributes=json.dumps(tumourboard.getAttributes()),
 
                 # Unique fields
                 patientId = tumourboard.getPatientId(),
@@ -2478,6 +2487,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=chemotherapy.getUpdated(),
                 name=chemotherapy.getLocalId(),
                 description=chemotherapy.getDescription(),
+                attributes=json.dumps(chemotherapy.getAttributes()),
 
                 # Unique fields
                 patientId=chemotherapy.getPatientId(),
@@ -2548,6 +2558,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=radiotherapy.getUpdated(),
                 name=radiotherapy.getLocalId(),
                 description=radiotherapy.getDescription(),
+                attributes=json.dumps(radiotherapy.getAttributes()),
 
                 # Unique fields
                 patientId=radiotherapy.getPatientId(),
@@ -2637,6 +2648,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=surgery.getUpdated(),
                 name=surgery.getLocalId(),
                 description=surgery.getDescription(),
+                attributes=json.dumps(surgery.getAttributes()),
 
                 # Unique fields
                 patientId=surgery.getPatientId(),
@@ -2696,6 +2708,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=immunotherapy.getUpdated(),
                 name=immunotherapy.getLocalId(),
                 description=immunotherapy.getDescription(),
+                attributes=json.dumps(immunotherapy.getAttributes()),
 
                 # Unique fields
                 patientId=immunotherapy.getPatientId(),
@@ -2747,6 +2760,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=celltransplant.getUpdated(),
                 name=celltransplant.getLocalId(),
                 description=celltransplant.getDescription(),
+                attributes=json.dumps(celltransplant.getAttributes()),
 
                 # Unique fields
                 patientId=celltransplant.getPatientId(),
@@ -2796,6 +2810,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=slide.getUpdated(),
                 name=slide.getLocalId(),
                 description=slide.getDescription(),
+                attributes=json.dumps(slide.getAttributes()),
 
                 # Unique fields
                 patientId=slide.getPatientId(),
@@ -2867,6 +2882,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=study.getUpdated(),
                 name=study.getLocalId(),
                 description=study.getDescription(),
+                attributes=json.dumps(study.getAttributes()),
 
                 # Unique fields
                 patientId=study.getPatientId(),
@@ -2914,6 +2930,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=labtest.getUpdated(),
                 name=labtest.getLocalId(),
                 description=labtest.getDescription(),
+                attributes=json.dumps(labtest.getAttributes()),
 
                 # Unique fields
                 patientId=labtest.getPatientId(),
@@ -2967,6 +2984,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=extraction.getUpdated(),
                 name=extraction.getLocalId(),
                 description=extraction.getDescription(),
+                attributes=json.dumps(extraction.getAttributes()),
                 # Unique fields
                 extractionId=extraction.getExtractionId(),
                 extractionIdTier=extraction.getExtractionIdTier(),
@@ -3016,6 +3034,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=sequencing.getUpdated(),
                 name=sequencing.getLocalId(),
                 description=sequencing.getDescription(),
+                attributes=json.dumps(sequencing.getAttributes()),
                 # Unique fields
                 sequencingId=sequencing.getSequencingId(),
                 sequencingIdTier=sequencing.getSequencingIdTier(),
@@ -3073,6 +3092,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=alignment.getUpdated(),
                 name=alignment.getLocalId(),
                 description=alignment.getDescription(),
+                attributes=json.dumps(alignment.getAttributes()),
                 # Unique fields
                 alignmentId=alignment.getAlignmentId(),
                 alignmentIdTier=alignment.getAlignmentIdTier(),
@@ -3142,6 +3162,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=variantCalling.getUpdated(),
                 name=variantCalling.getLocalId(),
                 description=variantCalling.getDescription(),
+                attributes=json.dumps(variantCalling.getAttributes()),
                 # Unique fields
                 variantCallingId=variantCalling.getVariantCallingId(),
                 variantCallingIdTier=variantCalling.getVariantCallingIdTier(),
@@ -3206,6 +3227,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=fusionDetection.getUpdated(),
                 name=fusionDetection.getLocalId(),
                 description=fusionDetection.getDescription(),
+                attributes=json.dumps(fusionDetection.getAttributes()),
                 # Unique fields
                 fusionDetectionId=fusionDetection.getFusionDetectionId(),
                 fusionDetectionIdTier=fusionDetection.getFusionDetectionIdTier(),
@@ -3263,6 +3285,7 @@ class SqlDataRepository(AbstractDataRepository):
                 updated=expressionAnalysis.getUpdated(),
                 name=expressionAnalysis.getLocalId(),
                 description=expressionAnalysis.getDescription(),
+                attributes=json.dumps(expressionAnalysis.getAttributes()),
                 # Unique fields
                 expressionAnalysisId=expressionAnalysis.getExpressionAnalysisId(),
                 expressionAnalysisIdTier=expressionAnalysis.getExpressionAnalysisIdTier(),

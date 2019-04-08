@@ -145,7 +145,7 @@ class Patient(datamodel.DatamodelObject):
             record[str('occupationalOrEnvironmentalExposure')] = str(self.getOccupationalOrEnvironmentalExposure())
 
         Patient = protocol.Patient(**record)
-        self.serializeAttributes(Patient)
+        self.serializeMetadataAttributes(Patient)
 
         return Patient
 
@@ -211,8 +211,7 @@ class Patient(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -498,7 +497,7 @@ class Enrollment(datamodel.DatamodelObject):
             record[str('treatingCentreProvince')] = str(self.getTreatingCentreProvince())
 
         Enrollment = protocol.Enrollment(**record)
-        self.serializeAttributes(Enrollment)
+        self.serializeMetadataAttributes(Enrollment)
 
         return Enrollment
 
@@ -560,8 +559,7 @@ class Enrollment(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -852,7 +850,7 @@ class Consent(datamodel.DatamodelObject):
             record[str('consentFormComplete')] = str(self.getConsentFormComplete())
 
         Consent = protocol.Consent(**record)
-        self.serializeAttributes(Consent)
+        self.serializeMetadataAttributes(Consent)
 
         return Consent
 
@@ -922,8 +920,7 @@ class Consent(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -1291,7 +1288,7 @@ class Diagnosis(datamodel.DatamodelObject):
             record[str('additionalTest')] = str(self.getAdditionalTest())
 
         Diagnosis = protocol.Diagnosis(**record)
-        self.serializeAttributes(Diagnosis)
+        self.serializeMetadataAttributes(Diagnosis)
 
         return Diagnosis
 
@@ -1379,8 +1376,7 @@ class Diagnosis(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -1805,7 +1801,7 @@ class Sample(datamodel.DatamodelObject):
             record[str('startInterval')] = str(self.getStartInterval())
 
         Sample = protocol.Sample(**record)
-        self.serializeAttributes(Sample)
+        self.serializeMetadataAttributes(Sample)
 
         return Sample
 
@@ -1887,8 +1883,7 @@ class Sample(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -2229,7 +2224,7 @@ class Treatment(datamodel.DatamodelObject):
             record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
 
         Treatment = protocol.Treatment(**record)
-        self.serializeAttributes(Treatment)
+        self.serializeMetadataAttributes(Treatment)
 
         return Treatment
 
@@ -2287,8 +2282,7 @@ class Treatment(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -2553,7 +2547,7 @@ class Outcome(datamodel.DatamodelObject):
             record[str('diseaseFreeSurvivalInMonths')] = str(self.getDiseaseFreeSurvivalInMonths())
 
         Outcome = protocol.Outcome(**record)
-        self.serializeAttributes(Outcome)
+        self.serializeMetadataAttributes(Outcome)
 
         return Outcome
 
@@ -2619,8 +2613,7 @@ class Outcome(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -2857,7 +2850,7 @@ class Complication(datamodel.DatamodelObject):
             record[str('treatmentInducedNeoplasmDetails')] = str(self.getTreatmentInducedNeoplasmDetails())
 
         Complication = protocol.Complication(**record)
-        self.serializeAttributes(Complication)
+        self.serializeMetadataAttributes(Complication)
 
         return Complication
 
@@ -2899,8 +2892,7 @@ class Complication(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -3161,7 +3153,7 @@ class Tumourboard(datamodel.DatamodelObject):
             record[str('summaryReport')] = str(self.getSummaryReport())
 
         Tumourboard = protocol.Tumourboard(**record)
-        self.serializeAttributes(Tumourboard)
+        self.serializeMetadataAttributes(Tumourboard)
         
         return Tumourboard
 
@@ -3251,8 +3243,7 @@ class Tumourboard(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -3640,7 +3631,7 @@ class Chemotherapy(datamodel.DatamodelObject):
             record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
 
         Chemotherapy = protocol.Chemotherapy(**record)
-        self.serializeAttributes(Chemotherapy)
+        self.serializeMetadataAttributes(Chemotherapy, tier)
 
         return Chemotherapy
 
@@ -3704,8 +3695,7 @@ class Chemotherapy(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -4033,7 +4023,7 @@ class Radiotherapy(datamodel.DatamodelObject):
             record[str('boostDose')] = str(self.getBoostDose())
 
         Radiotherapy = protocol.Radiotherapy(**record)
-        self.serializeAttributes(Radiotherapy)
+        self.serializeMetadataAttributes(Radiotherapy)
 
         return Radiotherapy
 
@@ -4115,8 +4105,7 @@ class Radiotherapy(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -4442,7 +4431,7 @@ class Surgery(datamodel.DatamodelObject):
             record[str('courseNumber')] = str(self.getCourseNumber())
 
         Surgery = protocol.Surgery(**record)
-        self.serializeAttributes(Surgery)
+        self.serializeMetadataAttributes(Surgery)
 
         return Surgery
 
@@ -4494,8 +4483,7 @@ class Surgery(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -4681,7 +4669,7 @@ class Immunotherapy(datamodel.DatamodelObject):
             record[str('courseNumber')] = str(self.getCourseNumber())
 
         Immunotherapy = protocol.Immunotherapy(**record)
-        self.serializeAttributes(Immunotherapy)
+        self.serializeMetadataAttributes(Immunotherapy)
 
         return Immunotherapy
 
@@ -4725,8 +4713,7 @@ class Immunotherapy(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -4875,7 +4862,7 @@ class Celltransplant(datamodel.DatamodelObject):
             record[str('courseNumber')] = str(self.getCourseNumber())
 
         Celltransplant = protocol.Celltransplant(**record)
-        self.serializeAttributes(Celltransplant)
+        self.serializeMetadataAttributes(Celltransplant)
 
         return Celltransplant
 
@@ -4917,8 +4904,7 @@ class Celltransplant(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -5114,7 +5100,7 @@ class Slide(datamodel.DatamodelObject):
             record[str('sectionLocation')] = str(self.getSectionLocation())
 
         Slide = protocol.Slide(**record)
-        self.serializeAttributes(Slide)
+        self.serializeMetadataAttributes(Slide)
 
         return Slide
 
@@ -5178,8 +5164,7 @@ class Slide(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -5403,7 +5388,7 @@ class Study(datamodel.DatamodelObject):
             record[str('recordingDate')] = str(self.getRecordingDate())
 
         Study = protocol.Study(**record)
-        self.serializeAttributes(Study)
+        self.serializeMetadataAttributes(Study)
 
         return Study
 
@@ -5443,8 +5428,7 @@ class Study(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields
@@ -5587,7 +5571,7 @@ class Labtest(datamodel.DatamodelObject):
             record[str('recordingDate')] = str(self.getRecordingDate())
 
         Labtest = protocol.Labtest(**record)
-        self.serializeAttributes(Labtest)
+        self.serializeMetadataAttributes(Labtest)
 
         return Labtest
 
@@ -5633,8 +5617,7 @@ class Labtest(datamodel.DatamodelObject):
         self._description = parsed.description
         attributes = {}
         for key in parsed.attributes.attr:
-            attributes[key] = {
-                "values": protocol.toJsonDict(parsed.attributes.attr[key])}
+            attributes[key] = protocol.toJsonDict(parsed.attributes.attr[key])['values']
         self.setAttributes(attributes)
 
         # Unique fields

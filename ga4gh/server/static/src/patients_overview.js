@@ -170,9 +170,17 @@ function patient_main() {
                 alertBuilder("We are sorry, but the record you are trying to query doesn't have a valid id.");
             };
         });
-    })
+    }, function(Error) {
+            noPermissionMessage('raceGraph');
+            noPermissionMessage('provinceGraph');
+            noPermissionMessage('genderGraph');
+        })
 }
 
+function noPermissionMessage(id) {
+    let message = "<p class='noPermission'>No data available</p>";
+    document.getElementById(id).innerHTML = message;
+}
 
 function highChartSeriesObjectMaker(nameArray, dataArray) {
     var tempObj = {};
@@ -191,6 +199,7 @@ function categoriesDrawer(elementId, titleText, arrayToDraw) {
     var tempCats = Object.keys(categoriesCounter(arrayToDraw));
     var tempVals = Object.values(categoriesCounter(arrayToDraw));
     var tempObjList = highChartSeriesObjectMaker(tempCats, tempVals);
+
     drillDownDrawer(elementId, titleText, tempCats, "", tempObjList, []);
 }
 
@@ -209,7 +218,10 @@ function drillDownDrawer(elementId, titleText, categories, seriesName, seriesLis
     var lastSearch = "";
     Highcharts.chart(elementId, {
         chart: {
-            type: 'pie'
+            type: 'pie',
+            style: {
+                fontFamily: "Roboto"
+            }
         },
         title: {
             text: titleText

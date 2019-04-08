@@ -234,35 +234,34 @@ class Backend(object):
 
         if logic_key in op_keys:
             results_arr = []
-            patient_array = []
+            patient_set = set()
 
             for logic_obj in logic[logic_key]:
-                results_arr.append(self.logicHandler(logic_obj, responses, dataset_id, access_map))
+                results_arr.append(set(self.logicHandler(logic_obj, responses, dataset_id, access_map)))
 
             if logic_key == 'or':
-                for id_list in results_arr:
-                    for id in id_list:
-                        if id not in patient_array:
-                            patient_array.append(id)
+                for id_set in results_arr:
+                    for patient_id in id_set:
+                        patient_set.add(patient_id)
             elif logic_key == 'and':
                 results_arr.sort(key=len)
-                for id in results_arr[0]:
-                    if all(id in results_arr[x] for x in range(1, len(results_arr))):
-                        patient_array.append(id)
-            return patient_array
+                for patient_id in results_arr[0]:
+                    if all(patient_id in results_arr[x] for x in range(1, len(results_arr))):
+                        patient_set.add(patient_id)
+            return list(patient_set)
 
         elif logic_key == 'id':
-            id_list = []
+            id_set = set()
 
             try:
                 for response in responses[logic[logic_key]]:
                     patient_id = self.getResponsePatientId(response, dataset_id)
-                    if patient_id not in id_list:
-                        id_list.append(patient_id)
+                    id_set.add(patient_id)
                 if logic_negate:
                     id_list_all = self.getAllPatientId(dataset_id, access_map)
-                    id_set = set(id_list_all) - set(id_list)
-                    id_list = list(id_set)
+                    id_set = set(id_list_all) - id_set
+                
+                id_list = list(id_set)
                 return id_list
 
             except KeyError:
