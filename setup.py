@@ -40,7 +40,7 @@ except EnvironmentError:
 
 setup(
     name="candig-server",
-    description="Flask server implementation of the GA4GH API",
+    description="Server implementation of the CanDIG APIs",
     packages=["ga4gh", "ga4gh.server", "ga4gh.server.datamodel",
               "ga4gh.server.templates"],
     namespace_packages=["ga4gh"],
