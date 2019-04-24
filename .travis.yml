@@ -24,9 +24,9 @@ install:
 before_script:
   - pip install -r dev-requirements.txt
   - python scripts/build_test_data.py
-  - PROFYLE_ingest --version
-  - PROFYLE_ingest tests/data/registry.db dataset1 tests/data/sample_clin_metadata.json
-  - PROFYLE_ingest tests/data/registry.db dataset1 tests/data/sample_pipe_metadata.json
+  - ingest --version
+  - ingest tests/data/registry.db dataset1 tests/data/sample_clin_metadata.json
+  - ingest tests/data/registry.db dataset1 tests/data/sample_pipe_metadata.json
     
 before_install:
     - bash tools/travis-install-protoc.sh 3.3.2
