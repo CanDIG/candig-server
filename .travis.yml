@@ -17,9 +17,9 @@ install:
   - python setup.py sdist
   - pip install dist/candig*.tar.gz -c constraints.txt
 # every installable in setup.py's entry_points should be tested here
-  - ga4gh_configtest --version
-  - ga4gh_server --version
-  - ga4gh_repo --version
+  - candig_configtest --version
+  - candig_server --version
+  - candig_repo --version
 
 before_script:
   - pip install -r dev-requirements.txt
