@@ -10,11 +10,11 @@ import glob
 
 import vcf
 
-import ga4gh.server.datamodel as datamodel
-import ga4gh.server.datamodel.datasets as datasets
-import ga4gh.server.datamodel.variants as variants
-import ga4gh.server.datamodel.references as references
-import ga4gh.server.datamodel.ontologies as ontologies
+import candig.server.datamodel as datamodel
+import candig.server.datamodel.datasets as datasets
+import candig.server.datamodel.variants as variants
+import candig.server.datamodel.references as references
+import candig.server.datamodel.ontologies as ontologies
 import tests.datadriven as datadriven
 import tests.paths as paths
 

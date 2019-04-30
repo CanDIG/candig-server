@@ -18,8 +18,8 @@ import glue
 import ga4gh.schemas.protocol as protocol
 
 glue.ga4ghImportGlue()
-import ga4gh.server.backend as backend  # noqa
-import ga4gh.server.datarepo as datarepo  # noqa
+import candig.server.backend as backend  # noqa
+import candig.server.datarepo as datarepo  # noqa
 
 
 class HeapProfilerBackend(backend.Backend):
@@ -152,7 +152,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    registryDb = "ga4gh-example-data/registry.db"
+    registryDb = "candig-example-data/registry.db"
 
     if args.profile == 'heap':
         backendClass = HeapProfilerBackend

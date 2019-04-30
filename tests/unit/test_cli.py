@@ -8,8 +8,8 @@ from __future__ import unicode_literals
 import unittest
 import shlex
 
-import ga4gh.server.cli.server as cli_server
-import ga4gh.server.cli.repomanager as cli_repomanager
+import candig.server.cli.server as cli_server
+import candig.server.cli.repomanager as cli_repomanager
 
 import ga4gh.schemas.protocol as protocol
 

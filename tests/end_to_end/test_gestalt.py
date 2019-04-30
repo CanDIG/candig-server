@@ -16,7 +16,7 @@ import server_test
 import client
 import unittest
 
-import ga4gh.server.datarepo as datarepo
+import candig.server.datarepo as datarepo
 
 
 @unittest.skip("Disabled, client not used")

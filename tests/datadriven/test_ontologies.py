@@ -10,8 +10,8 @@ import os.path
 # TODO it may be a bit circular to use obo_parser as our method of
 # accessing ontology information, since this is the method we use
 # in the main code. However, other libraries have very heavy dependencies.
-import ga4gh.server.datamodel.obo_parser as obo_parser
-import ga4gh.server.datamodel.ontologies as ontologies
+import candig.server.datamodel.obo_parser as obo_parser
+import candig.server.datamodel.ontologies as ontologies
 
 import tests.datadriven as datadriven
 import tests.paths as paths

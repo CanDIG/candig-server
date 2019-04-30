@@ -1,5 +1,5 @@
 """
-Constructs a data source for the ga4gh server by downloading data from
+Constructs a data source for the candig server by downloading data from
 authoritative remote servers.
 """
 from __future__ import division
@@ -23,11 +23,11 @@ import glue
 glue.ga4ghImportGlue()
 
 # We need to turn off QA because of the import glue
-import ga4gh.server.datarepo as datarepo  # NOQA
-import ga4gh.server.datamodel.references as references  # NOQA
-import ga4gh.server.datamodel.datasets as datasets  # NOQA
-import ga4gh.server.datamodel.variants as variants  # NOQA
-import ga4gh.server.datamodel.reads as reads  # NOQA
+import candig.server.datarepo as datarepo  # NOQA
+import candig.server.datamodel.references as references  # NOQA
+import candig.server.datamodel.datasets as datasets  # NOQA
+import candig.server.datamodel.variants as variants  # NOQA
+import candig.server.datamodel.reads as reads  # NOQA
 
 
 class ChromMinMax(object):
@@ -112,7 +112,7 @@ class AbstractFileDownloader(object):
         self.maxVariants = args.num_variants
         self.maxReads = args.num_reads
         self.samples = args.samples.split(',')
-        self.tempDir = tempfile.mkdtemp(prefix="ga4gh-download")
+        self.tempDir = tempfile.mkdtemp(prefix="candig-download")
         self.numChromosomes = args.num_chromosomes
         self.chromosomes = [str(j + 1) for j in range(self.numChromosomes)]
         self.dirName = args.destination

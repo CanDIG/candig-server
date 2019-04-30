@@ -9,12 +9,12 @@ from __future__ import unicode_literals
 
 import unittest
 
-import ga4gh.server.exceptions as exceptions
-import ga4gh.server.backend as backend
-import ga4gh.server.paging as paging
-import ga4gh.server.datarepo as datarepo
-import ga4gh.server.datamodel.datasets as datasets
-import ga4gh.server.datamodel.references as references
+import candig.server.exceptions as exceptions
+import candig.server.backend as backend
+import candig.server.paging as paging
+import candig.server.datarepo as datarepo
+import candig.server.datamodel.datasets as datasets
+import candig.server.datamodel.references as references
 
 import tests.paths as paths
 

@@ -8,8 +8,8 @@ from __future__ import unicode_literals
 import os
 import rdflib
 
-import ga4gh.server.datamodel.genotype_phenotype as genotype_phenotype
-import ga4gh.server.datamodel.datasets as datasets
+import candig.server.datamodel.genotype_phenotype as genotype_phenotype
+import candig.server.datamodel.datasets as datasets
 import tests.datadriven as datadriven
 import tests.paths as paths
 
