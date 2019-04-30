@@ -12,12 +12,12 @@ import logging
 import random
 import json
 import array
-import ga4gh.server.datamodel.reads as reads
-import ga4gh.server.datamodel.references as references
-import ga4gh.server.datamodel.variants as variants
-import ga4gh.server.datamodel.sequence_annotations as sequence_annotations
-import ga4gh.server.datamodel.continuous as continuous
-import ga4gh.server.frontend as frontend
+import candig.server.datamodel.reads as reads
+import candig.server.datamodel.references as references
+import candig.server.datamodel.variants as variants
+import candig.server.datamodel.sequence_annotations as sequence_annotations
+import candig.server.datamodel.continuous as continuous
+import candig.server.frontend as frontend
 
 import ga4gh.schemas.protocol as protocol
 
@@ -38,7 +38,7 @@ class TestSimulatedStack(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # silence usually unhelpful CORS log
-        logging.getLogger('ga4gh.frontend.cors').setLevel(logging.CRITICAL)
+        logging.getLogger('candig.frontend.cors').setLevel(logging.CRITICAL)
         # Set the random seed to make tests reproducible.
         random.seed(1)
         config = {

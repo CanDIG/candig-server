@@ -16,7 +16,7 @@ import shutil
 import oic
 import oic.oic.message as message
 
-import ga4gh.server.frontend as frontend
+import candig.server.frontend as frontend
 import ga4gh.common.utils as utils
 
 
@@ -114,7 +114,7 @@ class TestFrontendOidc(unittest.TestCase):
             "SECRET_KEY": "secret"
             # "DEBUG" : True
         }
-        shutil.rmtree('/tmp/ga4gh', True)
+        shutil.rmtree('/tmp/candig', True)
         frontend.reset()
         frontend.configure(
             baseConfig="TestOidcConfig", extraConfig=config, port=8001)
@@ -123,7 +123,7 @@ class TestFrontendOidc(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.app = None
-        shutil.rmtree('/tmp/ga4gh', True)
+        shutil.rmtree('/tmp/candig', True)
 
     def sendPostRequest(self, path, request):
         """
@@ -303,7 +303,7 @@ class TestFrontendOidc(unittest.TestCase):
         typically ["/etc/mime.types","/etc/httpd/conf/mime.types",...]
         If this test fails, see the results of `mimetypes.knownfiles`
         on your host and ensure configuration set up
-        see https://github.com/ga4gh/ga4gh-server/issues/501
+        see https://github.com/ga4gh/candig-server/issues/501
         """
         content_type, encoding = mimetypes.guess_type("foo.json")
         self.assertEqual(content_type, "application/json")

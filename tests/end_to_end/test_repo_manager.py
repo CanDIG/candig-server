@@ -11,7 +11,7 @@ import tempfile
 import unittest
 import json
 
-import ga4gh.server.cli.repomanager as cli_repomanager
+import candig.server.cli.repomanager as cli_repomanager
 import tests.paths as paths
 
 import ga4gh.schemas.protocol as protocol
@@ -122,11 +122,11 @@ class RepoManagerEndToEndTest(unittest.TestCase):
         self._runCmd("init")
         self._runCmd("add-dataset", datasetName)
         with mock.patch(
-                'ga4gh.server.cli.repomanager.getRawInput',
+                'candig.server.cli.repomanager.getRawInput',
                 lambda x: 'N'):
             self._runCmd("remove-dataset", datasetName)
         with mock.patch(
-                'ga4gh.server.cli.repomanager.getRawInput',
+                'candig.server.cli.repomanager.getRawInput',
                 lambda x: 'y'):
             self._runCmd("remove-dataset", datasetName)
             with self.assertRaises(SystemExit):

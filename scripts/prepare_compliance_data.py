@@ -1,6 +1,6 @@
 """
 A script that takes the compliance dataset (the released version
-of which is at https://github.com/ga4gh/compliance/tree/master/test-data)
+of which is at https://github.com/candig/compliance/tree/master/test-data)
 and turns it into a directory bundle of binary and JSON files suitable
 for use by the reference server.
 """
@@ -26,20 +26,20 @@ import glue
 glue.ga4ghImportGlue()
 
 # We need to turn off QA because of the import glue
-import ga4gh.server  # NOQA
-import ga4gh.server.datarepo as datarepo  # NOQA
-import ga4gh.server.datamodel.references as references  # NOQA
-import ga4gh.server.datamodel.datasets as datasets  # NOQA
-import ga4gh.server.datamodel.variants as variants  # NOQA
-import ga4gh.server.datamodel.reads as reads  # NOQA
-import ga4gh.server.datamodel.ontologies as ontologies  # NOQA
-import ga4gh.server.datamodel.sequence_annotations as sequence_annotations  # NOQA
-import ga4gh.server.datamodel.continuous as continuous # NOQA
-import ga4gh.server.datamodel.bio_metadata as biodata  # NOQA
-import ga4gh.server.datamodel.genotype_phenotype_featureset as g2p_featureset  # NOQA
-import ga4gh.server.datamodel.genotype_phenotype as g2p_associationset  # NOQA
-import ga4gh.server.datamodel.rna_quantification as rna_quantification  # NOQA
-import ga4gh.server.repo.rnaseq2ga as rnaseq2ga  # NOQA
+import candig.server  # NOQA
+import candig.server.datarepo as datarepo  # NOQA
+import candig.server.datamodel.references as references  # NOQA
+import candig.server.datamodel.datasets as datasets  # NOQA
+import candig.server.datamodel.variants as variants  # NOQA
+import candig.server.datamodel.reads as reads  # NOQA
+import candig.server.datamodel.ontologies as ontologies  # NOQA
+import candig.server.datamodel.sequence_annotations as sequence_annotations  # NOQA
+import candig.server.datamodel.continuous as continuous # NOQA
+import candig.server.datamodel.bio_metadata as biodata  # NOQA
+import candig.server.datamodel.genotype_phenotype_featureset as g2p_featureset  # NOQA
+import candig.server.datamodel.genotype_phenotype as g2p_associationset  # NOQA
+import candig.server.datamodel.rna_quantification as rna_quantification  # NOQA
+import candig.server.repo.rnaseq2ga as rnaseq2ga  # NOQA
 
 
 class ComplianceDataMunger(object):
@@ -142,7 +142,7 @@ class ComplianceDataMunger(object):
 
         dataset = datasets.Dataset("brca1")
         # Some info is set, it isn't important what
-        dataset.setAttributes({"version": ga4gh.server.__version__})
+        dataset.setAttributes({"version": candig.server.__version__})
         self.repo.insertDataset(dataset)
 
         hg00096Individual = biodata.Individual(dataset, "HG00096")

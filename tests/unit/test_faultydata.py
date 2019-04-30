@@ -8,9 +8,9 @@ from __future__ import unicode_literals
 import os
 import unittest
 
-import ga4gh.server.datamodel.datasets as datasets
-import ga4gh.server.datamodel.variants as variants
-import ga4gh.server.exceptions as exceptions
+import candig.server.datamodel.datasets as datasets
+import candig.server.datamodel.variants as variants
+import candig.server.exceptions as exceptions
 
 import ga4gh.schemas.protocol as protocol
 

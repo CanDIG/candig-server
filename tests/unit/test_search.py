@@ -8,9 +8,9 @@ from __future__ import unicode_literals
 import unittest
 import json
 
-import ga4gh.server.backend as backend
-import ga4gh.server.exceptions as exceptions
-import ga4gh.server.datarepo as datarepo
+import candig.server.backend as backend
+import candig.server.exceptions as exceptions
+import candig.server.datarepo as datarepo
 import tests.paths as paths
 
 

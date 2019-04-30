@@ -22,5 +22,5 @@
 # the pinned packages in requirements.txt are used instead.
 #
 #git+git://github.com/ga4gh/ga4gh-common.git@master#egg=ga4gh_common
-git+git://github.com/CanDIG/candig-schemas.git@develop#egg=ga4gh_schemas
-git+git://github.com/CanDIG/candig-client.git@authz#egg=ga4gh_client
+git+git://github.com/CanDIG/ga4gh-schemas.git@develop#egg=ga4gh_schemas
+git+git://github.com/CanDIG/ga4gh-client.git@authz#egg=ga4gh_client

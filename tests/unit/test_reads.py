@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 
 import unittest
 
-import ga4gh.server.datamodel.reads as reads
+import candig.server.datamodel.reads as reads
 
 import ga4gh.schemas.protocol as protocol
 

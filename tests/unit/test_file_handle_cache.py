@@ -12,7 +12,7 @@ import tempfile
 import unittest
 import uuid
 
-import ga4gh.server.datamodel as datamodel
+import candig.server.datamodel as datamodel
 
 
 class TestFileHandleCache(datamodel.PysamFileHandleCache, unittest.TestCase):

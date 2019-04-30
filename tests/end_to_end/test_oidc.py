@@ -18,7 +18,7 @@ import client
 import server
 import server_test
 
-import ga4gh.server.datarepo as datarepo
+import candig.server.datarepo as datarepo
 
 
 def getClientKey(server_url, username, password):
@@ -70,12 +70,12 @@ class TestOidc(server_test.ServerTestClass):
         requests.packages.urllib3.disable_warnings()
         cls.opServer = server.OidcOpServerForTesting()
         cls.opServer.start()
-        shutil.rmtree('/tmp/ga4gh', True)
+        shutil.rmtree('/tmp/candig', True)
 
     @classmethod
     def otherTeardown(cls):
         cls.opServer.shutdown()
-        shutil.rmtree('/tmp/ga4gh', True)
+        shutil.rmtree('/tmp/candig', True)
 
     @classmethod
     def getServer(cls):

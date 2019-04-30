@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 import unittest
 
-import ga4gh.server.datamodel.datasets as datasets
+import candig.server.datamodel.datasets as datasets
 
 
 class TestDatasets(unittest.TestCase):

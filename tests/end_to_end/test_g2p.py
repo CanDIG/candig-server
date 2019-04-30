@@ -5,8 +5,8 @@ from __future__ import print_function
 import unittest
 import json
 
-import ga4gh.server.datamodel as datamodel
-import ga4gh.server.frontend as frontend
+import candig.server.datamodel as datamodel
+import candig.server.frontend as frontend
 import tests.paths as paths
 
 import ga4gh.schemas.protocol as protocol

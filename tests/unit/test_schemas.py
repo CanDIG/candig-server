@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 import unittest
 
-import ga4gh.server.response_builder as response_builder
+import candig.server.response_builder as response_builder
 import ga4gh.schemas.protocol as protocol
 
 

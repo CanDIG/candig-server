@@ -149,7 +149,7 @@ class ServerForTesting(object):
     @utils.Repeat()
     def _waitForErrLines(self):
         # not sure why there's some delay in getting the server
-        # process' stderr (at least for the ga4gh server)...
+        # process' stderr (at least for the candig server)...
         return self.getErrLines() == []
 
     def _assertServerShutdown(self):
@@ -160,7 +160,7 @@ class ServerForTesting(object):
 
 class Ga4ghServerForTesting(ServerForTesting):
     """
-    A ga4gh test server
+    A candig test server
     """
     def __init__(self, useOidc=False):
         protocol = 'https' if useOidc else 'http'

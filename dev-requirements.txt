@@ -35,4 +35,4 @@ cherrypy==3.2.4
 yubico-client==1.9.1
 
 # For ingesting various metadata
-git+git://github.com/CanDIG/candig-ingest.git@v1.1.0
+git+git://github.com/CanDIG/candig-ingest.git@v1.1.1
