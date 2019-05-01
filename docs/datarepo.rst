@@ -8,7 +8,7 @@ Each GA4GH server represents a repository of information. This repository
 consists of the reference sets, datasets, readgroup sets, variant sets etc. in
 the server's data model and may contain data from many different unrelated
 projects. The server administrator defines and manages this repository using
-the ``ga4gh_repo`` command line interface, which provides commands to manage
+the ``candig_repo`` command line interface, which provides commands to manage
 all of the objects represented by a GA4GH server.
 
 The information about the objects in the GA4GH data model is stored in an SQL
@@ -34,9 +34,9 @@ file path. This is the first command that must be issued
 when creating a new GA4GH repository.
 
 .. argparse::
-    :module: ga4gh.server.cli.repomanager
+    :module: candig.server.cli.repomanager
     :func: getRepoManagerParser
-    :prog: ga4gh_repo
+    :prog: candig_repo
     :path: init
     :nodefault:
 
@@ -45,7 +45,7 @@ when creating a new GA4GH repository.
 
 .. code-block:: bash
 
-    $ ga4gh_repo init registry.db
+    $ candig_repo init registry.db
 
 ----
 list
@@ -60,9 +60,9 @@ understand the structure of the repository that they are managing.
    of this command should improve considerably in the near future.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: list
    :nodefault:
 
@@ -70,7 +70,7 @@ understand the structure of the repository that they are managing.
 
 .. code-block:: bash
 
-    $ ga4gh_repo list registry.db
+    $ candig_repo list registry.db
 
 ------
 verify
@@ -89,9 +89,9 @@ well in their repository.
    of this command should improve considerably in the near future.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: verify
    :nodefault:
 
@@ -99,7 +99,7 @@ well in their repository.
 
 .. code-block:: bash
 
-    $ ga4gh_repo verify registry.db
+    $ candig_repo verify registry.db
 
 -----------
 add-dataset
@@ -110,9 +110,9 @@ of ReadGroupSets, VariantSets, VariantAnnotationSets and FeatureSets. Each
 dataset has a name, which is used to identify it in the repository manager.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: add-dataset
    :nodefault:
 
@@ -120,7 +120,7 @@ dataset has a name, which is used to identify it in the repository manager.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-dataset registry.db 1kg -d 'Example dataset using 1000 genomes data'
+    $ candig_repo add-dataset registry.db 1kg -d 'Example dataset using 1000 genomes data'
 
 Adds the dataset with the name ``1kg`` and description
 ``'Example dataset using 1000 genomes data'`` to the
@@ -138,9 +138,9 @@ number of metadata values (.e.g. ``species``) which can be set
 using command line options.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: add-referenceset
    :nodefault:
 
@@ -148,7 +148,7 @@ using command line options.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-referenceset registry.db hs37d5.fa.gz \
+    $ candig_repo add-referenceset registry.db hs37d5.fa.gz \
         --description "NCBI37 assembly of the human genome" \
         --species '{"termId": "NCBI:9606", "term": "Homo sapiens"}' \
         --name NCBI37 \
@@ -165,9 +165,9 @@ Adds a new biosample to the repository. The biosample argument is
 a JSON document according to the GA4GH JSON schema.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: add-biosample
    :nodefault:
 
@@ -175,7 +175,7 @@ a JSON document according to the GA4GH JSON schema.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-biosample registry.db dataset1 HG00096 '{"individualId": "abc"}'
+    $ candig_repo add-biosample registry.db dataset1 HG00096 '{"individualId": "abc"}'
 
 Adds the biosample named HG00096 to the repository with the individual ID
 "abc".
@@ -188,9 +188,9 @@ Adds a new individual to the repository. The individual argument is
 a JSON document following the GA4GH JSON schema.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: add-individual
    :nodefault:
 
@@ -198,7 +198,7 @@ a JSON document following the GA4GH JSON schema.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-individual registry.db dataset1 HG00096 '{"description": "A description"}'
+    $ candig_repo add-individual registry.db dataset1 HG00096 '{"description": "A description"}'
 
 
 ------------
@@ -214,9 +214,9 @@ to ontology IDs. Sequence ontology definitions can be downloaded from
 the `Sequence Ontology site <https://github.com/The-Sequence-Ontology/SO-Ontologies>`_.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: add-ontology
    :nodefault:
 
@@ -224,7 +224,7 @@ the `Sequence Ontology site <https://github.com/The-Sequence-Ontology/SO-Ontolog
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-ontology registry.db path/to/so-xp.obo
+    $ candig_repo add-ontology registry.db path/to/so-xp.obo
 
 Adds the sequence ontology ``so-xp.obo`` to the repository using the
 default naming rules.
@@ -242,9 +242,9 @@ If remote URLs are used then index files in the local file system must be
 provided using the ``-I`` option.
 
 .. argparse::
-    :module: ga4gh.server.cli.repomanager
+    :module: candig.server.cli.repomanager
     :func: getRepoManagerParser
-    :prog: ga4gh_repo
+    :prog: candig_repo
     :path: add-variantset
     :nodefault:
 
@@ -252,7 +252,7 @@ provided using the ``-I`` option.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-variantset registry.db 1kg 1kgPhase1/ -R NCBI37
+    $ candig_repo add-variantset registry.db 1kg 1kgPhase1/ -R NCBI37
 
 Adds a new variant set to the dataset named ``1kg`` in the repository defined
 by the registry database ``registry.db`` using the VCF files contained in the
@@ -264,7 +264,7 @@ rules.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-variantset registry.db 1kg \
+    $ candig_repo add-variantset registry.db 1kg \
         1kgPhase1/chr1.vcf.gz 1kg/chr2.vcf.gz -n phase1-subset -R NCBI37
 
 Like the last example, we add a new variant set to the dataset ``1kg``,
@@ -273,7 +273,7 @@ name for this new variant set to be ``phase1-subset``.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-variantset registry.db 1kg \
+    $ candig_repo add-variantset registry.db 1kg \
         --name phase1-subset-remote -R NCBI37 \
         --indexFiles ALL.chr1.phase1_release_v3.20101123.snps_indels_svs.genotypes.vcf.gz.tbi ALL.chr2.phase1_release_v3.20101123.snps_indels_svs.genotypes.vcf.gz.tbi \
         ftp://ftp.ncbi.nlm.nih.gov/1000genomes/ftp/release/20110521/ALL.chr1.phase1_release_v3.20101123.snps_indels_svs.genotypes.vcf.gz \
@@ -308,9 +308,9 @@ then the readgroup set will be associated with it automatically. If it does not
 name of the reference set using the ``--referenceSetName`` option.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: add-readgroupset
    :nodefault:
 
@@ -318,7 +318,7 @@ name of the reference set using the ``--referenceSetName`` option.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-readgroupset registry.db 1kg \
+    $ candig_repo add-readgroupset registry.db 1kg \
         path/to/HG00114.chrom11.ILLUMINA.bwa.GBR.low_coverage.20120522.bam
 
 Adds a new readgroup set for an indexed 1000 Genomes BAM file stored on the
@@ -329,7 +329,7 @@ reference set automatically set from the BAM header.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-readgroupset registry.db 1kg ga4gh-example-data/HG00096.bam \
+    $ candig_repo add-readgroupset registry.db 1kg ga4gh-example-data/HG00096.bam \
         -R GRCh37-subset -n HG0096-subset
 
 Adds a new readgroup set based on a subset of the 1000 genomes reads for the
@@ -340,7 +340,7 @@ the name ``HG00096-subset`` for the new readgroup set.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-readgroupset registry.db 1kg \
+    $ candig_repo add-readgroupset registry.db 1kg \
         -n HG00114-remote
         -I /path/to/HG00114.chrom11.ILLUMINA.bwa.GBR.low_coverage.20120522.bam.bai
         ftp://ftp.ncbi.nlm.nih.gov/1000genomes/ftp/phase3/data/HG00114/alignment/HG00114.chrom11.ILLUMINA.bwa.GBR.low_coverage.20120522.bam
@@ -358,9 +358,9 @@ must be in a '.db' file. An appropriate '.db' file can
 be generate from a GFF3 file using scripts/generate_gff3_db.py.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: add-featureset
    :nodefault:
 
@@ -368,7 +368,7 @@ be generate from a GFF3 file using scripts/generate_gff3_db.py.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-featureset registry.db 1KG gencode.db \
+    $ candig_repo add-featureset registry.db 1KG gencode.db \
         -R hg37 -O so-xp-simple
 
 Adds the feature set `gencode` to the registry under the `1KG`
@@ -387,9 +387,9 @@ Files in the bedGraph format can be converted using bedGraphToBigWig
 (https://www.encodeproject.org/software/bedgraphtobigwig/).
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: add-continuousset
    :nodefault:
 
@@ -397,7 +397,7 @@ Files in the bedGraph format can be converted using bedGraphToBigWig
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-continuousset registry.db 1KG continuous.bw \
+    $ candig_repo add-continuousset registry.db 1KG continuous.bw \
         -R hg37
 
 Adds the continuous set `continuous` to the registry under the `1KG`
@@ -410,9 +410,9 @@ init-rnaquantificationset
 Initializes a rnaquantification set.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: init-rnaquantificationset
    :nodefault:
 
@@ -420,7 +420,7 @@ Initializes a rnaquantification set.
 
 .. code-block:: bash
 
-    $ ga4gh_repo init-rnaquantificationset repo.db rnaseq.db
+    $ candig_repo init-rnaquantificationset repo.db rnaseq.db
 
 Initializes the RNA Quantification Set with the filename rnaseq.db.
 
@@ -433,9 +433,9 @@ Adds a rnaquantification to a RNA quantification set.
 RNA quantification formats supported are currently kallisto and RSEM.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: add-rnaquantification
    :nodefault:
 
@@ -443,7 +443,7 @@ RNA quantification formats supported are currently kallisto and RSEM.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-rnaquantification rnaseq.db data.tsv \
+    $ candig_repo add-rnaquantification rnaseq.db data.tsv \
              kallisto ga4gh-example-data/registry.db brca1 \
             --biosampleName HG00096 --featureSetNames gencodev19
             --readGroupSetName HG00096rna --transcript
@@ -460,9 +460,9 @@ When the desired RNA quantification have been added to the set, use this command
 to add them to the registry.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: add-rnaquantificationset
    :nodefault:
 
@@ -470,7 +470,7 @@ to add them to the registry.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-rnaquantificationset registry.db brca1 rnaseq.db \
+    $ candig_repo add-rnaquantificationset registry.db brca1 rnaseq.db \
         -R hg37 -n rnaseq
 
 Adds the RNA quantification set `rnaseq.db` to the registry under the `brca1`
@@ -486,9 +486,9 @@ Clinical Genomics Knowledge Base http://nif-crawler.neuinfo.org/monarch/ttl/cgd.
 published by the Monarch project, is the supported format for Evidence.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: add-phenotypeassociationset
    :nodefault:
 
@@ -497,7 +497,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-phenotypeassociationset registry.db dataset1 /monarch/ttl/cgd.ttl -n cgd
+    $ candig_repo add-phenotypeassociationset registry.db dataset1 /monarch/ttl/cgd.ttl -n cgd
 
 
 --------------
@@ -508,9 +508,9 @@ Removes a dataset from the repository and recursively removes all
 objects (ReadGroupSets, VariantSets, etc) within this dataset.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: remove-dataset
    :nodefault:
 
@@ -518,7 +518,7 @@ objects (ReadGroupSets, VariantSets, etc) within this dataset.
 
 .. code-block:: bash
 
-    $ ga4gh_repo remove-dataset registry.db dataset1
+    $ candig_repo remove-dataset registry.db dataset1
 
 Deletes the dataset with name ``dataset1`` from the repository
 represented by ``registry.db``
@@ -532,9 +532,9 @@ to remove a reference set that is referenced by other objects in the
 repository will result in an error.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: remove-referenceset
    :nodefault:
 
@@ -542,7 +542,7 @@ repository will result in an error.
 
 .. code-block:: bash
 
-    $ ga4gh_repo remove-referenceset registry.db NCBI37
+    $ candig_repo remove-referenceset registry.db NCBI37
 
 Deletes the reference set with name ``NCBI37`` from the repository
 represented by ``registry.db``
@@ -554,9 +554,9 @@ remove-biosample
 Removes a biosample from the repository.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: remove-biosample
    :nodefault:
 
@@ -564,7 +564,7 @@ Removes a biosample from the repository.
 
 .. code-block:: bash
 
-    $ ga4gh_repo remove-biosample registry.db dataset1 HG00096
+    $ candig_repo remove-biosample registry.db dataset1 HG00096
 
 Deletes the biosample with name ``HG00096`` in the dataset
 ``dataset1`` from the repository represented by ``registry.db``
@@ -576,9 +576,9 @@ remove-individual
 Removes an individual from the repository.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: remove-individual
    :nodefault:
 
@@ -586,7 +586,7 @@ Removes an individual from the repository.
 
 .. code-block:: bash
 
-    $ ga4gh_repo remove-individual registry.db dataset1 HG00096
+    $ candig_repo remove-individual registry.db dataset1 HG00096
 
 Deletes the individual with name ``HG00096`` in the dataset
 ``dataset1`` from the repository represented by ``registry.db``
@@ -600,9 +600,9 @@ to remove an ontology that is referenced by other objects in the
 repository will result in an error.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: remove-ontology
    :nodefault:
 
@@ -610,7 +610,7 @@ repository will result in an error.
 
 .. code-block:: bash
 
-    $ ga4gh_repo remove-ontology registry.db so-xp
+    $ candig_repo remove-ontology registry.db so-xp
 
 Deletes the ontology with name ``so-xp`` from the repository
 represented by ``registry.db``
@@ -623,9 +623,9 @@ Removes a variant set from the repository. This also deletes all
 associated call sets and variant annotation sets from the repository.
 
 .. argparse::
-    :module: ga4gh.server.cli.repomanager
+    :module: candig.server.cli.repomanager
     :func: getRepoManagerParser
-    :prog: ga4gh_repo
+    :prog: candig_repo
     :path: remove-variantset
     :nodefault:
 
@@ -633,7 +633,7 @@ associated call sets and variant annotation sets from the repository.
 
 .. code-block:: bash
 
-    $ ga4gh_repo remove-variantset registry.db dataset1 phase3-release
+    $ candig_repo remove-variantset registry.db dataset1 phase3-release
 
 Deletes the variant set named ``phase3-release`` from the dataset
 named ``dataset1`` from the repository represented by ``registry.db``.
@@ -645,9 +645,9 @@ remove-readgroupset
 Removes a read group set from the repository.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: remove-readgroupset
    :nodefault:
 
@@ -655,7 +655,7 @@ Removes a read group set from the repository.
 
 .. code-block:: bash
 
-    $ ga4gh_repo remove-readgroupset registry.db dataset1 HG00114
+    $ candig_repo remove-readgroupset registry.db dataset1 HG00114
 
 Deletes the readgroup set named ``HG00114`` from the dataset named
 ``dataset1`` from the repository represented by ``registry.db``.
@@ -667,9 +667,9 @@ remove-featureset
 Removes a feature set from the repository.
 
 .. argparse::
-    :module: ga4gh.server.cli.repomanager
+    :module: candig.server.cli.repomanager
     :func: getRepoManagerParser
-    :prog: ga4gh_repo
+    :prog: candig_repo
     :path: remove-featureset
     :nodefault:
 
@@ -677,7 +677,7 @@ Removes a feature set from the repository.
 
 .. code-block:: bash
 
-    $ ga4gh_repo remove-featureset registry.db 1KG gencode-genes
+    $ candig_repo remove-featureset registry.db 1KG gencode-genes
 
 Deletes the feature set named ``gencode-genes`` from the dataset
 named ``1KG`` from the repository represented by ``registry.db``.
@@ -689,9 +689,9 @@ remove-continuousset
 Removes a continuous set from the repository.
 
 .. argparse::
-    :module: ga4gh.server.cli.repomanager
+    :module: candig.server.cli.repomanager
     :func: getRepoManagerParser
-    :prog: ga4gh_repo
+    :prog: candig_repo
     :path: remove-continuousset
     :nodefault:
 
@@ -699,7 +699,7 @@ Removes a continuous set from the repository.
 
 .. code-block:: bash
 
-    $ ga4gh_repo remove-continuousset registry.db 1KG continuous
+    $ candig_repo remove-continuousset registry.db 1KG continuous
 
 Deletes the feature set named ``continuous`` from the dataset
 named ``1KG`` from the repository represented by ``registry.db``.
@@ -711,9 +711,9 @@ remove-rnaquantificationset
 Removes a rna quantification set from the repository.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: remove-rnaquantificationset
    :nodefault:
 
@@ -721,7 +721,7 @@ Removes a rna quantification set from the repository.
 
 .. code-block:: bash
 
-    $ ga4gh_repo remove-rnaquantificationset registry.db dataset1 ENCFF305LZB
+    $ candig_repo remove-rnaquantificationset registry.db dataset1 ENCFF305LZB
 
 Deletes the rnaquantification set named ``ENCFF305LZB`` from the dataset named
 ``dataset1`` from the repository represented by ``registry.db``.
@@ -733,9 +733,9 @@ remove-phenotypeassociationset
 Removes an rdf object store.
 
 .. argparse::
-   :module: ga4gh.server.cli.repomanager
+   :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
-   :prog: ga4gh_repo
+   :prog: candig_repo
    :path: remove-phenotypeassociationset
    :nodefault:
 
@@ -743,4 +743,4 @@ Examples:
 
 .. code-block:: bash
 
-    $ ga4gh_repo remove-phenotypeassociationset registry.db dataset1  cgd
+    $ candig_repo remove-phenotypeassociationset registry.db dataset1  cgd
