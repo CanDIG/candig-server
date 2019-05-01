@@ -62,7 +62,7 @@ Now we can download some example data, which we'll use for our demo:
     (ga4gh-env) $ wget https://github.com/ga4gh/ga4gh-server/releases/download/data/ga4gh-example-data_4.6.tar
     (ga4gh-env) $ tar -xvf ga4gh-example-data_4.6.tar
 
-After extracting the data, we can then run the ``ga4gh_server`` application:
+After extracting the data, we can then run the ``candig_server`` application:
 
 .. code-block:: bash
 

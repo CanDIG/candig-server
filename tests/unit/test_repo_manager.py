@@ -62,7 +62,7 @@ class AbstractRepoManagerTest(unittest.TestCase):
     Base class for repo manager tests
     """
     def setUp(self):
-        fd, self._repoPath = tempfile.mkstemp(prefix="ga4gh_repoman_test")
+        fd, self._repoPath = tempfile.mkstemp(prefix="candig_repoman_test")
         os.unlink(self._repoPath)
 
     def runCommand(self, cmd):

@@ -35,7 +35,7 @@ class RepoManagerEndToEndTest(unittest.TestCase):
 
     def setUp(self):
         _, self.repoFile = tempfile.mkstemp(
-            prefix='ga4gh_repo_manager_end2end_test')
+            prefix='candig_repo_manager_end2end_test')
         os.unlink(self.repoFile)
 
     def tearDown(self):
