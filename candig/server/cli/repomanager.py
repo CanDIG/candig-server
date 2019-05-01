@@ -2589,7 +2589,7 @@ def repo_main(args=None):
         # Uncaught exception: this is a bug
         message = """
 An internal error has occurred.  Please file a bug report at
-https://github.com/can dig/candig-server/issues
+https://github.com/candig/candig-server/issues
 with all the relevant details, and the following stack trace.
 """
         print("{}: error:".format(sys.argv[0]), file=sys.stderr)
