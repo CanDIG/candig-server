@@ -18,8 +18,6 @@ def getInitialPeerList(filePath, logger=None):
 
     This file has one URL per line and can contain newlines and comments.
 
-        # Main candig node
-        http://1kgenomes.candig.org
         # Local intranet peer
         https://192.168.1.1
 

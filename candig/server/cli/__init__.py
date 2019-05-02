@@ -13,7 +13,7 @@ import ga4gh.schemas.protocol as protocol
 def addVersionArgument(parser):
     # TODO argparse strips newlines from version output
     versionString = (
-        "GA4GH Server Version {}\n"
+        "CanDIG Server Version {}\n"
         "(Protocol Version {})".format(
             candig.server.__version__, protocol.version))
     parser.add_argument(

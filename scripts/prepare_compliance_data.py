@@ -1,6 +1,6 @@
 """
 A script that takes the compliance dataset (the released version
-of which is at https://github.com/candig/compliance/tree/master/test-data)
+of which is at https://github.com/ga4gh/compliance/tree/master/test-data)
 and turns it into a directory bundle of binary and JSON files suitable
 for use by the reference server.
 """
