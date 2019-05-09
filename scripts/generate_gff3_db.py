@@ -20,7 +20,7 @@ import ga4gh.common.utils as utils
 import glue
 
 glue.ga4ghImportGlue()
-import ga4gh.server.gff3 as gff3  # NOQA
+import candig.server.gff3 as gff3  # NOQA
 
 # TODO: Shift this to use the Gff3DbBackend class.
 

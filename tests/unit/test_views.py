@@ -10,10 +10,10 @@ import logging
 
 import tests.paths as paths
 
-import ga4gh.server.datamodel as datamodel
-import ga4gh.server.frontend as frontend
+import candig.server.datamodel as datamodel
+import candig.server.frontend as frontend
 import ga4gh.schemas.protocol as protocol
-import ga4gh.server.exceptions as exceptions
+import candig.server.exceptions as exceptions
 
 import json
 
@@ -41,7 +41,7 @@ class TestFrontend(unittest.TestCase):
             baseConfig="TestConfig", extraConfig=config)
         cls.app = frontend.app.test_client()
         # silence usually unhelpful CORS log
-        logging.getLogger('ga4gh.frontend.cors').setLevel(logging.CRITICAL)
+        logging.getLogger('candig.frontend.cors').setLevel(logging.CRITICAL)
 
         # example test values
         cls.backend = frontend.app.backend

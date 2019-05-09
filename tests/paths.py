@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 import os
 
 
-packageName = 'ga4gh'
+packageName = 'candig'
 
 
 def getProjectRootFilePath():

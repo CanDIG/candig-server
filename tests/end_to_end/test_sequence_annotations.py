@@ -9,7 +9,7 @@ import unittest
 import logging
 import json
 
-import ga4gh.server.frontend as frontend
+import candig.server.frontend as frontend
 import tests.paths as paths
 
 import ga4gh.schemas.protocol as protocol
@@ -26,7 +26,7 @@ class TestSequenceAnnotations(unittest.TestCase):
             "DATA_SOURCE": paths.testDataRepo,
             "DEBUG": False
         }
-        logging.getLogger('ga4gh.frontend.cors').setLevel(logging.CRITICAL)
+        logging.getLogger('candig.frontend.cors').setLevel(logging.CRITICAL)
         frontend.reset()
         frontend.configure(
             baseConfig="TestConfig", extraConfig=config)

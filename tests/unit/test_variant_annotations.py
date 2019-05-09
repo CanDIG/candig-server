@@ -9,9 +9,9 @@ from __future__ import unicode_literals
 import hashlib
 import unittest
 
-import ga4gh.server.datarepo as datarepo
-import ga4gh.server.datamodel.variants as variants
-import ga4gh.server.datamodel.datasets as datasets
+import candig.server.datarepo as datarepo
+import candig.server.datamodel.variants as variants
+import candig.server.datamodel.datasets as datasets
 
 import tests.paths as paths
 

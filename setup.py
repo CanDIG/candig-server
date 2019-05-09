@@ -41,20 +41,20 @@ except EnvironmentError:
 setup(
     name="candig-server",
     description="Server implementation of the CanDIG APIs",
-    packages=["ga4gh", "ga4gh.server", "ga4gh.server.datamodel",
-              "ga4gh.server.templates"],
-    namespace_packages=["ga4gh"],
+    packages=["candig", "candig.server", "candig.server.datamodel",
+              "candig.server.templates"],
+    namespace_packages=["candig"],
     zip_safe=False,
     url="https://github.com/CanDIG/candig-server",
-    use_scm_version={"write_to": "ga4gh/server/_version.py"},
+    use_scm_version={"write_to": "candig/server/_version.py"},
     entry_points={
         'console_scripts': [
-            'ga4gh_configtest=ga4gh.server.cli.configtest:configtest_main',
-            'ga4gh_server=ga4gh.server.cli.server:server_main',
-            'ga4gh_repo=ga4gh.server.cli.repomanager:repo_main',
-            'candig_configtest=ga4gh.server.cli.configtest:configtest_main',
-            'candig_server=ga4gh.server.cli.server:server_main',
-            'candig_repo=ga4gh.server.cli.repomanager:repo_main'
+            'ga4gh_configtest=candig.server.cli.configtest:configtest_main',
+            'ga4gh_server=candig.server.cli.server:server_main',
+            'ga4gh_repo=candig.server.cli.repomanager:repo_main',
+            'candig_configtest=candig.server.cli.configtest:configtest_main',
+            'candig_server=candig.server.cli.server:server_main',
+            'candig_repo=candig.server.cli.repomanager:repo_main'
         ]
     },
     long_description=long_description,

@@ -1,3 +1,3 @@
 [flake8]
-exclude = ga4gh/server/datamodel/obo_parser.py,docs,ez_setup.py
+exclude = candig/server/datamodel/obo_parser.py,docs,ez_setup.py
 ignore = E501,E251,W

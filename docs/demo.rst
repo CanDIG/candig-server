@@ -62,7 +62,7 @@ Now we can download some example data, which we'll use for our demo:
     (ga4gh-env) $ wget https://github.com/ga4gh/ga4gh-server/releases/download/data/ga4gh-example-data_4.6.tar
     (ga4gh-env) $ tar -xvf ga4gh-example-data_4.6.tar
 
-After extracting the data, we can then run the ``ga4gh_server`` application:
+After extracting the data, we can then run the ``candig_server`` application:
 
 .. code-block:: bash
 
@@ -232,7 +232,7 @@ user running the server.
 
 .. code-block:: bash
 
-    $ ga4gh_repo init registry.db
+    $ candig_repo init registry.db
 
 This command will create a file ``registry.db`` in the current working
 directory. This file should stay relatively small (a few MB for
@@ -244,7 +244,7 @@ description using the ``--description`` flag.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-dataset registry.db 1kgenomes \
+    $ candig_repo add-dataset registry.db 1kgenomes \
         --description "Variants from the 1000 Genomes project and GENCODE genes annotations"
 
 Add a Reference Set
@@ -272,7 +272,7 @@ around 3GB. Next, we will add the reference set.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-referenceset registry.db /full/path/to/hs37d5.fa.gz \
+    $ candig_repo add-referenceset registry.db /full/path/to/hs37d5.fa.gz \
       -d “NCBI37 assembly of the human genome” \
       --species '{"id": "9606", "term": "Homo sapiens", "source_name": "NCBI", "source_version: "1.0"}' \
       --name NCBI37 \
@@ -295,7 +295,7 @@ site <https://github.com/The-Sequence-Ontology/SO-Ontologies>`_.
 .. code-block:: bash
 
     $ wget https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so-xp-dec.obo
-    $ ga4gh_repo add-ontology registry.db /full/path/to/so-xp.obo -n so-xp
+    $ candig_repo add-ontology registry.db /full/path/to/so-xp.obo -n so-xp
 
 Add sequence annotations
 ------------------------
@@ -311,7 +311,7 @@ with these annotations.
 .. code-block:: bash
 
     $ wget https://ga4ghstore.blob.core.windows.net/testing/gencode_v24lift37.db
-    $ ga4gh_repo add-featureset registry.db 1kgenomes /full/path/to/gencode.v24lift37.annotation.db \
+    $ candig_repo add-featureset registry.db 1kgenomes /full/path/to/gencode.v24lift37.annotation.db \
         --referenceSetName NCBI37 --ontologyName so-xp
 
 
@@ -337,7 +337,7 @@ Again, notice we have referred to the reference set by name.
 
 .. code-block:: bash
 
-    $ ga4gh_repo add-variantset registry.db 1kgenomes /full/path/to/release/ \
+    $ candig_repo add-variantset registry.db 1kgenomes /full/path/to/release/ \
         --name phase3-release --referenceSetName NCBI37
 
 Add a BAM as a Read Group Set
@@ -350,7 +350,7 @@ We will first download the index and then add it to the registry.
 .. code-block:: bash
 
     $ wget http://s3.amazonaws.com/1000genomes/phase3/data/HG00096/alignment/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20120522.bam.bai
-    $ ga4gh_repo add-readgroupset registry.db 1kgenomes \
+    $ candig_repo add-readgroupset registry.db 1kgenomes \
         -I HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20120522.bam.bai \
         --referenceSetName NCBI37 \
         http://s3.amazonaws.com/1000genomes/phase3/data/HG00096/alignment/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20120522.bam \

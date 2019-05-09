@@ -8,8 +8,8 @@ from __future__ import unicode_literals
 import unittest
 import json
 
-import ga4gh.server.backend as backend
-import ga4gh.server.datarepo as datarepo
+import candig.server.backend as backend
+import candig.server.datarepo as datarepo
 
 import ga4gh.client.client as client
 import ga4gh.common.utils as utils
