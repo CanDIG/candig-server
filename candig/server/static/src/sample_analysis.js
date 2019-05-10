@@ -92,6 +92,8 @@ function sample_analysis() {
 
         makeRequest(endpoint + "/search", requestObj).then(function (response) {
             tableBuilder(JSON.parse(response), endpoint, element);
+        }, function (Error) {
+            alertBuilder("One or more tables are not available at this time.")
         })
     }
 

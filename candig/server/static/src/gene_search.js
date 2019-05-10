@@ -31,7 +31,7 @@ $(window).on('load', function() {
         }
 
     }, function(Error) {
-        alertBuilder("No data currently available. Please contact a system administrator for assistance.")
+        alertBuilder("No datasets currently available. Please contact a system administrator for assistance.");
     })
 });
 

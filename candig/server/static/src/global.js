@@ -155,12 +155,12 @@ function setCookie(name, value) {
     document.cookie = name + "=" + value;
 }
 
-// Sugur-coated complexRequestHelper for /search request
+// Sugar-coated complexRequestHelper for /search request
 function searchRequest(table, keys, datasetId, filter = {}, returnTable) {
     return complexRequestHelper(table, keys, datasetId, filter, false, returnTable)
 }
 
-// Sugur-coated complexRequestHelper for /count request
+// Sugar-coated complexRequestHelper for /count request
 function countRequest(table, keys, datasetId, filter = {}) {
     return complexRequestHelper(table, keys, datasetId, filter, true, table)
 }
@@ -216,8 +216,7 @@ function complexRequestHelper(table, keys, datasetId, filter = {}, requestCount 
     makeRequest(endpoint, body).then(function(response) {
 
         if (endpoint == "/count") {
-            let listOfCounts = JSON.parse(response)["results"][returnTable][0];
-            resolve(listOfCounts);
+            resolve(response);  // Return the full response because we need its status info to update status graph
         }
 
         else resolve(JSON.parse(response)["results"][returnTable]);
@@ -229,3 +228,106 @@ function complexRequestHelper(table, keys, datasetId, filter = {}, requestCount 
     }
 })}
 
+/**
+ * Draw a simple single-layered graph.
+ * @param {string} id: The DOM element to render the graph on.
+ * @param {array} type: The type of the graph
+ * @param {string} title: The displayed title
+ * @param {object} count: An object with the aggregated stats
+ * @return None
+*/
+
+function singleLayerDrawer(id, type, title, count) {
+
+    if (count == undefined) {
+        noPermissionMessage(id);
+    }
+
+    else {
+        var categories = Object.keys(count);
+        var values = Object.values(count);
+        var seriesArray = highChartSeriesObjectMaker(categories, values);
+
+        Highcharts.chart(id, {
+            chart: {
+                type: type,
+                style: {
+                    fontFamily: "Roboto"
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            title: {
+                text: title
+            },
+            xAxis: {
+                type: 'category'
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
+            series: [{
+                name: 'count',
+                colorByPoint: true,
+                data: seriesArray
+            }]
+        });
+    }
+}
+
+/**
+ * Display the 'No Data Available' message on designated element.
+ * @param {string} id: The DOM element to render the message on.
+ * @return None
+*/
+
+function noPermissionMessage(id) {
+    let message = "<p class='noPermission'>No data available</p>";
+    document.getElementById(id).innerHTML = message;
+}
+
+/**
+ * Display the 'No Data Available' message on designated elements.
+ * @param {array} ids: The DOM elements to render the message on.
+ * @return None
+*/
+
+function noPermissionMessageMultiple(ids) {
+    let message = "<p class='noPermission'>No data available</p>";
+
+    for (let i = 0; i < ids.length; i++) {
+        document.getElementById(ids[i]).innerHTML = message;
+    }
+}
+
+/**
+ * Make a highcharts-compatible object list.
+ * @param {array} nameArray: 
+ * @param {array} dataArray:
+ * @return {array} seriesObjList: 
+*/
+
+function highChartSeriesObjectMaker(nameArray, dataArray) {
+    var tempObj = {};
+    var seriesObjList = [];
+    var tempDataArray = [];
+    for (var i = 0; i < nameArray.length; i++) {
+        tempObj = {};
+        tempObj['name'] = nameArray[i];
+        tempObj['y'] = dataArray[i];
+        seriesObjList.push(tempObj);
+    }
+    return seriesObjList;
+}

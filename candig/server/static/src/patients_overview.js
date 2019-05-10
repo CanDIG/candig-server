@@ -32,7 +32,8 @@ $(window).on('load', function() {
         patient_main();
 
     }, function(Error) {
-        alertBuilder("No data currently available. Please contact a system administrator for assistance.")
+        alertBuilder("No datasets currently available. Please contact a system administrator for assistance.");
+        noPermissionMessageMultiple(['raceGraph', 'provinceGraph', 'genderGraph']);
     })
 });
 
@@ -171,15 +172,8 @@ function patient_main() {
             };
         });
     }, function(Error) {
-            noPermissionMessage('raceGraph');
-            noPermissionMessage('provinceGraph');
-            noPermissionMessage('genderGraph');
+            noPermissionMessageMultiple(['raceGraph', 'provinceGraph', 'genderGraph']);
         })
-}
-
-function noPermissionMessage(id) {
-    let message = "<p class='noPermission'>No data available</p>";
-    document.getElementById(id).innerHTML = message;
 }
 
 function highChartSeriesObjectMaker(nameArray, dataArray) {
