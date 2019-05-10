@@ -34,7 +34,8 @@ $(window).on('load', function() {
         initialize();
 
     }, function(Error) {
-        alertBuilder("No data currently available. Please contact a system administrator for assistance.")
+        alertBuilder("No datasets currently available. Please contact a system administrator for assistance.");
+        noPermissionMessageMultiple(["adv1", "adv2"]);
     })
 });
 
@@ -127,24 +128,26 @@ $("#table2").off("change").change(function() {
 
 $("#adv1_confirm").off('click').click(function() {
     document.getElementById("adv1").innerHTML = '<div class="loader_bar"></div>';
-    countRequest($("#table1").val(), [$("#key1").val()], datasetId).then(function(response) {
+    countRequest($("#table1").val(), [$("#key1").val()], datasetId).then(function(data) {
+        let response = JSON.parse(data)["results"][$("#table1").val()][0];
         if (response[$("#key1").val()] == undefined) {
             document.getElementById("adv1").innerHTML = "<p class='noPermission'>No data available</p>";
         } else {
             var selectedKey = $("#key1").val();
-            singleLayerDrawer("adv1", $("#type1").val(), "Distribution of " + splitString(selectedKey), currentDatasetName + " " + splitString($("#table1").val()), response[$("#key1").val()])
+            singleLayerDrawer_cv("adv1", $("#type1").val(), "Distribution of " + splitString(selectedKey), currentDatasetName + " " + splitString($("#table1").val()), response[$("#key1").val()])
         }
     })
 });
 
 $("#adv2_confirm").off('click').click(function() {
     document.getElementById("adv2").innerHTML = '<div class="loader_bar"></div>';
-    countRequest($("#table2").val(), [$("#key2").val()], datasetId).then(function(response) {
+    countRequest($("#table2").val(), [$("#key2").val()], datasetId).then(function(data) {
+        let response = JSON.parse(data)["results"][$("#table2").val()][0];
         if (response[$("#key2").val()] == undefined) {
             document.getElementById("adv2").innerHTML = "<p class='noPermission'>No data available</p>";
         } else {
             var selectedKey = $("#key2").val();
-            singleLayerDrawer("adv2", $("#type2").val(), "Distribution of " + splitString(selectedKey), currentDatasetName + " " + splitString($("#table2").val()), response[$("#key2").val()])
+            singleLayerDrawer_cv("adv2", $("#type2").val(), "Distribution of " + splitString(selectedKey), currentDatasetName + " " + splitString($("#table2").val()), response[$("#key2").val()])
         }
     })
 });
@@ -166,13 +169,14 @@ function initialize() {
         document.getElementById("type1").selectedIndex = JSON.stringify(types.indexOf(type1));
         document.getElementById("type2").selectedIndex = JSON.stringify(types.indexOf(type2));
 
-        countRequest($("#table1").val(), [$("#key1").val()], datasetId).then(function(response) {
+        countRequest($("#table1").val(), [$("#key1").val()], datasetId).then(function(data) {
+            let response = JSON.parse(data)["results"][$("#table1").val()][0];
             if (response[$("#key1").val()] == undefined) {
                 document.getElementById("adv1").innerHTML = "<p class='noPermission'>No data available</p>";
                 document.getElementById("adv2").innerHTML = "<p class='noPermission'>No data available</p>";
             } else {
-                singleLayerDrawer("adv1", type1, "Distribution of Treating Centre Province", currentDatasetName + " " + "Enrollments", response[$("#key1").val()])
-                singleLayerDrawer("adv2", type2, "Distribution of Treating Centre Province", currentDatasetName + " " + "Enrollments", response[$("#key2").val()])
+                singleLayerDrawer_cv("adv1", type1, "Distribution of Treating Centre Province", currentDatasetName + " " + "Enrollments", response[$("#key1").val()])
+                singleLayerDrawer_cv("adv2", type2, "Distribution of Treating Centre Province", currentDatasetName + " " + "Enrollments", response[$("#key2").val()])
             }
         })
     }
@@ -198,20 +202,7 @@ function splitString(newString) {
     return capitalized;
 }
 
-function highChartSeriesObjectMaker(nameArray, dataArray) {
-    var tempObj = {};
-    var seriesObjList = [];
-    var tempDataArray = [];
-    for (var i = 0; i < nameArray.length; i++) {
-        tempObj = {};
-        tempObj['name'] = nameArray[i];
-        tempObj['y'] = dataArray[i];
-        seriesObjList.push(tempObj);
-    }
-    return seriesObjList;
-}
-
-function singleLayerDrawer(id, type, title, subtitle, count) {
+function singleLayerDrawer_cv(id, type, title, subtitle, count) {
     var categories = Object.keys(count);
     var values = Object.values(count);
     var seriesArray = highChartSeriesObjectMaker(categories, values);
