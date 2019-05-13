@@ -8,12 +8,12 @@ from __future__ import unicode_literals
 import collections
 import os
 
-import ga4gh.server.backend as backend
-import ga4gh.server.datamodel as datamodel
-import ga4gh.server.datamodel.datasets as datasets
-import ga4gh.server.datamodel.reads as reads
-import ga4gh.server.datamodel.references as references
-import ga4gh.server.datarepo as datarepo
+import candig.server.backend as backend
+import candig.server.datamodel as datamodel
+import candig.server.datamodel.datasets as datasets
+import candig.server.datamodel.reads as reads
+import candig.server.datamodel.references as references
+import candig.server.datarepo as datarepo
 import tests.datadriven as datadriven
 import tests.paths as paths
 

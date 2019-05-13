@@ -18,8 +18,8 @@ import glue
 import ga4gh.schemas.protocol as protocol
 
 glue.ga4ghImportGlue()
-import ga4gh.server.backend as backend  # noqa
-import ga4gh.server.datarepo as datarepo  # noqa
+import candig.server.backend as backend  # noqa
+import candig.server.datarepo as datarepo  # noqa
 
 
 class HeapProfilerBackend(backend.Backend):

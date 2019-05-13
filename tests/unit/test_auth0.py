@@ -9,9 +9,9 @@ import shutil
 import unittest
 import logging
 
-import ga4gh.server.frontend as frontend
-import ga4gh.server.exceptions as exceptions
-import ga4gh.server.auth as auth
+import candig.server.frontend as frontend
+import candig.server.exceptions as exceptions
+import candig.server.auth as auth
 
 import ga4gh.schemas.protocol as protocol
 
@@ -30,20 +30,20 @@ class TestAuth0(unittest.TestCase):
             "SIMULATED_BACKEND_NUM_CALLS": 1,
             "SIMULATED_BACKEND_VARIANT_DENSITY": 1.0,
             "SIMULATED_BACKEND_NUM_VARIANT_SETS": 1,
-            "CACHE_DIRECTORY": "/tmp/ga4gh-test"
+            "CACHE_DIRECTORY": "/tmp/candig-test"
         }
         frontend.reset()
         frontend.configure(
             baseConfig="TestAuth0Config", extraConfig=config)
         cls.app = frontend.app
         # silence usually unhelpful CORS log
-        logging.getLogger('ga4gh.frontend.cors').setLevel(logging.CRITICAL)
+        logging.getLogger('candig.frontend.cors').setLevel(logging.CRITICAL)
         cls.backend = frontend.app.backend
         cls.client = frontend.app.test_client()
 
     @classmethod
     def tearDownClass(cls):
-        shutil.rmtree('/tmp/ga4gh-test', True)
+        shutil.rmtree('/tmp/candig-test', True)
         frontend.reset()
 
     def sendPostRequest(self, path, request, extraHeaders=None):

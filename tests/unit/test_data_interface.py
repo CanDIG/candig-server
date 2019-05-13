@@ -7,8 +7,8 @@ from __future__ import unicode_literals
 
 import unittest
 
-import ga4gh.server.datarepo as datarepo
-import ga4gh.server.backend as backend
+import candig.server.datarepo as datarepo
+import candig.server.backend as backend
 import tests.paths as paths
 
 import ga4gh.client.client as client

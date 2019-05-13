@@ -11,10 +11,10 @@ import shutil
 import tempfile
 import unittest
 
-import ga4gh.server.exceptions as exceptions
-import ga4gh.server.datarepo as datarepo
-import ga4gh.server.cli.repomanager as cli_repomanager
-import ga4gh.server.datamodel as datamodel
+import candig.server.exceptions as exceptions
+import candig.server.datarepo as datarepo
+import candig.server.cli.repomanager as cli_repomanager
+import candig.server.datamodel as datamodel
 import tests.paths as paths
 
 
@@ -62,7 +62,7 @@ class AbstractRepoManagerTest(unittest.TestCase):
     Base class for repo manager tests
     """
     def setUp(self):
-        fd, self._repoPath = tempfile.mkstemp(prefix="ga4gh_repoman_test")
+        fd, self._repoPath = tempfile.mkstemp(prefix="candig_repoman_test")
         os.unlink(self._repoPath)
 
     def runCommand(self, cmd):

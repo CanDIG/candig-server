@@ -15,18 +15,18 @@ install:
   - easy_install distribute
   - pip install --upgrade distribute
   - python setup.py sdist
-  - pip install dist/ga4gh*.tar.gz -c constraints.txt
+  - pip install dist/candig*.tar.gz -c constraints.txt
 # every installable in setup.py's entry_points should be tested here
-  - ga4gh_configtest --version
-  - ga4gh_server --version
-  - ga4gh_repo --version
+  - candig_configtest --version
+  - candig_server --version
+  - candig_repo --version
 
 before_script:
   - pip install -r dev-requirements.txt
   - python scripts/build_test_data.py
-  - PROFYLE_ingest --version
-  - PROFYLE_ingest tests/data/registry.db dataset1 tests/data/sample_clin_metadata.json
-  - PROFYLE_ingest tests/data/registry.db dataset1 tests/data/sample_pipe_metadata.json
+  - ingest --version
+  - ingest tests/data/registry.db dataset1 tests/data/sample_clin_metadata.json
+  - ingest tests/data/registry.db dataset1 tests/data/sample_pipe_metadata.json
     
 before_install:
     - bash tools/travis-install-protoc.sh 3.3.2
@@ -38,9 +38,9 @@ script:
   - flake8 configtest_dev.py convert_error_code.py
            repo_dev.py server_dev.py
            setup.py
-           tests ga4gh scripts
+           tests candig scripts
   - python -mnose tests 
-              --with-coverage --cover-package ga4gh.server
+              --with-coverage --cover-package candig.server
               --cover-inclusive --cover-min-percentage 75
               --cover-branches --cover-erase
   - make clean -C docs

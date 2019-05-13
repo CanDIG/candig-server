@@ -66,14 +66,14 @@ def buildTestData(
         run(
             "add-featureset", repoFile, datasetName, useRelativePath,
             dataFile, "-R NCBI37", "-O", sequenceOntologyName,
-            "-C ga4gh.datamodel.sequence_annotations.Gff3DbFeatureSet")
+            "-C candig.datamodel.sequence_annotations.Gff3DbFeatureSet")
 
     pattern = os.path.join(
         prefix, "datasets/dataset1/continuous", "*.bw")
     for dataFile in glob.glob(pattern):
         run("add-continuousset", repoFile, datasetName, useRelativePath,
             dataFile, "-R NCBI37",
-            "-C ga4gh.datamodel.continuous.FileContinuousSet")
+            "-C candig.datamodel.continuous.FileContinuousSet")
 
     pattern = os.path.join(prefix, "datasets/dataset1/phenotypes", "*")
     for dataFile in glob.glob(pattern):
@@ -85,7 +85,7 @@ def buildTestData(
         run(
             "add-featureset", repoFile, datasetName, useRelativePath,
             dataFile, "-R NCBI37", "-O", sequenceOntologyName,
-            "-C ga4gh.datamodel.genotype_phenotype_featureset."
+            "-C candig.datamodel.genotype_phenotype_featureset."
             "PhenotypeAssociationFeatureSet")
 
     pattern = os.path.join(

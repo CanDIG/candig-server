@@ -11,11 +11,11 @@ import hashlib
 
 import vcf
 
-import ga4gh.server.datamodel as datamodel
-import ga4gh.server.datamodel.datasets as datasets
-import ga4gh.server.datamodel.references as references
-import ga4gh.server.datamodel.variants as variants
-import ga4gh.server.exceptions as exceptions
+import candig.server.datamodel as datamodel
+import candig.server.datamodel.datasets as datasets
+import candig.server.datamodel.references as references
+import candig.server.datamodel.variants as variants
+import candig.server.exceptions as exceptions
 import tests.datadriven as datadriven
 import tests.paths as paths
 

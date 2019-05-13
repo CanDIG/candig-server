@@ -11,10 +11,10 @@ import math
 
 from nose.tools import raises
 
-import ga4gh.server.datarepo as datarepo
-import ga4gh.server.datamodel.continuous as continuous
-import ga4gh.server.datamodel.datasets as datasets
-import ga4gh.server.exceptions as exceptions
+import candig.server.datarepo as datarepo
+import candig.server.datamodel.continuous as continuous
+import candig.server.datamodel.datasets as datasets
+import candig.server.exceptions as exceptions
 
 import tests.paths as paths
 

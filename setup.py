@@ -39,19 +39,22 @@ except EnvironmentError:
           'creating dependency links.')
 
 setup(
-    name="ga4gh-server",
-    description="A reference implementation of the GA4GH API",
-    packages=["ga4gh", "ga4gh.server", "ga4gh.server.datamodel",
-              "ga4gh.server.templates"],
-    namespace_packages=["ga4gh"],
+    name="candig-server",
+    description="Server implementation of the CanDIG APIs",
+    packages=["candig", "candig.server", "candig.server.datamodel",
+              "candig.server.templates"],
+    namespace_packages=["candig"],
     zip_safe=False,
-    url="https://github.com/ga4gh/ga4gh-server",
-    use_scm_version={"write_to": "ga4gh/server/_version.py"},
+    url="https://github.com/CanDIG/candig-server",
+    use_scm_version={"write_to": "candig/server/_version.py"},
     entry_points={
         'console_scripts': [
-            'ga4gh_configtest=ga4gh.server.cli.configtest:configtest_main',
-            'ga4gh_server=ga4gh.server.cli.server:server_main',
-            'ga4gh_repo=ga4gh.server.cli.repomanager:repo_main',
+            'ga4gh_configtest=candig.server.cli.configtest:configtest_main',
+            'ga4gh_server=candig.server.cli.server:server_main',
+            'ga4gh_repo=candig.server.cli.repomanager:repo_main',
+            'candig_configtest=candig.server.cli.configtest:configtest_main',
+            'candig_server=candig.server.cli.server:server_main',
+            'candig_repo=candig.server.cli.repomanager:repo_main'
         ]
     },
     long_description=long_description,
@@ -59,8 +62,8 @@ setup(
     dependency_links=dependency_links,
     license='Apache License 2.0',
     include_package_data=True,
-    author="Global Alliance for Genomics and Health",
-    author_email="theglobalalliance@genomicsandhealth.org",
+    author="CanDIG Team",
+    author_email="info@distributedgenomics.ca",
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Science/Research',
@@ -69,7 +72,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],
-    keywords=['genomics', 'reference'],
+    keywords=['genomics', 'candig'],
     # Use setuptools_scm to set the version number automatically from Git
     setup_requires=['setuptools_scm'],
 )

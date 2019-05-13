@@ -7,9 +7,9 @@ from __future__ import unicode_literals
 
 import unittest
 
-import ga4gh.server.datamodel.datasets as datasets
-import ga4gh.server.exceptions as exceptions
-import ga4gh.server.datamodel.pipeline_metadata as pipeMetadata
+import candig.server.datamodel.datasets as datasets
+import candig.server.exceptions as exceptions
+import candig.server.datamodel.pipeline_metadata as pipeMetadata
 
 import ga4gh.schemas.protocol as protocol
 

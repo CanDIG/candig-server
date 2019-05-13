@@ -7,9 +7,9 @@ from __future__ import unicode_literals
 
 import unittest
 
-import ga4gh.server.datamodel.datasets as datasets
-import ga4gh.server.exceptions as exceptions
-import ga4gh.server.datamodel.bio_metadata as bioMetadata
+import candig.server.datamodel.datasets as datasets
+import candig.server.exceptions as exceptions
+import candig.server.datamodel.bio_metadata as bioMetadata
 
 import ga4gh.schemas.protocol as protocol
 
