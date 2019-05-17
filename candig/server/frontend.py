@@ -41,6 +41,7 @@ import candig.server.network as network
 import ga4gh.schemas.protocol as protocol
 
 import base64
+import pandas as pd
 from collections import Counter
 from requests_futures.sessions import FuturesSession
 
@@ -237,10 +238,7 @@ class ServerStatus(object):
 class UserAccessMap(object):
     """
     Loads local authorization info from an access list file to the backend
-
-    access_list.txt formatting example:
-    username1:project1:0
-    username2:project2:4
+    ACL tsv file header row contains list of project names(ID)
     """
     def __init__(self):
         self.user_access_map = {}
@@ -249,35 +247,27 @@ class UserAccessMap(object):
         if not self.file_path:
             raise exceptions.ConfigurationException("No user access list defined")
 
+        self.access_list = pd.read_csv(self.file_path, sep='\t')
         self.list_updated = os.path.getmtime(self.file_path)
 
     def initializeUserAccess(self, logger=None):
-        try:
-            with open(self.file_path) as access_list:
-                for line in access_list:
-                    parsed_line = line.split(":")
-                    if len(parsed_line) != 3:
-                        # skip incorrectly formatted lines
-                        continue
-                    username = parsed_line[0]
-                    project = parsed_line[1]
-                    level = parsed_line[2].strip('\n')
+        project_list = list(self.access_list)[1:]
+        for idx, row in self.access_list.iterrows():
+            username = row['users']
+            if username not in self.user_access_map:
+                self.user_access_map[username] = {}
+                for project in project_list:
                     try:
-                        int(level)
+                        level = int(row[project])
+                        if 0 <= level <= 4:
+                            self.user_access_map[username][project] = level
                     except ValueError:
-                        # skip non int tier lines
                         continue
-                    if username not in self.user_access_map:
-                        self.user_access_map[username] = {}
-                    if any(project in role for role in self.user_access_map[username]):
-                        if logger:
-                            logger.warn(
-                                "Duplicate roles detected for {}. Resolve in access list".format(username)
-                            )
-                    else:
-                        self.user_access_map[username][project] = level
-        except:
-            raise exceptions.MalformedException
+            else:
+                if logger:
+                    logger.warn(
+                        "Duplicate entries detected for {}. Resolve in ACL.".format(username)
+                    )
 
     def getUserAccessMap(self):
         return self.user_access_map
