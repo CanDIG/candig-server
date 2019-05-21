@@ -1108,6 +1108,13 @@ class RepoManager(object):
             self._updateRepo(self._repo.removePeer, self._args.url)
         self._confirmDelete("Peer", self._args.url, func)
 
+    def removePeers(self):
+        """
+        Clears the list of peers from the repo.
+        """
+        self._openRepo()
+        self._repo.removePeers()
+
     def addExperiment(self):
         """
         Adds a new experiment into this repo
@@ -1781,6 +1788,11 @@ class RepoManager(object):
         cls.addRepoArgument(removePeerParser)
         cls.addUrlArgument(removePeerParser)
         cls.addForceOption(removePeerParser)
+
+        removeAllPeersParser = common_cli.addSubparser(
+            subparsers, "remove-peers", "Remove all peers from the registry.")
+        removeAllPeersParser.set_defaults(runner="removePeers")
+        cls.addRepoArgument(removeAllPeersParser)
 
         addDatasetParser = common_cli.addSubparser(
             subparsers, "add-dataset", "Add a dataset to the data repo")
