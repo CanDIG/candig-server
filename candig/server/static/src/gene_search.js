@@ -98,7 +98,7 @@ var statusCode = 0; // Initial value, table is empty
         }, function(Error) {
                 document.getElementById("loader").style.display = "none";
                 document.getElementById("igvSample").style.display = "none";
-                document.getElementById("geneTable").innerHTML = "Sorry, but we are not able to locate the gene.";
+                alertBuilder("Sorry, but no data is available for the gene you searched.")
                 statusCode = -1; //The dataset failed to initialized.
         })
     }

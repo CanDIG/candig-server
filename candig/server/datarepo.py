@@ -3457,6 +3457,16 @@ class SqlDataRepository(AbstractDataRepository):
             models.Peer.url == url)
         q.execute()
 
+    def removePeers(self):
+        """
+        Remove all peers from the Peers table.
+        """
+        try:
+            q = models.Peer.delete()
+            q.execute()
+        except Exception as e:
+            raise exceptions.RepoManagerException(e)
+
     def _createNetworkTables(self):
         """"""
         self.database.create_table(models.Peer)
