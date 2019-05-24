@@ -11,7 +11,7 @@ import json
 import candig.server.datamodel as datamodel
 import candig.server.exceptions as exceptions
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 
 class Biosample(datamodel.DatamodelObject):
