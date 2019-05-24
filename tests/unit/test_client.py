@@ -11,7 +11,7 @@ import json
 import candig.server.backend as backend
 import candig.server.datarepo as datarepo
 
-import ga4gh.client.client as client
+import candig.client.client as client
 import ga4gh.common.utils as utils
 import candig.schemas.protocol as protocol
 
