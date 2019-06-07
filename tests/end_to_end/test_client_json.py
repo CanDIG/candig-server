@@ -12,15 +12,15 @@ import json
 import unittest
 import freezegun
 
-import candig.client.client as client
+import ga4gh.client.client as client
 import candig.server.backend as backend
-import candig.client.cli as cli_client
+import ga4gh.client.cli as cli_client
 import candig.server.datarepo as datarepo
 import ga4gh.common.utils as utils
 import tests.paths as paths
 import server
 
-import candig.schemas.protocol as protocol
+import ga4gh.schemas.protocol as protocol
 
 
 def setUpModule():

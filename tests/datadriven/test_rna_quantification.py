@@ -18,7 +18,7 @@ import candig.server.datamodel.rna_quantification as rna_quantification
 import tests.datadriven as datadriven
 import tests.paths as paths
 
-import candig.schemas.protocol as protocol
+import ga4gh.schemas.protocol as protocol
 
 
 _datasetName = "ds"

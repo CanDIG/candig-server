@@ -20,7 +20,7 @@ import tests.datadriven as datadriven
 import tests.paths as paths
 
 import ga4gh.common.utils as utils
-import candig.schemas.protocol as protocol
+import ga4gh.schemas.protocol as protocol
 
 
 def testVariantSets():

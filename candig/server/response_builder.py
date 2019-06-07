@@ -5,8 +5,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import candig.schemas.pb as pb
-import candig.schemas.protocol as protocol
+import ga4gh.schemas.pb as pb
+import ga4gh.schemas.protocol as protocol
 
 
 class SearchResponseBuilder(object):

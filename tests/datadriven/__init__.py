@@ -15,8 +15,8 @@ import array
 
 import google.protobuf.json_format as json_format
 
-import candig.schemas.pb as pb
-import candig.schemas.protocol as protocol
+import ga4gh.schemas.pb as pb
+import ga4gh.schemas.protocol as protocol
 
 
 def _wrapTestMethod(method):

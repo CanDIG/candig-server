@@ -38,7 +38,7 @@ import candig.server.datarepo as datarepo
 import candig.server.auth as auth
 import candig.server.network as network
 
-import candig.schemas.protocol as protocol
+import ga4gh.schemas.protocol as protocol
 
 import base64
 import pandas as pd

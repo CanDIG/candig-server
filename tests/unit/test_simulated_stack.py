@@ -19,7 +19,7 @@ import candig.server.datamodel.sequence_annotations as sequence_annotations
 import candig.server.datamodel.continuous as continuous
 import candig.server.frontend as frontend
 
-import candig.schemas.protocol as protocol
+import ga4gh.schemas.protocol as protocol
 
 
 def round_float32(x_double):

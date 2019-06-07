@@ -13,7 +13,7 @@ import datetime
 import candig.server.datamodel as datamodel
 import candig.server.exceptions as exceptions
 
-import candig.schemas.protocol as protocol
+import ga4gh.schemas.protocol as protocol
 
 
 class Extraction(datamodel.DatamodelObject):

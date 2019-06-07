@@ -11,7 +11,7 @@ import candig.server.datarepo as datarepo
 import candig.server.backend as backend
 import tests.paths as paths
 
-import candig.client.client as client
+import ga4gh.client.client as client
 import ga4gh.common.utils as utils
 
 

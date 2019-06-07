@@ -16,8 +16,8 @@ import candig.server.datamodel.ontologies as ontologies
 import tests.datadriven as datadriven
 import tests.paths as paths
 
-from candig.schemas.ga4gh.common_pb2 import OntologyTerm
-import candig.schemas.protocol as protocol
+from ga4gh.schemas.ga4gh.common_pb2 import OntologyTerm
+import ga4gh.schemas.protocol as protocol
 
 
 def testReferenceSets():

@@ -13,7 +13,7 @@ import candig.server.datamodel.datasets as datasets
 import tests.datadriven as datadriven
 import tests.paths as paths
 
-import candig.schemas.protocol as protocol
+import ga4gh.schemas.protocol as protocol
 
 
 def testG2P():

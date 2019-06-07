@@ -10,7 +10,7 @@ import unittest
 
 import candig.server.datamodel.reads as reads
 
-import candig.schemas.protocol as protocol
+import ga4gh.schemas.protocol as protocol
 
 
 class TestParseMalformedBamHeader(unittest.TestCase):

@@ -10,7 +10,7 @@ import unittest
 import candig.server.frontend as frontend
 import candig.server.exceptions as exceptions
 
-import candig.schemas.protocol as protocol
+import ga4gh.schemas.protocol as protocol
 
 
 class TestFrontendErrors(unittest.TestCase):

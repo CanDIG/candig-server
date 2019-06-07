@@ -9,7 +9,7 @@ import candig.server.datamodel as datamodel
 import candig.server.frontend as frontend
 import tests.paths as paths
 
-import candig.schemas.protocol as protocol
+import ga4gh.schemas.protocol as protocol
 
 
 class TestG2P(unittest.TestCase):
