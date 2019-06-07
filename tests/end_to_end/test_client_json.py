@@ -20,7 +20,7 @@ import ga4gh.common.utils as utils
 import tests.paths as paths
 import server
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 
 def setUpModule():

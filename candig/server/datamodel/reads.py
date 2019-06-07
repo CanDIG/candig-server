@@ -17,8 +17,8 @@ import candig.server.datamodel as datamodel
 import candig.server.datamodel.references as references
 import candig.server.exceptions as exceptions
 
-import ga4gh.schemas.pb as pb
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.pb as pb
+import candig.schemas.protocol as protocol
 
 
 def parseMalformedBamHeader(headerDict):

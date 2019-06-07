@@ -13,8 +13,8 @@ import candig.server.datamodel as datamodel
 import candig.server.sqlite_backend as sqlite_backend
 import candig.server.exceptions as exceptions
 
-import ga4gh.schemas.pb as pb
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.pb as pb
+import candig.schemas.protocol as protocol
 
 # Note to self: There's the Feature ID as understood in a GFF3 file,
 # the Feature ID that is its server-assigned compoundId, and the

@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import unittest
 
 import candig.server.response_builder as response_builder
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 
 def getValueListName(cls):

@@ -12,7 +12,7 @@ import tests.paths as paths
 
 import candig.server.datamodel as datamodel
 import candig.server.frontend as frontend
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 import candig.server.exceptions as exceptions
 
 import json

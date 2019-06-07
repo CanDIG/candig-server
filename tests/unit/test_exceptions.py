@@ -12,7 +12,7 @@ import inspect
 import candig.server.exceptions as exceptions
 import candig.server.frontend as frontend
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 
 class TestExceptionHandler(unittest.TestCase):

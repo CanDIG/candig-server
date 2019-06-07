@@ -15,8 +15,8 @@ import candig.server.datamodel.bio_metadata as biodata
 import candig.server.datamodel.genotype_phenotype as g2p
 import candig.server.datamodel.rna_quantification as rnaQuantification
 
-import ga4gh.schemas.pb as pb
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.pb as pb
+import candig.schemas.protocol as protocol
 
 
 class Dataset(datamodel.DatamodelObject):
