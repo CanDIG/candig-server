@@ -240,34 +240,37 @@ class UserAccessMap(object):
     Loads local authorization info from an access list file to the backend
     ACL tsv file header row contains list of project names(ID)
     """
-    def __init__(self):
+    def __init__(self, logger=None):
         self.user_access_map = {}
         self.file_path = app.config.get('ACCESS_LIST')
 
         if not self.file_path:
             raise exceptions.ConfigurationException("No user access list defined")
 
-        self.access_list = pd.read_csv(self.file_path, sep='\t')
+        self.access_list = pd.read_table(self.file_path, index_col=0)
+        # Detect duplicated usernames
+        if logger:
+            for username in self.access_list.index[self.access_list.index.duplicated()]:
+                logger.warn(
+                    "Duplicate entries detected for {}. Resolve in ACL.".format(username)
+                )
+                
         self.list_updated = os.path.getmtime(self.file_path)
 
-    def initializeUserAccess(self, logger=None):
-        project_list = list(self.access_list)[1:]
-        for idx, row in self.access_list.iterrows():
-            username = row['users']
-            if username not in self.user_access_map:
-                self.user_access_map[username] = {}
-                for project in project_list:
-                    try:
-                        level = int(row[project])
-                        if 0 <= level <= 4:
-                            self.user_access_map[username][project] = level
-                    except ValueError:
-                        continue
-            else:
-                if logger:
-                    logger.warn(
-                        "Duplicate entries detected for {}. Resolve in ACL.".format(username)
-                    )
+    def initializeUserAccess(self):
+        """
+        Convert user access table to dictionary {user: {project: value, ...}}
+        """
+        # Convert user access table into a dictionary
+        self.user_access_map = self.access_list.to_dict(orient='index')
+        
+        # Remove non set values
+        self.user_access_map = {
+            user: {project: level 
+                for project, level in value.iteritems() if 0 <= level <= 4
+                } 
+            for user, value in self.user_access_map.iteritems()
+            }
 
     def getUserAccessMap(self):
         return self.user_access_map
@@ -283,8 +286,8 @@ def load_access_map():
     """
     Reloads the user access map from file
     """
-    app.access_map = UserAccessMap()
-    app.access_map.initializeUserAccess(app.logger)
+    app.access_map = UserAccessMap(app.logger)
+    app.access_map.initializeUserAccess()
 
 
 def render_candig_template(template_path, **kwargs):
