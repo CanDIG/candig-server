@@ -185,7 +185,7 @@ performed above, we can use the following code:
 
     from __future__ import print_function
 
-    from candig.client import client
+    from ga4gh.client import client
 
     httpClient = client.HttpClient("http://localhost:8000")
     # Get the datasets on the server.
@@ -393,7 +393,7 @@ client's libraries for use in your own programs:
 
 .. code-block:: python
 
-    >>> from candig.client import client
+    >>> from ga4gh.client import client
     >>> client.HttpClient
     <class 'ga4gh_client.client.HttpClient'>
 
