@@ -14,7 +14,7 @@
 # of the respective module.
 ga4gh-common==0.0.7
 candig-schemas
-ga4gh-client
+candig-client
 
 Werkzeug==0.14.1
 MarkupSafe==0.23
