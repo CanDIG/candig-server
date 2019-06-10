@@ -15,7 +15,7 @@ import guppy
 
 import glue
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 glue.ga4ghImportGlue()
 import candig.server.backend as backend  # noqa

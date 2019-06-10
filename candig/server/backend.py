@@ -10,7 +10,7 @@ import candig.server.datamodel as datamodel
 import candig.server.exceptions as exceptions
 import candig.server.paging as paging
 import candig.server.response_builder as response_builder
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 import operator
 from google.protobuf.json_format import MessageToDict
 import json

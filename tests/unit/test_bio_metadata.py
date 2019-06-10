@@ -11,7 +11,7 @@ import candig.server.datamodel.datasets as datasets
 import candig.server.exceptions as exceptions
 import candig.server.datamodel.bio_metadata as bioMetadata
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 
 class TestIndividuals(unittest.TestCase):
