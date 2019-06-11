@@ -21,5 +21,6 @@
 # When making a release, these constraints are commented out so that
 # the pinned packages in requirements.txt are used instead.
 #
+#git+git://github.com/ga4gh/ga4gh-common.git@master#egg=ga4gh_common
 git+git://github.com/CanDIG/candig-schemas.git@test_update_protocol_190610#egg=candig_schemas
 git+git://github.com/CanDIG/candig-client.git@develop#egg=candig_client
