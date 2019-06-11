@@ -88,7 +88,7 @@ class TestDuplicateCallSetId(FaultyVariantDataTest):
     """
     localIds = ["duplicated_sampleid"]
 
-    @unittest.skipIf(protocol.version.startswith("0.6"), "")
+    @unittest.skip("There is no need to check protocol version here. The test gets skipped at all time.")
     def testInstantiation(self):
         for localId in self.localIds:
             path = self.getFullPath(localId)

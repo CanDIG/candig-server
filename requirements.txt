@@ -13,7 +13,7 @@
 # the constraints file will point at the current master branch 
 # of the respective module.
 ga4gh-common==0.0.7
-candig-schemas
+candig-schemas==0.8.0
 candig-client
 
 Werkzeug==0.14.1
