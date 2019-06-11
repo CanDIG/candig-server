@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 import candig.server
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 
 def addVersionArgument(parser):

@@ -12,7 +12,7 @@ import candig.server.datamodel.datasets as datasets
 import candig.server.datamodel.variants as variants
 import candig.server.exceptions as exceptions
 
-import ga4gh.schemas.protocol as protocol
+# import candig.schemas.protocol as protocol
 
 
 class FaultyVariantDataTest(unittest.TestCase):
@@ -88,7 +88,7 @@ class TestDuplicateCallSetId(FaultyVariantDataTest):
     """
     localIds = ["duplicated_sampleid"]
 
-    @unittest.skipIf(protocol.version.startswith("0.6"), "")
+    @unittest.skip("There is no need to check protocol version here. The test gets skipped at all time.")
     def testInstantiation(self):
         for localId in self.localIds:
             path = self.getFullPath(localId)

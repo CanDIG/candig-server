@@ -15,7 +15,7 @@ import candig.server.exceptions as exceptions
 import candig.server.datamodel.sequence_annotations as sequence_annotations
 import candig.server.datamodel.genotype_phenotype as g2p
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 # annotation keys
 TYPE = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'

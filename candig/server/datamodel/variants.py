@@ -19,8 +19,8 @@ import pysam
 import candig.server.exceptions as exceptions
 import candig.server.datamodel as datamodel
 
-import ga4gh.schemas.pb as pb
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.pb as pb
+import candig.schemas.protocol as protocol
 
 
 ANNOTATIONS_VEP_V82 = "VEP_v82"

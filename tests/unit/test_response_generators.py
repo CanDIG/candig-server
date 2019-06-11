@@ -14,7 +14,7 @@ import candig.server.datamodel.variants as variants
 import candig.server.exceptions as exceptions
 import candig.server.datarepo as datarepo
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 
 def generateVariant():
