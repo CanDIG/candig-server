@@ -34,5 +34,8 @@ pyaml==15.03.1
 cherrypy==3.2.4
 yubico-client==1.9.1
 
+# For client-related test suite
+git+git://github.com/CanDIG/candig-client.git@v0.9.0
+
 # For ingesting various metadata
-git+git://github.com/CanDIG/candig-ingest.git@v1.1.1
+git+git://github.com/CanDIG/candig-ingest.git@v1.2.0
