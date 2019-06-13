@@ -27,7 +27,7 @@ import candig.server.repo.models as models
 import candig.server.datamodel.clinical_metadata as clinical_metadata
 import candig.server.datamodel.pipeline_metadata as pipeline_metadata
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 MODE_READ = 'r'
 MODE_WRITE = 'w'
@@ -3456,6 +3456,16 @@ class SqlDataRepository(AbstractDataRepository):
         q = models.Peer.delete().where(
             models.Peer.url == url)
         q.execute()
+
+    def removePeers(self):
+        """
+        Remove all peers from the Peers table.
+        """
+        try:
+            q = models.Peer.delete()
+            q.execute()
+        except Exception as e:
+            raise exceptions.RepoManagerException(e)
 
     def _createNetworkTables(self):
         """"""

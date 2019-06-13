@@ -81,8 +81,6 @@ function makeRequest(path, body) {
                     } else if (xhr.status == 500) {
                         alertBuilder("Unexpected errors occurred. Click <a href='/'>here</a> to refresh your session." +
                             " If problems persist, please contact your system administrators for assistance.");
-                    } else if (xhr.status == 404) {
-                        alertBuilder("One or more resources you requested do not exist.");
                     }
                     reject(Error(xhr.response));
                 }

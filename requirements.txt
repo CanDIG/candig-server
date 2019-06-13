@@ -13,8 +13,7 @@
 # the constraints file will point at the current master branch 
 # of the respective module.
 ga4gh-common==0.0.7
-ga4gh-schemas
-ga4gh-client
+candig-schemas==0.8.0
 
 Werkzeug==0.14.1
 MarkupSafe==0.23
@@ -39,6 +38,7 @@ pyjwkest==1.4.0
 PyJWT==1.4.2
 peewee==2.8.5
 gunicorn==19.9.0
+pandas==0.24.2
 
 ### This section is for the actual libraries ###
 # these libraries are imported in code that can be reached via

@@ -11,7 +11,7 @@ import os.path
 import candig.server.exceptions as exceptions
 import candig.server.datamodel.obo_parser as obo_parser
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 
 SEQUENCE_ONTOLOGY_PREFIX = "SO"

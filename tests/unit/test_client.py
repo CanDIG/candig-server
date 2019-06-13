@@ -11,9 +11,9 @@ import json
 import candig.server.backend as backend
 import candig.server.datarepo as datarepo
 
-import ga4gh.client.client as client
+import candig.client.client as client
 import ga4gh.common.utils as utils
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 
 class DatamodelObjectWrapper(object):

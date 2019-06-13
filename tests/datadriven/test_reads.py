@@ -18,7 +18,7 @@ import tests.datadriven as datadriven
 import tests.paths as paths
 
 import ga4gh.common.utils as utils
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 import pysam
 
