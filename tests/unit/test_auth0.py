@@ -13,7 +13,7 @@ import candig.server.frontend as frontend
 import candig.server.exceptions as exceptions
 import candig.server.auth as auth
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 
 class TestAuth0(unittest.TestCase):

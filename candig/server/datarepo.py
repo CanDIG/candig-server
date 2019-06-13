@@ -27,7 +27,7 @@ import candig.server.repo.models as models
 import candig.server.datamodel.clinical_metadata as clinical_metadata
 import candig.server.datamodel.pipeline_metadata as pipeline_metadata
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 MODE_READ = 'r'
 MODE_WRITE = 'w'

@@ -11,7 +11,7 @@ import urlparse
 
 import candig.server.exceptions as exceptions
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 
 def isUrl(urlString):

@@ -15,7 +15,7 @@ import candig.server.datamodel.datasets as datasets
 
 import tests.paths as paths
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 
 class TestHtslibVariantAnnotationSet(unittest.TestCase):

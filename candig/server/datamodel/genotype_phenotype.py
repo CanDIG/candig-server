@@ -12,7 +12,7 @@ import rdflib
 import candig.server.datamodel as datamodel
 import candig.server.exceptions as exceptions
 
-import ga4gh.schemas.protocol as protocol
+import candig.schemas.protocol as protocol
 
 # annotation keys
 TYPE = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
