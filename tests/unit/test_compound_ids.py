@@ -2,9 +2,9 @@
 """
 Tests the compound ids
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import json
 import unittest
@@ -36,15 +36,15 @@ class TestCompoundIds(unittest.TestCase):
         foo = latin1chars
         bar = "a unicode string"
         baz = str("an ascii string")
-        self.assertEqual(type(foo), unicode)
-        self.assertEqual(type(bar), unicode)
+        self.assertEqual(type(foo), str)
+        self.assertEqual(type(bar), str)
         self.assertEqual(type(baz), str)
         compoundId = ExampleCompoundId(None, foo, bar, baz)
-        self.assertEqual(type(compoundId.foo), unicode)
-        self.assertEqual(type(compoundId.bar), unicode)
-        self.assertEqual(type(compoundId.baz), unicode)
-        self.assertEqual(type(compoundId.foobar), unicode)
-        self.assertEqual(type(compoundId.foobarbaz), unicode)
+        self.assertEqual(type(compoundId.foo), str)
+        self.assertEqual(type(compoundId.bar), str)
+        self.assertEqual(type(compoundId.baz), str)
+        self.assertEqual(type(compoundId.foobar), str)
+        self.assertEqual(type(compoundId.foobarbaz), str)
 
     def testTopLevelIdsUnique(self):
         datasetId = "a"
@@ -501,7 +501,7 @@ class TestCompoundIds(unittest.TestCase):
         obfuscated = datamodel.CompoundId.obfuscate(idStr)
         cid = datamodel.RnaQuantificationCompoundId.parse(obfuscated)
         self.assertEqual(cid.dataset, "a")
-        self.assertEquals(cid.rna_quantification_set, "b")
+        self.assertEqual(cid.rna_quantification_set, "b")
         self.assertEqual(cid.rna_quantification, "c")
         self.verifyParseFailure(idStr, datamodel.RnaQuantificationCompoundId)
 
@@ -529,7 +529,7 @@ class TestCompoundIds(unittest.TestCase):
         obfuscated = datamodel.CompoundId.obfuscate(idStr)
         cid = datamodel.ExpressionLevelCompoundId.parse(obfuscated)
         self.assertEqual(cid.dataset, "a")
-        self.assertEquals(cid.rna_quantification_set, "b")
+        self.assertEqual(cid.rna_quantification_set, "b")
         self.assertEqual(cid.rna_quantification, "c")
         self.assertEqual(cid.expression_level_id, "d")
         self.verifyParseFailure(idStr, datamodel.ExpressionLevelCompoundId)

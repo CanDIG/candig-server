@@ -2,9 +2,9 @@
 Module responsible for translating sequence annotation data
 into GA4GH native objects.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import json
 import random
@@ -247,7 +247,7 @@ class SimulatedFeatureSet(AbstractFeatureSet):
             "gene_name": "Frances",
             "gene_type": "mRNA",
             "gene_status": "UNKNOWN"}
-        for key, value in attributes.items():
+        for key, value in list(attributes.items()):
             feature.attributes.attr[key].values.add().string_value = value
         return feature
 
@@ -362,7 +362,7 @@ class Gff3DbFeatureSet(AbstractFeatureSet):
         :raises: exceptions.ObjectWithIdNotFoundException if invalid
             compoundId is provided.
         """
-        featureId = long(compoundId.featureId)
+        featureId = int(compoundId.featureId)
         with self._db as dataSource:
             featureReturned = dataSource.getFeatureById(featureId)
 
@@ -394,9 +394,9 @@ class Gff3DbFeatureSet(AbstractFeatureSet):
         else:
             # default to positive strand
             gaFeature.strand = protocol.POS_STRAND
-        gaFeature.child_ids.extend(map(
+        gaFeature.child_ids.extend(list(map(
             self.getCompoundIdForFeatureId,
-            json.loads(feature['child_ids'])))
+            json.loads(feature['child_ids']))))
         gaFeature.feature_type.CopyFrom(
             self._ontology.getGaTermByName(feature['type']))
         attributes = json.loads(feature['attributes'])

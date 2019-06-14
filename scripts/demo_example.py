@@ -2,9 +2,9 @@
 """
 Example of client query
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import candig.client.client as client
 

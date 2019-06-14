@@ -1,9 +1,9 @@
 """
 The backing data store for the GA4GH server
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import json
 import os
@@ -131,7 +131,7 @@ class AbstractDataRepository(object):
         Select the first peer in the datarepo with the given url simulating
         the behavior of selecting by URL. This is only used during testing.
         """
-        peers = filter(lambda x: x.getUrl() == url, self.getPeers())
+        peers = [x for x in self.getPeers() if x.getUrl() == url]
         if len(peers) == 0:
             raise exceptions.PeerNotFoundException(url)
         return peers[0]
@@ -708,7 +708,7 @@ class SimulatedDataRepository(AbstractDataRepository):
             numAlignments=2, numRnaQuantSets=2, numExpressionLevels=2,
             numPeers=1):
         super(SimulatedDataRepository, self).__init__()
-        for i in xrange(numPeers):
+        for i in range(numPeers):
             peer = peers.Peer("http://test{}.org".format(i))
             self.insertPeer(peer)
 
@@ -805,12 +805,12 @@ class SqlDataRepository(AbstractDataRepository):
         for item in model.select():
             if first:
                 header = "".join(
-                    ["{}\t".format(x) for x in model._meta.fields.keys()])
+                    ["{}\t".format(x) for x in list(model._meta.fields.keys())])
                 print(header)
                 first = False
             row = "".join(
                 ["{}\t".format(
-                    getattr(item, key)) for key in model._meta.fields.keys()])
+                    getattr(item, key)) for key in list(model._meta.fields.keys())])
             print(row)
 
     def printAnnouncements(self):
@@ -957,7 +957,7 @@ class SqlDataRepository(AbstractDataRepository):
                 max_variants = 10
                 max_annotations = 10
                 refMap = variantSet.getReferenceToDataUrlIndexMap()
-                for referenceName, (dataUrl, indexFile) in refMap.items():
+                for referenceName, (dataUrl, indexFile) in list(refMap.items()):
                     variants = variantSet.getVariants(referenceName, 0, 2**31)
                     for i, variant in enumerate(variants):
                         if i == max_variants:
@@ -969,7 +969,7 @@ class SqlDataRepository(AbstractDataRepository):
                     print(
                         "\t\tVerifying VariantAnnotationSet",
                         annotationSet.getLocalId())
-                    for referenceName in refMap.keys():
+                    for referenceName in list(refMap.keys()):
                         annotations = annotationSet.getVariantAnnotations(
                             referenceName, 0, 2**31)
                         for i, annotation in enumerate(annotations):

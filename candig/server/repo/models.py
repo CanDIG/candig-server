@@ -12,9 +12,9 @@ For more on the peewee model API see:
 https://peewee.readthedocs.io/en/latest/peewee/models.html
 
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import peewee as pw
 import datetime

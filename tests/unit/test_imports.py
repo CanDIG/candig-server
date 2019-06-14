@@ -1,9 +1,9 @@
 """
 Tests that the project's module import graph conforms to certain policies
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import copy
 import fnmatch
@@ -105,7 +105,7 @@ class ImportGraph(object):
         self.graph = {}
 
     def iterNodes(self):
-        return self.graph.items()
+        return list(self.graph.items())
 
     def getNodeFor(self, name):
         return self.graph[name]
@@ -229,7 +229,7 @@ class ImportGraphLayerChecker(object):
             for moduleGroup in layerRow:
                 self.moduleGroupToOrderIndex[moduleGroup] = i
         self.moduleToModuleGroup = {}
-        for moduleGroup, modules in self.moduleGroupNames.items():
+        for moduleGroup, modules in list(self.moduleGroupNames.items()):
             for module in modules:
                 self.moduleToModuleGroup[module] = moduleGroup
 
@@ -245,7 +245,7 @@ class ImportGraphLayerChecker(object):
                 self._aboveLayerCheck(layer, moduleGroup, modulesInGroup)
 
     def _allModules(self):
-        modules = list(itertools.chain(*self.moduleGroupNames.values()))
+        modules = list(itertools.chain(*list(self.moduleGroupNames.values())))
         return modules
 
     def _checkConfiguration(self):
@@ -277,7 +277,7 @@ class ImportGraphLayerChecker(object):
 
         # each moduleGroup should only appear once in layers
         # every defined moduleGroup appears in layers
-        moduleGroups = self.moduleGroupNames.keys()
+        moduleGroups = list(self.moduleGroupNames.keys())
         layersModuleGroups = list(itertools.chain(*self.layers))
         if set(moduleGroups) != set(layersModuleGroups):
             message = "moduleGroupNames and layer moduleGroups not equal"
@@ -555,7 +555,7 @@ class SnakefoodScanner(object):
         # not just to the files that live in the same roots.
         if self.optsInternal >= 2:
             filtfiles = type(allfiles)()
-            for from_, tolist in allfiles.iteritems():
+            for from_, tolist in allfiles.items():
                 filtfiles[from_] = set(
                     x for x in tolist if x in allfiles or x == (None, None))
             allfiles = filtfiles
@@ -585,9 +585,9 @@ class SnakefoodScanner(object):
         info("")
         info("Found roots:")
         foundRoots = set()
-        for key, files in allfiles.iteritems():
+        for key, files in allfiles.items():
             foundRoots.add(key[0])
-            foundRoots.update(map(operator.itemgetter(0), files))
+            foundRoots.update(list(map(operator.itemgetter(0), files)))
         if None in foundRoots:
             foundRoots.remove(None)
         for root in sorted(foundRoots):
@@ -596,7 +596,7 @@ class SnakefoodScanner(object):
         entries = SnakefoodEntries()
         info("")
         for (from_root, from_), targets in sorted(
-                allfiles.iteritems(), key=operator.itemgetter(0)):
+                iter(allfiles.items()), key=operator.itemgetter(0)):
             for to_root, to_ in sorted(targets):
                 entry = SnakefoodEntry(from_root, from_, to_root, to_)
                 entries.append(entry)

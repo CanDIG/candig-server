@@ -3,9 +3,9 @@ End-to-end tests for the simulator configuration. Sets up a server with
 the backend, sends some basic queries to that server and verifies results
 are as expected.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import unittest
 import logging
@@ -171,7 +171,7 @@ class TestSimulatedStack(unittest.TestCase):
         self.assertEqual(gaCallSet.id, callSet.getId())
         self.assertEqual(gaCallSet.name, callSet.getLocalId())
         self.assertEqual(gaCallSet.variant_set_ids, [variantSet.getId()])
-        for key, value in gaCallSet.attributes.attr.items():
+        for key, value in list(gaCallSet.attributes.attr.items()):
             self.assertEqual(
                 protocol.getValueFromValue(value.values[0]),
                 callSet.getInfo()[key])
@@ -696,7 +696,7 @@ class TestSimulatedStack(unittest.TestCase):
         response = json.dumps(response_data.get('results', {}))
         responseData = self.deserialize(response, protocol.
                                         SearchVariantAnnotationsResponse)
-        self.assertEquals(
+        self.assertEqual(
             len(responseData.variant_annotations), 0,
             "There should be no results for a nonsense effect")
 
@@ -737,10 +737,9 @@ class TestSimulatedStack(unittest.TestCase):
             effectPresent = False
             for effect in ann.transcript_effects:
                 for featureType in effect.effects:
-                    if featureType.term_id in map(
-                            lambda e: e.term_id, request.effects):
+                    if featureType.term_id in [e.term_id for e in request.effects]:
                         effectPresent = True
-            self.assertEquals(
+            self.assertEqual(
                 True, effectPresent,
                 "The ontology term should appear at least once")
 
@@ -764,10 +763,9 @@ class TestSimulatedStack(unittest.TestCase):
             effectPresent = False
             for effect in ann.transcript_effects:
                 for featureType in effect.effects:
-                    if featureType.term_id in map(
-                            lambda e: e.term_id, request.effects):
+                    if featureType.term_id in [e.term_id for e in request.effects]:
                         effectPresent = True
-            self.assertEquals(
+            self.assertEqual(
                 True,
                 effectPresent,
                 "The ontology term should appear at least once")
@@ -787,15 +785,14 @@ class TestSimulatedStack(unittest.TestCase):
                            "There should be some results for a good effect ID")
         for ann in responseData.variant_annotations:
             effectPresent = False
-            txIds = map(lambda t: t.id, ann.transcript_effects)
+            txIds = [t.id for t in ann.transcript_effects]
             self.assertEqual(len(txIds), len(set(txIds)),
                              "Transcript effects should be unique")
             for effect in ann.transcript_effects:
                 for featureType in effect.effects:
-                    if featureType.term_id in map(
-                            lambda e: e.term_id, request.effects):
+                    if featureType.term_id in [e.term_id for e in request.effects]:
                         effectPresent = True
-            self.assertEquals(True, effectPresent,
+            self.assertEqual(True, effectPresent,
                               "The ontology term should appear at least once")
 
         request = protocol.SearchVariantAnnotationsRequest()
@@ -1094,7 +1091,7 @@ class TestSimulatedStack(unittest.TestCase):
             request.page_size = 1
             responseData = self.sendSearchRequest(
                 path, request, protocol.SearchReadGroupSetsResponse)
-            self.assertEquals(
+            self.assertEqual(
                 len(responseData.read_group_sets), 0,
                 "A good biosample ID and bad name should return 0")
             request = protocol.SearchReadGroupSetsRequest()

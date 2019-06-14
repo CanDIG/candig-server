@@ -4,9 +4,9 @@ of which is at https://github.com/ga4gh/compliance/tree/master/test-data)
 and turns it into a directory bundle of binary and JSON files suitable
 for use by the reference server.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import argparse
 import os

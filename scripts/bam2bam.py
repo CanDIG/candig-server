@@ -1,9 +1,9 @@
 """
 Convert a BAM file to a small BAM file
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import ga4gh.common.utils as utils
 

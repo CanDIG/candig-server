@@ -1,9 +1,9 @@
 """
 Tests the backend methods and generators for the advanced search API
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import unittest
 import json

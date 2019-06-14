@@ -1,9 +1,9 @@
 """
 Tests for the repo manager tool
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import os
 import glob
@@ -777,8 +777,8 @@ class TestAddVariantSet(AbstractRepoManagerTest):
         variantSet = dataset.getVariantSetByName(name)
         self.assertEqual(variantSet.getLocalId(), name)
         self.assertEqual(variantSet.getReferenceSet(), referenceSet)
-        dataUrls = map(lambda x: os.path.abspath(x), dataUrls)
-        indexFiles = map(lambda x: os.path.abspath(x), indexFiles)
+        dataUrls = [os.path.abspath(x) for x in dataUrls]
+        indexFiles = [os.path.abspath(x) for x in indexFiles]
         pairs = sorted(zip(dataUrls, indexFiles))
         self.assertEqual(pairs, sorted(variantSet.getDataUrlIndexPairs()))
 

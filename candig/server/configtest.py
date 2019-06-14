@@ -3,9 +3,9 @@ Tests for the server configuration. Run via configtest_dev.py
 
 Tests are standard python unittest tests.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import unittest
 import flask

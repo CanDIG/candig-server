@@ -1,9 +1,9 @@
 """
 Provides methods to initialize the server's peer to peer connections.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import os
 import requests
@@ -37,7 +37,7 @@ def getInitialPeerList(filePath, logger=None):
                         "file named 'initial_peers.txt' "
                         "to {}".format(os.getcwd()))
     # Remove lines that start with a hash or are empty.
-    return filter(lambda x: x != "" and not x.find("#") != -1, ret)
+    return [x for x in ret if x != "" and not x.find("#") != -1]
 
 
 def insertInitialPeer(dataRepository, url, logger=None):

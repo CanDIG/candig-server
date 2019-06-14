@@ -1,9 +1,9 @@
 """
 Simple shim for running the configuration testing program during development.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import dev_glue  # NOQA
 import candig.server.cli.configtest as cli_configtest

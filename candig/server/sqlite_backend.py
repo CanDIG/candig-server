@@ -3,9 +3,9 @@ Library for accessing SQLite-backed data
 optimized for typical REST queries as defined by the GA4GH server.
 """
 
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import sqlite3
 
@@ -18,7 +18,7 @@ def sqliteRowsToDicts(sqliteRows):
     :param sqliteRows: array of rows returned from fetchall DB call
     :return:  array of dicts, keyed by the column names.
     """
-    return map(lambda r: dict(zip(r.keys(), r)), sqliteRows)
+    return [dict(list(zip(list(r.keys()), r))) for r in sqliteRows]
 
 
 def sqliteRowToDict(sqliteRow):
@@ -29,7 +29,7 @@ def sqliteRowToDict(sqliteRow):
     :param sqliteRow: single row returned from fetchone DB call
     :return: dictionary corresponding to this row
     """
-    return dict(zip(sqliteRow.keys(), sqliteRow))
+    return dict(list(zip(list(sqliteRow.keys()), sqliteRow)))
 
 
 def limitsSql(startIndex=0, maxResults=0):

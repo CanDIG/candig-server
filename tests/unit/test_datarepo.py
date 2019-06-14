@@ -1,9 +1,9 @@
 """
 Tests the datarepo module
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import os
 import tempfile
@@ -46,7 +46,7 @@ class TestDataRepoVersion(AbstractDataRepoTest):
         repo.initialise()
         anotherRepo = datarepo.SqlDataRepository(self._repoPath)
         anotherRepo.open(datarepo.MODE_READ)
-        self.assertEquals(anotherRepo._schemaVersion, str(repo.version))
+        self.assertEqual(anotherRepo._schemaVersion, str(repo.version))
 
     def testWrongVersion(self):
         repo = datarepo.SqlDataRepository(self._repoPath)

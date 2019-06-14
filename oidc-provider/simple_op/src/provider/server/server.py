@@ -4,8 +4,8 @@ from functools import wraps, partial
 import json
 import mimetypes
 import os
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 import errno
 
 import cherrypy
@@ -43,8 +43,8 @@ def VerifierMiddleware(verifier):
     @wraps(verifier.verify)
     def wrapper(environ, start_response):
         data = get_post(environ)
-        kwargs = dict(urlparse.parse_qsl(data))
-        kwargs["state"] = json.loads(urllib.unquote(kwargs["state"]))
+        kwargs = dict(urllib.parse.parse_qsl(data))
+        kwargs["state"] = json.loads(urllib.parse.unquote(kwargs["state"]))
         val, completed = verifier.verify(**kwargs)
         if not completed:
             return val(environ, start_response)
@@ -128,7 +128,7 @@ def setup_endpoints(provider):
 
 def _webfinger(provider, request, **kwargs):
     """Handle webfinger requests."""
-    params = urlparse.parse_qs(request)
+    params = urllib.parse.parse_qs(request)
     if params["rel"][0] == OIC_ISSUER:
         wf = WebFinger()
         return Response(wf.response(params["resource"][0], provider.baseurl),
@@ -194,7 +194,7 @@ def main():
     path = os.path.join(os.path.dirname(__file__), "static")
     try:
         os.makedirs(path)
-    except OSError, e:
+    except OSError as e:
         if e.errno != errno.EEXIST:
             raise e
         pass
@@ -212,7 +212,7 @@ def main():
         provider.providerinfo_endpoint)
     app_routing["/.well-known/webfinger"] = pyoidcMiddleware(
         partial(_webfinger, provider))
-    routing = dict(auth_routing.items() + app_routing.items())
+    routing = dict(list(auth_routing.items()) + list(app_routing.items()))
     routing["/static"] = make_static_handler(path)
     dispatcher = WSGIPathInfoDispatcher(routing)
     server = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port), dispatcher)
@@ -225,7 +225,7 @@ def main():
 
     # Start the CherryPy WSGI web server
     try:
-        print("Server started: {}".format(issuer))
+        print(("Server started: {}".format(issuer)))
         server.start()
     except KeyboardInterrupt:
         server.stop()

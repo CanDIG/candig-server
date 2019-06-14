@@ -1,9 +1,9 @@
 """
 Data-driven tests for variants.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import os
 import glob
@@ -110,7 +110,7 @@ class VariantAnnotationSetTest(datadriven.DataDrivenTest):
                       "distance", "errsWarns"]
         values = annfield.split('|')
         values[1] = values[1].split('&')  # split effects
-        return dict(zip(fields, values))
+        return dict(list(zip(fields, values)))
 
     def getDataModelInstance(self, localId, dataPath):
         dataset = datasets.Dataset("ds")
@@ -162,7 +162,7 @@ class VariantAnnotationSetTest(datadriven.DataDrivenTest):
                         zip(pyvcfAnn, gaVariantAnnotation.transcript_effects):
                     effectDict = self.splitAnnField(pyvcfEffect)
                     self.assertEqual(
-                        map(lambda e: e.term, gaEff.effects),
+                        [e.term for e in gaEff.effects],
                         effectDict['effects'])
                     self.assertEqual(
                         gaEff.attributes.attr['impact'].values[0].string_value,
@@ -191,7 +191,7 @@ class VariantAnnotationSetTest(datadriven.DataDrivenTest):
                         transcriptEffects,
                         gaVariantAnnotation.transcript_effects):
                     self.assertEqual(
-                        map(lambda e: e.term, gaEff.effects),
+                        [e.term for e in gaEff.effects],
                         treff['effects'])
                     self.assertEqual(gaEff.alternate_bases, treff['alt'])
                     self.assertEqual(gaEff.feature_id, treff['featureId'])

@@ -3,9 +3,9 @@ Performs an end-to-end test where we verify that the data
 output by the client command line interface is equal to
 the values we expect using the test dataset.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import datetime
 import json
@@ -18,7 +18,7 @@ import candig.client.cli as cli_client
 import candig.server.datarepo as datarepo
 import ga4gh.common.utils as utils
 import tests.paths as paths
-import server
+from . import server
 
 import candig.schemas.protocol as protocol
 
@@ -104,7 +104,7 @@ class TestClientJson(TestClientOutput):
         for line in stdout.splitlines():
             try:
                 cliOutput.append(json.loads(line))
-            except ValueError, e:
+            except ValueError as e:
                 raise Exception((e, line, stdout, command, arguments))
         return cliOutput
 
@@ -281,8 +281,8 @@ class TestClientJson(TestClientOutput):
             for readGroupSet in self._client.search_read_group_sets(
                     dataset.id):
                 for readGroup in readGroupSet.read_groups:
-                    reference = self._client.search_references(
-                        reference_set_id=readGroup.reference_set_id).next()
+                    reference = next(self._client.search_references(
+                        reference_set_id=readGroup.reference_set_id))
                     referenceId = reference.id
                     iterator = self._client.search_reads(
                         [readGroup.id], reference_id=referenceId,

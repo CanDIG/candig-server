@@ -2,9 +2,9 @@
 Module responsible for translating feature expression data into GA4GH native
 objects.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import candig.server.datamodel as datamodel
 import candig.server.exceptions as exceptions

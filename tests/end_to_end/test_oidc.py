@@ -2,21 +2,21 @@
 Performs a request via the client with OpenID Connect enabled,
 with a local OP server.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import requests
 import subprocess
-from urlparse import urlparse
+from urllib.parse import urlparse
 import shutil
 import unittest
 
 import lxml.html as html
 
-import client
-import server
-import server_test
+from . import client
+from . import server
+from . import server_test
 
 import candig.server.datarepo as datarepo
 

@@ -1,13 +1,13 @@
 """
 Peer datamodel for exchanging data about GA4GH services.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import json
 import re
-import urlparse
+import urllib.parse
 
 import candig.server.exceptions as exceptions
 
@@ -22,7 +22,7 @@ def isUrl(urlString):
 
     From http://stackoverflow.com/questions/7160737/
     """
-    parsed = urlparse.urlparse(urlString)
+    parsed = urllib.parse.urlparse(urlString)
     urlparseValid = parsed.netloc != '' and parsed.scheme != ''
     regex = re.compile(
         r'^(?:http|ftp)s?://'  # http:// or https://

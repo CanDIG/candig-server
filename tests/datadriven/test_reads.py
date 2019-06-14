@@ -1,9 +1,9 @@
 """
 Data-driven tests for reads
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import collections
 import os
@@ -260,7 +260,7 @@ class ReadGroupSetTest(datadriven.DataDrivenTest):
         readGroupSet = self._gaObject
         for readGroup in readGroupSet.getReadGroups():
             readGroupInfo = self._readGroupInfos[readGroup.getLocalId()]
-            for name, alignments in readGroupInfo.mappedReads.items():
+            for name, alignments in list(readGroupInfo.mappedReads.items()):
                 reference = self._referenceSet.getReferenceByName(name)
                 self.assertAlignmentListsEqual(
                     list(readGroup.getReadAlignments(reference)), alignments,
@@ -271,7 +271,7 @@ class ReadGroupSetTest(datadriven.DataDrivenTest):
         readGroupSet = self._gaObject
         for readGroup in readGroupSet.getReadGroups():
             readGroupInfo = self._readGroupInfos[readGroup.getLocalId()]
-            for name, alignments, in readGroupInfo.mappedReads.items():
+            for name, alignments, in list(readGroupInfo.mappedReads.items()):
                 bigNumThatPysamWontChokeOn = 2**30
                 reference = self._referenceSet.getReferenceByName(name)
                 gaAlignments = list(readGroup.getReadAlignments(
@@ -284,7 +284,7 @@ class ReadGroupSetTest(datadriven.DataDrivenTest):
         readGroupSet = self._gaObject
         for readGroup in readGroupSet.getReadGroups():
             readGroupInfo = self._readGroupInfos[readGroup.getLocalId()]
-            for name in readGroupInfo.mappedReads.keys():
+            for name in list(readGroupInfo.mappedReads.keys()):
                 reference = self._referenceSet.getReferenceByName(name)
                 alignments = list(readGroup.getReadAlignments(reference))
                 length = len(alignments)
@@ -319,7 +319,7 @@ class ReadGroupSetTest(datadriven.DataDrivenTest):
     def getDictFromMessageMap(self, messageMap):
         return dict([
             (k, [protocol.getValueFromValue(x) for x in v.values])
-            for (k, v) in messageMap._values.items()])
+            for (k, v) in list(messageMap._values.items())])
 
     def assertAlignmentsEqual(self, gaAlignment, pysamAlignment,
                               readGroupInfo):

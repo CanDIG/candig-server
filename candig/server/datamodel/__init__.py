@@ -2,9 +2,9 @@
 The GA4GH data model. Defines all the methods required to translate
 data in existing formats into GA4GH protocol types.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import base64
 import collections
@@ -152,7 +152,7 @@ class CompoundId(object):
             localIds = localIds[:differentiatorIndex] + tuple([
                 self.differentiator]) + localIds[differentiatorIndex:]
         for field, localId in zip(self.fields[index:], localIds):
-            if not isinstance(localId, basestring):
+            if not isinstance(localId, str):
                 raise exceptions.BadIdentifierNotStringException(localId)
             encodedLocalId = self.encode(localId)
             setattr(self, field, encodedLocalId)
@@ -216,7 +216,7 @@ class CompoundId(object):
         identifier (under our internal rules) is provided, the response should
         be that the identifier does not exist.
         """
-        if not isinstance(compoundIdStr, basestring):
+        if not isinstance(compoundIdStr, str):
             raise exceptions.BadIdentifierException(compoundIdStr)
         try:
             deobfuscated = cls.deobfuscate(compoundIdStr)
@@ -255,7 +255,7 @@ class CompoundId(object):
         fashion. This is not intended for security purposes, but rather to
         dissuade users from depending on our internal ID structures.
         """
-        return unicode(base64.urlsafe_b64encode(
+        return str(base64.urlsafe_b64encode(
             idStr.encode('utf-8')).replace(b'=', b''))
 
     @classmethod
@@ -930,7 +930,7 @@ class PysamDatamodelMixin(object):
 
     @classmethod
     def assertInt(cls, attr, attrName):
-        if not isinstance(attr, (int, long)):
+        if not isinstance(attr, int):
             message = "invalid {} '{}' not an int".format(attrName, attr)
             raise exceptions.DatamodelValidationException(message)
 
@@ -945,11 +945,11 @@ class PysamDatamodelMixin(object):
 
     @classmethod
     def sanitizeString(cls, attr, attrName):
-        if not isinstance(attr, basestring):
+        if not isinstance(attr, str):
             message = "invalid {} '{}' not a string".format(
                 attrName, attr)
             raise exceptions.DatamodelValidationException(message)
-        if isinstance(attr, unicode):
+        if isinstance(attr, str):
             attr = attr.encode('utf8')
         if len(attr) > cls.maxStringLength:
             attr = attr[:cls.maxStringLength]

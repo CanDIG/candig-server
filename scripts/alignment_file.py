@@ -1,9 +1,9 @@
 """
 Tools for alignment files
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import argparse
 import pysam
@@ -72,8 +72,8 @@ class AlignmentFileTool(object):
         outputFilePath = outputFile.filename
         utils.log("Creating alignment file '{}'".format(outputFilePath))
         # write new file
-        for _ in xrange(self.args.numLines):
-            alignedSegment = inputFile.next()
+        for _ in range(self.args.numLines):
+            alignedSegment = next(inputFile)
             outputFile.write(alignedSegment)
         # clean up
         inputFile.close()

@@ -1,9 +1,9 @@
 """
 Data-driven tests for rna quantification.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import tempfile
 import os

@@ -3,9 +3,9 @@ Tests for the backend objects. We instantiate local copies of
 the backends and invoke the entry points for the protocol methods.
 We do not set up any server processes or communicate over sockets.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import unittest
 

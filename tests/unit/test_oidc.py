@@ -1,14 +1,14 @@
 """
 Unit tests for the oidc code in the frontend.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import unittest
 import socket
 import mock
-import urlparse
+import urllib.parse
 import logging
 import mimetypes
 import shutil
@@ -54,7 +54,7 @@ def mockRndstr(size):
     return RANDSTR
 
 
-ARESP = {'scope': u'openid profile', 'state': RANDSTR,
+ARESP = {'scope': 'openid profile', 'state': RANDSTR,
          'code': OICRESPONSE['code']}
 
 
@@ -147,10 +147,10 @@ class TestFrontendOidc(unittest.TestCase):
         authorization provider, of the correct form.
         """
         response = self.app.get('/')
-        scheme, netloc, path, params, query, fragment = urlparse.urlparse(
+        scheme, netloc, path, params, query, fragment = urllib.parse.urlparse(
             response.location)
         self.assertEqual(netloc, 'auth.com')
-        args = urlparse.parse_qs(query, strict_parsing=True)
+        args = urllib.parse.parse_qs(query, strict_parsing=True)
         self.assertEqual(path, '/auth')
         self.assertEqual(args['redirect_uri'][0],
                          'https://{}:8001/oauth2callback'.format(
@@ -214,10 +214,10 @@ class TestFrontendOidc(unittest.TestCase):
             with app.session_transaction() as sess:
                 sess['key'] = 'xxx'
             result = app.get('/')
-            scheme, netloc, path, params, query, fragment = urlparse.urlparse(
+            scheme, netloc, path, params, query, fragment = urllib.parse.urlparse(
                 result.location)
             self.assertEqual(netloc, 'auth.com')
-            args = urlparse.parse_qs(query, strict_parsing=True)
+            args = urllib.parse.parse_qs(query, strict_parsing=True)
             self.assertEqual(path, '/auth')
             self.assertEqual(args['redirect_uri'][0],
                              'https://{}:8001/oauth2callback'.format(

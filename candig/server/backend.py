@@ -2,9 +2,9 @@
 Module responsible for handling protocol requests and returning
 responses.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import candig.server.datamodel as datamodel
 import candig.server.exceptions as exceptions
@@ -15,7 +15,7 @@ import operator
 from google.protobuf.json_format import MessageToDict
 import json
 import itertools
-import DP as DP
+from . import DP as DP
 
 
 class Backend(object):
@@ -221,9 +221,9 @@ class Backend(object):
         op_keys = ['and', 'or']
         logic_negate = False
 
-        if len(logic.keys()) == 1:
-            logic_key = logic.keys()[0]
-        elif len(logic.keys()) == 2:
+        if len(list(logic.keys())) == 1:
+            logic_key = list(logic.keys())[0]
+        elif len(list(logic.keys())) == 2:
             if {'id', 'negate'} == set(logic.keys()):
                 logic_key = 'id'
                 logic_negate = bool(logic['negate'])
@@ -502,7 +502,7 @@ class Backend(object):
             table = "variants"
         try:
             for entry in json_results[table]:
-                for k, v in entry.iteritems():
+                for k, v in entry.items():
                     if k in field:
                         if k not in field_value_counts:
                             field_value_counts[k] = {}

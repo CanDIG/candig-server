@@ -1,9 +1,9 @@
 """
 Unit tests for the frontend code.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import shutil
 import unittest
@@ -98,17 +98,17 @@ class TestAuth0(unittest.TestCase):
         request = protocol.SearchDatasetsRequest()
         headers = {"Authorization": ""}
         response = self.sendPostRequest(protectedPath, request, headers)
-        self.assertEquals(response.status_code, 401, "No bearer should fail"
+        self.assertEqual(response.status_code, 401, "No bearer should fail"
                                                      "with 401")
         headers = {"Authorization": "Bearer"}
         response = self.sendPostRequest(protectedPath, request, headers)
-        self.assertEquals(response.status_code, 401, "")
+        self.assertEqual(response.status_code, 401, "")
 
     def testProtected(self):
         protectedPath = "datasets/search"
         request = protocol.SearchDatasetsRequest()
         response = self.sendPostRequest(protectedPath, request)
-        self.assertEquals(
+        self.assertEqual(
             response.status_code,
             401, "If Auth0 is enabled this endpoint "
                  "is not accessible without auth.")
@@ -164,7 +164,7 @@ class TestAuth0(unittest.TestCase):
             auth.is_active(self.app.cache, token)
         self.app.cache.set("123", {"email": email})
         # Even though the token is set, in the cache, it
-        self.assertEquals(
+        self.assertEqual(
             email, auth.is_active(self.app.cache, token)['email'])
 
     def testCallbackMaker(self):

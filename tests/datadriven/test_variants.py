@@ -1,9 +1,9 @@
 """
 Data-driven tests for variants.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import os
 import glob
@@ -52,7 +52,7 @@ def convertVCFGenotype(vcfGenotype):
         if "." in vcfGenotype:
             genotype = [-1]
         else:
-            genotype = map(int, vcfGenotype.split(delim))
+            genotype = list(map(int, vcfGenotype.split(delim)))
     else:
         genotype = [-1]
     return genotype
@@ -124,7 +124,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
                     " values are inconsistent",
                     "between ga4ghObject and pyvcf!"))
 
-        for key, value in pyvcfInfo.iteritems():
+        for key, value in pyvcfInfo.items():
             if isinstance(value, list):
                 self.assertEqual(len(gaObjectInfo[key].values), len(value))
                 for gaValue, pyvcfValue in zip(
@@ -138,7 +138,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
         pyvcfLen = None
         pyvcfPos = None
         pyvcfEnd = None
-        for key, value in pyvcfInfo.iteritems():
+        for key, value in pyvcfInfo.items():
             if key == 'SVTYPE':
                 pyvcfType = value
             elif key == 'SVLEN':
@@ -177,7 +177,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
                 gaCall.genotype_likelihood, pyvcfCall.data.GL)
         else:
             self.assertNotIn("GL", pyvcfCall.data)
-        for key, value in gaCall.attributes.attr.items():
+        for key, value in list(gaCall.attributes.attr.items()):
             if key != "GT" and key != "GL":
                 if isinstance(value.values[0], (list, tuple)):
                     self._compareTwoListFloats(value.values[0], getattr(
@@ -254,8 +254,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
                 reference_name, 0, end, gaSearchIds))
             self._verifyGaVariantsSample(gaVariants, searchsampleIds)
             gaCallSetVariants += gaVariants
-            localVariants = filter(
-                lambda v: v.CHROM == reference_name, self._variantRecords)
+            localVariants = [v for v in self._variantRecords if v.CHROM == reference_name]
             self._verifyVariantsEqual(gaVariants, localVariants)
         self.assertEqual(len(gaCallSetVariants), len(self._variantRecords))
 
@@ -414,7 +413,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
         for prefix, content in [("FORMAT", self._formats),
                                 ("INFO", self._infos),
                                 ("FILTER", self._filters)]:
-            for contentKey in content.keys():
+            for contentKey in list(content.keys()):
                 key = "{0}.{1}".format(prefix, contentKey)
                 if key == "FORMAT.GT":
                     gtCounter += 1
@@ -517,6 +516,6 @@ class VariantSetTest(datadriven.DataDrivenTest):
         if record.ALT[0] is None:
             alts = tuple()
         else:
-            alts = tuple([unicode(sub) for sub in record.ALT])
+            alts = tuple([str(sub) for sub in record.ALT])
         hash_str = record.REF + str(alts)
         return hashlib.md5(hash_str).hexdigest()

@@ -1,9 +1,9 @@
 """
 Server cli
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import requests
 
@@ -23,9 +23,9 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
 
     def load_config(self):
         config = dict(
-            [(key, value) for key, value in self.options.iteritems()
+            [(key, value) for key, value in self.options.items()
              if key in self.cfg.settings and value is not None])
-        for key, value in config.iteritems():
+        for key, value in config.items():
             self.cfg.set(key.lower(), value)
 
     def load(self):

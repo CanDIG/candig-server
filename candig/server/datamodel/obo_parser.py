@@ -33,7 +33,7 @@
 
 """Read and store Gene Ontology's obo file."""
 # -*- coding: UTF-8 -*-
-from __future__ import print_function
+
 from collections import defaultdict
 import sys
 import os
@@ -288,7 +288,7 @@ class GOTerm:
     def __repr__(self):
         """Print GO id and all attributes in GOTerm class."""
         ret = ["GOTerm('{ID}'):".format(ID=self.id)]
-        for key, val in self.__dict__.items():
+        for key, val in list(self.__dict__.items()):
             if isinstance(val, int) or isinstance(val, str):
                 ret.append("{K}:{V}".format(K=key, V=val))
             else:
@@ -298,7 +298,7 @@ class GOTerm:
                         for elem in val:
                             ret.append("  {ELEM}".format(ELEM=elem))
                     else:
-                        for (typedef, terms) in val.items():
+                        for (typedef, terms) in list(val.items()):
                             ret.append("  {TYPEDEF}: {NTERMS} items"
                                        .format(TYPEDEF=typedef,
                                                NTERMS=len(terms)))
@@ -452,24 +452,24 @@ class GODag(dict):
             return rec.depth
 
         # Make parents and relationships references to the actual GO terms.
-        for rec in self.values():
+        for rec in list(self.values()):
             rec.parents = [self[x] for x in rec._parents]
 
             if hasattr(rec, '_relationship'):
                 rec.relationship = defaultdict(set)
-                for (typedef, terms) in rec._relationship.items():
+                for (typedef, terms) in list(rec._relationship.items()):
                     rec.relationship[typedef].update(set([self[x] for x in terms]))
                 delattr(rec, '_relationship')
 
         # populate children, levels and add inverted relationships
-        for rec in self.values():
+        for rec in list(self.values()):
             for p in rec.parents:
                 if rec not in p.children:
                     p.children.append(rec)
 
             # Add invert relationships
             if hasattr(rec, 'relationship'):
-                for (typedef, terms) in rec.relationship.items():
+                for (typedef, terms) in list(rec.relationship.items()):
                     invert_typedef = self.typedefs[typedef].inverse_of
                     if invert_typedef:
                         # Add inverted relationship
@@ -586,7 +586,7 @@ class GODag(dict):
                 for ID in rec_id_set}
 
         # add nodes explicitly via add_node
-        for rec_id, node in nodes.items():
+        for rec_id, node in list(nodes.items()):
             G.add_node(node)
 
         for src, target in edgeset:

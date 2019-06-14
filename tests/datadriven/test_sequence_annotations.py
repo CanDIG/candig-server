@@ -1,9 +1,9 @@
 """
 Data-driven tests for sequence annotation Features.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import candig.server.datarepo as datarepo
 import candig.server.datamodel as datamodel

@@ -3,9 +3,9 @@ Data-driven tests for the GA4GH reference implementation. A data
 driven test applies a given test method to a data file, and
 each applicaton is an independent test case under nose.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import contextlib
 import fnmatch
@@ -26,7 +26,7 @@ def _wrapTestMethod(method):
     updating the description attribute so that we can see details of
     the tests being run in nose.
     """
-    instance = method.im_self
+    instance = method.__self__
     cls = instance.__class__
 
     def testFunction():
@@ -290,7 +290,7 @@ class DataDrivenTest(TestCase):
         """
         try:
             json_format.Parse(jsonDict, protocolClass())
-        except json_format.ParseError, e:
+        except json_format.ParseError as e:
             assert False, e.message
 
     def testProtocolElementValid(self):

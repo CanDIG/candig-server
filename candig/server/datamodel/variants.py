@@ -2,9 +2,9 @@
 Module responsible for translating variant data into GA4GH native
 objects.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import datetime
 import glob
@@ -503,7 +503,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         self._chromFileMap = {}
         # We can't load directly as we want tuples to be stored
         # rather than lists.
-        for key, value in json.loads(variantSetRecord.dataurlindexmap).items():
+        for key, value in list(json.loads(variantSetRecord.dataurlindexmap).items()):
             self._chromFileMap[key] = tuple(value)
         self._metadata = []
         for jsonDict in json.loads(variantSetRecord.metadata):
@@ -550,7 +550,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         """
         Perform consistency check on the variant set
         """
-        for referenceName, (dataUrl, indexFile) in self._chromFileMap.items():
+        for referenceName, (dataUrl, indexFile) in list(self._chromFileMap.items()):
             varFile = pysam.VariantFile(dataUrl, index_filename=indexFile)
             try:
                 for chrom in varFile.index:
@@ -610,7 +610,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
                                 "Unsupported VEP version {} in '{}'".format(
                                     version, dataUrl))
             if annotationType is None:
-                infoKeys = variantFile.header.info.keys()
+                infoKeys = list(variantFile.header.info.keys())
                 if 'CSQ' in infoKeys or 'ANN' in infoKeys:
                     # TODO likewise, we want a properly typed exception that
                     # we can throw back to the repo manager UI and display
@@ -677,7 +677,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
             phaseset = str(pysamCall.phased)
         genotypeLikelihood = []
         info = {}
-        for key, value in pysamCall.iteritems():
+        for key, value in pysamCall.items():
             if key == 'GL' and value is not None:
                 genotypeLikelihood = list(value)
             elif key != 'GT':
@@ -707,7 +707,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         variant.reference_bases = record.ref
         if record.alts is not None:
             variant.alternate_bases.extend(list(record.alts))
-        filterKeys = record.filter.keys()
+        filterKeys = list(record.filter.keys())
         if len(filterKeys) == 0:
             variant.filters_applied = False
         else:
@@ -718,7 +718,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
                 variant.filters_passed = False
                 variant.filters_failed.extend(filterKeys)
         # record.qual is also available, when supported by GAVariant.
-        for key, value in record.info.iteritems():
+        for key, value in record.info.items():
             if value is None:
                 continue
             if key == 'SVTYPE':
@@ -893,9 +893,9 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         ret = []
         header = varFile.header
         ret.append(buildMetadata(key="version", value=header.version))
-        formats = header.formats.items()
-        infos = header.info.items()
-        filters = header.filters.items()
+        formats = list(header.formats.items())
+        infos = list(header.info.items())
+        filters = list(header.filters.items())
         # TODO: currently ALT field is not implemented through pysam
         # NOTE: contigs field is different between vcf files,
         # so it's not included in metadata
@@ -1228,9 +1228,9 @@ class HtslibVariantAnnotationSet(AbstractVariantAnnotationSet):
         """
         header = varFile.header
         analysis = protocol.Analysis()
-        formats = header.formats.items()
-        infos = header.info.items()
-        filters = header.filters.items()
+        formats = list(header.formats.items())
+        infos = list(header.info.items())
+        filters = list(header.filters.items())
         for prefix, content in [("FORMAT", formats), ("INFO", infos),
                                 ("FILTER", filters)]:
             for contentKey, value in content:
@@ -1402,13 +1402,13 @@ class HtslibVariantAnnotationSet(AbstractVariantAnnotationSet):
         effect.hgvs_annotation.CopyFrom(protocol.HGVSAnnotation())
         annDict = dict()
         if self._annotationType == ANNOTATIONS_SNPEFF:
-            annDict = dict(zip(self. SNPEFF_FIELDS, annStr.split("|")))
+            annDict = dict(list(zip(self. SNPEFF_FIELDS, annStr.split("|"))))
         elif self._annotationType == ANNOTATIONS_VEP_V82:
-            annDict = dict(zip(self.VEP_FIELDS, annStr.split("|")))
+            annDict = dict(list(zip(self.VEP_FIELDS, annStr.split("|"))))
         else:
-            annDict = dict(zip(self.CSQ_FIELDS, annStr.split("|")))
-        annDict["hgvs_annotation.genomic"] = hgvsG if hgvsG else u''
-        for key, val in annDict.items():
+            annDict = dict(list(zip(self.CSQ_FIELDS, annStr.split("|"))))
+        annDict["hgvs_annotation.genomic"] = hgvsG if hgvsG else ''
+        for key, val in list(annDict.items()):
             try:
                 protocol.deepSetAttr(effect, key, val)
             except AttributeError:

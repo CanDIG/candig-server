@@ -1,14 +1,14 @@
 """
 Assists in executing tests with a running server on localhost
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import unittest
 import subprocess
 
-import server as server
+from . import server as server
 
 
 class ClientHelperMixin(object):

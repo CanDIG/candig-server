@@ -1,9 +1,9 @@
 """
 Tests the pysam sanitizer
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import unittest
 
@@ -22,10 +22,10 @@ class TestPysamSanitizer(datamodel.PysamDatamodelMixin, unittest.TestCase):
 
         # return same string if string is short enough
         shortString = 'shortString'
-        self.assertIsInstance(shortString, unicode)
+        self.assertIsInstance(shortString, str)
         result = self.sanitizeString(shortString, shortString)
         self.assertEqual(shortString, result)
-        self.assertNotIsInstance(result, unicode)
+        self.assertNotIsInstance(result, str)
 
         # shorten string length if string too long
         longString = 'x' * (self.maxStringLength + 1)

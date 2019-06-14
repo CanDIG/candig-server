@@ -6,9 +6,9 @@ GA4GH server implementation, and each row in the 'feature' table will be
 mapped to a Feature.
 """
 
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
 
 import argparse
 import os
