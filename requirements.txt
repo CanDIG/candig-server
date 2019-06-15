@@ -56,7 +56,7 @@ requests-futures==0.9.8
 oic==0.7.6
 pyOpenSSL==18.0.0
 lxml==4.3.4
-pyBigWig==0.3.4
+pyBigWig==0.3.16
 
 # We need sphinx-argparse to build on readthedocs.
 sphinx-argparse==0.1.15
