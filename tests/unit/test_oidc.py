@@ -17,7 +17,7 @@ import oic
 import oic.oic.message as message
 
 import candig.server.frontend as frontend
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 
 
 RANDSTR = 'abc'

@@ -8,7 +8,7 @@ Tools for alignment files
 import argparse
 import pysam
 
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 
 
 class AlignmentFileConstants(object):

@@ -472,7 +472,7 @@ class HtslibReferenceSet(datamodel.PysamDatamodelMixin, AbstractReferenceSet):
             # TODO break this up into chunks and calculate the MD5
             # in bits (say, 64K chunks?)
             bases = fastaFile.fetch(referenceName)
-            md5checksum = hashlib.md5(bases).hexdigest()
+            md5checksum = hashlib.md5(bases.encode('utf-8')).hexdigest()
             reference.setMd5checksum(md5checksum)
             reference.setLength(len(bases))
             self.addReference(reference)

@@ -16,7 +16,7 @@ import sys
 import json
 import sqlite3
 
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 import glue
 
 glue.ga4ghImportGlue()

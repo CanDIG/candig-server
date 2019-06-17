@@ -13,7 +13,7 @@ import socket
 
 import requests
 
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 
 
 ga4ghPort = 8001

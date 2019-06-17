@@ -5,7 +5,7 @@ Convert a BAM file to a small BAM file
 
 
 
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 
 
 @utils.Timed()

@@ -12,7 +12,7 @@ import gunicorn.app.base
 import candig.server.cli as cli
 import candig.server.frontend as frontend
 
-import ga4gh.common.cli as common_cli
+import candig.common.cli as common_cli
 
 
 class StandaloneApplication(gunicorn.app.base.BaseApplication):

@@ -29,7 +29,7 @@ import candig.server.datarepo as datarepo
 import candig.server.exceptions as exceptions
 import candig.server.repo.rnaseq2ga as rnaseq2ga
 
-import ga4gh.common.cli as common_cli
+import candig.common.cli as common_cli
 
 
 def getNameFromPath(filePath):

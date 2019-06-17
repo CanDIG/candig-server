@@ -9,7 +9,7 @@ import shlex
 import subprocess
 import tempfile
 
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 
 
 class ClientForTesting(object):

@@ -12,7 +12,7 @@ import candig.server.backend as backend
 import tests.paths as paths
 
 import candig.client.client as client
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 
 
 @unittest.skip('Disabling, client not used')

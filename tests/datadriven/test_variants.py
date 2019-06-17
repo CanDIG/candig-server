@@ -19,7 +19,7 @@ import candig.server.exceptions as exceptions
 import tests.datadriven as datadriven
 import tests.paths as paths
 
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 import candig.schemas.protocol as protocol
 
 

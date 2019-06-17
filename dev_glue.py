@@ -12,4 +12,4 @@ See __path__ documentation at:
 
 
 import candig
-candig.__path__.insert(0, 'candig')
+candig.__path__.append('candig')

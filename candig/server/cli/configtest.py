@@ -11,7 +11,7 @@ import unittest
 import candig.server.cli as cli
 import candig.server.configtest as configtest
 
-import ga4gh.common.cli as common_cli
+import candig.common.cli as common_cli
 
 
 class SimplerResult(unittest.TestResult):

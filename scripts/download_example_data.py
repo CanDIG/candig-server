@@ -17,7 +17,7 @@ import urllib.request, urllib.error, urllib.parse
 
 import pysam
 
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 import glue
 
 glue.ga4ghImportGlue()

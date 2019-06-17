@@ -20,7 +20,7 @@ import glob
 
 import file_downloader
 
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 import glue
 
 glue.ga4ghImportGlue()

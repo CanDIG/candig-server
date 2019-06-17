@@ -10,7 +10,7 @@ import sys
 # the following two lines are the same ones as in dev_glue.py
 # they enable python to find the candig.server package
 import candig
-candig.__path__.insert(0, 'candig')
+candig.__path__.append('candig')
 
 
 def ga4ghImportGlue():
