@@ -53,7 +53,7 @@ humanize==0.5.1
 pysam==0.9.1.4
 requests==2.20.0
 requests-futures==0.9.8
-oic==0.7.7
+oic==0.15.1
 pyOpenSSL==18.0.0
 lxml==4.3.4
 pyBigWig==0.3.16
