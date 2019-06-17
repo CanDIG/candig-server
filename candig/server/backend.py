@@ -15,7 +15,7 @@ import operator
 from google.protobuf.json_format import MessageToDict
 import json
 import itertools
-from . import DP as DP
+import candig.server.DP as DP
 
 
 class Backend(object):

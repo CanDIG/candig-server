@@ -12,7 +12,7 @@
 # way to resolve our internal dependencies. During development,
 # the constraints file will point at the current master branch 
 # of the respective module.
-ga4gh-common
+candig-common
 candig-schemas
 
 Werkzeug==0.14.1
