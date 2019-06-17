@@ -73,20 +73,23 @@ class Extraction(datamodel.DatamodelObject):
         }
 
         # Unique fields
-        if tier >= self.getExtractionIdTier():
-            record[str('extractionId')] = str(self.getExtractionId())
-        if tier >= self.getSampleIdTier():
-            record[str('sampleId')] = str(self.getSampleId())
-        if tier >= self.getRnaBloodTier():
-            record[str('rnaBlood')] = str(self.getRnaBlood())
-        if tier >= self.getDnaBloodTier():
-            record[str('dnaBlood')] = str(self.getDnaBlood())
-        if tier >= self.getRnaTissueTier():
-            record[str('rnaTissue')] = str(self.getRnaTissue())
-        if tier >= self.getDnaTissueTier():
-            record[str('dnaTissue')] = str(self.getDnaTissue())
-        if tier >= self.getSiteTier():
-            record[str('site')] = str(self.getSite())
+        try:
+            if tier >= self.getExtractionIdTier():
+                record[str('extractionId')] = str(self.getExtractionId())
+            if tier >= self.getSampleIdTier():
+                record[str('sampleId')] = str(self.getSampleId())
+            if tier >= self.getRnaBloodTier():
+                record[str('rnaBlood')] = str(self.getRnaBlood())
+            if tier >= self.getDnaBloodTier():
+                record[str('dnaBlood')] = str(self.getDnaBlood())
+            if tier >= self.getRnaTissueTier():
+                record[str('rnaTissue')] = str(self.getRnaTissue())
+            if tier >= self.getDnaTissueTier():
+                record[str('dnaTissue')] = str(self.getDnaTissue())
+            if tier >= self.getSiteTier():
+                record[str('site')] = str(self.getSite())
+        except TypeError:
+            pass
 
         Extraction = protocol.Extraction(**record)
         self.serializeMetadataAttributes(Extraction)
@@ -281,28 +284,31 @@ class Sequencing(datamodel.DatamodelObject):
         }
 
         # Unique fields
-        if tier >= self.getSequencingIdTier():
-            record[str('sequencingId')] = str(self.getSequencingId())
-        if tier >= self.getSampleIdTier():
-            record[str('sampleId')] = str(self.getSampleId())
-        if tier >= self.getDnaLibraryKitTier():
-            record[str('dnaLibraryKit')] = str(self.getDnaLibraryKit())
-        if tier >= self.getDnaSeqPlatformTier():
-            record[str('dnaSeqPlatform')] = str(self.getDnaSeqPlatform())
-        if tier >= self.getDnaReadLengthTier():
-            record[str('dnaReadLength')] = str(self.getDnaReadLength())
-        if tier >= self.getRnaLibraryKitTier():
-            record[str('rnaLibraryKit')] = str(self.getRnaLibraryKit())
-        if tier >= self.getRnaSeqPlatformTier():
-            record[str('rnaSeqPlatform')] = str(self.getRnaSeqPlatform())
-        if tier >= self.getRnaReadLengthTier():
-            record[str('rnaReadLength')] = str(self.getRnaReadLength())
-        if tier >= self.getPcrCyclesTier():
-            record[str('pcrCycles')] = str(self.getPcrCycles())
-        if tier >= self.getExtractionIdTier():
-            record[str('extractionId')] = str(self.getExtractionId())
-        if tier >= self.getSiteTier():
-            record[str('site')] = str(self.getSite())
+        try:
+            if tier >= self.getSequencingIdTier():
+                record[str('sequencingId')] = str(self.getSequencingId())
+            if tier >= self.getSampleIdTier():
+                record[str('sampleId')] = str(self.getSampleId())
+            if tier >= self.getDnaLibraryKitTier():
+                record[str('dnaLibraryKit')] = str(self.getDnaLibraryKit())
+            if tier >= self.getDnaSeqPlatformTier():
+                record[str('dnaSeqPlatform')] = str(self.getDnaSeqPlatform())
+            if tier >= self.getDnaReadLengthTier():
+                record[str('dnaReadLength')] = str(self.getDnaReadLength())
+            if tier >= self.getRnaLibraryKitTier():
+                record[str('rnaLibraryKit')] = str(self.getRnaLibraryKit())
+            if tier >= self.getRnaSeqPlatformTier():
+                record[str('rnaSeqPlatform')] = str(self.getRnaSeqPlatform())
+            if tier >= self.getRnaReadLengthTier():
+                record[str('rnaReadLength')] = str(self.getRnaReadLength())
+            if tier >= self.getPcrCyclesTier():
+                record[str('pcrCycles')] = str(self.getPcrCycles())
+            if tier >= self.getExtractionIdTier():
+                record[str('extractionId')] = str(self.getExtractionId())
+            if tier >= self.getSiteTier():
+                record[str('site')] = str(self.getSite())
+        except TypeError:
+            pass
 
         Sequencing = protocol.Sequencing(**record)
         self.serializeMetadataAttributes(Sequencing)
@@ -558,42 +564,45 @@ class Alignment(datamodel.DatamodelObject):
         }
 
         # Unique fields
-        if tier >= self.getAlignmentIdTier():
-            record[str('alignmentId')] = str(self.getAlignmentId())
-        if tier >= self.getSampleIdTier():
-            record[str('sampleId')] = str(self.getSampleId())
-        if tier >= self.getInHousePipelineTier():
-            record[str('inHousePipeline')] = str(self.getInHousePipeline())
-        if tier >= self.getAlignmentToolTier():
-            record[str('alignmentTool')] = str(self.getAlignmentTool())
-        if tier >= self.getMergeToolTier():
-            record[str('mergeTool')] = str(self.getMergeTool())
-        if tier >= self.getMarkDuplicatesTier():
-            record[str('markDuplicates')] = str(self.getMarkDuplicates())
-        if tier >= self.getRealignerTargetTier():
-            record[str('realignerTarget')] = str(self.getRealignerTarget())
-        if tier >= self.getIndelRealignerTier():
-            record[str('indelRealigner')] = str(self.getIndelRealigner())
-        if tier >= self.getBaseRecalibratorTier():
-            record[str('baseRecalibrator')] = str(self.getBaseRecalibrator())
-        if tier >= self.getPrintReadsTier():
-            record[str('printReads')] = str(self.getPrintReads())
-        if tier >= self.getIdxStatsTier():
-            record[str('idxStats')] = str(self.getIdxStats())
-        if tier >= self.getFlagStatTier():
-            record[str('flagStat')] = str(self.getFlagStat())
-        if tier >= self.getCoverageTier():
-            record[str('coverage')] = str(self.getCoverage())
-        if tier >= self.getInsertSizeMetricsTier():
-            record[str('insertSizeMetrics')] = str(self.getInsertSizeMetrics())
-        if tier >= self.getFastqcTier():
-            record[str('fastqc')] = str(self.getFastqc())
-        if tier >= self.getReferenceTier():
-            record[str('reference')] = str(self.getReference())
-        if tier >= self.getSequencingIdTier():
-            record[str('sequencingId')] = str(self.getSequencingId())
-        if tier >= self.getSiteTier():
-            record[str('site')] = str(self.getSite())
+        try:
+            if tier >= self.getAlignmentIdTier():
+                record[str('alignmentId')] = str(self.getAlignmentId())
+            if tier >= self.getSampleIdTier():
+                record[str('sampleId')] = str(self.getSampleId())
+            if tier >= self.getInHousePipelineTier():
+                record[str('inHousePipeline')] = str(self.getInHousePipeline())
+            if tier >= self.getAlignmentToolTier():
+                record[str('alignmentTool')] = str(self.getAlignmentTool())
+            if tier >= self.getMergeToolTier():
+                record[str('mergeTool')] = str(self.getMergeTool())
+            if tier >= self.getMarkDuplicatesTier():
+                record[str('markDuplicates')] = str(self.getMarkDuplicates())
+            if tier >= self.getRealignerTargetTier():
+                record[str('realignerTarget')] = str(self.getRealignerTarget())
+            if tier >= self.getIndelRealignerTier():
+                record[str('indelRealigner')] = str(self.getIndelRealigner())
+            if tier >= self.getBaseRecalibratorTier():
+                record[str('baseRecalibrator')] = str(self.getBaseRecalibrator())
+            if tier >= self.getPrintReadsTier():
+                record[str('printReads')] = str(self.getPrintReads())
+            if tier >= self.getIdxStatsTier():
+                record[str('idxStats')] = str(self.getIdxStats())
+            if tier >= self.getFlagStatTier():
+                record[str('flagStat')] = str(self.getFlagStat())
+            if tier >= self.getCoverageTier():
+                record[str('coverage')] = str(self.getCoverage())
+            if tier >= self.getInsertSizeMetricsTier():
+                record[str('insertSizeMetrics')] = str(self.getInsertSizeMetrics())
+            if tier >= self.getFastqcTier():
+                record[str('fastqc')] = str(self.getFastqc())
+            if tier >= self.getReferenceTier():
+                record[str('reference')] = str(self.getReference())
+            if tier >= self.getSequencingIdTier():
+                record[str('sequencingId')] = str(self.getSequencingId())
+            if tier >= self.getSiteTier():
+                record[str('site')] = str(self.getSite())
+        except TypeError:
+            pass
 
         Alignment = protocol.Alignment(**record)
         self.serializeMetadataAttributes(Alignment)
@@ -908,36 +917,39 @@ class VariantCalling(datamodel.DatamodelObject):
         }
 
         # Unique fields
-        if tier >= self.getVariantCallingIdTier():
-            record[str('variantCallingId')] = str(self.getVariantCallingId())
-        if tier >= self.getSampleIdTier():
-            record[str('sampleId')] = str(self.getSampleId())
-        if tier >= self.getInHousePipelineTier():
-            record[str('inHousePipeline')] = str(self.getInHousePipeline())
-        if tier >= self.getVariantCallerTier():
-            record[str('variantCaller')] = str(self.getVariantCaller())
-        if tier >= self.getTabulateTier():
-            record[str('tabulate')] = str(self.getTabulate())
-        if tier >= self.getAnnotationTier():
-            record[str('annotation')] = str(self.getAnnotation())
-        if tier >= self.getMergeToolTier():
-            record[str('mergeTool')] = str(self.getMergeTool())
-        if tier >= self.getRdaToTabTier():
-            record[str('rdaToTab')] = str(self.getRdaToTab())
-        if tier >= self.getDellyTier():
-            record[str('delly')] = str(self.getDelly())
-        if tier >= self.getPostFilterTier():
-            record[str('postFilter')] = str(self.getPostFilter())
-        if tier >= self.getClipFilterTier():
-            record[str('clipFilter')] = str(self.getClipFilter())
-        if tier >= self.getCosmicTier():
-            record[str('cosmic')] = str(self.getCosmic())
-        if tier >= self.getDbSnpTier():
-            record[str('dbSnp')] = str(self.getDbSnp())
-        if tier >= self.getAlignmentIdTier():
-            record[str('alignmentId')] = str(self.getAlignmentId())
-        if tier >= self.getSiteTier():
-            record[str('site')] = str(self.getSite())
+        try:
+            if tier >= self.getVariantCallingIdTier():
+                record[str('variantCallingId')] = str(self.getVariantCallingId())
+            if tier >= self.getSampleIdTier():
+                record[str('sampleId')] = str(self.getSampleId())
+            if tier >= self.getInHousePipelineTier():
+                record[str('inHousePipeline')] = str(self.getInHousePipeline())
+            if tier >= self.getVariantCallerTier():
+                record[str('variantCaller')] = str(self.getVariantCaller())
+            if tier >= self.getTabulateTier():
+                record[str('tabulate')] = str(self.getTabulate())
+            if tier >= self.getAnnotationTier():
+                record[str('annotation')] = str(self.getAnnotation())
+            if tier >= self.getMergeToolTier():
+                record[str('mergeTool')] = str(self.getMergeTool())
+            if tier >= self.getRdaToTabTier():
+                record[str('rdaToTab')] = str(self.getRdaToTab())
+            if tier >= self.getDellyTier():
+                record[str('delly')] = str(self.getDelly())
+            if tier >= self.getPostFilterTier():
+                record[str('postFilter')] = str(self.getPostFilter())
+            if tier >= self.getClipFilterTier():
+                record[str('clipFilter')] = str(self.getClipFilter())
+            if tier >= self.getCosmicTier():
+                record[str('cosmic')] = str(self.getCosmic())
+            if tier >= self.getDbSnpTier():
+                record[str('dbSnp')] = str(self.getDbSnp())
+            if tier >= self.getAlignmentIdTier():
+                record[str('alignmentId')] = str(self.getAlignmentId())
+            if tier >= self.getSiteTier():
+                record[str('site')] = str(self.getSite())
+        except TypeError:
+            pass
 
         VariantCalling = protocol.VariantCalling(**record)
         self.serializeMetadataAttributes(VariantCalling)
@@ -1212,28 +1224,31 @@ class FusionDetection(datamodel.DatamodelObject):
         }
 
         # Unique fields
-        if tier >= self.getFusionDetectionIdTier():
-            record[str('fusionDetectionId')] = str(self.getFusionDetectionId())
-        if tier >= self.getSampleIdTier():
-            record[str('sampleId')] = str(self.getSampleId())
-        if tier >= self.getInHousePipelineTier():
-            record[str('inHousePipeline')] = str(self.getInHousePipeline())
-        if tier >= self.getSvDetectionTier():
-            record[str('svDetection')] = str(self.getSvDetection())
-        if tier >= self.getFusionDetectionTier():
-            record[str('fusionDetection')] = str(self.getFusionDetection())
-        if tier >= self.getRealignmentTier():
-            record[str('realignment')] = str(self.getRealignment())
-        if tier >= self.getAnnotationTier():
-            record[str('annotation')] = str(self.getAnnotation())
-        if tier >= self.getGenomeReferenceTier():
-            record[str('genomeReference')] = str(self.getGenomeReference())
-        if tier >= self.getGeneModelsTier():
-            record[str('geneModels')] = str(self.getGeneModels())
-        if tier >= self.getAlignmentIdTier():
-            record[str('alignmentId')] = str(self.getAlignmentId())
-        if tier >= self.getSiteTier():
-            record[str('site')] = str(self.getSite())
+        try:
+            if tier >= self.getFusionDetectionIdTier():
+                record[str('fusionDetectionId')] = str(self.getFusionDetectionId())
+            if tier >= self.getSampleIdTier():
+                record[str('sampleId')] = str(self.getSampleId())
+            if tier >= self.getInHousePipelineTier():
+                record[str('inHousePipeline')] = str(self.getInHousePipeline())
+            if tier >= self.getSvDetectionTier():
+                record[str('svDetection')] = str(self.getSvDetection())
+            if tier >= self.getFusionDetectionTier():
+                record[str('fusionDetection')] = str(self.getFusionDetection())
+            if tier >= self.getRealignmentTier():
+                record[str('realignment')] = str(self.getRealignment())
+            if tier >= self.getAnnotationTier():
+                record[str('annotation')] = str(self.getAnnotation())
+            if tier >= self.getGenomeReferenceTier():
+                record[str('genomeReference')] = str(self.getGenomeReference())
+            if tier >= self.getGeneModelsTier():
+                record[str('geneModels')] = str(self.getGeneModels())
+            if tier >= self.getAlignmentIdTier():
+                record[str('alignmentId')] = str(self.getAlignmentId())
+            if tier >= self.getSiteTier():
+                record[str('site')] = str(self.getSite())
+        except TypeError:
+            pass
 
         FusionDetection = protocol.FusionDetection(**record)
         self.serializeMetadataAttributes(FusionDetection)
@@ -1462,24 +1477,27 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
         }
 
         # Unique fields
-        if tier >= self.getExpressionAnalysisIdTier():
-            record[str('expressionAnalysisId')] = str(self.getExpressionAnalysisId())
-        if tier >= self.getSampleIdTier():
-            record[str('sampleId')] = str(self.getSampleId())
-        if tier >= self.getReadLengthTier():
-            record[str('readLength')] = str(self.getReadLength())
-        if tier >= self.getReferenceTier():
-            record[str('reference')] = str(self.getReference())
-        if tier >= self.getAlignmentToolTier():
-            record[str('alignmentTool')] = str(self.getAlignmentTool())
-        if tier >= self.getBamHandlingTier():
-            record[str('bamHandling')] = str(self.getBamHandling())
-        if tier >= self.getExpressionEstimationTier():
-            record[str('expressionEstimation')] = str(self.getExpressionEstimation())
-        if tier >= self.getSequencingIdTier():
-            record[str('sequencingId')] = str(self.getSequencingId())
-        if tier >= self.getSiteTier():
-            record[str('site')] = str(self.getSite())
+        try:
+            if tier >= self.getExpressionAnalysisIdTier():
+                record[str('expressionAnalysisId')] = str(self.getExpressionAnalysisId())
+            if tier >= self.getSampleIdTier():
+                record[str('sampleId')] = str(self.getSampleId())
+            if tier >= self.getReadLengthTier():
+                record[str('readLength')] = str(self.getReadLength())
+            if tier >= self.getReferenceTier():
+                record[str('reference')] = str(self.getReference())
+            if tier >= self.getAlignmentToolTier():
+                record[str('alignmentTool')] = str(self.getAlignmentTool())
+            if tier >= self.getBamHandlingTier():
+                record[str('bamHandling')] = str(self.getBamHandling())
+            if tier >= self.getExpressionEstimationTier():
+                record[str('expressionEstimation')] = str(self.getExpressionEstimation())
+            if tier >= self.getSequencingIdTier():
+                record[str('sequencingId')] = str(self.getSequencingId())
+            if tier >= self.getSiteTier():
+                record[str('site')] = str(self.getSite())
+        except TypeError:
+            pass
 
         ExpressionAnalysis = protocol.ExpressionAnalysis(**record)
         self.serializeMetadataAttributes(ExpressionAnalysis)
