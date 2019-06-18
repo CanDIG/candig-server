@@ -144,7 +144,7 @@ class AbstractReferenceSet(datamodel.DatamodelObject):
             self.getReferences(),
             key=lambda ref: ref.getMd5Checksum())
         checksums = ''.join([ref.getMd5Checksum() for ref in references])
-        md5checksum = hashlib.md5(checksums).hexdigest()
+        md5checksum = hashlib.md5(checksums.encode('utf-8')).hexdigest()
         return md5checksum
 
     def getAssemblyId(self):
@@ -428,7 +428,7 @@ class SimulatedReference(AbstractReference):
         self._length = length
         bases = [rng.choice('ACGT') for _ in range(self._length)]
         self._bases = ''.join(bases)
-        self._md5checksum = hashlib.md5(self._bases).hexdigest()
+        self._md5checksum = hashlib.md5((self._bases).encode('utf-8')).hexdigest()
         self._isDerived = bool(rng.randint(0, 1))
         self._sourceDivergence = 0
         if self._isDerived:

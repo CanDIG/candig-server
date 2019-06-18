@@ -38,4 +38,4 @@ yubico-client==1.9.1
 git+git://github.com/CanDIG/candig-client.git@2to3#egg=candig_client
 
 # For ingesting various metadata
-git+git://github.com/CanDIG/candig-client.git@2to3#egg=candig_ingest
+git+git://github.com/CanDIG/candig-ingest.git@2to3#egg=candig_ingest

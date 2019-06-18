@@ -256,7 +256,7 @@ class CompoundId(object):
         dissuade users from depending on our internal ID structures.
         """
         return str(base64.urlsafe_b64encode(
-            idStr.encode('utf-8')).replace(b'=', b''))
+            idStr.encode('utf-8')).replace(b'=', b'').decode("utf-8"))
 
     @classmethod
     def deobfuscate(cls, data):
@@ -269,7 +269,7 @@ class CompoundId(object):
         # to an ascii string since the urlsafe_b64decode method
         # sometimes chokes on unicode strings
         return base64.urlsafe_b64decode(str((
-            data + b'A=='[(len(data) - 1) % 4:])))
+            data + (b'A=='[(len(data) - 1) % 4:]).decode('utf-8'))))
 
     @classmethod
     def getInvalidIdString(cls):
