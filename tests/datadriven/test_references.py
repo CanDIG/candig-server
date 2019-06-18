@@ -103,7 +103,7 @@ class ReferenceSetTest(datadriven.DataDrivenTest):
             referenceMd5s.append(gaReference.getMd5Checksum())
         referenceMd5s.sort()
         checksumsString = ''.join(referenceMd5s)
-        md5checksum = hashlib.md5(checksumsString).hexdigest()
+        md5checksum = hashlib.md5(checksumsString.encode("utf-8")).hexdigest()
         referenceSetMd5 = referenceSet.getMd5Checksum()
         self.assertEqual(md5checksum, referenceSetMd5)
 

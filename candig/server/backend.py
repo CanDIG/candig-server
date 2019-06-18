@@ -1073,7 +1073,7 @@ class Backend(object):
             if request.name and request.name != obj.getLocalId():
                 include = False
             if request.biosample_id and include:
-                rgsp.ClearField(b"read_groups")
+                rgsp.ClearField("read_groups")
                 for readGroup in obj.getReadGroups():
                     if request.biosample_id == readGroup.getBiosampleId():
                         rgsp.read_groups.extend(
@@ -1607,7 +1607,7 @@ class Backend(object):
         for gt_variant, nextPageToken in objectGenerator(request, access_map):
             genotypemtx, variant, callsetids = gt_variant
             genotyperows.append(genotypemtx)
-            variant.ClearField(b"calls")
+            variant.ClearField("calls")
             variants.append(variant)
             if callsetIds is None:
                 callsetIds = callsetids

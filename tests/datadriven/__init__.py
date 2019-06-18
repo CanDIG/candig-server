@@ -70,8 +70,8 @@ class TestCase(object):
         an assertion error.
         """
         def compare_as_float_32s(a_dbl, b_dbl):
-            a_flt = array.array(b"f", [a_dbl])[0]
-            b_flt = array.array(b"f", [b_dbl])[0]
+            a_flt = array.array("f", [a_dbl])[0]
+            b_flt = array.array("f", [b_dbl])[0]
             return a_flt == b_flt
 
         if a == b:
