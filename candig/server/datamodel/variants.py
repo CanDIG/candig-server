@@ -336,7 +336,7 @@ class AbstractVariantSet(datamodel.DatamodelObject):
         """
         hash_str = gaVariant.reference_bases + \
             str(tuple(gaVariant.alternate_bases))
-        return hashlib.md5(hash_str).hexdigest()
+        return hashlib.md5(hash_str.encode('utf-8')).hexdigest()
 
 
 class SimulatedVariantSet(AbstractVariantSet):

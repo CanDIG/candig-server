@@ -70,7 +70,7 @@ class BaseServerException(Exception):
         # We follow the recommendation of the Python docs to ensure
         # that this value is signed 32 bit integer, and then mod it
         # to ensure non-negativity
-        code = (zlib.crc32(cls.__name__) & 0xffffffff) % 2**31
+        code = (zlib.crc32(cls.__name__.encode('utf-8')) & 0xffffffff) % 2**31
         return code
 
     def __str__(self):
