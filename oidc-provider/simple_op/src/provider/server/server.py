@@ -16,7 +16,7 @@ from jinja2.environment import Environment
 from jinja2.loaders import FileSystemLoader
 import yaml
 
-from oic.oauth2 import rndstr
+from oic import rndstr
 from oic.oic.provider import Provider, AuthorizationEndpoint, TokenEndpoint, \
     UserinfoEndpoint, RegistrationEndpoint, EndSessionEndpoint
 from oic.utils.authn.authn_context import AuthnBroker

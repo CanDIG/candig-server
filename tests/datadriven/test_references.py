@@ -98,7 +98,7 @@ class ReferenceSetTest(datadriven.DataDrivenTest):
         referenceMd5s = []
         for gaReference in referenceSet.getReferences():
             bases = self._fastaFile.fetch(gaReference.getLocalId())
-            basesChecksum = hashlib.md5(bases).hexdigest()
+            basesChecksum = hashlib.md5(bases.encode('utf-8')).hexdigest()
             self.assertEqual(basesChecksum, gaReference.getMd5Checksum())
             referenceMd5s.append(gaReference.getMd5Checksum())
         referenceMd5s.sort()

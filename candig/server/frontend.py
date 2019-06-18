@@ -876,8 +876,8 @@ def startLogin():
     provider and returns the redirect response
     :return: A redirect response to the OIDC provider
     """
-    flask.session["state"] = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
-    flask.session["nonce"] = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
+    flask.session["state"] = oic.rndstr(SECRET_KEY_LENGTH)
+    flask.session["nonce"] = oic.rndstr(SECRET_KEY_LENGTH)
     args = {
         "client_id": app.oidcClient.client_id,
         "response_type": "code",
@@ -1983,7 +1983,7 @@ def oidcCallback():
     atrDict = atr.to_dict()
     if flask.session.get('nonce') != atrDict['id_token']['nonce']:
         raise exceptions.NotAuthenticatedException()
-    key = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
+    key = oic.rndstr(SECRET_KEY_LENGTH)
     flask.session['key'] = key
     token_data = aresp["code"], respState, atrDict
     app.cache.set(key, token_data)
