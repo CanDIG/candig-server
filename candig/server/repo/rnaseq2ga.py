@@ -143,7 +143,7 @@ class AbstractWriter(object):
         isNormalized = self._isNormalized
         units = self._units
         with open(quantfilename, "r") as quantFile:
-            quantificationReader = csv.reader(quantFile, delimiter=b"\t")
+            quantificationReader = csv.reader(quantFile, delimiter="\t")
             header = next(quantificationReader)
             expressionLevelColNum = self.setColNum(
                 header, self._expressionLevelCol)

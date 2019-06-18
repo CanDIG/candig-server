@@ -64,7 +64,7 @@ class TestSimulatedStack(unittest.TestCase):
     @classmethod
     def as_float32(cls, x):
         x_dbl = float(x)
-        x_flt = array.array(b"f", [x_dbl])[0]
+        x_flt = array.array("f", [x_dbl])[0]
         return x_flt
 
     def setUp(self):

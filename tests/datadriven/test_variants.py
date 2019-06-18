@@ -518,4 +518,4 @@ class VariantSetTest(datadriven.DataDrivenTest):
         else:
             alts = tuple([str(sub) for sub in record.ALT])
         hash_str = record.REF + str(alts)
-        return hashlib.md5(hash_str).hexdigest()
+        return hashlib.md5(hash_str.encode('utf-8')).hexdigest()
