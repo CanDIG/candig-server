@@ -3,9 +3,6 @@ Module responsible for translating reference sequence data into GA4GH native
 objects.
 """
 
-
-
-
 import hashlib
 import json
 import random

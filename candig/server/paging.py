@@ -4,9 +4,6 @@ the object stream at the appropriate point
 """
 
 
-
-
-
 import candig.server.exceptions as exceptions
 
 

@@ -3,9 +3,6 @@ Unit tests for continuous objects. This is used for all tests
 that can be performed in isolation from input data.
 """
 
-
-
-
 import unittest
 import math
 

@@ -2,9 +2,6 @@
 Functionality common to cli modules
 """
 
-
-
-
 import candig.server
 
 import candig.schemas.protocol as protocol

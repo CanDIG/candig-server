@@ -2,9 +2,6 @@
 Tests for the client
 """
 
-
-
-
 import unittest
 import json
 

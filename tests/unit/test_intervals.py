@@ -2,9 +2,6 @@
 Random data based tests for the interval iterator code.
 """
 
-
-
-
 import unittest
 import random
 

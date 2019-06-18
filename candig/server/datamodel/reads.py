@@ -3,9 +3,6 @@ Module responsible for translating read data into GA4GH native
 objects.
 """
 
-
-
-
 import datetime
 import json
 import os.path

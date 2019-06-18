@@ -4,9 +4,6 @@ optimized for typical REST queries as defined by the GA4GH server.
 """
 
 
-
-
-
 import sqlite3
 
 

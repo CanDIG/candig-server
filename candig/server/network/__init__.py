@@ -2,9 +2,6 @@
 Provides methods to initialize the server's peer to peer connections.
 """
 
-
-
-
 import os
 import requests
 

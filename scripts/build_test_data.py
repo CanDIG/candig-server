@@ -2,9 +2,6 @@
 Builds the test data registry DB.
 """
 
-
-
-
 import argparse
 import glob
 import os.path

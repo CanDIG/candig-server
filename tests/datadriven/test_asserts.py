@@ -2,9 +2,6 @@
 Tests the datadriven assert methods
 """
 
-
-
-
 import unittest
 import tests.datadriven as datadriven
 

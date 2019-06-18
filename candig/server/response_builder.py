@@ -2,9 +2,6 @@
 Class that builds the responses to the client
 """
 
-
-
-
 import candig.schemas.pb as pb
 import candig.schemas.protocol as protocol
 

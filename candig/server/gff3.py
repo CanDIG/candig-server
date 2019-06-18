@@ -5,9 +5,6 @@ See: http://www.sequenceontology.org/gff3.shtml
 """
 
 
-
-
-
 import urllib.request, urllib.parse, urllib.error
 import copy
 import re

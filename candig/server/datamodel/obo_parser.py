@@ -259,9 +259,6 @@ class OBOReader(object):
             return
         self._die("FIELD IS ALREADY INITIALIZED", lnum)
 
-
-
-
 class GOTerm:
     """
     GO term, actually contain a lot more properties than interfaced here

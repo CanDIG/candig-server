@@ -3,9 +3,6 @@ Module responsible for translating feature expression data into GA4GH native
 objects.
 """
 
-
-
-
 import candig.server.datamodel as datamodel
 import candig.server.exceptions as exceptions
 import candig.server.sqlite_backend as sqlite_backend

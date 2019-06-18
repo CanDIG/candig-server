@@ -3,9 +3,6 @@
 Tests the compound ids
 """
 
-
-
-
 import json
 import unittest
 

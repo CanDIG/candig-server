@@ -2,9 +2,6 @@
 Tests the backend methods and generators for the advanced search API
 """
 
-
-
-
 import unittest
 import json
 

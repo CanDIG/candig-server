@@ -4,9 +4,6 @@ This is used for all tests that can be performed in isolation
 from input data.
 """
 
-
-
-
 import unittest
 
 import candig.server.datamodel.sequence_annotations as sequence_annotations

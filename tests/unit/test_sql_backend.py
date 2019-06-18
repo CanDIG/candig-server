@@ -2,9 +2,6 @@
 Unit tests for the sql backend
 """
 
-
-
-
 import unittest
 
 import candig.server.sqlite_backend as sqlite_backend

@@ -2,9 +2,6 @@
 Glue to enable script access to candig packages
 """
 
-
-
-
 import os
 import sys
 # the following two lines are the same ones as in dev_glue.py

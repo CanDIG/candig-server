@@ -5,9 +5,6 @@ Clinical metadata objects
 
 """
 
-
-
-
 import datetime
 # import json
 

@@ -2,9 +2,6 @@
 Tests the datasets module
 """
 
-
-
-
 import unittest
 
 import candig.server.datamodel.datasets as datasets

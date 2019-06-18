@@ -3,9 +3,6 @@ Simple script to decode exception error codes. This translates
 the error code received by clients into an exception class.
 """
 
-
-
-
 import argparse
 
 import candig.server.exceptions as exceptions

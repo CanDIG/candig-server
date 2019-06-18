@@ -5,9 +5,6 @@ Pipeline metadata objects
 
 """
 
-
-
-
 import datetime
 
 import candig.server.datamodel as datamodel

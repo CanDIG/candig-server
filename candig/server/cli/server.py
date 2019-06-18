@@ -2,9 +2,6 @@
 Server cli
 """
 
-
-
-
 import requests
 
 import gunicorn.app.base

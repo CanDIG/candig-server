@@ -2,9 +2,6 @@
 GFF3 parser unit tests.
 """
 
-
-
-
 import candig.server.gff3 as gff3
 import unittest
 

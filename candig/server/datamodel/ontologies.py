@@ -2,9 +2,6 @@
 Support for Ontologies.
 """
 
-
-
-
 import collections
 import os.path
 

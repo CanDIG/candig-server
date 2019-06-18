@@ -2,9 +2,6 @@
 Biodata objects
 """
 
-
-
-
 import datetime
 import json
 

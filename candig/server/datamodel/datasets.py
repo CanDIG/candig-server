@@ -2,9 +2,6 @@
 Dataset objects
 """
 
-
-
-
 import candig.server.datamodel as datamodel
 import candig.server.datamodel.reads as reads
 import candig.server.datamodel.sequence_annotations as sequence_annotations

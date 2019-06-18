@@ -2,9 +2,6 @@
 Peer datamodel for exchanging data about GA4GH services.
 """
 
-
-
-
 import json
 import re
 import urllib.parse

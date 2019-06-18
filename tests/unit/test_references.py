@@ -3,9 +3,6 @@ Unit tests for reference objects. This is used for all tests
 that can be performed in isolation from input data.
 """
 
-
-
-
 import unittest
 
 import candig.server.backend as backend

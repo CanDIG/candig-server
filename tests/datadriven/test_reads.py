@@ -2,9 +2,6 @@
 Data-driven tests for reads
 """
 
-
-
-
 import collections
 import os
 

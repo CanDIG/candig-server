@@ -2,9 +2,6 @@
 Assists in executing tests with a client
 """
 
-
-
-
 import shlex
 import subprocess
 import tempfile

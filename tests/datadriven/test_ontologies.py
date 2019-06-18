@@ -2,9 +2,6 @@
 Data-driven tests for ontologies.
 """
 
-
-
-
 import os.path
 
 # TODO it may be a bit circular to use obo_parser as our method of

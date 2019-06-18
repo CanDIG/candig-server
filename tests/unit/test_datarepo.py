@@ -2,9 +2,6 @@
 Tests the datarepo module
 """
 
-
-
-
 import os
 import tempfile
 import unittest

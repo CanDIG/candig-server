@@ -2,9 +2,6 @@
 Data-driven tests for references.
 """
 
-
-
-
 import hashlib
 import os
 import unittest

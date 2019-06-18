@@ -2,9 +2,6 @@
 Data-driven tests for rna quantification.
 """
 
-
-
-
 import tempfile
 import os
 import shutil

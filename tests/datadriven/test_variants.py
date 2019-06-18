@@ -2,9 +2,6 @@
 Data-driven tests for variants.
 """
 
-
-
-
 import os
 import glob
 import hashlib

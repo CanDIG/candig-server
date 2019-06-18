@@ -2,9 +2,6 @@
 Data-driven tests for g2p.
 """
 
-
-
-
 import os
 import rdflib
 

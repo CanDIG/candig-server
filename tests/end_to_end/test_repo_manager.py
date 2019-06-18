@@ -2,9 +2,6 @@
 End to end test that invokes the repo manager
 """
 
-
-
-
 import mock
 import os
 import tempfile

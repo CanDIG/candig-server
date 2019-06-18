@@ -2,9 +2,6 @@
 Tests the cli
 """
 
-
-
-
 import unittest
 import shlex
 

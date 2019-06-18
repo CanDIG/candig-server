@@ -9,9 +9,6 @@ An end to end test which tests:
 - server logging
 """
 
-
-
-
 from . import server_test
 from . import client
 import unittest

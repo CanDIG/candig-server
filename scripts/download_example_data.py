@@ -3,9 +3,6 @@ Constructs a data source for the candig server by downloading data from
 authoritative remote servers.
 """
 
-
-
-
 import argparse
 import gzip
 import os

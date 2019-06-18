@@ -2,9 +2,6 @@
 Tests for the repo manager tool
 """
 
-
-
-
 import os
 import glob
 import shutil

@@ -2,9 +2,6 @@
 Tests the backend response generators
 """
 
-
-
-
 import unittest
 
 import candig.server.backend as backend

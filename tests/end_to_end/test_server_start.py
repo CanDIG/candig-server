@@ -5,9 +5,6 @@ Necessary because all other tests that start up the server do so
 with non-file backends (e.g. simulated backends).
 """
 
-
-
-
 import unittest
 
 from . import server as server

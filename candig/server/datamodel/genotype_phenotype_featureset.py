@@ -3,9 +3,6 @@ Module responsible for translating g2p data into GA4GH native
 objects.
 """
 
-
-
-
 import re
 import bisect
 import rdflib

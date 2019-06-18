@@ -4,9 +4,6 @@ driven test applies a given test method to a data file, and
 each applicaton is an independent test case under nose.
 """
 
-
-
-
 import contextlib
 import fnmatch
 import os

@@ -2,9 +2,6 @@
 repo manager cli
 """
 
-
-
-
 import glob
 import json
 import os

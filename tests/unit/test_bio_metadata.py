@@ -2,9 +2,6 @@
 Tests the biodata module
 """
 
-
-
-
 import unittest
 
 import candig.server.datamodel.datasets as datasets

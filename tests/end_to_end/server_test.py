@@ -2,9 +2,6 @@
 Assists in executing tests with a running server on localhost
 """
 
-
-
-
 import unittest
 import subprocess
 

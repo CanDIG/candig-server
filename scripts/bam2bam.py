@@ -2,9 +2,6 @@
 Convert a BAM file to a small BAM file
 """
 
-
-
-
 import candig.common.utils as utils
 
 

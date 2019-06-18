@@ -2,9 +2,6 @@
 Simple tool to download files
 """
 
-
-
-
 import sys
 
 import humanize

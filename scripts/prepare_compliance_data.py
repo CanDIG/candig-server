@@ -5,9 +5,6 @@ and turns it into a directory bundle of binary and JSON files suitable
 for use by the reference server.
 """
 
-
-
-
 import argparse
 import os
 import shutil

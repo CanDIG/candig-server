@@ -3,9 +3,6 @@ Module responsible for translating continuous sequence annotation data
 into GA4GH native objects.
 """
 
-
-
-
 import random
 import re
 import math

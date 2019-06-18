@@ -2,9 +2,6 @@
 Unit tests for the oidc code in the frontend.
 """
 
-
-
-
 import unittest
 import socket
 import mock

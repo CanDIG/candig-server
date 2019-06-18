@@ -2,9 +2,6 @@
 Unit tests for the frontend code.
 """
 
-
-
-
 import unittest
 import logging
 

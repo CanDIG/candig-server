@@ -3,9 +3,6 @@ Module responsible for translating sequence annotation data
 into GA4GH native objects.
 """
 
-
-
-
 import json
 import random
 

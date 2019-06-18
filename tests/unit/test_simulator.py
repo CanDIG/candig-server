@@ -2,9 +2,6 @@
 Tests for simulated data
 """
 
-
-
-
 import unittest
 import datetime
 

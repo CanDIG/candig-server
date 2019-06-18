@@ -2,9 +2,6 @@
 The backing data store for the GA4GH server
 """
 
-
-
-
 import json
 import os
 import datetime

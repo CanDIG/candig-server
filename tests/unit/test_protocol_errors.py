@@ -2,9 +2,6 @@
 Unit tests for frontend error conditions.
 """
 
-
-
-
 import unittest
 
 import candig.server.frontend as frontend

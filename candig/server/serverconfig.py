@@ -5,9 +5,6 @@ given by the environment variable GA4GH_CONFIGURATION.
 """
 
 
-
-
-
 import datetime
 # import socket
 

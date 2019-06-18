@@ -2,9 +2,6 @@
 Tools for alignment files
 """
 
-
-
-
 import argparse
 import pysam
 

@@ -2,9 +2,6 @@
 Servers to assist in testing
 """
 
-
-
-
 import logging
 import tempfile
 import shlex

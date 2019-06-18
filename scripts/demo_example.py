@@ -3,9 +3,6 @@
 Example of client query
 """
 
-
-
-
 import candig.client.client as client
 
 

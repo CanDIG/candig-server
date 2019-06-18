@@ -2,9 +2,6 @@
 Stand-alone benchmark for the GA4GH reference implementation.
 """
 
-
-
-
 import re
 import time
 import pstats

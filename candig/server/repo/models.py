@@ -13,9 +13,6 @@ https://peewee.readthedocs.io/en/latest/peewee/models.html
 
 """
 
-
-
-
 import peewee as pw
 import datetime
 # The databaseProxy is used to dynamically changed the

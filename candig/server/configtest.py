@@ -4,9 +4,6 @@ Tests for the server configuration. Run via configtest_dev.py
 Tests are standard python unittest tests.
 """
 
-
-
-
 import unittest
 import flask
 import os

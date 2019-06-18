@@ -7,9 +7,6 @@ mapped to a Feature.
 """
 
 
-
-
-
 import argparse
 import os
 import sys

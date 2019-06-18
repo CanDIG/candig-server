@@ -3,9 +3,6 @@ Module responsible for handling protocol requests and returning
 responses.
 """
 
-
-
-
 import candig.server.datamodel as datamodel
 import candig.server.exceptions as exceptions
 import candig.server.paging as paging

@@ -3,9 +3,6 @@ Module responsible for translating variant data into GA4GH native
 objects.
 """
 
-
-
-
 import datetime
 import glob
 import hashlib

@@ -4,9 +4,6 @@ the backends and invoke the entry points for the protocol methods.
 We do not set up any server processes or communicate over sockets.
 """
 
-
-
-
 import unittest
 
 import candig.server.exceptions as exceptions

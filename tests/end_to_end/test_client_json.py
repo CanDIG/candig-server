@@ -4,9 +4,6 @@ output by the client command line interface is equal to
 the values we expect using the test dataset.
 """
 
-
-
-
 import datetime
 import json
 import unittest

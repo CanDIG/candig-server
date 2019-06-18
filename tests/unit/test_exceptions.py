@@ -2,9 +2,6 @@
 Tests related to exceptions
 """
 
-
-
-
 import mock
 import unittest
 import inspect

@@ -3,9 +3,6 @@ Unit tests for reads objects. This is used for all tests
 that can be performed in isolation from input data.
 """
 
-
-
-
 import unittest
 
 import candig.server.datamodel.reads as reads

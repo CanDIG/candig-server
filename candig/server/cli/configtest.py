@@ -2,9 +2,6 @@
 configtest cli
 """
 
-
-
-
 import logging
 import unittest
 

@@ -2,9 +2,6 @@
 Sequence Annotations testing on the test data
 """
 
-
-
-
 import unittest
 import logging
 import json

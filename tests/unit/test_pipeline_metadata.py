@@ -2,9 +2,6 @@
 Tests the pipeline meta data models
 """
 
-
-
-
 import unittest
 
 import candig.server.datamodel.datasets as datasets

@@ -2,9 +2,6 @@
 Data-driven tests for sequence annotation Features.
 """
 
-
-
-
 import candig.server.datarepo as datarepo
 import candig.server.datamodel as datamodel
 import candig.server.datamodel.datasets as datasets

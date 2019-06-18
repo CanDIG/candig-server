@@ -3,9 +3,6 @@ Tests the file handle cache
 """
 
 
-
-
-
 import os
 import shutil
 import tempfile

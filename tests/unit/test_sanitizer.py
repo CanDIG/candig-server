@@ -2,9 +2,6 @@
 Tests the pysam sanitizer
 """
 
-
-
-
 import unittest
 
 import candig.server.datamodel as datamodel

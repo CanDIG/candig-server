@@ -2,9 +2,6 @@
 Tests the data interfacing layer for various objects
 """
 
-
-
-
 import unittest
 
 import candig.server.datarepo as datarepo

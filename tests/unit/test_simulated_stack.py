@@ -4,9 +4,6 @@ the backend, sends some basic queries to that server and verifies results
 are as expected.
 """
 
-
-
-
 import unittest
 import logging
 import random
