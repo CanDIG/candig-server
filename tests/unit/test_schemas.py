@@ -1,7 +1,3 @@
-
-
-
-
 import unittest
 
 import candig.server.response_builder as response_builder

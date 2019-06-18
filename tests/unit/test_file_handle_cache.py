@@ -2,7 +2,6 @@
 Tests the file handle cache
 """
 
-
 import os
 import shutil
 import tempfile
@@ -43,8 +42,7 @@ class TestFileHandleCache(datamodel.PysamFileHandleCache, unittest.TestCase):
         self.assertEqual(len(self._memoTable), len(self._cache))
 
         # Ensure that the first added file has been removed from the cache
-        self.assertEqual([x for x in self._cache if x[0] == fileList[0]],
-                          [])
+        self.assertEqual([x for x in self._cache if x[0] == fileList[0]], [])
 
         topIndex = len(self._cache) - 1
 

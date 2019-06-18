@@ -3,9 +3,6 @@ Performs a request via the client with OpenID Connect enabled,
 with a local OP server.
 """
 
-
-
-
 import requests
 import subprocess
 from urllib.parse import urlparse

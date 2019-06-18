@@ -95,8 +95,7 @@ class TestAuth0(unittest.TestCase):
         request = protocol.SearchDatasetsRequest()
         headers = {"Authorization": ""}
         response = self.sendPostRequest(protectedPath, request, headers)
-        self.assertEqual(response.status_code, 401, "No bearer should fail"
-                                                     "with 401")
+        self.assertEqual(response.status_code, 401, "No bearer should fail with 401")
         headers = {"Authorization": "Bearer"}
         response = self.sendPostRequest(protectedPath, request, headers)
         self.assertEqual(response.status_code, 401, "")

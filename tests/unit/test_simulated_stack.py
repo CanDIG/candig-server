@@ -790,7 +790,7 @@ class TestSimulatedStack(unittest.TestCase):
                     if featureType.term_id in [e.term_id for e in request.effects]:
                         effectPresent = True
             self.assertEqual(True, effectPresent,
-                              "The ontology term should appear at least once")
+                             "The ontology term should appear at least once")
 
         request = protocol.SearchVariantAnnotationsRequest()
         request.variant_annotation_set_id = self.variantAnnotationSet.getId()
