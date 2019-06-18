@@ -950,7 +950,7 @@ class PysamDatamodelMixin(object):
                 attrName, attr)
             raise exceptions.DatamodelValidationException(message)
         if isinstance(attr, str):
-            attr = attr.encode('utf8')
+            attr = attr
         if len(attr) > cls.maxStringLength:
             attr = attr[:cls.maxStringLength]
         return attr
