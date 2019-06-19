@@ -19,7 +19,6 @@ import tests.paths as paths
 import candig.common.utils as utils
 import candig.schemas.protocol as protocol
 
-
 def testVariantSets():
     testDataDir = os.path.join(
         paths.testDataDir, "datasets/dataset1/variants")
@@ -418,7 +417,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
                     hasPass = True
                 else:
                     self.assertEqual(
-                        keyMap[key].description, content[contentKey].desc)
+                        keyMap[key].description, content[contentKey].desc.rstrip())
                     if prefix != "FILTER":
                         self.assertEqual(
                             keyMap[key].type, content[contentKey].type)

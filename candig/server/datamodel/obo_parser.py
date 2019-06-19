@@ -77,31 +77,36 @@ class OBOReader(object):
         with open(self.obo_file) as fstream:
             rec_curr = None # Stores current GO Term
             typedef_curr = None  # Stores current typedef
-            for lnum, line in enumerate(fstream):
-                # obo lines start with any of: [Term], [Typedef], /^\S+:/, or /^\s*/
-                if self.data_version is None:
-                    self._init_obo_version(line)
-                if line[0:6].lower() == "[term]":
-                    rec_curr = self._init_goterm_ref(rec_curr, "Term", lnum)
-                elif line[0:9].lower() == "[typedef]":
-                    typedef_curr = self._init_typedef(rec_curr, "Typedef", lnum)
-                elif rec_curr is not None or typedef_curr is not None:
-                    line = line.rstrip() # chomp
-                    if ":" in line:
-                        if rec_curr is not None:
-                            self._add_to_ref(rec_curr, line, lnum)
+            lnum = None
+            try:
+                for lnum, line in enumerate(fstream):
+                    # obo lines start with any of: [Term], [Typedef], /^\S+:/, or /^\s*/
+                    if self.data_version is None:
+                        self._init_obo_version(line)
+                    if line[0:6].lower() == "[term]":
+                        rec_curr = self._init_goterm_ref(rec_curr, "Term", lnum)
+                    elif line[0:9].lower() == "[typedef]":
+                        typedef_curr = self._init_typedef(rec_curr, "Typedef", lnum)
+                    elif rec_curr is not None or typedef_curr is not None:
+                        line = line.rstrip() # chomp
+                        if ":" in line:
+                            if rec_curr is not None:
+                                self._add_to_ref(rec_curr, line, lnum)
+                            else:
+                                self._add_to_typedef(typedef_curr, line, lnum)
+                        elif line == "":
+                            if rec_curr is not None:
+                                yield rec_curr
+                                rec_curr = None
+                            elif typedef_curr is not None:
+                                # Save typedef.
+                                self.typedefs[typedef_curr.id] = typedef_curr
+                                typedef_curr = None
                         else:
-                            self._add_to_typedef(typedef_curr, line, lnum)
-                    elif line == "":
-                        if rec_curr is not None:
-                            yield rec_curr
-                            rec_curr = None
-                        elif typedef_curr is not None:
-                            # Save typedef.
-                            self.typedefs[typedef_curr.id] = typedef_curr
-                            typedef_curr = None
-                    else:
-                        self._die("UNEXPECTED LINE CONTENT: {L}".format(L=line), lnum)
+                            self._die("UNEXPECTED LINE CONTENT: {L}".format(L=line), lnum)
+            except UnicodeDecodeError as e:
+                # The following method will raise OntologyFileFormatException
+                self._die(str(e), lnum)
             # Return last record, if necessary
             if rec_curr is not None:
                 yield rec_curr

@@ -9,8 +9,8 @@ An end to end test which tests:
 - server logging
 """
 
-from . import server_test
-from . import client
+import tests.end_to_end.server_test as server_test
+import tests.end_to_end.client as client
 import unittest
 
 import candig.server.datarepo as datarepo
