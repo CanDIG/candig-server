@@ -144,7 +144,7 @@ def make_static_handler(static_dir):
             static_dir, os.path.normpath(path).lstrip("/"))
 
         if os.path.exists(full_path):
-            with open(full_path, 'rb') as f:
+            with open(full_path, 'r') as f:
                 content = f.read()
 
             content_type, encoding = mimetypes.guess_type(full_path)
