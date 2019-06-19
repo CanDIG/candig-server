@@ -90,13 +90,13 @@ class TestHtslibVariantAnnotationSet(unittest.TestCase):
     def testHashVariantAnnotation(self):
         annotation = protocol.VariantAnnotation()
         variant = protocol.Variant()
-        expected = hashlib.md5('\t()\t[]\t').hexdigest()
+        expected = hashlib.md5('\t()\t[]\t'.encode('utf-8')).hexdigest()
         hashed = self._variantAnnotationSet.hashVariantAnnotation(
             variant, annotation)
         self.assertEqual(hashed, expected)
 
     def testGetTranscriptEffectId(self):
         effect = protocol.TranscriptEffect()
-        expected = hashlib.md5("\t\t[]\t").hexdigest()
+        expected = hashlib.md5("\t\t[]\t".encode('utf-8')).hexdigest()
         hashed = self._variantAnnotationSet.getTranscriptEffectId(effect)
         self.assertEqual(hashed, expected)

@@ -213,10 +213,10 @@ class AlignmentDataMixin(datamodel.PysamDatamodelMixin):
         try:
             return pysam.AlignmentFile(
                 self._dataUrl, filepath_index=self._indexFile)
-        except IOError as exception:
+        except IOError as e:
             # IOError thrown when the index file passed in is not actually
             # an index file... may also happen in other cases?
-            raise exceptions.DataException(exception.message)
+            raise exceptions.DataException(str(e))
 
 
 class AbstractReadGroupSet(datamodel.DatamodelObject):

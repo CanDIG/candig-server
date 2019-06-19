@@ -156,12 +156,14 @@ class TestSimulatedStack(unittest.TestCase):
         self.assertIsInstance(obj, protocol.ListReferenceBasesResponse)
         return obj
 
+    # See https://hg.python.org/cpython/rev/d9921cb6e3cd for assertItemsEqual rename
+
     def verifyVariantSetsEqual(self, gaVariantSet, variantSet):
         dataset = variantSet.getParentContainer()
         self.assertEqual(gaVariantSet.id, variantSet.getId())
         self.assertEqual(gaVariantSet.dataset_id, dataset.getId())
         self.assertEqual(gaVariantSet.name, variantSet.getLocalId())
-        self.assertItemsEqual(gaVariantSet.metadata, variantSet.getMetadata())
+        self.assertCountEqual(gaVariantSet.metadata, variantSet.getMetadata())
 
     def verifyCallSetsEqual(self, gaCallSet, callSet):
         variantSet = callSet.getParentContainer()
