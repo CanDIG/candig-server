@@ -184,7 +184,7 @@ SECRET_KEY = "secret"
         if self.configFile is None:
             self.configFile = tempfile.NamedTemporaryFile()
         config = self.getConfig()
-        self.configFile.write(config)
+        self.configFile.write(config.encode())
         self.configFile.flush()
         configFilePath = self.configFile.name
         cmdLine = """
