@@ -262,9 +262,8 @@ class CompoundId(object):
         If an identifier arrives without correct base64 padding this
         function will append it to the end.
         """
-
         return base64.urlsafe_b64decode(
-            data + ('A=='[(len(data) - 1) % 4:])).decode('utf-8')
+            data + ('A=='[(len(data) - 1) % 4:]), '-_').decode()
 
     @classmethod
     def getInvalidIdString(cls):
