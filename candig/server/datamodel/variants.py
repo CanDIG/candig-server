@@ -404,17 +404,22 @@ class SimulatedVariantSet(AbstractVariantSet):
             compoundId.reference_name, start, randomNumberGenerator)
         return variant
 
+        # The endPosition may be None, which would raise TypeError
+        # When TypeError happens, it skips to mimic the previous behaviour
     def getVariants(self, referenceName, startPosition, endPosition,
                     callSetIds=None):
         randomNumberGenerator = random.Random()
         randomNumberGenerator.seed(self._randomSeed)
         i = startPosition
-        while i < endPosition:
-            if randomNumberGenerator.random() < self._variantDensity:
-                randomNumberGenerator.seed(self._randomSeed + i)
-                yield self.generateVariant(
-                    referenceName, i, randomNumberGenerator)
-            i += 1
+        try:
+            while i < endPosition:
+                if randomNumberGenerator.random() < self._variantDensity:
+                    randomNumberGenerator.seed(self._randomSeed + i)
+                    yield self.generateVariant(
+                        referenceName, i, randomNumberGenerator)
+                i += 1
+        except TypeError:
+            pass
 
     def generateVariant(self, referenceName, position, randomNumberGenerator):
         """

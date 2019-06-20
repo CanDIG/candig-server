@@ -263,9 +263,15 @@ class CompoundId(object):
         Reverses the obfuscation done by the :meth:`obfuscate` method.
         If an identifier arrives without correct base64 padding this
         function will append it to the end.
+        TODO: Temporary fix. Need to revisit in future.
         """
-        return base64.urlsafe_b64decode(
-            data + ('A=='[(len(data) - 1) % 4:]))
+
+        decoded_data = base64.urlsafe_b64decode(data + ('A=='[(len(data) - 1) % 4:]))
+
+        try:
+            return decoded_data.decode('utf-8')
+        except UnicodeDecodeError:
+            return decoded_data
 
     @classmethod
     def getInvalidIdString(cls):
