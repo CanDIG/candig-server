@@ -19,6 +19,7 @@ import tests.paths as paths
 import candig.common.utils as utils
 import candig.schemas.protocol as protocol
 
+
 def testVariantSets():
     testDataDir = os.path.join(
         paths.testDataDir, "datasets/dataset1/variants")

@@ -12,8 +12,9 @@ import os
 import difflib
 
 import candig.server.exceptions as exceptions
-
 import candig.schemas.protocol as protocol
+
+from binascii import Error as binascii_error
 
 
 class PysamFileHandleCache(object):
@@ -217,10 +218,11 @@ class CompoundId(object):
             raise exceptions.BadIdentifierException(compoundIdStr)
         try:
             deobfuscated = cls.deobfuscate(compoundIdStr)
-        except TypeError:
+        except binascii_error:
             # When a string that cannot be converted to base64 is passed
             # as an argument, b64decode raises a TypeError. We must treat
             # this as an ID not found error.
+            # In Python 3, it raises a binascii.Error instead of TypeError
             raise exceptions.ObjectWithIdNotFoundException(compoundIdStr)
         try:
             encodedSplits = cls.split(deobfuscated)
@@ -263,7 +265,7 @@ class CompoundId(object):
         function will append it to the end.
         """
         return base64.urlsafe_b64decode(
-            data + ('A=='[(len(data) - 1) % 4:]), '-_').decode()
+            data + ('A=='[(len(data) - 1) % 4:])).decode('utf-8')
 
     @classmethod
     def getInvalidIdString(cls):
