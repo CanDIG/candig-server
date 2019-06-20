@@ -265,7 +265,7 @@ class CompoundId(object):
         function will append it to the end.
         """
         return base64.urlsafe_b64decode(
-            data + ('A=='[(len(data) - 1) % 4:])).decode('utf-8')
+            data + ('A=='[(len(data) - 1) % 4:]))
 
     @classmethod
     def getInvalidIdString(cls):
