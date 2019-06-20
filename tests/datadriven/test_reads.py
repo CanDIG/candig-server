@@ -367,8 +367,8 @@ class ReadGroupSetTest(datadriven.DataDrivenTest):
         for key, value in pysamAlignment.tags:
             protocol.setAttribute(ret.attributes.attr[key].values, value)
         self.assertEqual(
-            protocol.toJson(gaAlignment.attributes),
-            protocol.toJson(ret.attributes))
+            protocol.toJsonDict(gaAlignment.attributes),
+            protocol.toJsonDict(ret.attributes))
         if reads.SamFlags.isFlagSet(
                 pysamAlignment.flag, reads.SamFlags.MATE_UNMAPPED):
             self.assertEqual(0, gaAlignment.next_mate_position.ByteSize())
