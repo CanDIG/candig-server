@@ -22,7 +22,9 @@ class TestPysamSanitizer(datamodel.PysamDatamodelMixin, unittest.TestCase):
         self.assertIsInstance(shortString, str)
         result = self.sanitizeString(shortString, shortString)
         self.assertEqual(shortString, result)
-        self.assertNotIsInstance(result, str)
+
+        # This is no longer a valid test case, there is only one type of str in 3
+        # self.assertNotIsInstance(result, str)
 
         # shorten string length if string too long
         longString = 'x' * (self.maxStringLength + 1)
