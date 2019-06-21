@@ -237,37 +237,46 @@ class UserAccessMap(object):
     Loads local authorization info from an access list file to the backend
     ACL tsv file header row contains list of project names(ID)
     """
-    def __init__(self):
+    def __init__(self, logger=None):
         self.user_access_map = {}
         self.file_path = app.config.get('ACCESS_LIST')
 
         if not self.file_path:
             raise exceptions.ConfigurationException("No user access list defined")
 
-        self.access_list = pd.read_csv(self.file_path, sep='\t')
+        try:
+            self.access_list = pd.read_csv(self.file_path, sep='\t', index_col=['issuer', 'username'])
+            # Detect duplicated (issuer, username) tuples
+            for issuer_user in self.access_list.index[self.access_list.index.duplicated()]:
+                raise ValueError(
+                    "Duplicate entries detected for {}. "
+                    "User access disabled until ACL resolved.".format(issuer_user))
+        except (IOError, ValueError) as err:
+            self.access_list = None
+            if logger:
+                logger.error(err)
+
         self.list_updated = os.path.getmtime(self.file_path)
 
-    def initializeUserAccess(self, logger=None):
-        project_list = list(self.access_list)[1:]
-        for idx, row in self.access_list.iterrows():
-            username = row['users']
-            if username not in self.user_access_map:
-                self.user_access_map[username] = {}
-                for project in project_list:
-                    try:
-                        level = int(row[project])
-                        if 0 <= level <= 4:
-                            self.user_access_map[username][project] = level
-                    except ValueError:
-                        continue
-            else:
-                if logger:
-                    logger.warn(
-                        "Duplicate entries detected for {}. Resolve in ACL.".format(username)
-                    )
+    def initializeUserAccess(self):
+        # Convert user access table into a dictionary
+        if self.access_list is not None:
+            self.user_access_map = self.access_list.to_dict(orient='index')
 
-    def getUserAccessMap(self):
-        return self.user_access_map
+        # Remove non set values
+        self.user_access_map = {
+            user: {project: level
+                   for project, level in value.iteritems() if 0 <= level <= 4
+                   }
+            for user, value in self.user_access_map.iteritems()
+        }
+
+    def getUserAccessMap(self, issuer, username):
+        try:
+            access_map = self.user_access_map[(issuer, username)]
+        except KeyError:
+            access_map = {}
+        return access_map
 
     def getFilePath(self):
         return self.file_path
@@ -280,8 +289,8 @@ def load_access_map():
     """
     Reloads the user access map from file
     """
-    app.access_map = UserAccessMap()
-    app.access_map.initializeUserAccess(app.logger)
+    app.access_map = UserAccessMap(app.logger)
+    app.access_map.initializeUserAccess()
 
 
 def render_candig_template(template_path, **kwargs):
@@ -620,24 +629,20 @@ class FederationResponse(object):
 
         if app.config.get("TYK_ENABLED"):
             if 'Authorization' in self.request_dict.headers:
-                access_map = {}
-                token = self.request_dict.headers['Authorization']
-                parsed_payload = _parseTokenPayload(token)
-
+                access_token = self.request_dict.headers['Authorization']
+                parsed_payload = _parseTokenPayload(access_token)
+                issuer = parsed_payload.get('iss')
                 username = parsed_payload.get('preferred_username')
-                if username:
-                    access_map = app.access_map.getUserAccessMap().get(username, {})
-                elif app.logger:
-                    app.logger.warn("Token does not contain a valid username")
+                access_map = app.access_map.getUserAccessMap(issuer, username)
             else:
                 raise exceptions.NotAuthenticatedException
         else:
             # for dev: mock full access when not using TYK config
-            token = None
+            access_token = None
             for dataset in app.serverStatus.getDatasets():
                 access_map[dataset.getLocalId()] = 4
 
-        return token, access_map
+        return access_token, access_map
 
     def handleLocalRequest(self):
         """
