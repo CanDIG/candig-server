@@ -271,7 +271,7 @@ class CompoundId(object):
         try:
             return decoded_data.decode('utf-8')
         except UnicodeDecodeError:
-            return decoded_data
+            raise exceptions.ObjectWithIdNotFoundException(decoded_data)
 
     @classmethod
     def getInvalidIdString(cls):
