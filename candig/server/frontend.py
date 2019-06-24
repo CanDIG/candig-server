@@ -266,9 +266,9 @@ class UserAccessMap(object):
         # Remove non set values
         self.user_access_map = {
             user: {project: level
-                   for project, level in value.iteritems() if 0 <= level <= 4
+                   for project, level in value.items() if 0 <= level <= 4
                    }
-            for user, value in self.user_access_map.iteritems()
+            for user, value in self.user_access_map.items()
         }
 
     def getUserAccessMap(self, issuer, username):
