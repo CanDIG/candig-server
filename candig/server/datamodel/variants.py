@@ -1444,10 +1444,10 @@ class HtslibVariantAnnotationSet(AbstractVariantAnnotationSet):
         variant = self._variantSet.convertVariant(record, [])
         annotation = self._createGaVariantAnnotation()
         annotation.variant_id = variant.id
-        gDots = record.info.get(b'HGVS.g')
+        gDots = record.info.get('HGVS.g')
         # Convert annotations from INFO field into TranscriptEffect
         transcriptEffects = []
-        annotations = record.info.get(b'ANN') or record.info.get(b'CSQ')
+        annotations = record.info.get('ANN') or record.info.get('CSQ')
         for i, ann in enumerate(annotations):
             hgvsG = gDots[i % len(variant.alternate_bases)] if gDots else None
             transcriptEffects.append(self.convertTranscriptEffect(ann, hgvsG))

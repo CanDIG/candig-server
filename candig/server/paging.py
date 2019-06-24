@@ -254,7 +254,7 @@ class VariantAnnotationsIntervalIterator(IntervalIterator):
 
     def __next__(self):
         while True:
-            ret = next(super(VariantAnnotationsIntervalIterator, self))
+            ret = super(VariantAnnotationsIntervalIterator, self).__next__()
             vann = ret[0]
             if self.filterVariantAnnotation(vann):
                 return self._removeNonMatchingTranscriptEffects(vann), ret[1]
@@ -314,7 +314,7 @@ class VariantAnnotationsIntervalIterator(IntervalIterator):
                     add = True
             if add:
                 newTxE.append(txe)
-        ann.ClearField(b'transcript_effects')
+        ann.ClearField('transcript_effects')
         ann.transcript_effects.extend(newTxE)
         return ann
 

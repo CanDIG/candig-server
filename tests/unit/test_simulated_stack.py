@@ -24,7 +24,7 @@ def round_float32(x_double):
     Uses the array module to retun a (truncated) 32-bit float
     representation of a python floating point number (double)
     """
-    return array.array(b'f', [x_double])[0]
+    return array.array('f', [x_double])[0]
 
 
 class TestSimulatedStack(unittest.TestCase):
