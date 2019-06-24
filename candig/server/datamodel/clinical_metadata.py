@@ -4017,7 +4017,7 @@ class Radiotherapy(datamodel.DatamodelObject):
                 record[str('treatingCentreName')] = str(self.getTreatingCentreName())
             if tier >= self.getStartIntervalRadTier():
                 record[str('startIntervalRad')] = str(self.getStartIntervalRad())
-            if tier >= self.getStartIntervalRadRaw():
+            if tier >= self.getStartIntervalRadRawTier():
                 record[str('startIntervalRadRaw')] = str(self.getStartIntervalRadRaw())
             if tier >= self.getRecordingDateTier():
                 record[str('recordingDate')] = str(self.getRecordingDate())

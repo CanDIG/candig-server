@@ -681,7 +681,7 @@ class Alignment(datamodel.DatamodelObject):
         self._alignmentTool = parsed.alignmentTool
         self._alignmentToolTier = parsed.alignmentToolTier
         self._mergeTool = parsed.mergeTool
-        self._mergeTierTool = parsed.mergeToolTier
+        self._mergeToolTier = parsed.mergeToolTier
         self._markDuplicates = parsed.markDuplicates
         self._markDuplicatesTier = parsed.markDuplicatesTier
         self._realignerTarget = parsed.realignerTarget
