@@ -551,10 +551,13 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         elif request_type == 'POST':
             raise exceptions.ObjectWithIdNotFoundException(json.loads(request))
     else:
-        # Update total
-        table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
-        if endpoint != app.backend.runCountQuery:
-            responseObject['results']['total'] = len(responseObject['results'][table])
+        # Update total when it's a POST request
+        if request_type == 'POST':
+            table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
+            if endpoint != app.backend.runCountQuery:
+                responseObject['results']['total'] = len(responseObject['results'][table])
+        else:
+            pass
 
     # Reformat the status response
     responseObject['status'] = {
