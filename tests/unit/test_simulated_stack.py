@@ -134,11 +134,8 @@ class TestSimulatedStack(unittest.TestCase):
         Sends a get request and parses the value into an instance of the
         specified class.
         """
-        try:
-            response = self.sendObjectGetRequest(path, id_)
-        except Exception as e:
-            print(e)
-            self.assertEqual(200, response.status_code)
+        response = self.sendObjectGetRequest(path, id_)
+        self.assertEqual(200, response.status_code)
         response_data = json.loads(response.data)
         response = json.dumps(response_data.get('results'))
         obj = self.deserialize(response, responseClass)
