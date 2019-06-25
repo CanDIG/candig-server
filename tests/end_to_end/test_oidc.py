@@ -56,7 +56,7 @@ class TestOidc(server_test.ServerTestClass):
     Tests the oidc flow
     """
     @classmethod
-    @unittest.skip("Disable the set up")
+    @unittest.skip("Disable the set up, module unused.")
     def otherSetup(cls):
         # extract ids from a simulated data repo with the same config
         repo = datarepo.SimulatedDataRepository()
