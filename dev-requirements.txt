@@ -9,7 +9,7 @@
 # and are not already listed in requirements.txt
 
 python-dateutil==2.5.1
-PyYAML==3.11
+PyYAML==5.1
 
 ### This section is for the actual libraries ###
 # we import these libraries somewhere in the codebase but
