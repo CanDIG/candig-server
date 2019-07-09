@@ -95,52 +95,52 @@ class Patient(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         try:
             # Unique fields
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getOtherIdsTier():
-                record[str('otherIds')] = str(self.getOtherIds())
+                record['otherIds'] = self.getOtherIds()
             if tier >= self.getDateOfBirthTier():
-                record[str('dateOfBirth')] = str(self.getDateOfBirth())
+                record['dateOfBirth'] = self.getDateOfBirth()
             if tier >= self.getGenderTier():
-                record[str('gender')] = str(self.getGender())
+                record['gender'] = self.getGender()
             if tier >= self.getEthnicityTier():
-                record[str('ethnicity')] = str(self.getEthnicity())
+                record['ethnicity'] = self.getEthnicity()
             if tier >= self.getRaceTier():
-                record[str('race')] = str(self.getRace())
+                record['race'] = self.getRace()
             if tier >= self.getProvinceOfResidenceTier():
-                record[str('provinceOfResidence')] = str(self.getProvinceOfResidence())
+                record['provinceOfResidence'] = self.getProvinceOfResidence()
             if tier >= self.getDateOfDeathTier():
-                record[str('dateOfDeath')] = str(self.getDateOfDeath())
+                record['dateOfDeath'] = self.getDateOfDeath()
             if tier >= self.getCauseOfDeathTier():
-                record[str('causeOfDeath')] = str(self.getCauseOfDeath())
+                record['causeOfDeath'] = self.getCauseOfDeath()
             if tier >= self.getAutopsyTissueForResearchTier():
-                record[str('autopsyTissueForResearch')] = str(self.getAutopsyTissueForResearch())
+                record['autopsyTissueForResearch'] = self.getAutopsyTissueForResearch()
             if tier >= self.getPriorMalignancyTier():
-                record[str('priorMalignancy')] = str(self.getPriorMalignancy())
+                record['priorMalignancy'] = self.getPriorMalignancy()
             if tier >= self.getDateOfPriorMalignancyTier():
-                record[str('dateOfPriorMalignancy')] = str(self.getDateOfPriorMalignancy())
+                record['dateOfPriorMalignancy'] = self.getDateOfPriorMalignancy()
             if tier >= self.getFamilyHistoryAndRiskFactorsTier():
-                record[str('familyHistoryAndRiskFactors')] = str(self.getFamilyHistoryAndRiskFactors())
+                record['familyHistoryAndRiskFactors'] = self.getFamilyHistoryAndRiskFactors()
             if tier >= self.getFamilyHistoryOfPredispositionSyndromeTier():
-                record[str('familyHistoryOfPredispositionSyndrome')] = str(self.getFamilyHistoryOfPredispositionSyndrome())
+                record['familyHistoryOfPredispositionSyndrome'] = self.getFamilyHistoryOfPredispositionSyndrome()
             if tier >= self.getDetailsOfPredispositionSyndromeTier():
-                record[str('detailsOfPredispositionSyndrome')] = str(self.getDetailsOfPredispositionSyndrome())
+                record['detailsOfPredispositionSyndrome'] = self.getDetailsOfPredispositionSyndrome()
             if tier >= self.getGeneticCancerSyndromeTier():
-                record[str('geneticCancerSyndrome')] = str(self.getGeneticCancerSyndrome())
+                record['geneticCancerSyndrome'] = self.getGeneticCancerSyndrome()
             if tier >= self.getOtherGeneticConditionOrSignificantComorbidityTier():
-                record[str('otherGeneticConditionOrSignificantComorbidity')] = str(self.getOtherGeneticConditionOrSignificantComorbidity())
+                record['otherGeneticConditionOrSignificantComorbidity'] = self.getOtherGeneticConditionOrSignificantComorbidity()
             if tier >= self.getOccupationalOrEnvironmentalExposureTier():
-                record[str('occupationalOrEnvironmentalExposure')] = str(self.getOccupationalOrEnvironmentalExposure())
+                record['occupationalOrEnvironmentalExposure'] = self.getOccupationalOrEnvironmentalExposure()
         except TypeError:
             pass
 
@@ -454,48 +454,48 @@ class Enrollment(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         try:
             # Unique fields
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getEnrollmentInstitutionTier():
-                record[str('enrollmentInstitution')] = str(self.getEnrollmentInstitution())
+                record['enrollmentInstitution'] = self.getEnrollmentInstitution()
             if tier >= self.getEnrollmentApprovalDateTier():
-                record[str('enrollmentApprovalDate')] = str(self.getEnrollmentApprovalDate())
+                record['enrollmentApprovalDate'] = self.getEnrollmentApprovalDate()
             if tier >= self.getCrossEnrollmentTier():
-                record[str('crossEnrollment')] = str(self.getCrossEnrollment())
+                record['crossEnrollment'] = self.getCrossEnrollment()
             if tier >= self.getOtherPersonalizedMedicineStudyNameTier():
-                record[str('otherPersonalizedMedicineStudyName')] = str(self.getOtherPersonalizedMedicineStudyName())
+                record['otherPersonalizedMedicineStudyName'] = self.getOtherPersonalizedMedicineStudyName()
             if tier >= self.getOtherPersonalizedMedicineStudyIdTier():
-                record[str('otherPersonalizedMedicineStudyId')] = str(self.getOtherPersonalizedMedicineStudyId())
+                record['otherPersonalizedMedicineStudyId'] = self.getOtherPersonalizedMedicineStudyId()
             if tier >= self.getAgeAtEnrollmentTier():
-                record[str('ageAtEnrollment')] = str(self.getAgeAtEnrollment())
+                record['ageAtEnrollment'] = self.getAgeAtEnrollment()
             if tier >= self.getEligibilityCategoryTier():
-                record[str('eligibilityCategory')] = str(self.getEligibilityCategory())
+                record['eligibilityCategory'] = self.getEligibilityCategory()
             if tier >= self.getStatusAtEnrollmentTier():
-                record[str('statusAtEnrollment')] = str(self.getStatusAtEnrollment())
+                record['statusAtEnrollment'] = self.getStatusAtEnrollment()
             if tier >= self.getPrimaryOncologistNameTier():
-                record[str('primaryOncologistName')] = str(self.getPrimaryOncologistName())
+                record['primaryOncologistName'] = self.getPrimaryOncologistName()
             if tier >= self.getPrimaryOncologistContactTier():
-                record[str('primaryOncologistContact')] = str(self.getPrimaryOncologistContact())
+                record['primaryOncologistContact'] = self.getPrimaryOncologistContact()
             if tier >= self.getReferringPhysicianNameTier():
-                record[str('referringPhysicianName')] = str(self.getReferringPhysicianName())
+                record['referringPhysicianName'] = self.getReferringPhysicianName()
             if tier >= self.getReferringPhysicianContactTier():
-                record[str('referringPhysicianContact')] = str(self.getReferringPhysicianContact())
+                record['referringPhysicianContact'] = self.getReferringPhysicianContact()
             if tier >= self.getSummaryOfIdRequestTier():
-                record[str('summaryOfIdRequest')] = str(self.getSummaryOfIdRequest())
+                record['summaryOfIdRequest'] = self.getSummaryOfIdRequest()
             if tier >= self.getTreatingCentreNameTier():
-                record[str('treatingCentreName')] = str(self.getTreatingCentreName())
+                record['treatingCentreName'] = self.getTreatingCentreName()
             if tier >= self.getTreatingCentreProvinceTier():
-                record[str('treatingCentreProvince')] = str(self.getTreatingCentreProvince())
+                record['treatingCentreProvince'] = self.getTreatingCentreProvince()
         except TypeError:
             pass
 
@@ -802,56 +802,56 @@ class Consent(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         try:
             # Unique fields
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getConsentIdTier():
-                record[str('consentId')] = str(self.getConsentId())
+                record['consentId'] = self.getConsentId()
             if tier >= self.getConsentDateTier():
-                record[str('consentDate')] = str(self.getConsentDate())
+                record['consentDate'] = self.getConsentDate()
             if tier >= self.getConsentVersionTier():
-                record[str('consentVersion')] = str(self.getConsentVersion())
+                record['consentVersion'] = self.getConsentVersion()
             if tier >= self.getPatientConsentedToTier():
-                record[str('patientConsentedTo')] = str(self.getPatientConsentedTo())
+                record['patientConsentedTo'] = self.getPatientConsentedTo()
             if tier >= self.getReasonForRejectionTier():
-                record[str('reasonForRejection')] = str(self.getReasonForRejection())
+                record['reasonForRejection'] = self.getReasonForRejection()
             if tier >= self.getWasAssentObtainedTier():
-                record[str('wasAssentObtained')] = str(self.getWasAssentObtained())
+                record['wasAssentObtained'] = self.getWasAssentObtained()
             if tier >= self.getDateOfAssentTier():
-                record[str('dateOfAssent')] = str(self.getDateOfAssent())
+                record['dateOfAssent'] = self.getDateOfAssent()
             if tier >= self.getAssentFormVersionTier():
-                record[str('assentFormVersion')] = str(self.getAssentFormVersion())
+                record['assentFormVersion'] = self.getAssentFormVersion()
             if tier >= self.getIfAssentNotObtainedWhyNotTier():
-                record[str('ifAssentNotObtainedWhyNot')] = str(self.getIfAssentNotObtainedWhyNot())
+                record['ifAssentNotObtainedWhyNot'] = self.getIfAssentNotObtainedWhyNot()
             if tier >= self.getReconsentDateTier():
-                record[str('reconsentDate')] = str(self.getReconsentDate())
+                record['reconsentDate'] = self.getReconsentDate()
             if tier >= self.getReconsentVersionTier():
-                record[str('reconsentVersion')] = str(self.getReconsentVersion())
+                record['reconsentVersion'] = self.getReconsentVersion()
             if tier >= self.getConsentingCoordinatorNameTier():
-                record[str('consentingCoordinatorName')] = str(self.getConsentingCoordinatorName())
+                record['consentingCoordinatorName'] = self.getConsentingCoordinatorName()
             if tier >= self.getPreviouslyConsentedTier():
-                record[str('previouslyConsented')] = str(self.getPreviouslyConsented())
+                record['previouslyConsented'] = self.getPreviouslyConsented()
             if tier >= self.getNameOfOtherBiobankTier():
-                record[str('nameOfOtherBiobank')] = str(self.getNameOfOtherBiobank())
+                record['nameOfOtherBiobank'] = self.getNameOfOtherBiobank()
             if tier >= self.getHasConsentBeenWithdrawnTier():
-                record[str('hasConsentBeenWithdrawn')] = str(self.getHasConsentBeenWithdrawn())
+                record['hasConsentBeenWithdrawn'] = self.getHasConsentBeenWithdrawn()
             if tier >= self.getDateOfConsentWithdrawalTier():
-                record[str('dateOfConsentWithdrawal')] = str(self.getDateOfConsentWithdrawal())
+                record['dateOfConsentWithdrawal'] = self.getDateOfConsentWithdrawal()
             if tier >= self.getTypeOfConsentWithdrawalTier():
-                record[str('typeOfConsentWithdrawal')] = str(self.getTypeOfConsentWithdrawal())
+                record['typeOfConsentWithdrawal'] = self.getTypeOfConsentWithdrawal()
             if tier >= self.getReasonForConsentWithdrawalTier():
-                record[str('reasonForConsentWithdrawal')] = str(self.getReasonForConsentWithdrawal())
+                record['reasonForConsentWithdrawal'] = self.getReasonForConsentWithdrawal()
             if tier >= self.getConsentFormCompleteTier():
-                record[str('consentFormComplete')] = str(self.getConsentFormComplete())
+                record['consentFormComplete'] = self.getConsentFormComplete()
         except TypeError:
             pass
 
@@ -1225,74 +1225,74 @@ class Diagnosis(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         try:
             # Unique fields
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getDiagnosisIdTier():
-                record[str('diagnosisId')] = str(self.getDiagnosisId())
+                record['diagnosisId'] = self.getDiagnosisId()
             if tier >= self.getDiagnosisDateTier():
-                record[str('diagnosisDate')] = str(self.getDiagnosisDate())
+                record['diagnosisDate'] = self.getDiagnosisDate()
             if tier >= self.getAgeAtDiagnosisTier():
-                record[str('ageAtDiagnosis')] = str(self.getAgeAtDiagnosis())
+                record['ageAtDiagnosis'] = self.getAgeAtDiagnosis()
             if tier >= self.getCancerTypeTier():
-                record[str('cancerType')] = str(self.getCancerType())
+                record['cancerType'] = self.getCancerType()
             if tier >= self.getClassificationTier():
-                record[str('classification')] = str(self.getClassification())
+                record['classification'] = self.getClassification()
             if tier >= self.getCancerSiteTier():
-                record[str('cancerSite')] = str(self.getCancerSite())
+                record['cancerSite'] = self.getCancerSite()
             if tier >= self.getHistologyTier():
-                record[str('histology')] = str(self.getHistology())
+                record['histology'] = self.getHistology()
             if tier >= self.getMethodOfDefinitiveDiagnosisTier():
-                record[str('methodOfDefinitiveDiagnosis')] = str(self.getMethodOfDefinitiveDiagnosis())
+                record['methodOfDefinitiveDiagnosis'] = self.getMethodOfDefinitiveDiagnosis()
             if tier >= self.getSampleTypeTier():
-                record[str('sampleType')] = str(self.getSampleType())
+                record['sampleType'] = self.getSampleType()
             if tier >= self.getSampleSiteTier():
-                record[str('sampleSite')] = str(self.getSampleSite())
+                record['sampleSite'] = self.getSampleSite()
             if tier >= self.getTumorGradeTier():
-                record[str('tumorGrade')] = str(self.getTumorGrade())
+                record['tumorGrade'] = self.getTumorGrade()
             if tier >= self.getGradingSystemUsedTier():
-                record[str('gradingSystemUsed')] = str(self.getGradingSystemUsed())
+                record['gradingSystemUsed'] = self.getGradingSystemUsed()
             if tier >= self.getSitesOfMetastasesTier():
-                record[str('sitesOfMetastases')] = str(self.getSitesOfMetastases())
+                record['sitesOfMetastases'] = self.getSitesOfMetastases()
             if tier >= self.getStagingSystemTier():
-                record[str('stagingSystem')] = str(self.getStagingSystem())
+                record['stagingSystem'] = self.getStagingSystem()
             if tier >= self.getVersionOrEditionOfTheStagingSystemTier():
-                record[str('versionOrEditionOfTheStagingSystem')] = str(self.getVersionOrEditionOfTheStagingSystem())
+                record['versionOrEditionOfTheStagingSystem'] = self.getVersionOrEditionOfTheStagingSystem()
             if tier >= self.getSpecificTumorStageAtDiagnosisTier():
-                record[str('specificTumorStageAtDiagnosis')] = str(self.getSpecificTumorStageAtDiagnosis())
+                record['specificTumorStageAtDiagnosis'] = self.getSpecificTumorStageAtDiagnosis()
             if tier >= self.getPrognosticBiomarkersTier():
-                record[str('prognosticBiomarkers')] = str(self.getPrognosticBiomarkers())
+                record['prognosticBiomarkers'] = self.getPrognosticBiomarkers()
             if tier >= self.getBiomarkerQuantificationTier():
-                record[str('biomarkerQuantification')] = str(self.getBiomarkerQuantification())
+                record['biomarkerQuantification'] = self.getBiomarkerQuantification()
             if tier >= self.getAdditionalMolecularTestingTier():
-                record[str('additionalMolecularTesting')] = str(self.getAdditionalMolecularTesting())
+                record['additionalMolecularTesting'] = self.getAdditionalMolecularTesting()
             if tier >= self.getAdditionalTestTypeTier():
-                record[str('additionalTestType')] = str(self.getAdditionalTestType())
+                record['additionalTestType'] = self.getAdditionalTestType()
             if tier >= self.getLaboratoryNameTier():
-                record[str('laboratoryName')] = str(self.getLaboratoryName())
+                record['laboratoryName'] = self.getLaboratoryName()
             if tier >= self.getLaboratoryAddressTier():
-                record[str('laboratoryAddress')] = str(self.getLaboratoryAddress())
+                record['laboratoryAddress'] = self.getLaboratoryAddress()
             if tier >= self.getSiteOfMetastasesTier():
-                record[str('siteOfMetastases')] = str(self.getSiteOfMetastases())
+                record['siteOfMetastases'] = self.getSiteOfMetastases()
             if tier >= self.getStagingSystemVersionTier():
-                record[str('stagingSystemVersion')] = str(self.getStagingSystemVersion())
+                record['stagingSystemVersion'] = self.getStagingSystemVersion()
             if tier >= self.getSpecificStageTier():
-                record[str('specificStage')] = str(self.getSpecificStage())
+                record['specificStage'] = self.getSpecificStage()
             if tier >= self.getCancerSpecificBiomarkersTier():
-                record[str('cancerSpecificBiomarkers')] = str(self.getCancerSpecificBiomarkers())
+                record['cancerSpecificBiomarkers'] = self.getCancerSpecificBiomarkers()
             if tier >= self.getAdditionalMolecularDiagnosticTestingPerformedTier():
-                record[str('additionalMolecularDiagnosticTestingPerformed')] = str(self.getAdditionalMolecularDiagnosticTestingPerformed())
+                record['additionalMolecularDiagnosticTestingPerformed'] = self.getAdditionalMolecularDiagnosticTestingPerformed()
             if tier >= self.getAdditionalTestTier():
-                record[str('additionalTest')] = str(self.getAdditionalTest())
+                record['additionalTest'] = self.getAdditionalTest()
         except TypeError:
             pass
 
@@ -1747,68 +1747,68 @@ class Sample(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         try:
             # Unique fields
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getSampleIdTier():
-                record[str('sampleId')] = str(self.getSampleId())
+                record['sampleId'] = self.getSampleId()
             if tier >= self.getDiagnosisIdTier():
-                record[str('diagnosisId')] = str(self.getDiagnosisId())
+                record['diagnosisId'] = self.getDiagnosisId()
             if tier >= self.getLocalBiobankIdTier():
-                record[str('localBiobankId')] = str(self.getLocalBiobankId())
+                record['localBiobankId'] = self.getLocalBiobankId()
             if tier >= self.getCollectionDateTier():
-                record[str('collectionDate')] = str(self.getCollectionDate())
+                record['collectionDate'] = self.getCollectionDate()
             if tier >= self.getCollectionHospitalTier():
-                record[str('collectionHospital')] = str(self.getCollectionHospital())
+                record['collectionHospital'] = self.getCollectionHospital()
             if tier >= self.getSampleTypeTier():
-                record[str('sampleType')] = str(self.getSampleType())
+                record['sampleType'] = self.getSampleType()
             if tier >= self.getTissueDiseaseStateTier():
-                record[str('tissueDiseaseState')] = str(self.getTissueDiseaseState())
+                record['tissueDiseaseState'] = self.getTissueDiseaseState()
             if tier >= self.getAnatomicSiteTheSampleObtainedFromTier():
-                record[str('anatomicSiteTheSampleObtainedFrom')] = str(self.getAnatomicSiteTheSampleObtainedFrom())
+                record['anatomicSiteTheSampleObtainedFrom'] = self.getAnatomicSiteTheSampleObtainedFrom()
             if tier >= self.getCancerTypeTier():
-                record[str('cancerType')] = str(self.getCancerType())
+                record['cancerType'] = self.getCancerType()
             if tier >= self.getCancerSubtypeTier():
-                record[str('cancerSubtype')] = str(self.getCancerSubtype())
+                record['cancerSubtype'] = self.getCancerSubtype()
             if tier >= self.getPathologyReportIdTier():
-                record[str('pathologyReportId')] = str(self.getPathologyReportId())
+                record['pathologyReportId'] = self.getPathologyReportId()
             if tier >= self.getMorphologicalCodeTier():
-                record[str('morphologicalCode')] = str(self.getMorphologicalCode())
+                record['morphologicalCode'] = self.getMorphologicalCode()
             if tier >= self.getTopologicalCodeTier():
-                record[str('topologicalCode')] = str(self.getTopologicalCode())
+                record['topologicalCode'] = self.getTopologicalCode()
             if tier >= self.getShippingDateTier():
-                record[str('shippingDate')] = str(self.getShippingDate())
+                record['shippingDate'] = self.getShippingDate()
             if tier >= self.getReceivedDateTier():
-                record[str('receivedDate')] = str(self.getReceivedDate())
+                record['receivedDate'] = self.getReceivedDate()
             if tier >= self.getQualityControlPerformedTier():
-                record[str('qualityControlPerformed')] = str(self.getQualityControlPerformed())
+                record['qualityControlPerformed'] = self.getQualityControlPerformed()
             if tier >= self.getEstimatedTumorContentTier():
-                record[str('estimatedTumorContent')] = str(self.getEstimatedTumorContent())
+                record['estimatedTumorContent'] = self.getEstimatedTumorContent()
             if tier >= self.getQuantityTier():
-                record[str('quantity')] = str(self.getQuantity())
+                record['quantity'] = self.getQuantity()
             if tier >= self.getUnitsTier():
-                record[str('units')] = str(self.getUnits())
+                record['units'] = self.getUnits()
             if tier >= self.getAssociatedBiobankTier():
-                record[str('associatedBiobank')] = str(self.getAssociatedBiobank())
+                record['associatedBiobank'] = self.getAssociatedBiobank()
             if tier >= self.getOtherBiobankTier():
-                record[str('otherBiobank')] = str(self.getOtherBiobank())
+                record['otherBiobank'] = self.getOtherBiobank()
             if tier >= self.getSopFollowedTier():
-                record[str('sopFollowed')] = str(self.getSopFollowed())
+                record['sopFollowed'] = self.getSopFollowed()
             if tier >= self.getIfNotExplainAnyDeviationTier():
-                record[str('ifNotExplainAnyDeviation')] = str(self.getIfNotExplainAnyDeviation())
+                record['ifNotExplainAnyDeviation'] = self.getIfNotExplainAnyDeviation()
             if tier >= self.getRecordingDateTier():
-                record[str('recordingDate')] = str(self.getRecordingDate())
+                record['recordingDate'] = self.getRecordingDate()
             if tier >= self.getStartIntervalTier():
-                record[str('startInterval')] = str(self.getStartInterval())
+                record['startInterval'] = self.getStartInterval()
         except TypeError:
             pass
 
@@ -2197,44 +2197,44 @@ class Treatment(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         try:
             # Unique fields
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getCourseNumberTier():
-                record[str('courseNumber')] = str(self.getCourseNumber())
+                record['courseNumber'] = self.getCourseNumber()
             if tier >= self.getTherapeuticModalityTier():
-                record[str('therapeuticModality')] = str(self.getTherapeuticModality())
+                record['therapeuticModality'] = self.getTherapeuticModality()
             if tier >= self.getTreatmentPlanTypeTier():
-                record[str('treatmentPlanType')] = str(self.getTreatmentPlanType())
+                record['treatmentPlanType'] = self.getTreatmentPlanType()
             if tier >= self.getTreatmentIntentTier():
-                record[str('treatmentIntent')] = str(self.getTreatmentIntent())
+                record['treatmentIntent'] = self.getTreatmentIntent()
             if tier >= self.getStartDateTier():
-                record[str('startDate')] = str(self.getStartDate())
+                record['startDate'] = self.getStartDate()
             if tier >= self.getStopDateTier():
-                record[str('stopDate')] = str(self.getStopDate())
+                record['stopDate'] = self.getStopDate()
             if tier >= self.getReasonForEndingTheTreatmentTier():
-                record[str('reasonForEndingTheTreatment')] = str(self.getReasonForEndingTheTreatment())
+                record['reasonForEndingTheTreatment'] = self.getReasonForEndingTheTreatment()
             if tier >= self.getResponseToTreatmentTier():
-                record[str('responseToTreatment')] = str(self.getResponseToTreatment())
+                record['responseToTreatment'] = self.getResponseToTreatment()
             if tier >= self.getResponseCriteriaUsedTier():
-                record[str('responseCriteriaUsed')] = str(self.getResponseCriteriaUsed())
+                record['responseCriteriaUsed'] = self.getResponseCriteriaUsed()
             if tier >= self.getDateOfRecurrenceOrProgressionAfterThisTreatmentTier():
-                record[str('dateOfRecurrenceOrProgressionAfterThisTreatment')] = str(self.getDateOfRecurrenceOrProgressionAfterThisTreatment())
+                record['dateOfRecurrenceOrProgressionAfterThisTreatment'] = self.getDateOfRecurrenceOrProgressionAfterThisTreatment()
             if tier >= self.getUnexpectedOrUnusualToxicityDuringTreatmentTier():
-                record[str('unexpectedOrUnusualToxicityDuringTreatment')] = str(self.getUnexpectedOrUnusualToxicityDuringTreatment())
+                record['unexpectedOrUnusualToxicityDuringTreatment'] = self.getUnexpectedOrUnusualToxicityDuringTreatment()
             if tier >= self.getDiagnosisIdTier():
-                record[str('diagnosisId')] = str(self.getDiagnosisId())
+                record['diagnosisId'] = self.getDiagnosisId()
             if tier >= self.getTreatmentPlanIdTier():
-                record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+                record['treatmentPlanId'] = self.getTreatmentPlanId()
         except TypeError:
             pass
 
@@ -2515,52 +2515,52 @@ class Outcome(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         try:
             # Unique fields
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getPhysicalExamIdTier():
-                record[str('physicalExamId')] = str(self.getPhysicalExamId())
+                record['physicalExamId'] = self.getPhysicalExamId()
             if tier >= self.getDateOfAssessmentTier():
-                record[str('dateOfAssessment')] = str(self.getDateOfAssessment())
+                record['dateOfAssessment'] = self.getDateOfAssessment()
             if tier >= self.getDiseaseResponseOrStatusTier():
-                record[str('diseaseResponseOrStatus')] = str(self.getDiseaseResponseOrStatus())
+                record['diseaseResponseOrStatus'] = self.getDiseaseResponseOrStatus()
             if tier >= self.getOtherResponseClassificationTier():
-                record[str('otherResponseClassification')] = str(self.getOtherResponseClassification())
+                record['otherResponseClassification'] = self.getOtherResponseClassification()
             if tier >= self.getMinimalResidualDiseaseAssessmentTier():
-                record[str('minimalResidualDiseaseAssessment')] = str(self.getMinimalResidualDiseaseAssessment())
+                record['minimalResidualDiseaseAssessment'] = self.getMinimalResidualDiseaseAssessment()
             if tier >= self.getMethodOfResponseEvaluationTier():
-                record[str('methodOfResponseEvaluation')] = str(self.getMethodOfResponseEvaluation())
+                record['methodOfResponseEvaluation'] = self.getMethodOfResponseEvaluation()
             if tier >= self.getResponseCriteriaUsedTier():
-                record[str('responseCriteriaUsed')] = str(self.getResponseCriteriaUsed())
+                record['responseCriteriaUsed'] = self.getResponseCriteriaUsed()
             if tier >= self.getSummaryStageTier():
-                record[str('summaryStage')] = str(self.getSummaryStage())
+                record['summaryStage'] = self.getSummaryStage()
             if tier >= self.getSitesOfAnyProgressionOrRecurrenceTier():
-                record[str('sitesOfAnyProgressionOrRecurrence')] = str(self.getSitesOfAnyProgressionOrRecurrence())
+                record['sitesOfAnyProgressionOrRecurrence'] = self.getSitesOfAnyProgressionOrRecurrence()
             if tier >= self.getVitalStatusTier():
-                record[str('vitalStatus')] = str(self.getVitalStatus())
+                record['vitalStatus'] = self.getVitalStatus()
             if tier >= self.getHeightTier():
-                record[str('height')] = str(self.getHeight())
+                record['height'] = self.getHeight()
             if tier >= self.getWeightTier():
-                record[str('weight')] = str(self.getWeight())
+                record['weight'] = self.getWeight()
             if tier >= self.getHeightUnitsTier():
-                record[str('heightUnits')] = str(self.getHeightUnits())
+                record['heightUnits'] = self.getHeightUnits()
             if tier >= self.getWeightUnitsTier():
-                record[str('weightUnits')] = str(self.getWeightUnits())
+                record['weightUnits'] = self.getWeightUnits()
             if tier >= self.getPerformanceStatusTier():
-                record[str('performanceStatus')] = str(self.getPerformanceStatus())
+                record['performanceStatus'] = self.getPerformanceStatus()
             if tier >= self.getOverallSurvivalInMonthsTier():
-                record[str('overallSurvivalInMonths')] = str(self.getOverallSurvivalInMonths())
+                record['overallSurvivalInMonths'] = self.getOverallSurvivalInMonths()
             if tier >= self.getDiseaseFreeSurvivalInMonthsTier():
-                record[str('diseaseFreeSurvivalInMonths')] = str(self.getDiseaseFreeSurvivalInMonths())
+                record['diseaseFreeSurvivalInMonths'] = self.getDiseaseFreeSurvivalInMonths()
         except TypeError:
             pass
 
@@ -2845,28 +2845,28 @@ class Complication(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getDateTier():
-                record[str('date')] = str(self.getDate())
+                record['date'] = self.getDate()
             if tier >= self.getLateComplicationOfTherapyDevelopedTier():
-                record[str('lateComplicationOfTherapyDeveloped')] = str(self.getLateComplicationOfTherapyDeveloped())
+                record['lateComplicationOfTherapyDeveloped'] = self.getLateComplicationOfTherapyDeveloped()
             if tier >= self.getLateToxicityDetailTier():
-                record[str('lateToxicityDetail')] = str(self.getLateToxicityDetail())
+                record['lateToxicityDetail'] = self.getLateToxicityDetail()
             if tier >= self.getSuspectedTreatmentInducedNeoplasmDevelopedTier():
-                record[str('suspectedTreatmentInducedNeoplasmDeveloped')] = str(self.getSuspectedTreatmentInducedNeoplasmDeveloped())
+                record['suspectedTreatmentInducedNeoplasmDeveloped'] = self.getSuspectedTreatmentInducedNeoplasmDeveloped()
             if tier >= self.getTreatmentInducedNeoplasmDetailsTier():
-                record[str('treatmentInducedNeoplasmDetails')] = str(self.getTreatmentInducedNeoplasmDetails())
+                record['treatmentInducedNeoplasmDetails'] = self.getTreatmentInducedNeoplasmDetails()
         except TypeError:
             pass
 
@@ -3103,76 +3103,76 @@ class Tumourboard(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getDateOfMolecularTumorBoardTier():
-                record[str('dateOfMolecularTumorBoard')] = str(self.getDateOfMolecularTumorBoard())
+                record['dateOfMolecularTumorBoard'] = self.getDateOfMolecularTumorBoard()
             if tier >= self.getTypeOfSampleAnalyzedTier():
-                record[str('typeOfSampleAnalyzed')] = str(self.getTypeOfSampleAnalyzed())
+                record['typeOfSampleAnalyzed'] = self.getTypeOfSampleAnalyzed()
             if tier >= self.getTypeOfTumourSampleAnalyzedTier():
-                record[str('typeOfTumourSampleAnalyzed')] = str(self.getTypeOfTumourSampleAnalyzed())
+                record['typeOfTumourSampleAnalyzed'] = self.getTypeOfTumourSampleAnalyzed()
             if tier >= self.getAnalysesDiscussedTier():
-                record[str('analysesDiscussed')] = str(self.getAnalysesDiscussed())
+                record['analysesDiscussed'] = self.getAnalysesDiscussed()
             if tier >= self.getSomaticSampleTypeTier():
-                record[str('somaticSampleType')] = str(self.getSomaticSampleType())
+                record['somaticSampleType'] = self.getSomaticSampleType()
             if tier >= self.getNormalExpressionComparatorTier():
-                record[str('normalExpressionComparator')] = str(self.getNormalExpressionComparator())
+                record['normalExpressionComparator'] = self.getNormalExpressionComparator()
             if tier >= self.getDiseaseExpressionComparatorTier():
-                record[str('diseaseExpressionComparator')] = str(self.getDiseaseExpressionComparator())
+                record['diseaseExpressionComparator'] = self.getDiseaseExpressionComparator()
             if tier >= self.getHasAGermlineVariantBeenIdentifiedByProfilingThatMayPredisposeToCancerTier():
-                record[str('hasAGermlineVariantBeenIdentifiedByProfilingThatMayPredisposeToCancer')] = str(self.getHasAGermlineVariantBeenIdentifiedByProfilingThatMayPredisposeToCancer())
+                record['hasAGermlineVariantBeenIdentifiedByProfilingThatMayPredisposeToCancer'] = self.getHasAGermlineVariantBeenIdentifiedByProfilingThatMayPredisposeToCancer()
             if tier >= self.getActionableTargetFoundTier():
-                record[str('actionableTargetFound')] = str(self.getActionableTargetFound())
+                record['actionableTargetFound'] = self.getActionableTargetFound()
             if tier >= self.getMolecularTumorBoardRecommendationTier():
-                record[str('molecularTumorBoardRecommendation')] = str(self.getMolecularTumorBoardRecommendation())
+                record['molecularTumorBoardRecommendation'] = self.getMolecularTumorBoardRecommendation()
             if tier >= self.getGermlineDnaSampleIdTier():
-                record[str('germlineDnaSampleId')] = str(self.getGermlineDnaSampleId())
+                record['germlineDnaSampleId'] = self.getGermlineDnaSampleId()
             if tier >= self.getTumorDnaSampleIdTier():
-                record[str('tumorDnaSampleId')] = str(self.getTumorDnaSampleId())
+                record['tumorDnaSampleId'] = self.getTumorDnaSampleId()
             if tier >= self.getTumorRnaSampleIdTier():
-                record[str('tumorRnaSampleId')] = str(self.getTumorRnaSampleId())
+                record['tumorRnaSampleId'] = self.getTumorRnaSampleId()
             if tier >= self.getGermlineSnvDiscussedTier():
-                record[str('germlineSnvDiscussed')] = str(self.getGermlineSnvDiscussed())
+                record['germlineSnvDiscussed'] = self.getGermlineSnvDiscussed()
             if tier >= self.getSomaticSnvDiscussedTier():
-                record[str('somaticSnvDiscussed')] = str(self.getSomaticSnvDiscussed())
+                record['somaticSnvDiscussed'] = self.getSomaticSnvDiscussed()
             if tier >= self.getCnvsDiscussedTier():
-                record[str('cnvsDiscussed')] = str(self.getCnvsDiscussed())
+                record['cnvsDiscussed'] = self.getCnvsDiscussed()
             if tier >= self.getStructuralVariantDiscussedTier():
-                record[str('structuralVariantDiscussed')] = str(self.getStructuralVariantDiscussed())
+                record['structuralVariantDiscussed'] = self.getStructuralVariantDiscussed()
             if tier >= self.getClassificationOfVariantsTier():
-                record[str('classificationOfVariants')] = str(self.getClassificationOfVariants())
+                record['classificationOfVariants'] = self.getClassificationOfVariants()
             if tier >= self.getClinicalValidationProgressTier():
-                record[str('clinicalValidationProgress')] = str(self.getClinicalValidationProgress())
+                record['clinicalValidationProgress'] = self.getClinicalValidationProgress()
             if tier >= self.getTypeOfValidationTier():
-                record[str('typeOfValidation')] = str(self.getTypeOfValidation())
+                record['typeOfValidation'] = self.getTypeOfValidation()
             if tier >= self.getAgentOrDrugClassTier():
-                record[str('agentOrDrugClass')] = str(self.getAgentOrDrugClass())
+                record['agentOrDrugClass'] = self.getAgentOrDrugClass()
             if tier >= self.getLevelOfEvidenceForExpressionTargetAgentMatchTier():
-                record[str('levelOfEvidenceForExpressionTargetAgentMatch')] = str(self.getLevelOfEvidenceForExpressionTargetAgentMatch())
+                record['levelOfEvidenceForExpressionTargetAgentMatch'] = self.getLevelOfEvidenceForExpressionTargetAgentMatch()
             if tier >= self.getDidTreatmentPlanChangeBasedOnProfilingResultTier():
-                record[str('didTreatmentPlanChangeBasedOnProfilingResult')] = str(self.getDidTreatmentPlanChangeBasedOnProfilingResult())
+                record['didTreatmentPlanChangeBasedOnProfilingResult'] = self.getDidTreatmentPlanChangeBasedOnProfilingResult()
             if tier >= self.getHowTreatmentHasAlteredBasedOnProfilingTier():
-                record[str('howTreatmentHasAlteredBasedOnProfiling')] = str(self.getHowTreatmentHasAlteredBasedOnProfiling())
+                record['howTreatmentHasAlteredBasedOnProfiling'] = self.getHowTreatmentHasAlteredBasedOnProfiling()
             if tier >= self.getReasonTreatmentPlanDidNotChangeBasedOnProfilingTier():
-                record[str('reasonTreatmentPlanDidNotChangeBasedOnProfiling')] = str(self.getReasonTreatmentPlanDidNotChangeBasedOnProfiling())
+                record['reasonTreatmentPlanDidNotChangeBasedOnProfiling'] = self.getReasonTreatmentPlanDidNotChangeBasedOnProfiling()
             if tier >= self.getDetailsOfTreatmentPlanImpactTier():
-                record[str('detailsOfTreatmentPlanImpact')] = str(self.getDetailsOfTreatmentPlanImpact())
+                record['detailsOfTreatmentPlanImpact'] = self.getDetailsOfTreatmentPlanImpact()
             if tier >= self.getPatientOrFamilyInformedOfGermlineVariantTier():
-                record[str('patientOrFamilyInformedOfGermlineVariant')] = str(self.getPatientOrFamilyInformedOfGermlineVariant())
+                record['patientOrFamilyInformedOfGermlineVariant'] = self.getPatientOrFamilyInformedOfGermlineVariant()
             if tier >= self.getPatientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfilingTier():
-                record[str('patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling')] = str(self.getPatientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling())
+                record['patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling'] = self.getPatientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling()
             if tier >= self.getSummaryReportTier():
-                record[str('summaryReport')] = str(self.getSummaryReport())
+                record['summaryReport'] = self.getSummaryReport()
         except TypeError:
             pass
 
@@ -3610,50 +3610,50 @@ class Chemotherapy(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         try:
             # Unique fields
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getCourseNumberTier():
-                record[str('courseNumber')] = str(self.getCourseNumber())
+                record['courseNumber'] = self.getCourseNumber()
             if tier >= self.getStartDateTier():
-                record[str('startDate')] = str(self.getStartDate())
+                record['startDate'] = self.getStartDate()
             if tier >= self.getStopDateTier():
-                record[str('stopDate')] = str(self.getStopDate())
+                record['stopDate'] = self.getStopDate()
             if tier >= self.getSystematicTherapyAgentNameTier():
-                record[str('systematicTherapyAgentName')] = str(self.getSystematicTherapyAgentName())
+                record['systematicTherapyAgentName'] = self.getSystematicTherapyAgentName()
             if tier >= self.getRouteTier():
-                record[str('route')] = str(self.getRoute())
+                record['route'] = self.getRoute()
             if tier >= self.getDoseTier():
-                record[str('dose')] = str(self.getDose())
+                record['dose'] = self.getDose()
             if tier >= self.getDoseFrequencyTier():
-                record[str('doseFrequency')] = str(self.getDoseFrequency())
+                record['doseFrequency'] = self.getDoseFrequency()
             if tier >= self.getDoseUnitTier():
-                record[str('doseUnit')] = str(self.getDoseUnit())
+                record['doseUnit'] = self.getDoseUnit()
             if tier >= self.getDaysPerCycleTier():
-                record[str('daysPerCycle')] = str(self.getDaysPerCycle())
+                record['daysPerCycle'] = self.getDaysPerCycle()
             if tier >= self.getNumberOfCycleTier():
-                record[str('numberOfCycle')] = str(self.getNumberOfCycle())
+                record['numberOfCycle'] = self.getNumberOfCycle()
             if tier >= self.getTreatmentIntentTier():
-                record[str('treatmentIntent')] = str(self.getTreatmentIntent())
+                record['treatmentIntent'] = self.getTreatmentIntent()
             if tier >= self.getTreatingCentreNameTier():
-                record[str('treatingCentreName')] = str(self.getTreatingCentreName())
+                record['treatingCentreName'] = self.getTreatingCentreName()
             if tier >= self.getTypeTier():
-                record[str('type')] = str(self.getType())
+                record['type'] = self.getType()
             if tier >= self.getProtocolCodeTier():
-                record[str('protocolCode')] = str(self.getProtocolCode())
+                record['protocolCode'] = self.getProtocolCode()
             if tier >= self.getRecordingDateTier():
-                record[str('recordingDate')] = str(self.getRecordingDate())
+                record['recordingDate'] = self.getRecordingDate()
             if tier >= self.getTreatmentPlanIdTier():
-                record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+                record['treatmentPlanId'] = self.getTreatmentPlanId()
         except TypeError:
             pass
 
@@ -3987,68 +3987,68 @@ class Radiotherapy(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getCourseNumberTier():
-                record[str('courseNumber')] = str(self.getCourseNumber())
+                record['courseNumber'] = self.getCourseNumber()
             if tier >= self.getStartDateTier():
-                record[str('startDate')] = str(self.getStartDate())
+                record['startDate'] = self.getStartDate()
             if tier >= self.getStopDateTier():
-                record[str('stopDate')] = str(self.getStopDate())
+                record['stopDate'] = self.getStopDate()
             if tier >= self.getTherapeuticModalityTier():
-                record[str('therapeuticModality')] = str(self.getTherapeuticModality())
+                record['therapeuticModality'] = self.getTherapeuticModality()
             if tier >= self.getBaselineTier():
-                record[str('baseline')] = str(self.getBaseline())
+                record['baseline'] = self.getBaseline()
             if tier >= self.getTestResultTier():
-                record[str('testResult')] = str(self.getTestResult())
+                record['testResult'] = self.getTestResult()
             if tier >= self.getTestResultStdTier():
-                record[str('testResultStd')] = str(self.getTestResultStd())
+                record['testResultStd'] = self.getTestResultStd()
             if tier >= self.getTreatingCentreNameTier():
-                record[str('treatingCentreName')] = str(self.getTreatingCentreName())
+                record['treatingCentreName'] = self.getTreatingCentreName()
             if tier >= self.getStartIntervalRadTier():
-                record[str('startIntervalRad')] = str(self.getStartIntervalRad())
+                record['startIntervalRad'] = self.getStartIntervalRad()
             if tier >= self.getStartIntervalRadRawTier():
-                record[str('startIntervalRadRaw')] = str(self.getStartIntervalRadRaw())
+                record['startIntervalRadRaw'] = self.getStartIntervalRadRaw()
             if tier >= self.getRecordingDateTier():
-                record[str('recordingDate')] = str(self.getRecordingDate())
+                record['recordingDate'] = self.getRecordingDate()
             if tier >= self.getAdjacentFieldsTier():
-                record[str('adjacentFields')] = str(self.getAdjacentFields())
+                record['adjacentFields'] = self.getAdjacentFields()
             if tier >= self.getAdjacentFractionsTier():
-                record[str('adjacentFractions')] = str(self.getAdjacentFractions())
+                record['adjacentFractions'] = self.getAdjacentFractions()
             if tier >= self.getCompleteTier():
-                record[str('complete')] = str(self.getComplete())
+                record['complete'] = self.getComplete()
             if tier >= self.getBrachytherapyDoseTier():
-                record[str('brachytherapyDose')] = str(self.getBrachytherapyDose())
+                record['brachytherapyDose'] = self.getBrachytherapyDose()
             if tier >= self.getRadiotherapyDoseTier():
-                record[str('radiotherapyDose')] = str(self.getRadiotherapyDose())
+                record['radiotherapyDose'] = self.getRadiotherapyDose()
             if tier >= self.getSiteNumberTier():
-                record[str('siteNumber')] = str(self.getSiteNumber())
+                record['siteNumber'] = self.getSiteNumber()
             if tier >= self.getTechniqueTier():
-                record[str('technique')] = str(self.getTechnique())
+                record['technique'] = self.getTechnique()
             if tier >= self.getTreatedRegionTier():
-                record[str('treatedRegion')] = str(self.getTreatedRegion())
+                record['treatedRegion'] = self.getTreatedRegion()
             if tier >= self.getTreatmentPlanIdTier():
-                record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+                record['treatmentPlanId'] = self.getTreatmentPlanId()
             if tier >= self.getRadiationTypeTier():
-                record[str('radiationType')] = str(self.getRadiationType())
+                record['radiationType'] = self.getRadiationType()
             if tier >= self.getRadiationSiteTier():
-                record[str('radiationSite')] = str(self.getRadiationSite())
+                record['radiationSite'] = self.getRadiationSite()
             if tier >= self.getTotalDoseTier():
-                record[str('totalDose')] = str(self.getTotalDose())
+                record['totalDose'] = self.getTotalDose()
             if tier >= self.getBoostSiteTier():
-                record[str('boostSite')] = str(self.getBoostSite())
+                record['boostSite'] = self.getBoostSite()
             if tier >= self.getBoostDoseTier():
-                record[str('boostDose')] = str(self.getBoostDose())
+                record['boostDose'] = self.getBoostDose()
         except TypeError:
             pass
 
@@ -4428,38 +4428,38 @@ class Surgery(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getStartDateTier():
-                record[str('startDate')] = str(self.getStartDate())
+                record['startDate'] = self.getStartDate()
             if tier >= self.getStopDateTier():
-                record[str('stopDate')] = str(self.getStopDate())
+                record['stopDate'] = self.getStopDate()
             if tier >= self.getSampleIdTier():
-                record[str('sampleId')] = str(self.getSampleId())
+                record['sampleId'] = self.getSampleId()
             if tier >= self.getCollectionTimePointTier():
-                record[str('collectionTimePoint')] = str(self.getCollectionTimePoint())
+                record['collectionTimePoint'] = self.getCollectionTimePoint()
             if tier >= self.getDiagnosisDateTier():
-                record[str('diagnosisDate')] = str(self.getDiagnosisDate())
+                record['diagnosisDate'] = self.getDiagnosisDate()
             if tier >= self.getSiteTier():
-                record[str('site')] = str(self.getSite())
+                record['site'] = self.getSite()
             if tier >= self.getTypeTier():
-                record[str('type')] = str(self.getType())
+                record['type'] = self.getType()
             if tier >= self.getRecordingDateTier():
-                record[str('recordingDate')] = str(self.getRecordingDate())
+                record['recordingDate'] = self.getRecordingDate()
             if tier >= self.getTreatmentPlanIdTier():
-                record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+                record['treatmentPlanId'] = self.getTreatmentPlanId()
             if tier >= self.getCourseNumberTier():
-                record[str('courseNumber')] = str(self.getCourseNumber())
+                record['courseNumber'] = self.getCourseNumber()
         except TypeError:
             pass
 
@@ -4677,30 +4677,30 @@ class Immunotherapy(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getStartDateTier():
-                record[str('startDate')] = str(self.getStartDate())
+                record['startDate'] = self.getStartDate()
             if tier >= self.getImmunotherapyTypeTier():
-                record[str('immunotherapyType')] = str(self.getImmunotherapyType())
+                record['immunotherapyType'] = self.getImmunotherapyType()
             if tier >= self.getImmunotherapyTargetTier():
-                record[str('immunotherapyTarget')] = str(self.getImmunotherapyTarget())
+                record['immunotherapyTarget'] = self.getImmunotherapyTarget()
             if tier >= self.getImmunotherapyDetailTier():
-                record[str('immunotherapyDetail')] = str(self.getImmunotherapyDetail())
+                record['immunotherapyDetail'] = self.getImmunotherapyDetail()
             if tier >= self.getTreatmentPlanIdTier():
-                record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+                record['treatmentPlanId'] = self.getTreatmentPlanId()
             if tier >= self.getCourseNumberTier():
-                record[str('courseNumber')] = str(self.getCourseNumber())
+                record['courseNumber'] = self.getCourseNumber()
         except TypeError:
             pass
 
@@ -4875,28 +4875,28 @@ class Celltransplant(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getStartDateTier():
-                record[str('startDate')] = str(self.getStartDate())
+                record['startDate'] = self.getStartDate()
             if tier >= self.getCellSourceTier():
-                record[str('cellSource')] = str(self.getCellSource())
+                record['cellSource'] = self.getCellSource()
             if tier >= self.getDonorTypeTier():
-                record[str('donorType')] = str(self.getDonorType())
+                record['donorType'] = self.getDonorType()
             if tier >= self.getTreatmentPlanIdTier():
-                record[str('treatmentPlanId')] = str(self.getTreatmentPlanId())
+                record['treatmentPlanId'] = self.getTreatmentPlanId()
             if tier >= self.getCourseNumberTier():
-                record[str('courseNumber')] = str(self.getCourseNumber())
+                record['courseNumber'] = self.getCourseNumber()
         except TypeError:
             pass
 
@@ -5094,50 +5094,50 @@ class Slide(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getSampleIdTier():
-                record[str('sampleId')] = str(self.getSampleId())
+                record['sampleId'] = self.getSampleId()
             if tier >= self.getSlideIdTier():
-                record[str('slideId')] = str(self.getSlideId())
+                record['slideId'] = self.getSlideId()
             if tier >= self.getSlideOtherIdTier():
-                record[str('slideOtherId')] = str(self.getSlideOtherId())
+                record['slideOtherId'] = self.getSlideOtherId()
             if tier >= self.getLymphocyteInfiltrationPercentTier():
-                record[str('lymphocyteInfiltrationPercent')] = str(self.getLymphocyteInfiltrationPercent())
+                record['lymphocyteInfiltrationPercent'] = self.getLymphocyteInfiltrationPercent()
             if tier >= self.getTumorNucleiPercentTier():
-                record[str('tumorNucleiPercent')] = str(self.getTumorNucleiPercent())
+                record['tumorNucleiPercent'] = self.getTumorNucleiPercent()
             if tier >= self.getMonocyteInfiltrationPercentTier():
-                record[str('monocyteInfiltrationPercent')] = str(self.getMonocyteInfiltrationPercent())
+                record['monocyteInfiltrationPercent'] = self.getMonocyteInfiltrationPercent()
             if tier >= self.getNormalCellsPercentTier():
-                record[str('normalCellsPercent')] = str(self.getNormalCellsPercent())
+                record['normalCellsPercent'] = self.getNormalCellsPercent()
             if tier >= self.getTumorCellsPercentTier():
-                record[str('tumorCellsPercent')] = str(self.getTumorCellsPercent())
+                record['tumorCellsPercent'] = self.getTumorCellsPercent()
             if tier >= self.getStromalCellsPercentTier():
-                record[str('stromalCellsPercent')] = str(self.getStromalCellsPercent())
+                record['stromalCellsPercent'] = self.getStromalCellsPercent()
             if tier >= self.getEosinophilInfiltrationPercentTier():
-                record[str('eosinophilInfiltrationPercent')] = str(self.getEosinophilInfiltrationPercent())
+                record['eosinophilInfiltrationPercent'] = self.getEosinophilInfiltrationPercent()
             if tier >= self.getNeutrophilInfiltrationPercentTier():
-                record[str('neutrophilInfiltrationPercent')] = str(self.getNeutrophilInfiltrationPercent())
+                record['neutrophilInfiltrationPercent'] = self.getNeutrophilInfiltrationPercent()
             if tier >= self.getGranulocyteInfiltrationPercentTier():
-                record[str('granulocyteInfiltrationPercent')] = str(self.getGranulocyteInfiltrationPercent())
+                record['granulocyteInfiltrationPercent'] = self.getGranulocyteInfiltrationPercent()
             if tier >= self.getNecrosisPercentTier():
-                record[str('necrosisPercent')] = str(self.getNecrosisPercent())
+                record['necrosisPercent'] = self.getNecrosisPercent()
             if tier >= self.getInflammatoryInfiltrationPercentTier():
-                record[str('inflammatoryInfiltrationPercent')] = str(self.getInflammatoryInfiltrationPercent())
+                record['inflammatoryInfiltrationPercent'] = self.getInflammatoryInfiltrationPercent()
             if tier >= self.getProliferatingCellsNumberTier():
-                record[str('proliferatingCellsNumber')] = str(self.getProliferatingCellsNumber())
+                record['proliferatingCellsNumber'] = self.getProliferatingCellsNumber()
             if tier >= self.getSectionLocationTier():
-                record[str('sectionLocation')] = str(self.getSectionLocation())
+                record['sectionLocation'] = self.getSectionLocation()
         except TypeError:
             pass
 
@@ -5409,26 +5409,26 @@ class Study(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getStartDateTier():
-                record[str('startDate')] = str(self.getStartDate())
+                record['startDate'] = self.getStartDate()
             if tier >= self.getEndDateTier():
-                record[str('endDate')] = str(self.getEndDate())
+                record['endDate'] = self.getEndDate()
             if tier >= self.getStatusTier():
-                record[str('status')] = str(self.getStatus())
+                record['status'] = self.getStatus()
             if tier >= self.getRecordingDateTier():
-                record[str('recordingDate')] = str(self.getRecordingDate())
+                record['recordingDate'] = self.getRecordingDate()
         except TypeError:
             pass
 
@@ -5589,32 +5589,32 @@ class Labtest(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getPatientIdTier():
-                record[str('patientId')] = str(self.getPatientId())
+                record['patientId'] = self.getPatientId()
             if tier >= self.getStartDateTier():
-                record[str('startDate')] = str(self.getStartDate())
+                record['startDate'] = self.getStartDate()
             if tier >= self.getEndDateTier():
-                record[str('endDate')] = str(self.getEndDate())
+                record['endDate'] = self.getEndDate()
             if tier >= self.getCollectionDateTier():
-                record[str('collectionDate')] = str(self.getCollectionDate())
+                record['collectionDate'] = self.getCollectionDate()
             if tier >= self.getEventTypeTier():
-                record[str('eventType')] = str(self.getEventType())
+                record['eventType'] = self.getEventType()
             if tier >= self.getTestResultsTier():
-                record[str('testResults')] = str(self.getTestResults())
+                record['testResults'] = self.getTestResults()
             if tier >= self.getTimePointTier():
-                record[str('timePoint')] = str(self.getTimePoint())
+                record['timePoint'] = self.getTimePoint()
             if tier >= self.getRecordingDateTier():
-                record[str('recordingDate')] = str(self.getRecordingDate())
+                record['recordingDate'] = self.getRecordingDate()
         except TypeError:
             pass
 
