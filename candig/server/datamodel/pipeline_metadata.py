@@ -61,30 +61,30 @@ class Extraction(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getExtractionIdTier():
-                record[str('extractionId')] = str(self.getExtractionId())
+                record['extractionId'] = self.getExtractionId()
             if tier >= self.getSampleIdTier():
-                record[str('sampleId')] = str(self.getSampleId())
+                record['sampleId'] = self.getSampleId()
             if tier >= self.getRnaBloodTier():
-                record[str('rnaBlood')] = str(self.getRnaBlood())
+                record['rnaBlood'] = self.getRnaBlood()
             if tier >= self.getDnaBloodTier():
-                record[str('dnaBlood')] = str(self.getDnaBlood())
+                record['dnaBlood'] = self.getDnaBlood()
             if tier >= self.getRnaTissueTier():
-                record[str('rnaTissue')] = str(self.getRnaTissue())
+                record['rnaTissue'] = self.getRnaTissue()
             if tier >= self.getDnaTissueTier():
-                record[str('dnaTissue')] = str(self.getDnaTissue())
+                record['dnaTissue'] = self.getDnaTissue()
             if tier >= self.getSiteTier():
-                record[str('site')] = str(self.getSite())
+                record['site'] = self.getSite()
         except TypeError:
             pass
 
@@ -272,38 +272,38 @@ class Sequencing(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getSequencingIdTier():
-                record[str('sequencingId')] = str(self.getSequencingId())
+                record['sequencingId'] = self.getSequencingId()
             if tier >= self.getSampleIdTier():
-                record[str('sampleId')] = str(self.getSampleId())
+                record['sampleId'] = self.getSampleId()
             if tier >= self.getDnaLibraryKitTier():
-                record[str('dnaLibraryKit')] = str(self.getDnaLibraryKit())
+                record['dnaLibraryKit'] = self.getDnaLibraryKit()
             if tier >= self.getDnaSeqPlatformTier():
-                record[str('dnaSeqPlatform')] = str(self.getDnaSeqPlatform())
+                record['dnaSeqPlatform'] = self.getDnaSeqPlatform()
             if tier >= self.getDnaReadLengthTier():
-                record[str('dnaReadLength')] = str(self.getDnaReadLength())
+                record['dnaReadLength'] = self.getDnaReadLength()
             if tier >= self.getRnaLibraryKitTier():
-                record[str('rnaLibraryKit')] = str(self.getRnaLibraryKit())
+                record['rnaLibraryKit'] = self.getRnaLibraryKit()
             if tier >= self.getRnaSeqPlatformTier():
-                record[str('rnaSeqPlatform')] = str(self.getRnaSeqPlatform())
+                record['rnaSeqPlatform'] = self.getRnaSeqPlatform()
             if tier >= self.getRnaReadLengthTier():
-                record[str('rnaReadLength')] = str(self.getRnaReadLength())
+                record['rnaReadLength'] = self.getRnaReadLength()
             if tier >= self.getPcrCyclesTier():
-                record[str('pcrCycles')] = str(self.getPcrCycles())
+                record['pcrCycles'] = self.getPcrCycles()
             if tier >= self.getExtractionIdTier():
-                record[str('extractionId')] = str(self.getExtractionId())
+                record['extractionId'] = self.getExtractionId()
             if tier >= self.getSiteTier():
-                record[str('site')] = str(self.getSite())
+                record['site'] = self.getSite()
         except TypeError:
             pass
 
@@ -552,52 +552,52 @@ class Alignment(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getAlignmentIdTier():
-                record[str('alignmentId')] = str(self.getAlignmentId())
+                record['alignmentId'] = self.getAlignmentId()
             if tier >= self.getSampleIdTier():
-                record[str('sampleId')] = str(self.getSampleId())
+                record['sampleId'] = self.getSampleId()
             if tier >= self.getInHousePipelineTier():
-                record[str('inHousePipeline')] = str(self.getInHousePipeline())
+                record['inHousePipeline'] = self.getInHousePipeline()
             if tier >= self.getAlignmentToolTier():
-                record[str('alignmentTool')] = str(self.getAlignmentTool())
+                record['alignmentTool'] = self.getAlignmentTool()
             if tier >= self.getMergeToolTier():
-                record[str('mergeTool')] = str(self.getMergeTool())
+                record['mergeTool'] = self.getMergeTool()
             if tier >= self.getMarkDuplicatesTier():
-                record[str('markDuplicates')] = str(self.getMarkDuplicates())
+                record['markDuplicates'] = self.getMarkDuplicates()
             if tier >= self.getRealignerTargetTier():
-                record[str('realignerTarget')] = str(self.getRealignerTarget())
+                record['realignerTarget'] = self.getRealignerTarget()
             if tier >= self.getIndelRealignerTier():
-                record[str('indelRealigner')] = str(self.getIndelRealigner())
+                record['indelRealigner'] = self.getIndelRealigner()
             if tier >= self.getBaseRecalibratorTier():
-                record[str('baseRecalibrator')] = str(self.getBaseRecalibrator())
+                record['baseRecalibrator'] = self.getBaseRecalibrator()
             if tier >= self.getPrintReadsTier():
-                record[str('printReads')] = str(self.getPrintReads())
+                record['printReads'] = self.getPrintReads()
             if tier >= self.getIdxStatsTier():
-                record[str('idxStats')] = str(self.getIdxStats())
+                record['idxStats'] = self.getIdxStats()
             if tier >= self.getFlagStatTier():
-                record[str('flagStat')] = str(self.getFlagStat())
+                record['flagStat'] = self.getFlagStat()
             if tier >= self.getCoverageTier():
-                record[str('coverage')] = str(self.getCoverage())
+                record['coverage'] = self.getCoverage()
             if tier >= self.getInsertSizeMetricsTier():
-                record[str('insertSizeMetrics')] = str(self.getInsertSizeMetrics())
+                record['insertSizeMetrics'] = self.getInsertSizeMetrics()
             if tier >= self.getFastqcTier():
-                record[str('fastqc')] = str(self.getFastqc())
+                record['fastqc'] = self.getFastqc()
             if tier >= self.getReferenceTier():
-                record[str('reference')] = str(self.getReference())
+                record['reference'] = self.getReference()
             if tier >= self.getSequencingIdTier():
-                record[str('sequencingId')] = str(self.getSequencingId())
+                record['sequencingId'] = self.getSequencingId()
             if tier >= self.getSiteTier():
-                record[str('site')] = str(self.getSite())
+                record['site'] = self.getSite()
         except TypeError:
             pass
 
@@ -905,46 +905,46 @@ class VariantCalling(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getVariantCallingIdTier():
-                record[str('variantCallingId')] = str(self.getVariantCallingId())
+                record['variantCallingId'] = self.getVariantCallingId()
             if tier >= self.getSampleIdTier():
-                record[str('sampleId')] = str(self.getSampleId())
+                record['sampleId'] = self.getSampleId()
             if tier >= self.getInHousePipelineTier():
-                record[str('inHousePipeline')] = str(self.getInHousePipeline())
+                record['inHousePipeline'] = self.getInHousePipeline()
             if tier >= self.getVariantCallerTier():
-                record[str('variantCaller')] = str(self.getVariantCaller())
+                record['variantCaller'] = self.getVariantCaller()
             if tier >= self.getTabulateTier():
-                record[str('tabulate')] = str(self.getTabulate())
+                record['tabulate'] = self.getTabulate()
             if tier >= self.getAnnotationTier():
-                record[str('annotation')] = str(self.getAnnotation())
+                record['annotation'] = self.getAnnotation()
             if tier >= self.getMergeToolTier():
-                record[str('mergeTool')] = str(self.getMergeTool())
+                record['mergeTool'] = self.getMergeTool()
             if tier >= self.getRdaToTabTier():
-                record[str('rdaToTab')] = str(self.getRdaToTab())
+                record['rdaToTab'] = self.getRdaToTab()
             if tier >= self.getDellyTier():
-                record[str('delly')] = str(self.getDelly())
+                record['delly'] = self.getDelly()
             if tier >= self.getPostFilterTier():
-                record[str('postFilter')] = str(self.getPostFilter())
+                record['postFilter'] = self.getPostFilter()
             if tier >= self.getClipFilterTier():
-                record[str('clipFilter')] = str(self.getClipFilter())
+                record['clipFilter'] = self.getClipFilter()
             if tier >= self.getCosmicTier():
-                record[str('cosmic')] = str(self.getCosmic())
+                record['cosmic'] = self.getCosmic()
             if tier >= self.getDbSnpTier():
-                record[str('dbSnp')] = str(self.getDbSnp())
+                record['dbSnp'] = self.getDbSnp()
             if tier >= self.getAlignmentIdTier():
-                record[str('alignmentId')] = str(self.getAlignmentId())
+                record['alignmentId'] = self.getAlignmentId()
             if tier >= self.getSiteTier():
-                record[str('site')] = str(self.getSite())
+                record['site'] = self.getSite()
         except TypeError:
             pass
 
@@ -1212,38 +1212,38 @@ class FusionDetection(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getFusionDetectionIdTier():
-                record[str('fusionDetectionId')] = str(self.getFusionDetectionId())
+                record['fusionDetectionId'] = self.getFusionDetectionId()
             if tier >= self.getSampleIdTier():
-                record[str('sampleId')] = str(self.getSampleId())
+                record['sampleId'] = self.getSampleId()
             if tier >= self.getInHousePipelineTier():
-                record[str('inHousePipeline')] = str(self.getInHousePipeline())
+                record['inHousePipeline'] = self.getInHousePipeline()
             if tier >= self.getSvDetectionTier():
-                record[str('svDetection')] = str(self.getSvDetection())
+                record['svDetection'] = self.getSvDetection()
             if tier >= self.getFusionDetectionTier():
-                record[str('fusionDetection')] = str(self.getFusionDetection())
+                record['fusionDetection'] = self.getFusionDetection()
             if tier >= self.getRealignmentTier():
-                record[str('realignment')] = str(self.getRealignment())
+                record['realignment'] = self.getRealignment()
             if tier >= self.getAnnotationTier():
-                record[str('annotation')] = str(self.getAnnotation())
+                record['annotation'] = self.getAnnotation()
             if tier >= self.getGenomeReferenceTier():
-                record[str('genomeReference')] = str(self.getGenomeReference())
+                record['genomeReference'] = self.getGenomeReference()
             if tier >= self.getGeneModelsTier():
-                record[str('geneModels')] = str(self.getGeneModels())
+                record['geneModels'] = self.getGeneModels()
             if tier >= self.getAlignmentIdTier():
-                record[str('alignmentId')] = str(self.getAlignmentId())
+                record['alignmentId'] = self.getAlignmentId()
             if tier >= self.getSiteTier():
-                record[str('site')] = str(self.getSite())
+                record['site'] = self.getSite()
         except TypeError:
             pass
 
@@ -1465,34 +1465,34 @@ class ExpressionAnalysis(datamodel.DatamodelObject):
         """
         """
         record = {
-            str('id'): str(self.getId()),
-            str('dataset_id'): str(self._datasetId),
-            str('created'): str(self.getCreated()),
-            str('updated'): str(self.getUpdated()),
-            str('name'): str(self.getName()),
-            str('description'): str(self.getDescription()),
+            'id': self.getId(),
+            'dataset_id': self._datasetId,
+            'created': self.getCreated(),
+            'updated': self.getUpdated(),
+            'name': self.getName(),
+            'description': self.getDescription(),
         }
 
         # Unique fields
         try:
             if tier >= self.getExpressionAnalysisIdTier():
-                record[str('expressionAnalysisId')] = str(self.getExpressionAnalysisId())
+                record['expressionAnalysisId'] = self.getExpressionAnalysisId()
             if tier >= self.getSampleIdTier():
-                record[str('sampleId')] = str(self.getSampleId())
+                record['sampleId'] = self.getSampleId()
             if tier >= self.getReadLengthTier():
-                record[str('readLength')] = str(self.getReadLength())
+                record['readLength'] = self.getReadLength()
             if tier >= self.getReferenceTier():
-                record[str('reference')] = str(self.getReference())
+                record['reference'] = self.getReference()
             if tier >= self.getAlignmentToolTier():
-                record[str('alignmentTool')] = str(self.getAlignmentTool())
+                record['alignmentTool'] = self.getAlignmentTool()
             if tier >= self.getBamHandlingTier():
-                record[str('bamHandling')] = str(self.getBamHandling())
+                record['bamHandling'] = self.getBamHandling()
             if tier >= self.getExpressionEstimationTier():
-                record[str('expressionEstimation')] = str(self.getExpressionEstimation())
+                record['expressionEstimation'] = self.getExpressionEstimation()
             if tier >= self.getSequencingIdTier():
-                record[str('sequencingId')] = str(self.getSequencingId())
+                record['sequencingId'] = self.getSequencingId()
             if tier >= self.getSiteTier():
-                record[str('site')] = str(self.getSite())
+                record['site'] = self.getSite()
         except TypeError:
             pass
 
