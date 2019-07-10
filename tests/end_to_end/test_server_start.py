@@ -7,7 +7,7 @@ with non-file backends (e.g. simulated backends).
 
 import unittest
 
-from . import server as server
+from . import server
 
 import tests.paths as paths
 

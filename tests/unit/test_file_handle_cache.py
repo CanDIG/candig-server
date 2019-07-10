@@ -33,7 +33,7 @@ class TestFileHandleCache(datamodel.PysamFileHandleCache, unittest.TestCase):
         self.setMaxCacheSize(9)
 
         # Build a list of 10 files and add their handles to the cache
-        fileList = list(map(genFileName, list(range(0, 10))))
+        fileList = list(map(genFileName, range(0, 10)))
 
         for f in fileList:
             handle = self._getFileHandle(f)

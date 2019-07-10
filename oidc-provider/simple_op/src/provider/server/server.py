@@ -212,7 +212,7 @@ def main():
         provider.providerinfo_endpoint)
     app_routing["/.well-known/webfinger"] = pyoidcMiddleware(
         partial(_webfinger, provider))
-    routing = dict(list(auth_routing.items()) + list(app_routing.items()))
+    routing = {**auth_routing, **app_routing}
     routing["/static"] = make_static_handler(path)
     dispatcher = WSGIPathInfoDispatcher(routing)
     server = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port), dispatcher)

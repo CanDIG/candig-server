@@ -5,7 +5,7 @@ Assists in executing tests with a running server on localhost
 import unittest
 import subprocess
 
-from . import server as server
+from . import server
 
 
 class ClientHelperMixin(object):
