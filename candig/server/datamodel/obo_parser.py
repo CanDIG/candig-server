@@ -290,7 +290,7 @@ class GOTerm:
     def __repr__(self):
         """Print GO id and all attributes in GOTerm class."""
         ret = ["GOTerm('{ID}'):".format(ID=self.id)]
-        for key, val in list(self.__dict__.items()):
+        for key, val in self.__dict__.items():
             if isinstance(val, int) or isinstance(val, str):
                 ret.append("{K}:{V}".format(K=key, V=val))
             else:
@@ -300,7 +300,7 @@ class GOTerm:
                         for elem in val:
                             ret.append("  {ELEM}".format(ELEM=elem))
                     else:
-                        for (typedef, terms) in list(val.items()):
+                        for typedef, terms in val.items():
                             ret.append("  {TYPEDEF}: {NTERMS} items"
                                        .format(TYPEDEF=typedef,
                                                NTERMS=len(terms)))

@@ -1,5 +1,5 @@
 """
-Exceptions for the GA4GH server. Each exception that can occur in the server
+Exceptions for the CanDIG server. Each exception that can occur in the server
 is given a unique error code that is derived from its name.
 """
 
@@ -36,7 +36,7 @@ def getServerError(exception):
 
 class BaseServerException(Exception):
     """
-    Superclass of all exceptions that can occur in the GA4GH reference
+    Superclass of all exceptions that can occur in the CanDIG reference
     server.
     """
     message = "Error code not set in exception; this is a bug."

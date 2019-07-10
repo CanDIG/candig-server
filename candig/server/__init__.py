@@ -1,5 +1,5 @@
 """
-Reference implementation of the GA4GH APIs.
+Implementation of the CanDIG APIs.
 """
 # Don't include future imports here; we don't want to export them as
 # part of the package

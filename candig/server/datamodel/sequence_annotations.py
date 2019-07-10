@@ -244,7 +244,7 @@ class SimulatedFeatureSet(AbstractFeatureSet):
             "gene_name": "Frances",
             "gene_type": "mRNA",
             "gene_status": "UNKNOWN"}
-        for key, value in list(attributes.items()):
+        for key, value in attributes.items():
             feature.attributes.attr[key].values.add().string_value = value
         return feature
 

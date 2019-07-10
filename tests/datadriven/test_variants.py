@@ -174,7 +174,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
                 gaCall.genotype_likelihood, pyvcfCall.data.GL)
         else:
             self.assertNotIn("GL", pyvcfCall.data)
-        for key, value in list(gaCall.attributes.attr.items()):
+        for key, value in gaCall.attributes.attr.items():
             if key != "GT" and key != "GL":
                 if isinstance(value.values[0], (list, tuple)):
                     self._compareTwoListFloats(value.values[0], getattr(
@@ -410,7 +410,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
         for prefix, content in [("FORMAT", self._formats),
                                 ("INFO", self._infos),
                                 ("FILTER", self._filters)]:
-            for contentKey in list(content.keys()):
+            for contentKey in content.keys():
                 key = "{0}.{1}".format(prefix, contentKey)
                 if key == "FORMAT.GT":
                     gtCounter += 1
