@@ -802,12 +802,12 @@ class SqlDataRepository(AbstractDataRepository):
         for item in model.select():
             if first:
                 header = "".join(
-                    ["{}\t".format(x) for x in list(model._meta.fields.keys())])
+                    ["{}\t".format(x) for x in model._meta.fields.keys()])
                 print(header)
                 first = False
             row = "".join(
                 ["{}\t".format(
-                    getattr(item, key)) for key in list(model._meta.fields.keys())])
+                    getattr(item, key)) for key in model._meta.fields.keys()])
             print(row)
 
     def printAnnouncements(self):

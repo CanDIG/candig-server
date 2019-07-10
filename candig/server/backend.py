@@ -218,9 +218,9 @@ class Backend(object):
         op_keys = ['and', 'or']
         logic_negate = False
 
-        if len(list(logic.keys())) == 1:
+        if len(logic) == 1:
             logic_key = list(logic.keys())[0]
-        elif len(list(logic.keys())) == 2:
+        elif len(logic) == 2:
             if {'id', 'negate'} == set(logic.keys()):
                 logic_key = 'id'
                 logic_negate = bool(logic['negate'])

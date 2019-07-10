@@ -66,7 +66,7 @@ class TestFrontendErrors(unittest.TestCase):
             exceptionClass, url, protocol.toJson(request))
 
     def testPageSize(self):
-        for url, requestClass in list(self.endPointMap.items()):
+        for url, requestClass in self.endPointMap.items():
             for badSize in [-100, -1]:
                 request = requestClass()
                 request.page_size = badSize
@@ -75,7 +75,7 @@ class TestFrontendErrors(unittest.TestCase):
 
     @unittest.skip("Gets caught by the protocol buffer checkers")
     def testPageToken(self):
-        for url, requestClass in list(self.endPointMap.items()):
+        for url, requestClass in self.endPointMap.items():
             for badType in [0, 0.0, 1e-3, {}, [], [None]]:
                 request = requestClass()
                 request.page_token = badType
@@ -84,7 +84,7 @@ class TestFrontendErrors(unittest.TestCase):
 
     @unittest.skip("TODO: create invalid JSON to test validation")
     def testInvalidFields(self):
-        for url, requestClass in list(self.endPointMap.items()):
+        for url, requestClass in self.endPointMap.items():
             request = self._createInvalidInstance(requestClass)
             self.assertRequestRaises(
                 exceptions.RequestValidationFailureException, url, request)

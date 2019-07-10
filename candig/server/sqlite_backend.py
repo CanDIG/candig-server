@@ -15,7 +15,7 @@ def sqliteRowsToDicts(sqliteRows):
     :param sqliteRows: array of rows returned from fetchall DB call
     :return:  array of dicts, keyed by the column names.
     """
-    return [dict(list(zip(list(r.keys()), r))) for r in sqliteRows]
+    return [dict(list(zip(r.keys(), r))) for r in sqliteRows]
 
 
 def sqliteRowToDict(sqliteRow):
@@ -26,7 +26,7 @@ def sqliteRowToDict(sqliteRow):
     :param sqliteRow: single row returned from fetchone DB call
     :return: dictionary corresponding to this row
     """
-    return dict(list(zip(list(sqliteRow.keys()), sqliteRow)))
+    return dict(list(zip(sqliteRow.keys(), sqliteRow)))
 
 
 def limitsSql(startIndex=0, maxResults=0):

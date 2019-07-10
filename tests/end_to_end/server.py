@@ -138,12 +138,7 @@ class ServerForTesting(object):
         if self.server.returncode is not None:
             self._waitForErrLines()
             message = "Server process unexpectedly died; stderr: {0}"
-            decoded_err_lines = []
-
-            for line in self.getErrLines():
-                decoded_err_lines.append(line.decode())
-
-            failMessage = message.format(''.join(decoded_err_lines))
+            failMessage = message.format(''.join(line.decode() for line in self.getErrLines()))
             assert False, failMessage
         return not self.isRunning()
 

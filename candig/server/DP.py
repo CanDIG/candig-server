@@ -7,13 +7,13 @@ class DP(object):
     def __init__(self, federated_individuals, eps):
         self._servers = federated_individuals
         self._epsilon = {}
-        for k, v in list(self._servers.items()):
+        for k, v in self._servers.items():
             self._epsilon[k] = eps
 
     def get_noise(self):
         federated_counts_dp = defaultdict()
 
-        for k, v in list(self._servers.items()):
+        for k, v in self._servers.items():
             federated_counts_dp[k] = self._add_noise(v, k)
 
         return federated_counts_dp
@@ -30,12 +30,12 @@ class DP(object):
         scale = np.float64(sensitivity) / np.float64(self._epsilon[server])
 
         if type(vec) is dict:
-            if not len(list(vec.keys())):
+            if not vec:
                 # print("Warning! can't add noise to empty input");
                 return vec
-            for pop, v in list(vec.items()):
+            for pop, v in vec.items():
                 if type(v) is dict:
-                    for var, count in list(v.items()):
+                    for var, count in v.items():
                         vec[pop][var] += int(np.random.laplace(0, scale=scale))
                         vec[pop][var] = max(vec[pop][var], 1)
                 else:

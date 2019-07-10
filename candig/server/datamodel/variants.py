@@ -505,7 +505,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         self._chromFileMap = {}
         # We can't load directly as we want tuples to be stored
         # rather than lists.
-        for key, value in list(json.loads(variantSetRecord.dataurlindexmap).items()):
+        for key, value in json.loads(variantSetRecord.dataurlindexmap).items():
             self._chromFileMap[key] = tuple(value)
         self._metadata = []
         for jsonDict in json.loads(variantSetRecord.metadata):
@@ -612,7 +612,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
                                 "Unsupported VEP version {} in '{}'".format(
                                     version, dataUrl))
             if annotationType is None:
-                infoKeys = list(variantFile.header.info.keys())
+                infoKeys = variantFile.header.info.keys()
                 if 'CSQ' in infoKeys or 'ANN' in infoKeys:
                     # TODO likewise, we want a properly typed exception that
                     # we can throw back to the repo manager UI and display

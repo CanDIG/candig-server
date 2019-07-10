@@ -257,7 +257,7 @@ class ReadGroupSetTest(datadriven.DataDrivenTest):
         readGroupSet = self._gaObject
         for readGroup in readGroupSet.getReadGroups():
             readGroupInfo = self._readGroupInfos[readGroup.getLocalId()]
-            for name, alignments in list(readGroupInfo.mappedReads.items()):
+            for name, alignments in readGroupInfo.mappedReads.items():
                 reference = self._referenceSet.getReferenceByName(name)
                 self.assertAlignmentListsEqual(
                     list(readGroup.getReadAlignments(reference)), alignments,

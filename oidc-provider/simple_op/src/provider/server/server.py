@@ -225,7 +225,7 @@ def main():
 
     # Start the CherryPy WSGI web server
     try:
-        print(("Server started: {}".format(issuer)))
+        print("Server started: {}".format(issuer))
         server.start()
     except KeyboardInterrupt:
         server.stop()
