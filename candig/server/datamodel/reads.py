@@ -2,9 +2,6 @@
 Module responsible for translating read data into GA4GH native
 objects.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import datetime
 import json
@@ -145,7 +142,7 @@ class AlignmentDataMixin(datamodel.PysamDatamodelMixin):
         ret.aligned_quality.extend(read.query_qualities)
         ret.aligned_sequence = read.query_sequence
         if SamFlags.isFlagSet(read.flag, SamFlags.READ_UNMAPPED):
-            ret.ClearField(b"alignment")
+            ret.ClearField("alignment")
         else:
             ret.alignment.CopyFrom(protocol.LinearAlignment())
             ret.alignment.mapping_quality = read.mapping_quality
@@ -216,10 +213,10 @@ class AlignmentDataMixin(datamodel.PysamDatamodelMixin):
         try:
             return pysam.AlignmentFile(
                 self._dataUrl, filepath_index=self._indexFile)
-        except IOError as exception:
+        except IOError as e:
             # IOError thrown when the index file passed in is not actually
             # an index file... may also happen in other cases?
-            raise exceptions.DataException(exception.message)
+            raise exceptions.DataException(str(e))
 
 
 class AbstractReadGroupSet(datamodel.DatamodelObject):

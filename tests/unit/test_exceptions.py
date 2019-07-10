@@ -1,9 +1,6 @@
 """
 Tests related to exceptions
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import mock
 import unittest
@@ -34,14 +31,14 @@ class TestExceptionHandler(unittest.TestCase):
     def testObjectNotFoundException(self):
         exception = exceptions.ObjectNotFoundException()
         response = frontend.handleException(exception)
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
         self.assertFalse(frontend.app.log_exception.called)
 
     def testCallSetNotInVariantSetException(self):
         exception = exceptions.CallSetNotInVariantSetException(
             'csId', 'vsId')
         response = frontend.handleException(exception)
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
         gaException = self.getGa4ghException(response.data)
         self.assertGreater(len(gaException.message), 0)
         self.assertFalse(frontend.app.log_exception.called)
@@ -49,18 +46,18 @@ class TestExceptionHandler(unittest.TestCase):
     def testUnknownExceptionBecomesServerError(self):
         exception = self.UnknownException()
         response = frontend.handleException(exception)
-        self.assertEquals(response.status_code, 500)
+        self.assertEqual(response.status_code, 500)
         gaException = self.getGa4ghException(response.data)
-        self.assertEquals(gaException.message, exceptions.ServerError.message)
+        self.assertEqual(gaException.message, exceptions.ServerError.message)
         self.assertTrue(frontend.app.log_exception.called)
 
     def testNotImplementedException(self):
         message = "A string unlikely to occur at random."
         exception = exceptions.NotImplementedException(message)
         response = frontend.handleException(exception)
-        self.assertEquals(response.status_code, 501)
+        self.assertEqual(response.status_code, 501)
         gaException = self.getGa4ghException(response.data)
-        self.assertEquals(gaException.message, message)
+        self.assertEqual(gaException.message, message)
         self.assertFalse(frontend.app.log_exception.called)
 
 
@@ -109,7 +106,7 @@ class TestExceptionConsistency(unittest.TestCase):
             instance = class_(*args)
             self.assertIsInstance(instance, exceptions.BaseServerException)
             message = instance.getMessage()
-            self.assertIsInstance(message, basestring)
+            self.assertIsInstance(message, str)
             self.assertGreater(len(message), 0)
             self.assertEqual(instance.getErrorCode(), class_.getErrorCode())
 

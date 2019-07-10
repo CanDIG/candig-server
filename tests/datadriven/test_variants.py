@@ -1,9 +1,6 @@
 """
 Data-driven tests for variants.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import os
 import glob
@@ -19,7 +16,7 @@ import candig.server.exceptions as exceptions
 import tests.datadriven as datadriven
 import tests.paths as paths
 
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 import candig.schemas.protocol as protocol
 
 
@@ -52,7 +49,7 @@ def convertVCFGenotype(vcfGenotype):
         if "." in vcfGenotype:
             genotype = [-1]
         else:
-            genotype = map(int, vcfGenotype.split(delim))
+            genotype = list(map(int, vcfGenotype.split(delim)))
     else:
         genotype = [-1]
     return genotype
@@ -124,7 +121,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
                     " values are inconsistent",
                     "between ga4ghObject and pyvcf!"))
 
-        for key, value in pyvcfInfo.iteritems():
+        for key, value in pyvcfInfo.items():
             if isinstance(value, list):
                 self.assertEqual(len(gaObjectInfo[key].values), len(value))
                 for gaValue, pyvcfValue in zip(
@@ -138,7 +135,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
         pyvcfLen = None
         pyvcfPos = None
         pyvcfEnd = None
-        for key, value in pyvcfInfo.iteritems():
+        for key, value in pyvcfInfo.items():
             if key == 'SVTYPE':
                 pyvcfType = value
             elif key == 'SVLEN':
@@ -254,8 +251,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
                 reference_name, 0, end, gaSearchIds))
             self._verifyGaVariantsSample(gaVariants, searchsampleIds)
             gaCallSetVariants += gaVariants
-            localVariants = filter(
-                lambda v: v.CHROM == reference_name, self._variantRecords)
+            localVariants = [v for v in self._variantRecords if v.CHROM == reference_name]
             self._verifyVariantsEqual(gaVariants, localVariants)
         self.assertEqual(len(gaCallSetVariants), len(self._variantRecords))
 
@@ -422,7 +418,7 @@ class VariantSetTest(datadriven.DataDrivenTest):
                     hasPass = True
                 else:
                     self.assertEqual(
-                        keyMap[key].description, content[contentKey].desc)
+                        keyMap[key].description, content[contentKey].desc.rstrip())
                     if prefix != "FILTER":
                         self.assertEqual(
                             keyMap[key].type, content[contentKey].type)
@@ -517,6 +513,6 @@ class VariantSetTest(datadriven.DataDrivenTest):
         if record.ALT[0] is None:
             alts = tuple()
         else:
-            alts = tuple([unicode(sub) for sub in record.ALT])
+            alts = tuple([str(sub) for sub in record.ALT])
         hash_str = record.REF + str(alts)
-        return hashlib.md5(hash_str).hexdigest()
+        return hashlib.md5(hash_str.encode('utf-8')).hexdigest()

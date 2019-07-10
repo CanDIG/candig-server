@@ -1,9 +1,6 @@
 """
 Unit tests for the sql backend
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import unittest
 
@@ -21,7 +18,7 @@ class SqliteDB(sqlite_backend.SqliteBackedDataSource):
         sql = "SELECT 1"
         query = self._dbconn.execute(sql)
         row = query.fetchone()
-        result = int(row.keys()[0])
+        result = int(list(row.keys())[0])
         return result
 
     def fetchOneMethod(self):
@@ -69,11 +66,11 @@ class TestSqlBackend(unittest.TestCase):
         self.assertEqual(limit, " LIMIT 3")
 
     def _testRowDict(self, rowDict):
-        self.assertEqual(len(rowDict.keys()), 2)
-        self.assertIn("id", rowDict.keys())
-        self.assertIn("name", rowDict.keys())
-        self.assertIsInstance(rowDict["id"], unicode)
-        self.assertIsInstance(rowDict["name"], unicode)
+        self.assertEqual(len(list(rowDict.keys())), 2)
+        self.assertIn("id", list(rowDict.keys()))
+        self.assertIn("name", list(rowDict.keys()))
+        self.assertIsInstance(rowDict["id"], str)
+        self.assertIsInstance(rowDict["name"], str)
 
     def testRowToDict(self):
         rows = None

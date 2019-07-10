@@ -4,9 +4,6 @@ Any of these values may be overridden by a file on the path
 given by the environment variable GA4GH_CONFIGURATION.
 """
 
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import datetime
 # import socket

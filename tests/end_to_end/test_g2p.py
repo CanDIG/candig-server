@@ -1,7 +1,7 @@
 """
 G2P testing on the test data
 """
-from __future__ import print_function
+
 import unittest
 import json
 
@@ -351,7 +351,7 @@ class TestG2P(unittest.TestCase):
             postUrl,
             request,
             protocol.SearchPhenotypesResponse)
-        self.assertEquals(7, len(response.phenotypes))
+        self.assertEqual(7, len(response.phenotypes))
 
     def testPhenotypesSearchMultipleTerms(self):
         request = protocol.SearchPhenotypesRequest()

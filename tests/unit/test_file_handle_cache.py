@@ -2,10 +2,6 @@
 Tests the file handle cache
 """
 
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import os
 import shutil
 import tempfile
@@ -37,26 +33,25 @@ class TestFileHandleCache(datamodel.PysamFileHandleCache, unittest.TestCase):
         self.setMaxCacheSize(9)
 
         # Build a list of 10 files and add their handles to the cache
-        fileList = map(genFileName, range(0, 10))
+        fileList = list(map(genFileName, range(0, 10)))
 
         for f in fileList:
             handle = self._getFileHandle(f)
-            self.assertEquals(self._cache.count((f, handle)), 1)
+            self.assertEqual(self._cache.count((f, handle)), 1)
 
-        self.assertEquals(len(self._memoTable), len(self._cache))
+        self.assertEqual(len(self._memoTable), len(self._cache))
 
         # Ensure that the first added file has been removed from the cache
-        self.assertEquals(filter(lambda x: x[0] == fileList[0], self._cache),
-                          [])
+        self.assertEqual([x for x in self._cache if x[0] == fileList[0]], [])
 
         topIndex = len(self._cache) - 1
 
         # Update priority of this file and ensure it's no longer the
         # least recently used
-        self.assertEquals(self._cache[topIndex][0], fileList[1])
+        self.assertEqual(self._cache[topIndex][0], fileList[1])
         self._getFileHandle(fileList[1])
         self.assertNotEqual(self._cache[topIndex][0], fileList[1])
-        self.assertEquals(self._cache[0][0], fileList[1])
+        self.assertEqual(self._cache[0][0], fileList[1])
 
     def testSetCacheMaxSize(self):
         self.assertRaises(ValueError, self.setMaxCacheSize, 0)

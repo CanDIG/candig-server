@@ -2,9 +2,6 @@
 Module responsible for translating variant data into GA4GH native
 objects.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import datetime
 import glob
@@ -336,7 +333,7 @@ class AbstractVariantSet(datamodel.DatamodelObject):
         """
         hash_str = gaVariant.reference_bases + \
             str(tuple(gaVariant.alternate_bases))
-        return hashlib.md5(hash_str).hexdigest()
+        return hashlib.md5(hash_str.encode('utf-8')).hexdigest()
 
 
 class SimulatedVariantSet(AbstractVariantSet):
@@ -407,17 +404,22 @@ class SimulatedVariantSet(AbstractVariantSet):
             compoundId.reference_name, start, randomNumberGenerator)
         return variant
 
+        # The endPosition may be None, which would raise TypeError
+        # When TypeError happens, it skips to mimic the previous behaviour
     def getVariants(self, referenceName, startPosition, endPosition,
                     callSetIds=None):
         randomNumberGenerator = random.Random()
         randomNumberGenerator.seed(self._randomSeed)
         i = startPosition
-        while i < endPosition:
-            if randomNumberGenerator.random() < self._variantDensity:
-                randomNumberGenerator.seed(self._randomSeed + i)
-                yield self.generateVariant(
-                    referenceName, i, randomNumberGenerator)
-            i += 1
+        try:
+            while i < endPosition:
+                if randomNumberGenerator.random() < self._variantDensity:
+                    randomNumberGenerator.seed(self._randomSeed + i)
+                    yield self.generateVariant(
+                        referenceName, i, randomNumberGenerator)
+                i += 1
+        except TypeError:
+            pass
 
     def generateVariant(self, referenceName, position, randomNumberGenerator):
         """
@@ -550,7 +552,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         """
         Perform consistency check on the variant set
         """
-        for referenceName, (dataUrl, indexFile) in self._chromFileMap.items():
+        for referenceName, (dataUrl, indexFile) in list(self._chromFileMap.items()):
             varFile = pysam.VariantFile(dataUrl, index_filename=indexFile)
             try:
                 for chrom in varFile.index:
@@ -677,7 +679,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
             phaseset = str(pysamCall.phased)
         genotypeLikelihood = []
         info = {}
-        for key, value in pysamCall.iteritems():
+        for key, value in pysamCall.items():
             if key == 'GL' and value is not None:
                 genotypeLikelihood = list(value)
             elif key != 'GT':
@@ -707,7 +709,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         variant.reference_bases = record.ref
         if record.alts is not None:
             variant.alternate_bases.extend(list(record.alts))
-        filterKeys = record.filter.keys()
+        filterKeys = list(record.filter.keys())
         if len(filterKeys) == 0:
             variant.filters_applied = False
         else:
@@ -718,7 +720,7 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
                 variant.filters_passed = False
                 variant.filters_failed.extend(filterKeys)
         # record.qual is also available, when supported by GAVariant.
-        for key, value in record.info.iteritems():
+        for key, value in record.info.items():
             if value is None:
                 continue
             if key == 'SVTYPE':
@@ -893,9 +895,9 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         ret = []
         header = varFile.header
         ret.append(buildMetadata(key="version", value=header.version))
-        formats = header.formats.items()
-        infos = header.info.items()
-        filters = header.filters.items()
+        formats = list(header.formats.items())
+        infos = list(header.info.items())
+        filters = list(header.filters.items())
         # TODO: currently ALT field is not implemented through pysam
         # NOTE: contigs field is different between vcf files,
         # so it's not included in metadata
@@ -1019,7 +1021,7 @@ class AbstractVariantAnnotationSet(datamodel.DatamodelObject):
             "{}\t{}\t{}\t{}".format(
                 gaTranscriptEffect.alternate_bases,
                 gaTranscriptEffect.feature_id,
-                effs, gaTranscriptEffect.hgvs_annotation)
+                effs, gaTranscriptEffect.hgvs_annotation).encode("utf-8")
         ).hexdigest()
 
     def hashVariantAnnotation(cls, gaVariant, gaVariantAnnotation):
@@ -1030,7 +1032,7 @@ class AbstractVariantAnnotationSet(datamodel.DatamodelObject):
         return hashlib.md5(
             "{}\t{}\t{}\t".format(
                 gaVariant.reference_bases, tuple(gaVariant.alternate_bases),
-                treffs)
+                treffs).encode("utf-8")
         ).hexdigest()
 
     def getVariantAnnotationId(self, gaVariant, gaAnnotation):
@@ -1228,9 +1230,9 @@ class HtslibVariantAnnotationSet(AbstractVariantAnnotationSet):
         """
         header = varFile.header
         analysis = protocol.Analysis()
-        formats = header.formats.items()
-        infos = header.info.items()
-        filters = header.filters.items()
+        formats = list(header.formats.items())
+        infos = list(header.info.items())
+        filters = list(header.filters.items())
         for prefix, content in [("FORMAT", formats), ("INFO", infos),
                                 ("FILTER", filters)]:
             for contentKey, value in content:
@@ -1402,13 +1404,13 @@ class HtslibVariantAnnotationSet(AbstractVariantAnnotationSet):
         effect.hgvs_annotation.CopyFrom(protocol.HGVSAnnotation())
         annDict = dict()
         if self._annotationType == ANNOTATIONS_SNPEFF:
-            annDict = dict(zip(self. SNPEFF_FIELDS, annStr.split("|")))
+            annDict = dict(list(zip(self. SNPEFF_FIELDS, annStr.split("|"))))
         elif self._annotationType == ANNOTATIONS_VEP_V82:
-            annDict = dict(zip(self.VEP_FIELDS, annStr.split("|")))
+            annDict = dict(list(zip(self.VEP_FIELDS, annStr.split("|"))))
         else:
-            annDict = dict(zip(self.CSQ_FIELDS, annStr.split("|")))
-        annDict["hgvs_annotation.genomic"] = hgvsG if hgvsG else u''
-        for key, val in annDict.items():
+            annDict = dict(list(zip(self.CSQ_FIELDS, annStr.split("|"))))
+        annDict["hgvs_annotation.genomic"] = hgvsG if hgvsG else ''
+        for key, val in list(annDict.items()):
             try:
                 protocol.deepSetAttr(effect, key, val)
             except AttributeError:
@@ -1442,10 +1444,10 @@ class HtslibVariantAnnotationSet(AbstractVariantAnnotationSet):
         variant = self._variantSet.convertVariant(record, [])
         annotation = self._createGaVariantAnnotation()
         annotation.variant_id = variant.id
-        gDots = record.info.get(b'HGVS.g')
+        gDots = record.info.get('HGVS.g')
         # Convert annotations from INFO field into TranscriptEffect
         transcriptEffects = []
-        annotations = record.info.get(b'ANN') or record.info.get(b'CSQ')
+        annotations = record.info.get('ANN') or record.info.get('CSQ')
         for i, ann in enumerate(annotations):
             hgvsG = gDots[i % len(variant.alternate_bases)] if gDots else None
             transcriptEffects.append(self.convertTranscriptEffect(ann, hgvsG))

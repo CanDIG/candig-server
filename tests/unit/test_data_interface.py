@@ -1,9 +1,6 @@
 """
 Tests the data interfacing layer for various objects
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import unittest
 
@@ -12,7 +9,7 @@ import candig.server.backend as backend
 import tests.paths as paths
 
 import candig.client.client as client
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 
 
 @unittest.skip('Disabling, client not used')

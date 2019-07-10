@@ -1,9 +1,6 @@
 """
 Data-driven tests for g2p.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import os
 import rdflib
@@ -39,91 +36,91 @@ class PhenotypeAssociationSetTest(datadriven.DataDrivenTest):
 
     def testDetailTuples(self):
         test_uriRefs = [
-            rdflib.term.URIRef(u'http://ohsu.edu/cgd/27d2169c'),
-            rdflib.term.URIRef(u'http://ohsu.edu/cgd/87752f6c')
+            rdflib.term.URIRef('http://ohsu.edu/cgd/27d2169c'),
+            rdflib.term.URIRef('http://ohsu.edu/cgd/87752f6c')
         ]
         details = self.phenotypeAssocationSet._detailTuples(test_uriRefs)
         self.assertEqual(len(details), 6)
         sample1 = {
-            u'predicate': u'http://www.w3.org/2000/01/rdf-schema#label',
-            u'object': u'GIST with decreased sensitivity to therapy',
-            u'subject': u'http://ohsu.edu/cgd/87752f6c',
+            'predicate': 'http://www.w3.org/2000/01/rdf-schema#label',
+            'object': 'GIST with decreased sensitivity to therapy',
+            'subject': 'http://ohsu.edu/cgd/87752f6c',
         }
         sample2 = {
-            u'predicate': u'http://purl.obolibrary.org/obo/RO_0002200',
-            u'object': u'http://ohsu.edu/cgd/87752f6c',
-            u'subject': u'http://ohsu.edu/cgd/27d2169c',
+            'predicate': 'http://purl.obolibrary.org/obo/RO_0002200',
+            'object': 'http://ohsu.edu/cgd/87752f6c',
+            'subject': 'http://ohsu.edu/cgd/27d2169c',
         }
         self.assertIn(sample1, details)
         self.assertIn(sample2, details)
 
     def testBindingsToDict(self):
         bindings = {
-            rdflib.term.Variable(u'association'):
-            rdflib.term.URIRef(u'http://ohsu.edu/cgd/fe484b5c'),
-            rdflib.term.Variable(u'feature'):
+            rdflib.term.Variable('association'):
+            rdflib.term.URIRef('http://ohsu.edu/cgd/fe484b5c'),
+            rdflib.term.Variable('feature'):
             rdflib.term.URIRef(
-                u'http://cancer.sanger.ac.uk/cosmic/mutation/overview?id=965'
+                'http://cancer.sanger.ac.uk/cosmic/mutation/overview?id=965'
             ),
-            rdflib.term.Variable(u'phenotype_label'):
+            rdflib.term.Variable('phenotype_label'):
             rdflib.term.Literal(
-                u'Papillary thyroid carcinoma with sensitivity to therapy'
+                'Papillary thyroid carcinoma with sensitivity to therapy'
             ),
-            rdflib.term.Variable(u'environment_label'):
-            rdflib.term.Literal(u'sunitinib'),
-            rdflib.term.Variable(u'environment'):
-            rdflib.term.URIRef(u'http://www.drugbank.ca/drugs/DB01268'),
-            rdflib.term.Variable(u'evidence_type'):
-            rdflib.term.URIRef(u'http://purl.obolibrary.org/obo/ECO_0000033'),
-            rdflib.term.Variable(u'sources'):
+            rdflib.term.Variable('environment_label'):
+            rdflib.term.Literal('sunitinib'),
+            rdflib.term.Variable('environment'):
+            rdflib.term.URIRef('http://www.drugbank.ca/drugs/DB01268'),
+            rdflib.term.Variable('evidence_type'):
+            rdflib.term.URIRef('http://purl.obolibrary.org/obo/ECO_0000033'),
+            rdflib.term.Variable('sources'):
             rdflib.term.Literal(
-                u'http://www.ncbi.nlm.nih.gov/pubmed/21470995|'
+                'http://www.ncbi.nlm.nih.gov/pubmed/21470995|'
                 'http://www.ncbi.nlm.nih.gov/pubmed/21470995'),
-            rdflib.term.Variable(u'phenotype'):
-            rdflib.term.URIRef(u'http://ohsu.edu/cgd/30ebfd1a'),
-            rdflib.term.Variable(u'feature_label'):
-            rdflib.term.Literal(u'COSM965'),
+            rdflib.term.Variable('phenotype'):
+            rdflib.term.URIRef('http://ohsu.edu/cgd/30ebfd1a'),
+            rdflib.term.Variable('feature_label'):
+            rdflib.term.Literal('COSM965'),
         }
         myDict = self.phenotypeAssocationSet._bindingsToDict(bindings)
         sampleDict = {
-            u'environment_label': u'sunitinib',
-            u'feature_label': u'COSM965',
-            u'evidence_type': u'http://purl.obolibrary.org/obo/ECO_0000033',
-            u'feature':
-            u'http://cancer.sanger.ac.uk/cosmic/mutation/overview?id=965',
-            u'environment': u'http://www.drugbank.ca/drugs/DB01268',
-            u'sources':
-            u'http://www.ncbi.nlm.nih.gov/pubmed/21470995|'
+            'environment_label': 'sunitinib',
+            'feature_label': 'COSM965',
+            'evidence_type': 'http://purl.obolibrary.org/obo/ECO_0000033',
+            'feature':
+            'http://cancer.sanger.ac.uk/cosmic/mutation/overview?id=965',
+            'environment': 'http://www.drugbank.ca/drugs/DB01268',
+            'sources':
+            'http://www.ncbi.nlm.nih.gov/pubmed/21470995|'
             'http://www.ncbi.nlm.nih.gov/pubmed/21470995',
-            u'phenotype': u'http://ohsu.edu/cgd/30ebfd1a',
-            u'phenotype_label':
-            u'Papillary thyroid carcinoma with sensitivity to therapy',
-            u'association': u'http://ohsu.edu/cgd/fe484b5c',
+            'phenotype': 'http://ohsu.edu/cgd/30ebfd1a',
+            'phenotype_label':
+            'Papillary thyroid carcinoma with sensitivity to therapy',
+            'association': 'http://ohsu.edu/cgd/fe484b5c',
         }
         self.assertEqual(myDict, sampleDict)
 
     def testGetDetails(self):
         uriRef = 'http://www.drugbank.ca/drugs/DB01268'
         associations_details = [
-            {u'predicate': u'http://purl.obolibrary.org/obo/RO_0002606',
-             u'object': u'http://ohsu.edu/cgd/54039374',
-             u'subject': u'http://www.drugbank.ca/drugs/DB01268'},
-            {u'predicate': u'http://purl.obolibrary.org/obo/RO_0002606',
-             u'object': u'http://ohsu.edu/cgd/983a1528',
-             u'subject': u'http://www.drugbank.ca/drugs/DB01268'},
-            {u'predicate': u'http://purl.obolibrary.org/obo/RO_0002606',
-             u'object': u'http://ohsu.edu/cgd/71fe9f0f',
-             u'subject': u'http://www.drugbank.ca/drugs/DB01268'},
-            {u'predicate': u'http://www.w3.org/2000/01/rdf-schema#subClassOf',
-             u'object': u'http://purl.obolibrary.org/obo/CHEBI_23888',
-             u'subject': u'http://www.drugbank.ca/drugs/DB01268'}
+            {'predicate': 'http://purl.obolibrary.org/obo/RO_0002606',
+             'object': 'http://ohsu.edu/cgd/54039374',
+             'subject': 'http://www.drugbank.ca/drugs/DB01268'},
+            {'predicate': 'http://purl.obolibrary.org/obo/RO_0002606',
+             'object': 'http://ohsu.edu/cgd/983a1528',
+             'subject': 'http://www.drugbank.ca/drugs/DB01268'},
+            {'predicate': 'http://purl.obolibrary.org/obo/RO_0002606',
+             'object': 'http://ohsu.edu/cgd/71fe9f0f',
+             'subject': 'http://www.drugbank.ca/drugs/DB01268'},
+            {'predicate': 'http://www.w3.org/2000/01/rdf-schema#subClassOf',
+             'object': 'http://purl.obolibrary.org/obo/CHEBI_23888',
+             'subject': 'http://www.drugbank.ca/drugs/DB01268'}
         ]
         sample_details = {
-            u'http://purl.obolibrary.org/obo/RO_0002606':
-            u'http://ohsu.edu/cgd/71fe9f0f',
-            u'http://www.w3.org/2000/01/rdf-schema#subClassOf':
-            u'http://purl.obolibrary.org/obo/CHEBI_23888',
-            u'id': u'http://www.drugbank.ca/drugs/DB01268'}
+            'http://purl.obolibrary.org/obo/RO_0002606':
+            'http://ohsu.edu/cgd/71fe9f0f',
+            'http://www.w3.org/2000/01/rdf-schema#subClassOf':
+            'http://purl.obolibrary.org/obo/CHEBI_23888',
+            'id': 'http://www.drugbank.ca/drugs/DB01268'}
         details = self.phenotypeAssocationSet._getDetails(
             uriRef, associations_details)
         self.assertEqual(details, sample_details)
@@ -192,65 +189,65 @@ class PhenotypeAssociationSetTest(datadriven.DataDrivenTest):
 
     def testToGA4GH(self):
         sample_associations = {
-            u'environment_label': u'sunitinib',
-            u'feature_label': u'RET M918T missense mutation',
-            u'evidence_type': u'http://purl.obolibrary.org/obo/ECO_0000033',
-            u'feature': {
-                u'http://purl.obolibrary.org/obo/GENO_0000408':
-                u'http://www.ncbi.nlm.nih.gov/gene/5979',
-                u'http://purl.obolibrary.org/obo/GENO_reference_amino_acid':
-                u'M',
-                u'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
-                u'http://purl.obolibrary.org/obo/SO_0001059',
-                u'http://biohackathon.org/resource/faldo#location':
-                u'http://www.monarchinitiative.org/_918918UniProtKB:'
+            'environment_label': 'sunitinib',
+            'feature_label': 'RET M918T missense mutation',
+            'evidence_type': 'http://purl.obolibrary.org/obo/ECO_0000033',
+            'feature': {
+                'http://purl.obolibrary.org/obo/GENO_0000408':
+                'http://www.ncbi.nlm.nih.gov/gene/5979',
+                'http://purl.obolibrary.org/obo/GENO_reference_amino_acid':
+                'M',
+                'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+                'http://purl.obolibrary.org/obo/SO_0001059',
+                'http://biohackathon.org/resource/faldo#location':
+                'http://www.monarchinitiative.org/_918918UniProtKB:'
                 'P07949#P07949-1Region',
-                u'http://purl.obolibrary.org/obo/GENO_reference_nucleotide':
-                u'T',
-                u'http://purl.obolibrary.org/obo/'
+                'http://purl.obolibrary.org/obo/GENO_reference_nucleotide':
+                'T',
+                'http://purl.obolibrary.org/obo/'
                 'GENO_results_in_amino_acid_change':
-                u'T',
-                u'http://purl.obolibrary.org/obo/RO_0002200':
-                u'http://ohsu.edu/cgd/3774b1d2',
-                u'http://purl.obolibrary.org/obo/RO_0002205':
-                u'http://www.ncbi.nlm.nih.gov/CCDS/CcdsBrowse.cgi?'
+                'T',
+                'http://purl.obolibrary.org/obo/RO_0002200':
+                'http://ohsu.edu/cgd/3774b1d2',
+                'http://purl.obolibrary.org/obo/RO_0002205':
+                'http://www.ncbi.nlm.nih.gov/CCDS/CcdsBrowse.cgi?'
                 'REQUEST=CCDS&DATA=7200.1',
-                u'http://purl.obolibrary.org/obo/GENO_altered_nucleotide':
-                u'C',
-                u'http://www.w3.org/2000/01/rdf-schema#label':
-                u'RET M918T missense mutation',
-                u'id': u'http://cancer.sanger.ac.uk/cosmic/mutation/'
+                'http://purl.obolibrary.org/obo/GENO_altered_nucleotide':
+                'C',
+                'http://www.w3.org/2000/01/rdf-schema#label':
+                'RET M918T missense mutation',
+                'id': 'http://cancer.sanger.ac.uk/cosmic/mutation/'
                 'overview?id=965',
-                u'http://www.w3.org/2002/07/owl#sameAs':
-                u'http://www.ncbi.nlm.nih.gov/SNP/74799832',
+                'http://www.w3.org/2002/07/owl#sameAs':
+                'http://www.ncbi.nlm.nih.gov/SNP/74799832',
             },
-            u'evidence': u'http://ohsu.edu/cgd/sensitivity',
-            u'environment': {
-                u'http://purl.obolibrary.org/obo/RO_0002606':
-                u'http://ohsu.edu/cgd/71fe9f0f',
-                u'http://www.w3.org/2000/01/rdf-schema#subClassOf':
-                u'http://purl.obolibrary.org/obo/CHEBI_23888',
-                u'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
-                u'http://www.w3.org/2002/07/owl#Class',
-                u'http://www.w3.org/2000/01/rdf-schema#label': u'sunitinib',
-                u'id': u'http://www.drugbank.ca/drugs/DB01268',
+            'evidence': 'http://ohsu.edu/cgd/sensitivity',
+            'environment': {
+                'http://purl.obolibrary.org/obo/RO_0002606':
+                'http://ohsu.edu/cgd/71fe9f0f',
+                'http://www.w3.org/2000/01/rdf-schema#subClassOf':
+                'http://purl.obolibrary.org/obo/CHEBI_23888',
+                'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+                'http://www.w3.org/2002/07/owl#Class',
+                'http://www.w3.org/2000/01/rdf-schema#label': 'sunitinib',
+                'id': 'http://www.drugbank.ca/drugs/DB01268',
             },
-            u'sources':
-            u'http://www.ncbi.nlm.nih.gov/pubmed/21470995|'
+            'sources':
+            'http://www.ncbi.nlm.nih.gov/pubmed/21470995|'
             'http://www.ncbi.nlm.nih.gov/pubmed/21470995',
-            u'phenotype': {
-                u'http://purl.obolibrary.org/obo/BFO_0000159':
-                u'http://ohsu.edu/cgd/sensitivity',
-                u'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
-                u'http://purl.obolibrary.org/obo/DOID_3969',
-                u'http://www.w3.org/2000/01/rdf-schema#label':
-                u'Papillary thyroid carcinoma with sensitivity to therapy',
-                u'id': u'http://ohsu.edu/cgd/30ebfd1a',
+            'phenotype': {
+                'http://purl.obolibrary.org/obo/BFO_0000159':
+                'http://ohsu.edu/cgd/sensitivity',
+                'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+                'http://purl.obolibrary.org/obo/DOID_3969',
+                'http://www.w3.org/2000/01/rdf-schema#label':
+                'Papillary thyroid carcinoma with sensitivity to therapy',
+                'id': 'http://ohsu.edu/cgd/30ebfd1a',
             },
-            u'phenotype_label':
-            u'Papillary thyroid carcinoma with sensitivity to therapy',
-            u'id': u'http://ohsu.edu/cgd/fe484b5c',
-            u'association': u'http://ohsu.edu/cgd/fe484b5c',
+            'phenotype_label':
+            'Papillary thyroid carcinoma with sensitivity to therapy',
+            'id': 'http://ohsu.edu/cgd/fe484b5c',
+            'association': 'http://ohsu.edu/cgd/fe484b5c',
         }
         result = self.phenotypeAssocationSet._toGA4GH(sample_associations)
         self.assertEqual(
@@ -264,9 +261,9 @@ class PhenotypeAssociationSetTest(datadriven.DataDrivenTest):
                       'http://www.ncbi.nlm.nih.gov/pubmed/21470995]'
 
         self.assertEqual(fpa_dict['description'], description)
-        self.assertIn('featureIds', fpa_dict.keys())
-        self.assertIn('evidence', fpa_dict.keys())
-        self.assertIn('environmentalContexts', fpa_dict.keys())
+        self.assertIn('featureIds', list(fpa_dict.keys()))
+        self.assertIn('evidence', list(fpa_dict.keys()))
+        self.assertIn('environmentalContexts', list(fpa_dict.keys()))
         self.assertEqual(len(fpa_dict['featureIds']), 1)
         self.assertEqual(len(fpa_dict['evidence']), 1)
         self.assertEqual(len(fpa_dict['environmentalContexts']), 1)

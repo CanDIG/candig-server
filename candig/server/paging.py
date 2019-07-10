@@ -2,9 +2,6 @@
 Iterators used by the backend for abstracting the logic of resuming
 the object stream at the appropriate point
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 
 import candig.server.exceptions as exceptions
@@ -23,7 +20,7 @@ def _parsePageToken(pageToken, numValues):
         msg = "Invalid number of values in page token"
         raise exceptions.BadPageTokenException(msg)
     try:
-        values = map(int, tokens)
+        values = list(map(int, tokens))
     except ValueError:
         msg = "Malformed integers in page token"
         raise exceptions.BadPageTokenException(msg)
@@ -131,7 +128,7 @@ class IntervalIterator(object):
         self._currentObject = obj
         self._nextObject = next(self._searchIterator, None)
 
-    def next(self):
+    def __next__(self):
         """
         Returns the next (object, nextPageToken) pair.
         """
@@ -255,9 +252,9 @@ class VariantAnnotationsIntervalIterator(IntervalIterator):
         variant, annotation = pair
         return variant.end
 
-    def next(self):
+    def __next__(self):
         while True:
-            ret = super(VariantAnnotationsIntervalIterator, self).next()
+            ret = super(VariantAnnotationsIntervalIterator, self).__next__()
             vann = ret[0]
             if self.filterVariantAnnotation(vann):
                 return self._removeNonMatchingTranscriptEffects(vann), ret[1]
@@ -317,7 +314,7 @@ class VariantAnnotationsIntervalIterator(IntervalIterator):
                     add = True
             if add:
                 newTxE.append(txe)
-        ann.ClearField(b'transcript_effects')
+        ann.ClearField('transcript_effects')
         ann.transcript_effects.extend(newTxE)
         return ann
 
@@ -365,7 +362,7 @@ class SequenceIterator(object):
         """
         raise NotImplementedError()
 
-    def next(self):
+    def __next__(self):
         if (self._numToReturn <= 0 or self._objectIndex >=
                 self._objectListLength):
             raise StopIteration()

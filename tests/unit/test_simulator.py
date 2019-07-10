@@ -1,9 +1,6 @@
 """
 Tests for simulated data
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import unittest
 import datetime
@@ -144,12 +141,12 @@ class TestSimulatedVariantAnnotationSet(unittest.TestCase):
             simulatedVariantSet, localId, self.randomSeed)
         annotations = simulatedVariantAnnotationSet.getVariantAnnotations(
             self.referenceName, self.startPosition, self.endPosition)
-        self.assertEquals(
+        self.assertEqual(
             simulatedVariantSet.toProtocolElement().id,
             simulatedVariantAnnotationSet.toProtocolElement().variant_set_id,
             "Variant Set ID should match the annotation's variant set ID")
         for variant, ann in annotations:
-            self.assertEquals(datetime.datetime.strptime(
+            self.assertEqual(datetime.datetime.strptime(
                 ann.created, "%Y-%m-%dT%H:%M:%S.%fZ").strftime(
                 "%Y-%m-%dT%H:%M:%S.%fZ"), ann.created,
                 "Expect time format to be in ISO8601")

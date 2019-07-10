@@ -2,9 +2,6 @@
 Module responsible for translating continuous sequence annotation data
 into GA4GH native objects.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import random
 import re
@@ -147,7 +144,7 @@ class WiggleReader:
             while self._position < start:
                 self._data.values.append(float('NaN'))
                 self._position += 1
-            for _ in xrange(self._span):
+            for _ in range(self._span):
                 self._data.values.append(val)
             self._position += self._span
 

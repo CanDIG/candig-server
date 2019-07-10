@@ -3,9 +3,6 @@ Unit tests for sequence annotation Feature and FeatureSet objects.
 This is used for all tests that can be performed in isolation
 from input data.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import unittest
 

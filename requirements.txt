@@ -12,8 +12,8 @@
 # way to resolve our internal dependencies. During development,
 # the constraints file will point at the current master branch 
 # of the respective module.
-ga4gh-common==0.0.7
-candig-schemas==0.8.0
+candig-common
+candig-schemas
 
 Werkzeug==0.14.1
 MarkupSafe==0.23
@@ -28,7 +28,7 @@ cryptography==2.3.1
 idna==2.7
 pyasn1==0.1.9
 pyasn1-modules==0.0.8
-enum34==1.1.2
+# enum34==1.1.2
 ipaddress==1.0.16
 cffi==1.11.5
 pycparser==2.14
@@ -50,13 +50,13 @@ Flask-Cors==3.0.6
 Flask==1.0.2
 protobuf==3.3.0
 humanize==0.5.1
-pysam==0.9.0
+pysam==0.9.1.4
 requests==2.20.0
 requests-futures==0.9.8
-oic==0.7.6
+oic==0.15.1
 pyOpenSSL==18.0.0
-lxml==3.4.4
-pyBigWig==0.3.4
+lxml==4.3.4
+pyBigWig==0.3.16
 
 # We need sphinx-argparse to build on readthedocs.
 sphinx-argparse==0.1.15

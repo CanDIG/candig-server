@@ -2,9 +2,6 @@
 Unit tests for variant objects. This is used for all tests
 that can be performed in isolation from input data.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import hashlib
 import unittest
@@ -93,13 +90,13 @@ class TestHtslibVariantAnnotationSet(unittest.TestCase):
     def testHashVariantAnnotation(self):
         annotation = protocol.VariantAnnotation()
         variant = protocol.Variant()
-        expected = hashlib.md5('\t()\t[]\t').hexdigest()
+        expected = hashlib.md5('\t()\t[]\t'.encode('utf-8')).hexdigest()
         hashed = self._variantAnnotationSet.hashVariantAnnotation(
             variant, annotation)
         self.assertEqual(hashed, expected)
 
     def testGetTranscriptEffectId(self):
         effect = protocol.TranscriptEffect()
-        expected = hashlib.md5("\t\t[]\t").hexdigest()
+        expected = hashlib.md5("\t\t[]\t".encode('utf-8')).hexdigest()
         hashed = self._variantAnnotationSet.getTranscriptEffectId(effect)
         self.assertEqual(hashed, expected)

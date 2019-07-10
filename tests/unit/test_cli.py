@@ -1,9 +1,6 @@
 """
 Tests the cli
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import unittest
 import shlex
@@ -55,37 +52,37 @@ class TestRepoManagerCli(unittest.TestCase):
     def testInit(self):
         cliInput = "init {}".format(self.registryPath)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.runner, "init")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.runner, "init")
 
     def testVerify(self):
         cliInput = "verify {}".format(self.registryPath)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.runner, "verify")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.runner, "verify")
 
     def testList(self):
         cliInput = "list {}".format(self.registryPath)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.runner, "list")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.runner, "list")
 
     def testAddDataset(self):
         cliInput = "add-dataset {} {}".format(
             self.registryPath, self.datasetName)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.runner, "addDataset")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.runner, "addDataset")
 
     def testRemoveDataset(self):
         cliInput = "remove-dataset {} {} -f".format(
             self.registryPath, self.datasetName)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.runner, "removeDataset")
-        self.assertEquals(args.force, True)
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.runner, "removeDataset")
+        self.assertEqual(args.force, True)
 
     def testAddReferenceSet(self):
         description = "description"
@@ -98,35 +95,35 @@ class TestRepoManagerCli(unittest.TestCase):
             "--sourceUri SOURCEURI ").format(
             self.registryPath, self.filePath, description)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.filePath, self.filePath)
-        self.assertEquals(args.description, description)
-        self.assertEquals(args.species, "NCBITAXONID-JSON")
-        self.assertEquals(args.isDerived, True)
-        self.assertEquals(args.assemblyId, "ASSEMBLYID")
-        self.assertEquals(args.sourceAccessions, "SOURCEACCESSIONS")
-        self.assertEquals(args.sourceUri, "SOURCEURI")
-        self.assertEquals(args.runner, "addReferenceSet")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.filePath, self.filePath)
+        self.assertEqual(args.description, description)
+        self.assertEqual(args.species, "NCBITAXONID-JSON")
+        self.assertEqual(args.isDerived, True)
+        self.assertEqual(args.assemblyId, "ASSEMBLYID")
+        self.assertEqual(args.sourceAccessions, "SOURCEACCESSIONS")
+        self.assertEqual(args.sourceUri, "SOURCEURI")
+        self.assertEqual(args.runner, "addReferenceSet")
 
     def testRemoveReferenceSet(self):
         referenceSetName = "referenceSetName"
         cliInput = "remove-referenceset {} {} -f".format(
             self.registryPath, referenceSetName)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.referenceSetName, referenceSetName)
-        self.assertEquals(args.runner, "removeReferenceSet")
-        self.assertEquals(args.force, True)
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.referenceSetName, referenceSetName)
+        self.assertEqual(args.runner, "removeReferenceSet")
+        self.assertEqual(args.force, True)
 
     def testAddReadGroupSet(self):
         cliInput = "add-readgroupset {} {} patient1 sample1 {} ".format(
             self.registryPath, self.datasetName, self.filePath)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.dataFile, self.filePath)
-        self.assertEquals(args.indexFile, None)
-        self.assertEquals(args.runner, "addReadGroupSet")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.dataFile, self.filePath)
+        self.assertEqual(args.indexFile, None)
+        self.assertEqual(args.runner, "addReadGroupSet")
 
     def testAddReadGroupSetWithIndexFile(self):
         indexPath = self.filePath + ".bai"
@@ -134,32 +131,32 @@ class TestRepoManagerCli(unittest.TestCase):
             self.registryPath, self.datasetName, self.filePath,
             indexPath)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.dataFile, self.filePath)
-        self.assertEquals(args.indexFile, indexPath)
-        self.assertEquals(args.runner, "addReadGroupSet")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.dataFile, self.filePath)
+        self.assertEqual(args.indexFile, indexPath)
+        self.assertEqual(args.runner, "addReadGroupSet")
 
     def testRemoveReadGroupSet(self):
         readGroupSetName = "readGroupSetName"
         cliInput = "remove-readgroupset {} {} {} -f".format(
             self.registryPath, self.datasetName, readGroupSetName)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.readGroupSetName, readGroupSetName)
-        self.assertEquals(args.runner, "removeReadGroupSet")
-        self.assertEquals(args.force, True)
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.readGroupSetName, readGroupSetName)
+        self.assertEqual(args.runner, "removeReadGroupSet")
+        self.assertEqual(args.force, True)
 
     def testAddVariantSet(self):
         cliInput = "add-variantset {} {} patient1 sample1 {} ".format(
             self.registryPath, self.datasetName, self.filePath)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.dataFiles, [self.filePath])
-        self.assertEquals(args.indexFiles, None)
-        self.assertEquals(args.runner, "addVariantSet")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.dataFiles, [self.filePath])
+        self.assertEqual(args.indexFiles, None)
+        self.assertEqual(args.runner, "addVariantSet")
 
     def testAddVariantSetWithIndexFiles(self):
         file1 = "file1"
@@ -170,40 +167,40 @@ class TestRepoManagerCli(unittest.TestCase):
             self.registryPath, self.datasetName, file1, file2,
             indexFile1, indexFile2)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.dataFiles, [file1, file2])
-        self.assertEquals(args.indexFiles, [indexFile1, indexFile2])
-        self.assertEquals(args.runner, "addVariantSet")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.dataFiles, [file1, file2])
+        self.assertEqual(args.indexFiles, [indexFile1, indexFile2])
+        self.assertEqual(args.runner, "addVariantSet")
 
     def testRemoveVariantSet(self):
         variantSetName = "variantSetName"
         cliInput = "remove-variantset {} {} {}".format(
             self.registryPath, self.datasetName, variantSetName)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.variantSetName, variantSetName)
-        self.assertEquals(args.runner, "removeVariantSet")
-        self.assertEquals(args.force, False)
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.variantSetName, variantSetName)
+        self.assertEqual(args.runner, "removeVariantSet")
+        self.assertEqual(args.force, False)
 
     def testAddOntology(self):
         cliInput = "add-ontology {} {}".format(
             self.registryPath, self.filePath)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.filePath, self.filePath)
-        self.assertEquals(args.runner, "addOntology")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.filePath, self.filePath)
+        self.assertEqual(args.runner, "addOntology")
 
     def testRemoveOntology(self):
         ontologyName = "the_ontology_name"
         cliInput = "remove-ontology {} {}".format(
             self.registryPath, ontologyName)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.ontologyName, ontologyName)
-        self.assertEquals(args.runner, "removeOntology")
-        self.assertEquals(args.force, False)
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.ontologyName, ontologyName)
+        self.assertEqual(args.runner, "removeOntology")
+        self.assertEqual(args.force, False)
 
     def testAddBiosample(self):
         cliInput = "add-biosample {} {} {} '{}'".format(
@@ -212,11 +209,11 @@ class TestRepoManagerCli(unittest.TestCase):
             self.biosampleName,
             self.biosample)
         args = self.parser.parse_args(shlex.split(cliInput))
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.biosampleName, self.biosampleName)
-        self.assertEquals(args.biosample, self.biosample)
-        self.assertEquals(args.runner, "addBiosample")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.biosampleName, self.biosampleName)
+        self.assertEqual(args.biosample, self.biosample)
+        self.assertEqual(args.runner, "addBiosample")
 
     def testRemoveBiosample(self):
         cliInput = "remove-biosample {} {} {}".format(
@@ -224,11 +221,11 @@ class TestRepoManagerCli(unittest.TestCase):
             self.datasetName,
             self.biosampleName)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.biosampleName, self.biosampleName)
-        self.assertEquals(args.runner, "removeBiosample")
-        self.assertEquals(args.force, False)
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.biosampleName, self.biosampleName)
+        self.assertEqual(args.runner, "removeBiosample")
+        self.assertEqual(args.force, False)
 
     def testAddIndividual(self):
         cliInput = "add-individual {} {} {} '{}'".format(
@@ -237,11 +234,11 @@ class TestRepoManagerCli(unittest.TestCase):
             self.individualName,
             self.individual)
         args = self.parser.parse_args(shlex.split(cliInput))
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.individualName, self.individualName)
-        self.assertEquals(args.individual, self.individual)
-        self.assertEquals(args.runner, "addIndividual")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.individualName, self.individualName)
+        self.assertEqual(args.individual, self.individual)
+        self.assertEqual(args.runner, "addIndividual")
 
     def testRemoveIndividual(self):
         cliInput = "remove-individual {} {} {}".format(
@@ -249,11 +246,11 @@ class TestRepoManagerCli(unittest.TestCase):
             self.datasetName,
             self.individualName)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.individualName, self.individualName)
-        self.assertEquals(args.runner, "removeIndividual")
-        self.assertEquals(args.force, False)
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.individualName, self.individualName)
+        self.assertEqual(args.runner, "removeIndividual")
+        self.assertEqual(args.force, False)
 
     def testAddPhenotypeAssociationSet(self):
         cliInput = "add-phenotypeassociationset {} {} {} -n NAME".format(
@@ -261,15 +258,15 @@ class TestRepoManagerCli(unittest.TestCase):
             self.datasetName,
             self.dirPath)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.dirPath, self.dirPath)
-        self.assertEquals(args.name, "NAME")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.dirPath, self.dirPath)
+        self.assertEqual(args.name, "NAME")
 
     def testRemovePhenotypeAssociationSet(self):
         cliInput = "remove-phenotypeassociationset {} {} NAME".format(
             self.registryPath, self.datasetName)
         args = self.parser.parse_args(cliInput.split())
-        self.assertEquals(args.registryPath, self.registryPath)
-        self.assertEquals(args.datasetName, self.datasetName)
-        self.assertEquals(args.name, "NAME")
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.name, "NAME")

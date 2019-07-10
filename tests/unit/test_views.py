@@ -1,9 +1,6 @@
 """
 Unit tests for the frontend code.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import unittest
 import logging
@@ -54,7 +51,7 @@ class TestFrontend(unittest.TestCase):
         cls.datasetId = cls.dataset.getId()
         cls.variantSet = cls.dataset.getVariantSets()[0]
         cls.variantSetId = cls.variantSet.getId()
-        gaVariant = cls.variantSet.getVariants("1", 0, 2**32).next()
+        gaVariant = next(cls.variantSet.getVariants("1", 0, 2**32))
         cls.variantId = gaVariant.id
         cls.callSet = cls.variantSet.getCallSets()[0]
         cls.callSetId = cls.callSet.getId()
@@ -62,7 +59,7 @@ class TestFrontend(unittest.TestCase):
         cls.readGroupSetId = cls.readGroupSet.getId()
         cls.readGroup = cls.readGroupSet.getReadGroups()[0]
         cls.readGroupId = cls.readGroup.getId()
-        cls.readAlignment = cls.readGroup.getReadAlignments().next()
+        cls.readAlignment = next(cls.readGroup.getReadAlignments())
         cls.readAlignmentId = cls.readAlignment.id
         cls.phenotypeAssociationSet = \
             cls.dataset.getPhenotypeAssociationSets()[0]
@@ -571,4 +568,4 @@ class TestFrontend(unittest.TestCase):
         with frontend.app.test_request_context():
             response = frontend.handleHttpPost(request, lambda x, return_mimetype, access_map: x)
             results = json.loads(response.get_data())["results"]["data"]
-            self.assertEquals(results, "test")
+            self.assertEqual(results, "test")

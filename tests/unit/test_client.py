@@ -1,9 +1,6 @@
 """
 Tests for the client
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import unittest
 import json
@@ -12,7 +9,7 @@ import candig.server.backend as backend
 import candig.server.datarepo as datarepo
 
 import candig.client.client as client
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 import candig.schemas.protocol as protocol
 
 

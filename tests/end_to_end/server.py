@@ -1,9 +1,6 @@
 """
 Servers to assist in testing
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import logging
 import tempfile
@@ -13,7 +10,7 @@ import socket
 
 import requests
 
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 
 
 ga4ghPort = 8001
@@ -141,7 +138,7 @@ class ServerForTesting(object):
         if self.server.returncode is not None:
             self._waitForErrLines()
             message = "Server process unexpectedly died; stderr: {0}"
-            failMessage = message.format(''.join(self.getErrLines()))
+            failMessage = message.format(''.join(line.decode() for line in self.getErrLines()))
             assert False, failMessage
         return not self.isRunning()
 
@@ -187,7 +184,7 @@ SECRET_KEY = "secret"
         if self.configFile is None:
             self.configFile = tempfile.NamedTemporaryFile()
         config = self.getConfig()
-        self.configFile.write(config)
+        self.configFile.write(config.encode())
         self.configFile.flush()
         configFilePath = self.configFile.name
         cmdLine = """

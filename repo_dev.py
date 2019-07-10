@@ -1,9 +1,6 @@
 """
 Simple shim for running the repo program during development.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import dev_glue  # NOQA
 import candig.server.cli.repomanager as cli_repomanager

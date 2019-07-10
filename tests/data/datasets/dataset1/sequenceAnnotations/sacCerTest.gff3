@@ -4,8 +4,8 @@
 # Saccharomyces cerevisiae S288C genome
 #
 # has empty Alias with multiple values:
-chrI	SGD	chromosome	1	230208	.	.	.	ID=chrI;dbxref=NCBI:NC_001133
 chrI	SGD	repeat_region	1	62	.	-	.	ID=TEL01L-TR;Name=TEL01L-TR;Note=Terminal%20stretch%20of%20telomeric%20repeats%20on%20the%20left%20arm%20of%20Chromosome%20I;dbxref=SGD:S000028864
+chrI	SGD	chromosome	1	230208	.	.	.	ID=chrI;dbxref=NCBI:NC_001133
 chrI	SGD	telomere	1	801	.	-	.	ID=TEL01L;Name=TEL01L;Note=Telomeric%20region%20on%20the%20left%20arm%20of%20Chromosome%20I%3B%20composed%20of%20an%20X%20element%20core%20sequence%2C%20X%20element%20combinatorial%20repeats%2C%20and%20a%20short%20terminal%20stretch%20of%20telomeric%20repeats;dbxref=SGD:S000028862
 chrI	SGD	repeat_region	63	336	.	-	.	ID=TEL01L-XR;Name=TEL01L-XR;Note=Telomeric%20X%20element%20combinatorial%20Repeat%20region%20on%20the%20left%20arm%20of%20Chromosome%20I%3B%20contains%20repeats%20of%20the%20D%2C%20C%2C%20B%20and%20A%20types%2C%20as%20well%20as%20Tbf1p%20binding%20sites%3B%20formerly%20called%20SubTelomeric%20Repeats;dbxref=SGD:S000028866
 chrI	SGD	gene	335	649	.	+	.	ID=YAL069W;Name=YAL069W;Ontology_term=GO:0003674,GO:0005575,GO:0008150;Note=Dubious%20open%20reading%20frame%20unlikely%20to%20encode%20a%20protein%2C%20based%20on%20available%20experimental%20and%20comparative%20sequence%20data;dbxref=SGD:S000002143;orf_classification=Dubious

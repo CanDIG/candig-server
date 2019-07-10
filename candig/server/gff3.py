@@ -4,11 +4,10 @@ Object tree representation of GFF3 data and parser for GFF3 files.
 See: http://www.sequenceontology.org/gff3.shtml
 """
 
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
-import urllib
+import urllib.request
+import urllib.parse
+import urllib.error
 import copy
 import re
 import gzip
@@ -53,7 +52,7 @@ def _encodeAttr(v):
     :return str: Encoded attribute string with special characters escaped.
     """
     if _encodeAttrRe.search(v):
-        return urllib.quote(v)
+        return urllib.parse.quote(v)
     else:
         return v
 
@@ -109,7 +108,7 @@ class Feature(object):
         including url-style quoting
         """
         return ";".join([self._attributeStr(name)
-                         for name in self.attributes.iterkeys()])
+                         for name in self.attributes.keys()])
 
     def __str__(self):
         """
@@ -192,7 +191,7 @@ class Gff3Set(object):
         finish loading the set, constructing the tree
         """
         # features maybe disjoint
-        for featureParts in self.byFeatureName.itervalues():
+        for featureParts in self.byFeatureName.values():
             for feature in featureParts:
                 self._linkFeature(feature)
 
@@ -261,11 +260,11 @@ class Gff3Parser(object):
             raise GFF3Exception(
                 "can't parse attribute/value: '" + attrStr +
                 "'", self.fileName, self.lineNumber)
-        name = urllib.unquote(m.group(1))
+        name = urllib.parse.unquote(m.group(1))
         val = m.group(2)
         # Split by comma to separate then unquote.
         # Commas in values must be url encoded.
-        return name, [urllib.unquote(v) for v in val.split(',')]
+        return name, [urllib.parse.unquote(v) for v in val.split(',')]
 
     SPLIT_ATTR_COL_RE = re.compile("; *")
 
@@ -296,9 +295,9 @@ class Gff3Parser(object):
                     self.GFF3_NUM_COLS, len(row)),
                 self.fileName, self.lineNumber)
         feature = Feature(
-            urllib.unquote(row[0]),
-            urllib.unquote(row[1]),
-            urllib.unquote(row[2]),
+            urllib.parse.unquote(row[0]),
+            urllib.parse.unquote(row[1]),
+            urllib.parse.unquote(row[2]),
             int(row[3]), int(row[4]),
             row[5], row[6], row[7],
             self._parseAttrs(row[8]))

@@ -1,15 +1,12 @@
 """
 Assists in executing tests with a client
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import shlex
 import subprocess
 import tempfile
 
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 
 
 class ClientForTesting(object):
