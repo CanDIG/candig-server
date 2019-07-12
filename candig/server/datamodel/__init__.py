@@ -1,10 +1,7 @@
 """
-The GA4GH data model. Defines all the methods required to translate
+The CanDIG data model. Defines all the methods required to translate
 data in existing formats into GA4GH protocol types.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import base64
 import collections
@@ -15,8 +12,9 @@ import os
 import difflib
 
 import candig.server.exceptions as exceptions
-
 import candig.schemas.protocol as protocol
+
+from binascii import Error as binascii_error
 
 
 class PysamFileHandleCache(object):
@@ -152,7 +150,7 @@ class CompoundId(object):
             localIds = localIds[:differentiatorIndex] + tuple([
                 self.differentiator]) + localIds[differentiatorIndex:]
         for field, localId in zip(self.fields[index:], localIds):
-            if not isinstance(localId, basestring):
+            if not isinstance(localId, str):
                 raise exceptions.BadIdentifierNotStringException(localId)
             encodedLocalId = self.encode(localId)
             setattr(self, field, encodedLocalId)
@@ -216,14 +214,15 @@ class CompoundId(object):
         identifier (under our internal rules) is provided, the response should
         be that the identifier does not exist.
         """
-        if not isinstance(compoundIdStr, basestring):
+        if not isinstance(compoundIdStr, str):
             raise exceptions.BadIdentifierException(compoundIdStr)
         try:
             deobfuscated = cls.deobfuscate(compoundIdStr)
-        except TypeError:
+        except binascii_error:
             # When a string that cannot be converted to base64 is passed
             # as an argument, b64decode raises a TypeError. We must treat
             # this as an ID not found error.
+            # In Python 3, it raises a binascii.Error instead of TypeError
             raise exceptions.ObjectWithIdNotFoundException(compoundIdStr)
         try:
             encodedSplits = cls.split(deobfuscated)
@@ -255,8 +254,8 @@ class CompoundId(object):
         fashion. This is not intended for security purposes, but rather to
         dissuade users from depending on our internal ID structures.
         """
-        return unicode(base64.urlsafe_b64encode(
-            idStr.encode('utf-8')).replace(b'=', b''))
+        return base64.urlsafe_b64encode(
+            idStr.encode('utf-8')).replace(b'=', b'').decode('utf-8')
 
     @classmethod
     def deobfuscate(cls, data):
@@ -264,12 +263,15 @@ class CompoundId(object):
         Reverses the obfuscation done by the :meth:`obfuscate` method.
         If an identifier arrives without correct base64 padding this
         function will append it to the end.
+        TODO: Temporary fix. Need to revisit in future.
         """
-        # the str() call is necessary to convert the unicode string
-        # to an ascii string since the urlsafe_b64decode method
-        # sometimes chokes on unicode strings
-        return base64.urlsafe_b64decode(str((
-            data + b'A=='[(len(data) - 1) % 4:])))
+
+        decoded_data = base64.urlsafe_b64decode(data + ('A=='[(len(data) - 1) % 4:]))
+
+        try:
+            return decoded_data.decode('utf-8')
+        except UnicodeDecodeError:
+            raise exceptions.ObjectWithIdNotFoundException(decoded_data)
 
     @classmethod
     def getInvalidIdString(cls):
@@ -930,7 +932,7 @@ class PysamDatamodelMixin(object):
 
     @classmethod
     def assertInt(cls, attr, attrName):
-        if not isinstance(attr, (int, long)):
+        if not isinstance(attr, int):
             message = "invalid {} '{}' not an int".format(attrName, attr)
             raise exceptions.DatamodelValidationException(message)
 
@@ -945,12 +947,12 @@ class PysamDatamodelMixin(object):
 
     @classmethod
     def sanitizeString(cls, attr, attrName):
-        if not isinstance(attr, basestring):
+        if not isinstance(attr, str):
             message = "invalid {} '{}' not a string".format(
                 attrName, attr)
             raise exceptions.DatamodelValidationException(message)
-        if isinstance(attr, unicode):
-            attr = attr.encode('utf8')
+        if isinstance(attr, str):
+            attr = attr
         if len(attr) > cls.maxStringLength:
             attr = attr[:cls.maxStringLength]
         return attr

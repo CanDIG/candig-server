@@ -2,9 +2,6 @@
 Module responsible for translating g2p data into GA4GH native
 objects.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import collections
 import rdflib
@@ -135,7 +132,7 @@ class G2PUtility(object):
         create a dict of plain text
         """
         myDict = {}
-        for key, val in bindings.iteritems():
+        for key, val in bindings.items():
             myDict[key.toPython().replace('?', '')] = val.toPython()
         return myDict
 
@@ -466,7 +463,7 @@ class RdfPhenotypeAssociationSet(G2PUtility, AbstractPhenotypeAssociationSet):
         # extract version
         cgdTTL = rdflib.URIRef("http://data.monarchinitiative.org/ttl/cgd.ttl")
         versionInfo = rdflib.URIRef(
-            u'http://www.w3.org/2002/07/owl#versionInfo')
+            'http://www.w3.org/2002/07/owl#versionInfo')
         self._version = None
         for _, _, obj in self._rdfGraph.triples((cgdTTL, versionInfo, None)):
             self._version = obj.toPython()

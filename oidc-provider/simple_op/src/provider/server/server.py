@@ -4,19 +4,19 @@ from functools import wraps, partial
 import json
 import mimetypes
 import os
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 import errno
 
 import cherrypy
 from cherrypy import wsgiserver
-from cherrypy.wsgiserver import ssl_pyopenssl
-from cherrypy.wsgiserver.wsgiserver2 import WSGIPathInfoDispatcher
+# from cherrypy.wsgiserver import ssl_pyopenssl
+from cherrypy.wsgiserver.wsgiserver3 import WSGIPathInfoDispatcher
 from jinja2.environment import Environment
 from jinja2.loaders import FileSystemLoader
 import yaml
 
-from oic.oauth2 import rndstr
+from oic import rndstr
 from oic.oic.provider import Provider, AuthorizationEndpoint, TokenEndpoint, \
     UserinfoEndpoint, RegistrationEndpoint, EndSessionEndpoint
 from oic.utils.authn.authn_context import AuthnBroker
@@ -43,8 +43,8 @@ def VerifierMiddleware(verifier):
     @wraps(verifier.verify)
     def wrapper(environ, start_response):
         data = get_post(environ)
-        kwargs = dict(urlparse.parse_qsl(data))
-        kwargs["state"] = json.loads(urllib.unquote(kwargs["state"]))
+        kwargs = dict(urllib.parse.parse_qsl(data))
+        kwargs["state"] = json.loads(urllib.parse.unquote(kwargs["state"]))
         val, completed = verifier.verify(**kwargs)
         if not completed:
             return val(environ, start_response)
@@ -128,7 +128,7 @@ def setup_endpoints(provider):
 
 def _webfinger(provider, request, **kwargs):
     """Handle webfinger requests."""
-    params = urlparse.parse_qs(request)
+    params = urllib.parse.parse_qs(request)
     if params["rel"][0] == OIC_ISSUER:
         wf = WebFinger()
         return Response(wf.response(params["resource"][0], provider.baseurl),
@@ -144,7 +144,7 @@ def make_static_handler(static_dir):
             static_dir, os.path.normpath(path).lstrip("/"))
 
         if os.path.exists(full_path):
-            with open(full_path, 'rb') as f:
+            with open(full_path, 'r') as f:
                 content = f.read()
 
             content_type, encoding = mimetypes.guess_type(full_path)
@@ -194,7 +194,7 @@ def main():
     path = os.path.join(os.path.dirname(__file__), "static")
     try:
         os.makedirs(path)
-    except OSError, e:
+    except OSError as e:
         if e.errno != errno.EEXIST:
             raise e
         pass
@@ -212,16 +212,16 @@ def main():
         provider.providerinfo_endpoint)
     app_routing["/.well-known/webfinger"] = pyoidcMiddleware(
         partial(_webfinger, provider))
-    routing = dict(auth_routing.items() + app_routing.items())
+    routing = {**auth_routing, **app_routing}
     routing["/static"] = make_static_handler(path)
     dispatcher = WSGIPathInfoDispatcher(routing)
     server = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port), dispatcher)
 
     # Setup SSL
-    if provider.baseurl.startswith("https://"):
-        server.ssl_adapter = ssl_pyopenssl.pyOpenSSLAdapter(
-            settings["server"]["cert"], settings["server"]["key"],
-            settings["server"]["cert_chain"])
+    # if provider.baseurl.startswith("https://"):
+    #     server.ssl_adapter = ssl_pyopenssl.pyOpenSSLAdapter(
+    #         settings["server"]["cert"], settings["server"]["key"],
+    #         settings["server"]["cert_chain"])
 
     # Start the CherryPy WSGI web server
     try:

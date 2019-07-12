@@ -1,14 +1,11 @@
 """
 Unit tests for the oidc code in the frontend.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import unittest
 import socket
 import mock
-import urlparse
+import urllib.parse
 import logging
 import mimetypes
 import shutil
@@ -17,7 +14,7 @@ import oic
 import oic.oic.message as message
 
 import candig.server.frontend as frontend
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 
 
 RANDSTR = 'abc'
@@ -54,7 +51,7 @@ def mockRndstr(size):
     return RANDSTR
 
 
-ARESP = {'scope': u'openid profile', 'state': RANDSTR,
+ARESP = {'scope': 'openid profile', 'state': RANDSTR,
          'code': OICRESPONSE['code']}
 
 
@@ -138,7 +135,7 @@ class TestFrontendOidc(unittest.TestCase):
             versionedPath, headers=headers,
             data=request.toJsonString())
 
-    @mock.patch('oic.oauth2.rndstr', mockRndstr)
+    @mock.patch('oic.rndstr', mockRndstr)
     @mock.patch('oic.oic.Client.do_authorization_request',
                 mockAuthorizationRequest)
     def testAuthorizationRequest(self):
@@ -147,16 +144,16 @@ class TestFrontendOidc(unittest.TestCase):
         authorization provider, of the correct form.
         """
         response = self.app.get('/')
-        scheme, netloc, path, params, query, fragment = urlparse.urlparse(
+        scheme, netloc, path, params, query, fragment = urllib.parse.urlparse(
             response.location)
         self.assertEqual(netloc, 'auth.com')
-        args = urlparse.parse_qs(query, strict_parsing=True)
+        args = urllib.parse.parse_qs(query, strict_parsing=True)
         self.assertEqual(path, '/auth')
         self.assertEqual(args['redirect_uri'][0],
                          'https://{}:8001/oauth2callback'.format(
                              socket.gethostname()))
 
-    @mock.patch('oic.oauth2.rndstr', lambda x: RANDSTR)
+    @mock.patch('oic.rndstr', lambda x: RANDSTR)
     @mock.patch('oic.oic.Client.parse_response',
                 mockParseResponse)
     @mock.patch('oic.oic.Client.do_access_token_request',
@@ -167,11 +164,11 @@ class TestFrontendOidc(unittest.TestCase):
         handle the reply correctly. This test is the 'succeeds' case.
         """
         url = '/oauth2callback?scope=openid+profile&state={0}&code={1}'.format(
-            oic.oauth2.rndstr(0), OICCODE
+            oic.rndstr(0), OICCODE
         )
         with self.app.session_transaction() as sess:
-            sess['state'] = oic.oauth2.rndstr(0)
-            sess['nonce'] = oic.oauth2.rndstr(0)
+            sess['state'] = oic.rndstr(0)
+            sess['nonce'] = oic.rndstr(0)
         result = self.app.get(url)
         self.assertEqual(result.status_code, 302)
         self.assertEqual(result.location, 'http://{0}:8001/'.format(
@@ -203,7 +200,7 @@ class TestFrontendOidc(unittest.TestCase):
             self.assertEqual("text/html", result.mimetype)
             self.assertGreater(len(result.data), 0)
 
-    @mock.patch('oic.oauth2.rndstr', mockRndstr)
+    @mock.patch('oic.rndstr', mockRndstr)
     @mock.patch('oic.oic.Client.do_authorization_request',
                 mockAuthorizationRequest)
     def testInvalidSessionKeyRedirects(self):
@@ -214,16 +211,16 @@ class TestFrontendOidc(unittest.TestCase):
             with app.session_transaction() as sess:
                 sess['key'] = 'xxx'
             result = app.get('/')
-            scheme, netloc, path, params, query, fragment = urlparse.urlparse(
+            scheme, netloc, path, params, query, fragment = urllib.parse.urlparse(
                 result.location)
             self.assertEqual(netloc, 'auth.com')
-            args = urlparse.parse_qs(query, strict_parsing=True)
+            args = urllib.parse.parse_qs(query, strict_parsing=True)
             self.assertEqual(path, '/auth')
             self.assertEqual(args['redirect_uri'][0],
                              'https://{}:8001/oauth2callback'.format(
                                  socket.gethostname()))
 
-    @mock.patch('oic.oauth2.rndstr', mockRndstr)
+    @mock.patch('oic.rndstr', mockRndstr)
     @mock.patch('oic.oic.Client.do_authorization_request',
                 mockAuthorizationRequest)
     def testInvalidKeyParamIsUnauthorized(self):
@@ -233,7 +230,7 @@ class TestFrontendOidc(unittest.TestCase):
         result = self.app.get('/?key=xxx')
         self.assertEqual(result.status_code, 403)
 
-    @mock.patch('oic.oauth2.rndstr', lambda x: RANDSTR)
+    @mock.patch('oic.rndstr', lambda x: RANDSTR)
     @mock.patch('oic.oic.Client.parse_response',
                 mockParseResponse)
     @mock.patch('oic.oic.Client.do_access_token_request',
@@ -245,16 +242,16 @@ class TestFrontendOidc(unittest.TestCase):
         In this case, the nonce returned does not match that in the session.
         """
         url = '/oauth2callback?scope=openid+profile&state={0}&code={1}'.format(
-            oic.oauth2.rndstr(0), OICCODE
+            oic.rndstr(0), OICCODE
         )
         with self.app as app:
             with app.session_transaction() as sess:
-                sess['state'] = oic.oauth2.rndstr(0)
+                sess['state'] = oic.rndstr(0)
                 sess['nonce'] = 'other'
             result = app.get(url)
             self.assertEqual(result.status_code, 403)
 
-    @mock.patch('oic.oauth2.rndstr', lambda x: RANDSTR)
+    @mock.patch('oic.rndstr', lambda x: RANDSTR)
     @mock.patch('oic.oic.Client.parse_response',
                 mockParseResponse)
     @mock.patch('oic.oic.Client.do_access_token_request',
@@ -266,16 +263,16 @@ class TestFrontendOidc(unittest.TestCase):
         In this case, the state returned does not match that in the session.
         """
         url = '/oauth2callback?scope=openid+profile&state={0}&code={1}'.format(
-            oic.oauth2.rndstr(0), OICCODE
+            oic.rndstr(0), OICCODE
         )
         with self.app as app:
             with app.session_transaction() as sess:
                 sess['state'] = 'other'
-                sess['nonce'] = oic.oauth2.rndstr(0)
+                sess['nonce'] = oic.rndstr(0)
             result = app.get(url)
             self.assertEqual(result.status_code, 403)
 
-    @mock.patch('oic.oauth2.rndstr', lambda x: RANDSTR)
+    @mock.patch('oic.rndstr', lambda x: RANDSTR)
     @mock.patch('oic.oic.Client.parse_response',
                 mockParseResponse)
     @mock.patch('oic.oic.Client.do_access_token_request',
@@ -287,12 +284,12 @@ class TestFrontendOidc(unittest.TestCase):
         In this case, the access token request returns an invalid response.
         """
         url = '/oauth2callback?scope=openid+profile&state={0}&code={1}'.format(
-            oic.oauth2.rndstr(0), OICCODE
+            oic.rndstr(0), OICCODE
         )
         with self.app as app:
             with app.session_transaction() as sess:
-                sess['state'] = oic.oauth2.rndstr(0)
-                sess['nonce'] = oic.oauth2.rndstr(0)
+                sess['state'] = oic.rndstr(0)
+                sess['nonce'] = oic.rndstr(0)
             result = app.get(url)
             self.assertEqual(result.status_code, 403)
 

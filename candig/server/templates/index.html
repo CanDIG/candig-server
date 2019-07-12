@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>GA4GH reference server {{ info.getServerVersion()}}</title>
+        <title>CanDIG server {{ info.getServerVersion()}}</title>
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
         <link rel=stylesheet type=text/css href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -9,12 +9,12 @@
     </head>
     <body>
     <div class="container">
-        <h2>GA4GH reference server {{ info.getServerVersion() }}</h2>
+        <h2>CanDIG server {{ info.getServerVersion() }}</h2>
         <div>
             <h3>Protocol version {{ info.getProtocolVersion() }}</h3>
         </div>
         <div>
-            {{ info.getLandingMessageHtml().decode('utf-8') | safe}}
+            {{ info.getLandingMessageHtml() | safe}}
         </div>
         <div>
             <h3>Registered peers</h3>

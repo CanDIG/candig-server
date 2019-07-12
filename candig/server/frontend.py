@@ -3,15 +3,12 @@ The Flask frontend for the GA4GH API.
 
 TODO Document properly.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import os
 import datetime
 import time
 import socket
-import urlparse
+import urllib.parse
 import functools
 import json
 
@@ -269,9 +266,9 @@ class UserAccessMap(object):
         # Remove non set values
         self.user_access_map = {
             user: {project: level
-                   for project, level in value.iteritems() if 0 <= level <= 4
+                   for project, level in value.items() if 0 <= level <= 4
                    }
-            for user, value in self.user_access_map.iteritems()
+            for user, value in self.user_access_map.items()
         }
 
     def getUserAccessMap(self, issuer, username):
@@ -329,7 +326,7 @@ def _configure_backend(app):
     # We use URLs to specify the backend. Currently we have file:// URLs (or
     # URLs with no scheme) for the SqlDataRepository, and special empty:// and
     # simulated:// URLs for empty or simulated data sources.
-    dataSource = urlparse.urlparse(app.config["DATA_SOURCE"], "file")
+    dataSource = urllib.parse.urlparse(app.config["DATA_SOURCE"], "file")
 
     if dataSource.scheme == "simulated":
         # Ignore the query string
@@ -397,7 +394,7 @@ def configure(configFile=None, baseConfig="ProductionConfig",
         app.config.from_envvar('GA4GH_CONFIGURATION')
     if configFile is not None:
         app.config.from_pyfile(configFile)
-    app.config.update(extraConfig.items())
+    app.config.update(list(extraConfig.items()))
     if epsilon:
         app.config["DP_EPSILON"] = epsilon
     # Setup file handle cache max size
@@ -554,10 +551,13 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         elif request_type == 'POST':
             raise exceptions.ObjectWithIdNotFoundException(json.loads(request))
     else:
-        # Update total
-        table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
-        if endpoint != app.backend.runCountQuery:
-            responseObject['results']['total'] = len(responseObject['results'][table])
+        # Update total when it's a POST request
+        if request_type == 'POST':
+            table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
+            if endpoint != app.backend.runCountQuery:
+                responseObject['results']['total'] = len(responseObject['results'][table])
+        else:
+            pass
 
     # Reformat the status response
     responseObject['status'] = {
@@ -730,7 +730,7 @@ class FederationResponse(object):
         table = list(set(self.results.keys()) - {"nextPageToken", "total"})[0]
         prepare_counts = {}
         for record in self.results[table]:
-            for k, v in record.iteritems():
+            for k, v in record.items():
                 if k in prepare_counts:
                     prepare_counts[k].append(Counter(v))
                 else:
@@ -881,8 +881,8 @@ def startLogin():
     provider and returns the redirect response
     :return: A redirect response to the OIDC provider
     """
-    flask.session["state"] = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
-    flask.session["nonce"] = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
+    flask.session["state"] = oic.rndstr(SECRET_KEY_LENGTH)
+    flask.session["nonce"] = oic.rndstr(SECRET_KEY_LENGTH)
     args = {
         "client_id": app.oidcClient.client_id,
         "response_type": "code",
@@ -994,10 +994,10 @@ class DisplayedRoute(object):
 
     def __call__(self, func):
         if self.methods is None:
-            app.add_url_rule(self.path, func.func_name, func)
+            app.add_url_rule(self.path, func.__name__, func)
         else:
             app.add_url_rule(
-                self.path, func.func_name, func, methods=self.methods)
+                self.path, func.__name__, func, methods=self.methods)
 
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -1960,7 +1960,7 @@ def oidcCallback():
     """
     if app.oidcClient is None:
         raise exceptions.NotImplementedException()
-    response = dict(flask.request.args.iteritems(multi=True))
+    response = dict(flask.request.args.items(multi=True))
     aresp = app.oidcClient.parse_response(
         message.AuthorizationResponse,
         info=response,
@@ -1988,7 +1988,7 @@ def oidcCallback():
     atrDict = atr.to_dict()
     if flask.session.get('nonce') != atrDict['id_token']['nonce']:
         raise exceptions.NotAuthenticatedException()
-    key = oic.oauth2.rndstr(SECRET_KEY_LENGTH)
+    key = oic.rndstr(SECRET_KEY_LENGTH)
     flask.session['key'] = key
     token_data = aresp["code"], respState, atrDict
     app.cache.set(key, token_data)
@@ -1996,10 +1996,10 @@ def oidcCallback():
     # and port, and defaults to 'localhost' if not found. Therefore
     # we need to fix the returned url
     indexUrl = flask.url_for('index', _external=True)
-    indexParts = list(urlparse.urlparse(indexUrl))
+    indexParts = list(urllib.parse.urlparse(indexUrl))
     if ':' not in indexParts[1]:
         indexParts[1] = '{}:{}'.format(socket.gethostname(), app.myPort)
-        indexUrl = urlparse.urlunparse(indexParts)
+        indexUrl = urllib.parse.urlunparse(indexParts)
     response = flask.redirect(indexUrl)
     return response
 

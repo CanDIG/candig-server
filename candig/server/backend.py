@@ -2,9 +2,6 @@
 Module responsible for handling protocol requests and returning
 responses.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import candig.server.datamodel as datamodel
 import candig.server.exceptions as exceptions
@@ -15,7 +12,7 @@ import operator
 from google.protobuf.json_format import MessageToDict
 import json
 import itertools
-import DP as DP
+import candig.server.DP as DP
 
 
 class Backend(object):
@@ -221,9 +218,9 @@ class Backend(object):
         op_keys = ['and', 'or']
         logic_negate = False
 
-        if len(logic.keys()) == 1:
-            logic_key = logic.keys()[0]
-        elif len(logic.keys()) == 2:
+        if len(logic) == 1:
+            logic_key = list(logic.keys())[0]
+        elif len(logic) == 2:
             if {'id', 'negate'} == set(logic.keys()):
                 logic_key = 'id'
                 logic_negate = bool(logic['negate'])
@@ -502,7 +499,7 @@ class Backend(object):
             table = "variants"
         try:
             for entry in json_results[table]:
-                for k, v in entry.iteritems():
+                for k, v in entry.items():
                     if k in field:
                         if k not in field_value_counts:
                             field_value_counts[k] = {}
@@ -1073,7 +1070,7 @@ class Backend(object):
             if request.name and request.name != obj.getLocalId():
                 include = False
             if request.biosample_id and include:
-                rgsp.ClearField(b"read_groups")
+                rgsp.ClearField("read_groups")
                 for readGroup in obj.getReadGroups():
                     if request.biosample_id == readGroup.getBiosampleId():
                         rgsp.read_groups.extend(
@@ -1607,7 +1604,7 @@ class Backend(object):
         for gt_variant, nextPageToken in objectGenerator(request, access_map):
             genotypemtx, variant, callsetids = gt_variant
             genotyperows.append(genotypemtx)
-            variant.ClearField(b"calls")
+            variant.ClearField("calls")
             variants.append(variant)
             if callsetIds is None:
                 callsetIds = callsetids

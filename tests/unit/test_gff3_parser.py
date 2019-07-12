@@ -1,9 +1,6 @@
 """
 GFF3 parser unit tests.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import candig.server.gff3 as gff3
 import unittest
@@ -25,12 +22,12 @@ class TestGff3ParserOnTypicalFile(unittest.TestCase):
         self.assertNotEqual(len(self.gff3Data.roots), 0, "No root features")
 
     def testSomeFeatureIsWellFormed(self):
-        featId = self.gff3Data.byFeatureName.keys()[0]
+        featId = list(self.gff3Data.byFeatureName.keys())[0]
         feat = self.gff3Data.byFeatureName[featId][0]
         self.assertEqual(featId, feat.featureName, "featureName mismatch")
         self.assertIsNotNone(feat.seqname, "sequence name is not populated")
         self.assertGreaterEqual(feat.end, feat.start, "end less than start")
-        self.assertIn(feat.strand, u"+-", "strand is neither + nor -")
+        self.assertIn(feat.strand, "+-", "strand is neither + nor -")
         self.assertIsNotNone(feat.source, "source is unspecified")
         self.assertIsNotNone(feat.type, "feature type is unspecified")
         self.assertIsInstance(feat.parents, set, "parents not a set")
@@ -56,7 +53,7 @@ class TestGff3ParserOnTypicalFile(unittest.TestCase):
             "invalid feature ID returned valid object")
 
     def testAllChildrenFeaturesArePresentInSet(self):
-        for featList in self.gff3Data.byFeatureName.values():
+        for featList in list(self.gff3Data.byFeatureName.values()):
             for feat in featList:
                 for child in feat.children:
                     childLookup = self.gff3Data.byFeatureName[

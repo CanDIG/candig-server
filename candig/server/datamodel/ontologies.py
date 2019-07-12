@@ -1,9 +1,6 @@
 """
 Support for Ontologies.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import collections
 import os.path
@@ -116,7 +113,7 @@ class Ontology(object):
         Returns the ontology term name corresponding to the specified IDs.
         If the term name is not found, return the empty list.
         """
-        for name, termIds in self._nameIdMap.iteritems():
+        for name, termIds in self._nameIdMap.items():
             # because it is a list of ids
             for termId in termIds:
                 if id == termId:

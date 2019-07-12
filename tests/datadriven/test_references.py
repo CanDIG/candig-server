@@ -1,9 +1,6 @@
 """
 Data-driven tests for references.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import hashlib
 import os
@@ -98,12 +95,12 @@ class ReferenceSetTest(datadriven.DataDrivenTest):
         referenceMd5s = []
         for gaReference in referenceSet.getReferences():
             bases = self._fastaFile.fetch(gaReference.getLocalId())
-            basesChecksum = hashlib.md5(bases).hexdigest()
+            basesChecksum = hashlib.md5(bases.encode('utf-8')).hexdigest()
             self.assertEqual(basesChecksum, gaReference.getMd5Checksum())
             referenceMd5s.append(gaReference.getMd5Checksum())
         referenceMd5s.sort()
         checksumsString = ''.join(referenceMd5s)
-        md5checksum = hashlib.md5(checksumsString).hexdigest()
+        md5checksum = hashlib.md5(checksumsString.encode("utf-8")).hexdigest()
         referenceSetMd5 = referenceSet.getMd5Checksum()
         self.assertEqual(md5checksum, referenceSetMd5)
 

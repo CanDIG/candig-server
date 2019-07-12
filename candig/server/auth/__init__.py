@@ -137,7 +137,7 @@ def callback_maker(
             raise exceptions.NotAuthorizedException(
                 'The callback from Auth0 did not'
                 'include the expected tokens: \n'
-                '{}'.format(e.message))
+                '{}'.format(str(e)))
         # Get profile information
         try:
             user_url = \
@@ -148,7 +148,7 @@ def callback_maker(
         except Exception as e:
             raise exceptions.NotAuthorizedException(
                 'The user profile from Auth0 did '
-                'not contain the expected data: \n {}'.format(e.message))
+                'not contain the expected data: \n {}'.format(str(e)))
         # Log token in
         user = cache.get(email)
         if user and user['authorized']:
@@ -271,7 +271,7 @@ def _decode_header(auth_header, client_id, client_secret):
             'Token signature could not be validated.')
     except Exception as e:
         raise exceptions.NotAuthorizedException(
-            'Token signature was malformed. {}'.format(e.message))
+            'Token signature was malformed. {}'.format(str(e)))
     return token, payload
 
 

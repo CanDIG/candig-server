@@ -6,9 +6,6 @@ GA4GH server implementation, and each row in the 'feature' table will be
 mapped to a Feature.
 """
 
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import argparse
 import os
@@ -16,7 +13,7 @@ import sys
 import json
 import sqlite3
 
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 import glue
 
 glue.ga4ghImportGlue()

@@ -1,10 +1,7 @@
 """
-Exceptions for the GA4GH server. Each exception that can occur in the server
+Exceptions for the CanDIG server. Each exception that can occur in the server
 is given a unique error code that is derived from its name.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import sys
 import zlib
@@ -39,7 +36,7 @@ def getServerError(exception):
 
 class BaseServerException(Exception):
     """
-    Superclass of all exceptions that can occur in the GA4GH reference
+    Superclass of all exceptions that can occur in the CanDIG reference
     server.
     """
     message = "Error code not set in exception; this is a bug."
@@ -70,7 +67,7 @@ class BaseServerException(Exception):
         # We follow the recommendation of the Python docs to ensure
         # that this value is signed 32 bit integer, and then mod it
         # to ensure non-negativity
-        code = (zlib.crc32(cls.__name__) & 0xffffffff) % 2**31
+        code = (zlib.crc32(cls.__name__.encode('utf-8')) & 0xffffffff) % 2**31
         return code
 
     def __str__(self):

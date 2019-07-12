@@ -1,9 +1,6 @@
 """
 configtest cli
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import logging
 import unittest
@@ -11,7 +8,7 @@ import unittest
 import candig.server.cli as cli
 import candig.server.configtest as configtest
 
-import ga4gh.common.cli as common_cli
+import candig.common.cli as common_cli
 
 
 class SimplerResult(unittest.TestResult):

@@ -8,12 +8,9 @@ An end to end test which tests:
 - simulated variantSet backend
 - server logging
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
-import server_test
-import client
+import tests.end_to_end.server_test as server_test
+import tests.end_to_end.client as client
 import unittest
 
 import candig.server.datarepo as datarepo

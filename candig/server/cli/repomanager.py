@@ -1,9 +1,6 @@
 """
 repo manager cli
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import glob
 import json
@@ -11,7 +8,7 @@ import os
 import sys
 import textwrap
 import traceback
-import urlparse
+import urllib.parse
 
 import candig.server.cli as cli
 import candig.server.datamodel.bio_metadata as bio_metadata
@@ -29,7 +26,7 @@ import candig.server.datarepo as datarepo
 import candig.server.exceptions as exceptions
 import candig.server.repo.rnaseq2ga as rnaseq2ga
 
-import ga4gh.common.cli as common_cli
+import candig.common.cli as common_cli
 
 
 def getNameFromPath(filePath):
@@ -52,7 +49,7 @@ def getRawInput(display):
     Wrapper around raw_input; put into separate function so that it
     can be easily mocked for tests.
     """
-    return raw_input(display)
+    return input(display)
 
 
 class RepoManager(object):
@@ -208,7 +205,7 @@ class RepoManager(object):
         dataset = self._repo.getDatasetByName(self._args.datasetName)
         dataUrl = self._args.dataFile
         indexFile = self._args.indexFile
-        parsed = urlparse.urlparse(dataUrl)
+        parsed = urllib.parse.urlparse(dataUrl)
         # TODO, add https support and others when they have been
         # tested.
         if parsed.scheme in ['http', 'ftp']:
@@ -274,10 +271,10 @@ class RepoManager(object):
                 "Cannot infer the intended name of the VariantSet when "
                 "more than one VCF file is provided. Please provide a "
                 "name argument using --name.")
-        parsed = urlparse.urlparse(dataUrls[0])
+        parsed = urllib.parse.urlparse(dataUrls[0])
         if parsed.scheme not in ['http', 'ftp']:
-            dataUrls = map(lambda url: self._getFilePath(
-                url, self._args.relativePath), dataUrls)
+            dataUrls = [self._getFilePath(
+                url, self._args.relativePath) for url in dataUrls]
         # Now, get the index files for the data files that we've now obtained.
         indexFiles = self._args.indexFiles
         if indexFiles is None:
@@ -296,8 +293,8 @@ class RepoManager(object):
             indexSuffix = ".tbi"
             # TODO support BCF input properly here by adding .csi
             indexFiles = [filename + indexSuffix for filename in dataUrls]
-        indexFiles = map(lambda url: self._getFilePath(
-            url, self._args.relativePath), indexFiles)
+        indexFiles = [self._getFilePath(
+            url, self._args.relativePath) for url in indexFiles]
         variantSet = variants.HtslibVariantSet(dataset, name)
         variantSet.populateFromFile(dataUrls, indexFiles)
         # Get the reference set that is associated with the variant set.

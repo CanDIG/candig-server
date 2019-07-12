@@ -2,9 +2,6 @@
 Constructs a data source for the candig server by downloading data from
 authoritative remote servers.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import argparse
 import gzip
@@ -13,11 +10,13 @@ import requests
 import shutil
 import subprocess
 import tempfile
-import urllib2
+import urllib.request
+import urllib.error
+import urllib.parse
 
 import pysam
 
-import ga4gh.common.utils as utils
+import candig.common.utils as utils
 import glue
 
 glue.ga4ghImportGlue()
@@ -206,7 +205,7 @@ class AbstractFileDownloader(object):
             ".20130502.genotypes.vcf.gz").format(chromosome)
         url = os.path.join(self.getVcfBaseUrl(), sourceFileName)
         self.log("Downloading '{}'".format(url))
-        response = urllib2.urlopen(url)
+        response = urllib.request.urlopen(url)
         megabyte = 1024 * 1024
         data = response.read(megabyte)
         localFileName = os.path.join(
@@ -261,7 +260,7 @@ class AbstractFileDownloader(object):
     def _downloadIndex(self, indexUrl, localIndexFile):
         self.log("Downloading index from {} to {}".format(
             indexUrl, localIndexFile))
-        response = urllib2.urlopen(indexUrl)
+        response = urllib.request.urlopen(indexUrl)
         with open(localIndexFile, "w") as destFile:
             destFile.write(response.read())
 
@@ -418,7 +417,7 @@ def parseArgs():
         "-f", "--force", default=False, action="store_true",
         help="Overwrite an existing directory with the same name")
     parser.add_argument(
-        "--source", default="ncbi", choices=sources.keys(),
+        "--source", default="ncbi", choices=list(sources.keys()),
         help="the source to download from")
     parser.add_argument(
         "--samples", default='HG00096,HG00533,HG00534',

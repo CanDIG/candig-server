@@ -1,9 +1,6 @@
 """
 End to end test that invokes the repo manager
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import mock
 import os

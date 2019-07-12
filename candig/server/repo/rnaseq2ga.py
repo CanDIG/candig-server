@@ -1,7 +1,3 @@
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import sqlite3
 import csv
 
@@ -143,7 +139,7 @@ class AbstractWriter(object):
         isNormalized = self._isNormalized
         units = self._units
         with open(quantfilename, "r") as quantFile:
-            quantificationReader = csv.reader(quantFile, delimiter=b"\t")
+            quantificationReader = csv.reader(quantFile, delimiter="\t")
             header = next(quantificationReader)
             expressionLevelColNum = self.setColNum(
                 header, self._expressionLevelCol)

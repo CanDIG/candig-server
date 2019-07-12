@@ -3,9 +3,6 @@ End-to-end tests for the simulator configuration. Sets up a server with
 the backend, sends some basic queries to that server and verifies results
 are as expected.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import unittest
 import logging
@@ -27,7 +24,7 @@ def round_float32(x_double):
     Uses the array module to retun a (truncated) 32-bit float
     representation of a python floating point number (double)
     """
-    return array.array(b'f', [x_double])[0]
+    return array.array('f', [x_double])[0]
 
 
 class TestSimulatedStack(unittest.TestCase):
@@ -64,7 +61,7 @@ class TestSimulatedStack(unittest.TestCase):
     @classmethod
     def as_float32(cls, x):
         x_dbl = float(x)
-        x_flt = array.array(b"f", [x_dbl])[0]
+        x_flt = array.array("f", [x_dbl])[0]
         return x_flt
 
     def setUp(self):
@@ -159,12 +156,14 @@ class TestSimulatedStack(unittest.TestCase):
         self.assertIsInstance(obj, protocol.ListReferenceBasesResponse)
         return obj
 
+    # See https://hg.python.org/cpython/rev/d9921cb6e3cd for assertItemsEqual rename
+
     def verifyVariantSetsEqual(self, gaVariantSet, variantSet):
         dataset = variantSet.getParentContainer()
         self.assertEqual(gaVariantSet.id, variantSet.getId())
         self.assertEqual(gaVariantSet.dataset_id, dataset.getId())
         self.assertEqual(gaVariantSet.name, variantSet.getLocalId())
-        self.assertItemsEqual(gaVariantSet.metadata, variantSet.getMetadata())
+        self.assertCountEqual(gaVariantSet.metadata, variantSet.getMetadata())
 
     def verifyCallSetsEqual(self, gaCallSet, callSet):
         variantSet = callSet.getParentContainer()
@@ -696,7 +695,7 @@ class TestSimulatedStack(unittest.TestCase):
         response = json.dumps(response_data.get('results', {}))
         responseData = self.deserialize(response, protocol.
                                         SearchVariantAnnotationsResponse)
-        self.assertEquals(
+        self.assertEqual(
             len(responseData.variant_annotations), 0,
             "There should be no results for a nonsense effect")
 
@@ -737,10 +736,9 @@ class TestSimulatedStack(unittest.TestCase):
             effectPresent = False
             for effect in ann.transcript_effects:
                 for featureType in effect.effects:
-                    if featureType.term_id in map(
-                            lambda e: e.term_id, request.effects):
+                    if featureType.term_id in [e.term_id for e in request.effects]:
                         effectPresent = True
-            self.assertEquals(
+            self.assertEqual(
                 True, effectPresent,
                 "The ontology term should appear at least once")
 
@@ -764,10 +762,9 @@ class TestSimulatedStack(unittest.TestCase):
             effectPresent = False
             for effect in ann.transcript_effects:
                 for featureType in effect.effects:
-                    if featureType.term_id in map(
-                            lambda e: e.term_id, request.effects):
+                    if featureType.term_id in [e.term_id for e in request.effects]:
                         effectPresent = True
-            self.assertEquals(
+            self.assertEqual(
                 True,
                 effectPresent,
                 "The ontology term should appear at least once")
@@ -787,16 +784,15 @@ class TestSimulatedStack(unittest.TestCase):
                            "There should be some results for a good effect ID")
         for ann in responseData.variant_annotations:
             effectPresent = False
-            txIds = map(lambda t: t.id, ann.transcript_effects)
+            txIds = [t.id for t in ann.transcript_effects]
             self.assertEqual(len(txIds), len(set(txIds)),
                              "Transcript effects should be unique")
             for effect in ann.transcript_effects:
                 for featureType in effect.effects:
-                    if featureType.term_id in map(
-                            lambda e: e.term_id, request.effects):
+                    if featureType.term_id in [e.term_id for e in request.effects]:
                         effectPresent = True
-            self.assertEquals(True, effectPresent,
-                              "The ontology term should appear at least once")
+            self.assertEqual(True, effectPresent,
+                             "The ontology term should appear at least once")
 
         request = protocol.SearchVariantAnnotationsRequest()
         request.variant_annotation_set_id = self.variantAnnotationSet.getId()
@@ -1094,7 +1090,7 @@ class TestSimulatedStack(unittest.TestCase):
             request.page_size = 1
             responseData = self.sendSearchRequest(
                 path, request, protocol.SearchReadGroupSetsResponse)
-            self.assertEquals(
+            self.assertEqual(
                 len(responseData.read_group_sets), 0,
                 "A good biosample ID and bad name should return 0")
             request = protocol.SearchReadGroupSetsRequest()

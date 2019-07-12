@@ -9,7 +9,7 @@
 # and are not already listed in requirements.txt
 
 python-dateutil==2.5.1
-PyYAML==3.11
+PyYAML==5.1
 
 ### This section is for the actual libraries ###
 # we import these libraries somewhere in the codebase but
@@ -22,10 +22,10 @@ pep8
 flake8==3.2.0
 coverage
 
-PyVCF==0.6.7
+PyVCF==0.6.8
 freezegun==0.3.6
-guppy==0.1.10
-snakefood==1.4
+# guppy==0.1.10
+# snakefood==1.4
 Sphinx==1.4.6
 sphinx_rtd_theme
 
@@ -35,7 +35,7 @@ cherrypy==3.2.4
 yubico-client==1.9.1
 
 # For client-related test suite
-git+git://github.com/CanDIG/candig-client.git@v0.9.0
+git+git://github.com/CanDIG/candig-client.git@2to3#egg=candig_client
 
 # For ingesting various metadata
-candig-ingest==1.2.0
+git+git://github.com/CanDIG/candig-ingest.git@2to3#egg=candig_ingest

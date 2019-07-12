@@ -1,9 +1,6 @@
 """
 Server cli
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import requests
 
@@ -12,7 +9,7 @@ import gunicorn.app.base
 import candig.server.cli as cli
 import candig.server.frontend as frontend
 
-import ga4gh.common.cli as common_cli
+import candig.common.cli as common_cli
 
 
 class StandaloneApplication(gunicorn.app.base.BaseApplication):
@@ -23,9 +20,9 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
 
     def load_config(self):
         config = dict(
-            [(key, value) for key, value in self.options.iteritems()
+            [(key, value) for key, value in self.options.items()
              if key in self.cfg.settings and value is not None])
-        for key, value in config.iteritems():
+        for key, value in config.items():
             self.cfg.set(key.lower(), value)
 
     def load(self):

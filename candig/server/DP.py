@@ -30,7 +30,7 @@ class DP(object):
         scale = np.float64(sensitivity) / np.float64(self._epsilon[server])
 
         if type(vec) is dict:
-            if not len(vec.keys()):
+            if not vec:
                 # print("Warning! can't add noise to empty input");
                 return vec
             for pop, v in vec.items():

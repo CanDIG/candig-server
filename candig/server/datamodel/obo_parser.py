@@ -33,7 +33,7 @@
 
 """Read and store Gene Ontology's obo file."""
 # -*- coding: UTF-8 -*-
-from __future__ import print_function
+
 from collections import defaultdict
 import sys
 import os
@@ -77,31 +77,36 @@ class OBOReader(object):
         with open(self.obo_file) as fstream:
             rec_curr = None # Stores current GO Term
             typedef_curr = None  # Stores current typedef
-            for lnum, line in enumerate(fstream):
-                # obo lines start with any of: [Term], [Typedef], /^\S+:/, or /^\s*/
-                if self.data_version is None:
-                    self._init_obo_version(line)
-                if line[0:6].lower() == "[term]":
-                    rec_curr = self._init_goterm_ref(rec_curr, "Term", lnum)
-                elif line[0:9].lower() == "[typedef]":
-                    typedef_curr = self._init_typedef(rec_curr, "Typedef", lnum)
-                elif rec_curr is not None or typedef_curr is not None:
-                    line = line.rstrip() # chomp
-                    if ":" in line:
-                        if rec_curr is not None:
-                            self._add_to_ref(rec_curr, line, lnum)
+            lnum = None
+            try:
+                for lnum, line in enumerate(fstream):
+                    # obo lines start with any of: [Term], [Typedef], /^\S+:/, or /^\s*/
+                    if self.data_version is None:
+                        self._init_obo_version(line)
+                    if line[0:6].lower() == "[term]":
+                        rec_curr = self._init_goterm_ref(rec_curr, "Term", lnum)
+                    elif line[0:9].lower() == "[typedef]":
+                        typedef_curr = self._init_typedef(rec_curr, "Typedef", lnum)
+                    elif rec_curr is not None or typedef_curr is not None:
+                        line = line.rstrip() # chomp
+                        if ":" in line:
+                            if rec_curr is not None:
+                                self._add_to_ref(rec_curr, line, lnum)
+                            else:
+                                self._add_to_typedef(typedef_curr, line, lnum)
+                        elif line == "":
+                            if rec_curr is not None:
+                                yield rec_curr
+                                rec_curr = None
+                            elif typedef_curr is not None:
+                                # Save typedef.
+                                self.typedefs[typedef_curr.id] = typedef_curr
+                                typedef_curr = None
                         else:
-                            self._add_to_typedef(typedef_curr, line, lnum)
-                    elif line == "":
-                        if rec_curr is not None:
-                            yield rec_curr
-                            rec_curr = None
-                        elif typedef_curr is not None:
-                            # Save typedef.
-                            self.typedefs[typedef_curr.id] = typedef_curr
-                            typedef_curr = None
-                    else:
-                        self._die("UNEXPECTED LINE CONTENT: {L}".format(L=line), lnum)
+                            self._die("UNEXPECTED LINE CONTENT: {L}".format(L=line), lnum)
+            except UnicodeDecodeError as e:
+                # The following method will raise OntologyFileFormatException
+                self._die(str(e), lnum)
             # Return last record, if necessary
             if rec_curr is not None:
                 yield rec_curr
@@ -259,9 +264,6 @@ class OBOReader(object):
             return
         self._die("FIELD IS ALREADY INITIALIZED", lnum)
 
-
-
-
 class GOTerm:
     """
     GO term, actually contain a lot more properties than interfaced here
@@ -298,7 +300,7 @@ class GOTerm:
                         for elem in val:
                             ret.append("  {ELEM}".format(ELEM=elem))
                     else:
-                        for (typedef, terms) in val.items():
+                        for typedef, terms in val.items():
                             ret.append("  {TYPEDEF}: {NTERMS} items"
                                        .format(TYPEDEF=typedef,
                                                NTERMS=len(terms)))
@@ -452,24 +454,24 @@ class GODag(dict):
             return rec.depth
 
         # Make parents and relationships references to the actual GO terms.
-        for rec in self.values():
+        for rec in list(self.values()):
             rec.parents = [self[x] for x in rec._parents]
 
             if hasattr(rec, '_relationship'):
                 rec.relationship = defaultdict(set)
-                for (typedef, terms) in rec._relationship.items():
+                for (typedef, terms) in list(rec._relationship.items()):
                     rec.relationship[typedef].update(set([self[x] for x in terms]))
                 delattr(rec, '_relationship')
 
         # populate children, levels and add inverted relationships
-        for rec in self.values():
+        for rec in list(self.values()):
             for p in rec.parents:
                 if rec not in p.children:
                     p.children.append(rec)
 
             # Add invert relationships
             if hasattr(rec, 'relationship'):
-                for (typedef, terms) in rec.relationship.items():
+                for (typedef, terms) in list(rec.relationship.items()):
                     invert_typedef = self.typedefs[typedef].inverse_of
                     if invert_typedef:
                         # Add inverted relationship
@@ -586,7 +588,7 @@ class GODag(dict):
                 for ID in rec_id_set}
 
         # add nodes explicitly via add_node
-        for rec_id, node in nodes.items():
+        for rec_id, node in list(nodes.items()):
             G.add_node(node)
 
         for src, target in edgeset:

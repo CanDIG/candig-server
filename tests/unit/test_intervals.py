@@ -1,13 +1,9 @@
 """
 Random data based tests for the interval iterator code.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import unittest
 import random
-
 import candig.server.paging as paging
 
 
@@ -90,8 +86,9 @@ class IntervalSet(object):
         with the specified interval.
         """
         for interval in self.intervals:
-            if intervalsIntersect(start, end, interval[0], interval[1]):
-                yield interval
+            if start is not None and end is not None:
+                if intervalsIntersect(start, end, interval[0], interval[1]):
+                    yield interval
 
 
 class FakeRequest(object):

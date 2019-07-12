@@ -2,9 +2,6 @@
 Module responsible for translating reference sequence data into GA4GH native
 objects.
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import hashlib
 import json
@@ -144,7 +141,7 @@ class AbstractReferenceSet(datamodel.DatamodelObject):
             self.getReferences(),
             key=lambda ref: ref.getMd5Checksum())
         checksums = ''.join([ref.getMd5Checksum() for ref in references])
-        md5checksum = hashlib.md5(checksums).hexdigest()
+        md5checksum = hashlib.md5(checksums.encode('utf-8')).hexdigest()
         return md5checksum
 
     def getAssemblyId(self):
@@ -428,7 +425,7 @@ class SimulatedReference(AbstractReference):
         self._length = length
         bases = [rng.choice('ACGT') for _ in range(self._length)]
         self._bases = ''.join(bases)
-        self._md5checksum = hashlib.md5(self._bases).hexdigest()
+        self._md5checksum = hashlib.md5((self._bases).encode('utf-8')).hexdigest()
         self._isDerived = bool(rng.randint(0, 1))
         self._sourceDivergence = 0
         if self._isDerived:
@@ -472,7 +469,7 @@ class HtslibReferenceSet(datamodel.PysamDatamodelMixin, AbstractReferenceSet):
             # TODO break this up into chunks and calculate the MD5
             # in bits (say, 64K chunks?)
             bases = fastaFile.fetch(referenceName)
-            md5checksum = hashlib.md5(bases).hexdigest()
+            md5checksum = hashlib.md5(bases.encode('utf-8')).hexdigest()
             reference.setMd5checksum(md5checksum)
             reference.setLength(len(bases))
             self.addReference(reference)
