@@ -12,8 +12,8 @@
 # way to resolve our internal dependencies. During development,
 # the constraints file will point at the current master branch 
 # of the respective module.
-candig-common
-candig-schemas
+candig-common==1.0.0
+candig-schemas==1.0.0
 
 Werkzeug==0.14.1
 MarkupSafe==0.23
