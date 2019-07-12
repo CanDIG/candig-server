@@ -21,6 +21,6 @@
 # When making a release, these constraints are commented out so that
 # the pinned packages in requirements.txt are used instead.
 #
-git+git://github.com/CanDIG/candig-common.git@master#egg=candig_common
-git+git://github.com/CanDIG/candig-schemas.git@2to3#egg=candig_schemas
+# git+git://github.com/CanDIG/candig-common.git@master#egg=candig_common
+# git+git://github.com/CanDIG/candig-schemas.git@2to3#egg=candig_schemas
 # git+git://github.com/CanDIG/candig-client.git@2to3#egg=candig_client
