@@ -1124,7 +1124,7 @@ def login_oidc():
 
             # save tokens in server session
             flask.session["access_token"] = flask.request.headers["KC-Access"]
-            flask.session["refresh_token"] = flask.request.headers["KC-Refresh"]
+            # flask.session["refresh_token"] = flask.request.headers["KC-Refresh"]
             flask.session["id_token"] = flask.request.headers["Authorization"][7:]
 
             # extract token data used in session
