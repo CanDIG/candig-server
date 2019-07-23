@@ -836,7 +836,12 @@ def handleException(exception):
         with app.test_request_context():
             app.log_exception(exception)
         serverException = exceptions.getServerError(exception)
-    error = serverException.toProtocolElement()
+    try:
+        error = serverException.toProtocolElement()
+    except AttributeError as e:
+        serverException = exceptions.NotFoundException(e)
+        error = serverException.toProtocolElement()
+
     # If the exception is being viewed by a web browser, we can render a nicer
     # view.
     if flask.request and 'Accept' in flask.request.headers and \
