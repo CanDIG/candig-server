@@ -12,8 +12,6 @@ install:
   - pip install pip --upgrade
 # RDFLib requres html5lib;  html5lib requires setuptools version 18.5 or above;
   - pip install -U setuptools
-  - easy_install distribute
-  - pip install --upgrade distribute
   - python setup.py sdist
   - pip install dist/candig*.tar.gz -c constraints.txt
 # every installable in setup.py's entry_points should be tested here
