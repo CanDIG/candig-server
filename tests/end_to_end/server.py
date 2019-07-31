@@ -238,3 +238,47 @@ class OidcOpServerForTesting(ServerForTesting):
     def getCmdLine(self):
         return ("python src/run.py --base https://localhost:{}" +
                 " -p {} -d settings.yaml").format(oidcOpPort, oidcOpPort)
+
+
+class CandigIntegrationTestServer(Ga4ghServerForTesting):
+    """
+    A test server that serves requests from behind a Tyk/Keycloak setup
+    """
+    def __init__(self, tyk_server, kc_server, kc_realm, kc_client, dataDir, acl):
+        super(CandigIntegrationTestServer, self).__init__(useOidc=False)
+        self.tyk_server = tyk_server
+        self.kc_server = kc_server
+        self.kc_realm = kc_realm
+        self.kc_client = kc_client
+        self.dataDir = dataDir
+        self.acl = acl
+
+    def getConfig(self):
+        config = """
+DATA_SOURCE = "{}"
+ACCESS_LIST = "{}"
+TYK_ENABLED = True
+TYK_SERVER = "{}"
+TYK_LISTEN_PATH = ''
+KC_SERVER = "{}"
+KC_REDIRECT = "{}/login_oidc"
+KC_LOGIN_REDIRECT = '/auth/realms/{}/protocol/openid-connect/auth?scope=openid+email&response_type=code&client_id={}&response_mode=form_post&redirect_uri={}/login_oidc'
+""".format(self.dataDir, self. acl, self.tyk_server, self.kc_server, self.tyk_server, self.kc_realm, self.kc_client, self.tyk_server)
+        return config
+
+    def getCmdLine(self):
+        if self.configFile is None:
+            self.configFile = tempfile.NamedTemporaryFile()
+        config = self.getConfig()
+        self.configFile.write(config.encode())
+        self.configFile.flush()
+        configFilePath = self.configFile.name
+        cmdLine = """
+python server_dev.py
+--dont-use-reloader
+--disable-urllib-warnings
+--host 0.0.0.0
+--config KeycloakOidConfig
+--config-file {}
+--port {} """.format(configFilePath, self.port)
+        return cmdLine
