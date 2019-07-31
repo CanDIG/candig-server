@@ -1,0 +1,8 @@
+{
+  "tyk": "http://ga4ghdev01.bcgsc.ca:8008",
+  "keycloak": "http://ga4ghdev01.bcgsc.ca:8080",
+  "realm": "CanDIG",
+  "client": "ga4gh",
+  "username": "integration_test",
+  "password": "candig"
+}
