@@ -26,10 +26,9 @@ with open('tests/integration/config.json', 'r') as test_config:
     KC_CLIENT = parsed_config['client']
 
 # SKIP_FLAG = 0 when continuous test deployment if Tyk/KC works
-SKIP_FLAG = 1
+SKIP_FLAG = 0
 
 
-@unittest.skip("Enable this when continuous test deployment of Tyk/KC works")
 class TestIntegrationStart(unittest.TestCase):
     def testIntegratedStart(self):
         app = server.CandigIntegrationTestServer(
@@ -40,7 +39,6 @@ class TestIntegrationStart(unittest.TestCase):
             app.shutdown()
 
 
-@unittest.skip("Enable this when continuous test deployment of Tyk/KC works")
 class TestIntegrationApi(server_test.ServerTestClass):
     @classmethod
     def setUpClass(cls):
@@ -82,7 +80,7 @@ class TestIntegrationApi(server_test.ServerTestClass):
     def testDashboardRedirect(self):
         # Dashboard should be returning 302 to Keycloak login without token
         frontend.configure(baseConfig="KeycloakOidConfig", configFile=self.server.configFile.name)
-        redirect_url = frontend._generate_login_url(TYK_HOST)+'/'
+        redirect_url = frontend._generate_login_url(TYK_HOST) + '/'
         r = requests.get(TYK_HOST, allow_redirects=False)
         self.assertEqual(r.status_code, 302)
         self.assertEqual(r.headers['Location'], redirect_url)
