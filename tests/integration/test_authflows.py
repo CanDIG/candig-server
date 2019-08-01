@@ -16,7 +16,6 @@ from tests.end_to_end import server
 import candig.server.frontend as frontend
 import tests.paths as paths
 
-
 with open('tests/integration/config.json', 'r') as test_config:
     parsed_config = json.load(test_config)
     TEST_USER = parsed_config['username']
@@ -25,6 +24,9 @@ with open('tests/integration/config.json', 'r') as test_config:
     KC_HOST = parsed_config['keycloak']
     KC_REALM = parsed_config['realm']
     KC_CLIENT = parsed_config['client']
+
+# SKIP_FLAG = 0 when continuous test deployment if Tyk/KC works
+SKIP_FLAG = 1
 
 
 @unittest.skip("Enable this when continuous test deployment of Tyk/KC works")
@@ -40,6 +42,13 @@ class TestIntegrationStart(unittest.TestCase):
 
 @unittest.skip("Enable this when continuous test deployment of Tyk/KC works")
 class TestIntegrationApi(server_test.ServerTestClass):
+    @classmethod
+    def setUpClass(cls):
+        cls.otherSetup()
+        cls.server = cls.getServer()
+        if not SKIP_FLAG == 1:
+            cls.server.start()
+
     @classmethod
     def getServer(cls):
         return server.CandigIntegrationTestServer(
