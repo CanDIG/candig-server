@@ -99,10 +99,11 @@ def server_main(args=None):
             'reload': not parsedArgs.dont_use_reloader,
         }
 
-        frontend.configure(configFile=parsedArgs.config_file, baseConfig="BaseConfig",
+        frontend.configure(configFile=parsedArgs.config_file, baseConfig=parsedArgs.config,
                            epsilon=parsedArgs.epsilon)
         app = StandaloneApplication(frontend.app, options)
         app.run()
+
     else:
 
         frontend.app.run(
