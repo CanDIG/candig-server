@@ -11,20 +11,20 @@ RUN yum -y install python36-pip.noarch \
  libffi-devel.x86_64 gcc-c++.x86_64 \
  python36-devel.x86_64 openssl-devel \
  libxml2-devel.x86_64 libxslt-devel.x86_64  libcurl-devel.x86_64 make gcc && \
- pip3 install --upgrade pip setuptools\
+ pip3 install --upgrade pip setuptools \
  && yum clean all \
- && rm -rf /var/cache/yum
+ && rm -rf /var/cache/yum ~/.cache
 
 ENV SCHEMA_V=v1.0.0 INGEST_V=v1.3.0
 
 RUN  pip install \
   git+https://github.com/CanDIG/candig-schemas.git@${SHEMA_V}#egg=candig_schemas  \
   git+https://github.com/CanDIG/candig-ingest.git@${INGEST_V}#egg=candig_ingest \
-  gevent
+  gevent && rm -rf ~/.cache
 
 # 0 is the irst stage
 COPY --from=0 /tmp/server /tmp/server
-RUN cd /tmp/server/ && pip install .
+RUN cd /tmp/server/ && pip install . && rm -rf ~/.cache
 
 RUN mkdir /data
 WORKDIR /data
