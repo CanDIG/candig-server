@@ -42,7 +42,7 @@ RUN yum -y install  \
 
 RUN mkdir /etc/candig && chmod 777 /etc/candig
 
-RUN mkdir -p /opt/ga4gh_server/
+RUN mkdir -p /opt/candig_server/
 # The ls forces a cash flush
 
 COPY --from=0 /data /data
