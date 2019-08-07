@@ -1,16 +1,12 @@
 # Using multi stage to prevent keeping a second copy of the package in the image
 FROM centos:7.6.1810
-COPY . /tmp/server
-
 RUN yum -y install epel-release
 RUN yum -y install python36-pip.noarch \
  git \
  libffi-devel.x86_64 gcc-c++.x86_64 \
  python36-devel.x86_64 openssl-devel \
- libxml2-devel.x86_64 libxslt-devel.x86_64  libcurl-devel.x86_64 make gcc && \
- pip3 install --upgrade pip setuptools \
- && yum clean all \
- && rm -rf /var/cache/yum
+ libxml2-devel.x86_64 libxslt-devel.x86_64  libcurl-devel.x86_64 make gcc  \
+ && pip3 install --upgrade pip setuptools
 
 ENV SCHEMA_V=v1.0.0 INGEST_V=v1.3.0
 
@@ -19,7 +15,8 @@ RUN  pip install \
   git+https://github.com/CanDIG/candig-ingest.git@${INGEST_V}#egg=candig_ingest \
   gevent
 
-RUN cd /tmp/server/ && pip install . && rm -rf ~/.cache
+COPY . /tmp/server
+RUN cd /tmp/server/ && pip install .
 
 RUN mkdir /data
 WORKDIR /data
@@ -45,14 +42,14 @@ RUN yum -y install  \
 
 RUN mkdir /etc/candig && chmod 777 /etc/candig
 
-EXPOSE 80
 RUN mkdir -p /opt/ga4gh_server/
 # The ls forces a cash flush
 
 COPY --from=0 /data /data
-COPY --from=0 /usr/local/lib/python3.6/site-packages /usr/local/lib/python3.6/site-packages
+COPY --from=0 /usr/local /usr/local
 
 WORKDIR /data
+EXPOSE 80
 
 ENTRYPOINT ["candig_server", "--host", "0.0.0.0", "--port", "80"]
 CMD  ["--workers", "1",  "--gunicorn", "-c", "NoAuth"]
