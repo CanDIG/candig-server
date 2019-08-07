@@ -22,11 +22,11 @@ RUN mkdir /data
 WORKDIR /data
 RUN mkdir -p server/templates \
   && touch server/templates/initial_peers.txt \
-  && mkdir ga4gh-example-data \
+  && mkdir candig-example-data \
   && touch access_list.txt
 
 RUN curl -Lo /tmp/mock_data.json  https://github.com/CanDIG/candig-ingest/releases/download/${INGEST_V}/mock_data.json \
- && ingest ga4gh-example-data/registry.db mock_data /tmp/mock_data.json
+ && ingest candig-example-data/registry.db mock_data /tmp/mock_data.json
 
 
 FROM centos:7.6.1810
