@@ -20,10 +20,8 @@ RUN cd /tmp/server/ && pip install .
 
 RUN mkdir /data
 WORKDIR /data
-RUN mkdir -p server/templates \
-  && touch server/templates/initial_peers.txt \
-  && mkdir candig-example-data \
-  && touch access_list.txt
+RUN mkdir  mkdir candig-example-data \
+  && touch access_list.tsv
 
 RUN curl -Lo /tmp/mock_data.json  https://github.com/CanDIG/candig-ingest/releases/download/${INGEST_V}/mock_data.json \
  && ingest candig-example-data/registry.db mock_data /tmp/mock_data.json
