@@ -5,7 +5,7 @@ registry database.
 
 Partially auto-generated using pwiz.
 
-    python -m pwiz -e sqlite ga4gh-example-data/registry.db > models.py
+    python -m pwiz -e sqlite candig-example-data/registry.db > models.py
 
 For more on the peewee model API see:
 
