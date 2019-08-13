@@ -51,8 +51,3 @@ EXPOSE 80
 
 ENTRYPOINT ["candig_server", "--host", "0.0.0.0", "--port", "80"]
 CMD  ["--workers", "1",  "--gunicorn", "-c", "NoAuth"]
-
-# CMD for test
-# -c NoAuth --workers 1 --gunicorn
-# in prod
-# "-f", "/opt/candig_server/config.py"
