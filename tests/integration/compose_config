@@ -1,5 +1,5 @@
-export INPUT_TEMPLATE_DIR=$PWD/candig_compose/template
-export OUPTUT_CONFIGURATION_DIR=/tmp/candig_containers/volume_mount
+export INPUT_TEMPLATE_DIR=${COMPOSE_DIR}/template
+export OUPTUT_CONFIGURATION_DIR=/tmp/volume_mount
 
 export CANDIG_PUBLIC_URL=http://candig
 
