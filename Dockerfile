@@ -29,7 +29,7 @@ RUN curl -Lo /tmp/mock_data.json  https://github.com/CanDIG/candig-ingest/releas
 
 FROM centos:7.6.1810
 MAINTAINER P-O Quirion <pierre-olivier.quirion@calculquebec.ca>
-RUN yum -y install epel-release
+RUN yum -u update && yum -y install epel-release
 RUN yum -y install  \
  gcc-c++.x86_64 \
  python36.x86_64 openssl-devel \
