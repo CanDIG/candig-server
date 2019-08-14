@@ -1,5 +1,5 @@
 # Using multi stage to prevent keeping a second copy of the package in the image
-FROM centos:7.6.1810
+FROM centos:7
 RUN yum -y update && yum -y install epel-release
 RUN yum -y install python36-pip.noarch \
  git \
@@ -27,7 +27,7 @@ RUN curl -Lo /tmp/mock_data.json  https://github.com/CanDIG/candig-ingest/releas
  && ingest candig-example-data/registry.db mock_data /tmp/mock_data.json
 
 
-FROM centos:7.6.1810
+FROM centos:7
 MAINTAINER P-O Quirion <pierre-olivier.quirion@calculquebec.ca>
 RUN yum -y update && yum -y install epel-release
 RUN yum -y install  \
