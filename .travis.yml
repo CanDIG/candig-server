@@ -52,6 +52,7 @@ matrix:
     env:
       - DOCKER_COMPOSE_VERSION=1.4.2
       - COMPOSE_DIR=/tmp/compose
+      - IMAGE_NAME=c3genomics/candig_server
     before_install:
       - sudo rm /usr/local/bin/docker-compose
       - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
@@ -62,7 +63,7 @@ matrix:
           --strip-components=1  -zxvf - -C ${COMPOSE_DIR}
       - curl -L https://github.com/CanDIG/candig_compose/release/download/v1.0.0
       - cd ${TRAVIS_BUILD_DIR}
-      - docker build --tag c3genomics/candig_server .
+      - docker build --pull --tag  ${IMAGE_NAME} .
     install:
       - cd ${COMPOSE_DIR}
       - ./create_compose.sh -o ${TRAVIS_BUILD_DIR}/tests/integrations/compose_config
