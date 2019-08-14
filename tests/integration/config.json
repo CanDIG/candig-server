@@ -1,8 +1,8 @@
 {
-  "tyk": "http://localhost:8008",
-  "keycloak": "http://localhost:8080",
-  "realm": "CanDIG",
-  "client": "ga4gh",
-  "username": "integration_test",
-  "password": "candig"
+  "tyk": "http://localhost:8080",
+  "keycloak": "http://localhost:8081",
+  "realm": "Candig",
+  "client": "test_candig",
+  "username": "candig_user",
+  "password": "candig_pw"
 }

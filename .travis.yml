@@ -1,51 +1,50 @@
-language: python
-python:
-  - "3.6"
 sudo: false
 
-cache:
-  directories:
-    - $HOME/.cache/pip
-    - /tmp/proto3.3.2
-
-install:
-  - pip install pip --upgrade
-# RDFLib requres html5lib;  html5lib requires setuptools version 18.5 or above;
-  - pip install -U setuptools
-  - easy_install distribute
-  - pip install --upgrade distribute
-  - python setup.py sdist
-  - pip install dist/candig*.tar.gz -c constraints.txt
-# every installable in setup.py's entry_points should be tested here
-  - candig_configtest --version
-  - candig_server --version
-  - candig_repo --version
-
-before_script:
-  - pip install -r dev-requirements.txt
-  - python scripts/build_test_data.py
-  - ingest --version
-  - ingest tests/data/registry.db dataset1 tests/data/sample_clin_metadata.json
-  - ingest tests/data/registry.db dataset1 tests/data/sample_pipe_metadata.json
-    
-before_install:
-    - bash tools/travis-install-protoc.sh 3.3.2
-    - export PATH=/tmp/proto3.3.2/bin:$PATH
-
-# run_tests.py runs everything under the script: tag so only put commands
-# under it that we want to run (and want to be able to run) as local tests
-script: 
-  - flake8 configtest_dev.py convert_error_code.py
+matrix:
+  include:
+  - python: "3.6"
+    language: python
+    cache:
+      directories:
+        - $HOME/.cache/pip
+        - /tmp/proto3.3.2
+    install:
+      - pip install pip --upgrade
+    # RDFLib requres html5lib;  html5lib requires setuptools version 18.5 or above;
+      - pip install -U setuptools
+      - easy_install distribute
+      - pip install --upgrade distribute
+      - python setup.py sdist
+      - pip install dist/candig*.tar.gz -c constraints.txt
+    # every installable in setup.py's entry_points should be tested here
+      - candig_configtest --version
+      - candig_server --version
+      - candig_repo --version
+    before_script:
+      - pip install -r dev-requirements.txt
+      - python scripts/build_test_data.py
+      - ingest --version
+      - ingest tests/data/registry.db dataset1 tests/data/sample_clin_metadata.json
+      - ingest tests/data/registry.db dataset1 tests/data/sample_pipe_metadata.json
+    before_install:
+      - bash tools/travis-install-protoc.sh 3.3.2
+      - export PATH=/tmp/proto3.3.2/bin:$PATH
+    # run_tests.py runs everything under the script: tag so only put commands
+    # under it that we want to run (and want to be able to run) as local tests
+    script:
+      - flake8 configtest_dev.py convert_error_code.py
            repo_dev.py server_dev.py
            setup.py
            tests candig scripts
-  - python -mnose tests 
+      - python -mnose tests
               --with-coverage --cover-package candig.server
               --cover-inclusive --cover-min-percentage 75
               --cover-branches --cover-erase
-  - make clean -C docs
-  - make -C docs
-
-after_success:
-# run codecov
-  - bash <(curl -s https://codecov.io/bash)
+      - make clean -C docs
+      - make -C docs
+    after_success:
+      # run codecov
+      - bash <(curl -s https://codecov.io/bash)
+  - service: docker
+    before_script: docker build --tag c3genomics/candig_server .
+    script: docker run -it c3genomics/candig_server --version
