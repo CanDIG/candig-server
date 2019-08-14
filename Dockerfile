@@ -1,6 +1,6 @@
 # Using multi stage to prevent keeping a second copy of the package in the image
 FROM centos:7.6.1810
-RUN yum -y install epel-release
+RUN RUN yum -u update && yum -y install epel-release
 RUN yum -y install python36-pip.noarch \
  git \
  libffi-devel.x86_64 gcc-c++.x86_64 \
