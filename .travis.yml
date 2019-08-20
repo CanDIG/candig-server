@@ -54,8 +54,6 @@ matrix:
       - COMPOSE_DIR=/tmp/compose
       - IMAGE_NAME=c3genomics/candig_server
     before_install:
-      - env
-      - exit 1
       - sudo rm /usr/local/bin/docker-compose
       - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
       - chmod +x docker-compose
@@ -68,12 +66,12 @@ matrix:
       - docker build --tag  ${IMAGE_NAME} .
     install:
       - cd ${COMPOSE_DIR}
-      - ./create_compose.sh -o ${TRAVIS_BUILD_DIR}/tests/integrations/compose_config
+      - ./create_compose.sh -o "${TRAVIS_BUILD_DIR}/tests/integrations/compose_config"
       - docker-compose -f yml/containers_network.yml -f yml/volumes.yml up -d
       - sleep 8
-      - ./candig_setup.sh -o ${TRAVIS_BUILD_DIR}/tests/integrations/compose_config -k localhost:8081 -t localhost
+      - ./candig_setup.sh -o "${TRAVIS_BUILD_DIR}/tests/integrations/compose_config" -k localhost:8081 -t localhost
     before_script: echo smething!
     script:
-      - cd ${TRAVIS_BUILD_DIR}
+      - cd "${TRAVIS_BUILD_DIR}"
       - echo I GET HERE YE
 

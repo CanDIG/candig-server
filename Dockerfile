@@ -31,7 +31,6 @@ FROM centos:7
 MAINTAINER P-O Quirion <pierre-olivier.quirion@calculquebec.ca>
 RUN yum -y update && yum -y install epel-release
 RUN yum -y install  \
- gcc-c++.x86_64 \
  python36.x86_64 openssl-devel \
  && yum clean all \
  && rm -rf /var/cache/yum
