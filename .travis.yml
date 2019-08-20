@@ -63,14 +63,14 @@ matrix:
       - curl -L https://api.github.com/repos/CanDIG/candig_compose/tarball/${CANDIG_COMPOSE_VERSION} | tar --strip-components=1  -zxvf -
         -C ${COMPOSE_DIR}
       - cd ${TRAVIS_BUILD_DIR}
-        #- docker build --tag  ${IMAGE_NAME} .
+      - docker build --tag  ${IMAGE_NAME} .
     install:
       - cd ${COMPOSE_DIR}
       - ./create_compose.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config"
       - docker-compose -f yml/containers_network.yml -f yml/volumes.yml up -d
       - sleep 8
       - ./candig_setup.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config" -k localhost:8081 -t localhost
-    before_script: echo smething!
+    before_script: echo something!
     script:
       - cd "${TRAVIS_BUILD_DIR}"
       - echo I GET HERE YE YE
