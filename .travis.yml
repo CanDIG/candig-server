@@ -73,5 +73,5 @@ matrix:
     before_script: echo smething!
     script:
       - cd "${TRAVIS_BUILD_DIR}"
-      - echo I GET HERE YE
+      - echo I GET HERE YE YE
 
