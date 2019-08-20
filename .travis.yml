@@ -53,13 +53,15 @@ matrix:
       - DOCKER_COMPOSE_VERSION=1.24.1
       - COMPOSE_DIR=/tmp/compose
       - IMAGE_NAME=c3genomics/candig_server
+      - CANDIG_COMPOSE_VERSION=v1.0.1
     before_install:
       - sudo rm /usr/local/bin/docker-compose
       - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
       - chmod +x docker-compose
       - sudo mv docker-compose /usr/local/bin
       - mkdir -p ${COMPOSE_DIR}
-      - curl -L https://api.github.com/repos/CanDIG/candig_compose/tarball/v1.0.0 | tar --strip-components=1  -zxvf - -C ${COMPOSE_DIR}
+      - curl -L https://api.github.com/repos/CanDIG/candig_compose/tarball/${CANDIG_COMPOSE_VERSION} | tar --strip-components=1  -zxvf -
+        -C ${COMPOSE_DIR}
       - cd ${TRAVIS_BUILD_DIR}
         #- docker build --tag  ${IMAGE_NAME} .
     install:
