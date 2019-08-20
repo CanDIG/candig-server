@@ -50,7 +50,7 @@ matrix:
     language: python
     python: 3.6
     env:
-      - DOCKER_COMPOSE_VERSION=1.4.2
+      - DOCKER_COMPOSE_VERSION=1.24.1
       - COMPOSE_DIR=/tmp/compose
       - IMAGE_NAME=c3genomics/candig_server
     before_install:
@@ -59,9 +59,7 @@ matrix:
       - chmod +x docker-compose
       - sudo mv docker-compose /usr/local/bin
       - mkdir -p ${COMPOSE_DIR}
-      - curl -L https://api.github.com/repos/CanDIG/candig_compose/tarball/v1.0.0 | tar
-          --strip-components=1  -zxvf - -C ${COMPOSE_DIR}
-      - curl -L https://github.com/CanDIG/candig_compose/release/download/v1.0.0
+      - curl -L https://api.github.com/repos/CanDIG/candig_compose/tarball/v1.0.0 | tar --strip-components=1  -zxvf - -C ${COMPOSE_DIR}
       - cd ${TRAVIS_BUILD_DIR}
         #- docker build --tag  ${IMAGE_NAME} .
     install:
