@@ -13,8 +13,6 @@ matrix:
       - pip install pip --upgrade
     # RDFLib requres html5lib;  html5lib requires setuptools version 18.5 or above;
       - pip install -U setuptools
-      - easy_install distribute
-      - pip install --upgrade distribute
       - python setup.py sdist
       - pip install dist/candig*.tar.gz -c constraints.txt
     # every installable in setup.py's entry_points should be tested here
@@ -70,8 +68,11 @@ matrix:
       - docker-compose -f yml/containers_network.yml -f yml/volumes.yml up -d
       - sleep 8
       - ./candig_setup.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config" -k localhost:8081 -t localhost
+      - cd "${TRAVIS_BUILD_DIR}"
+      - pip install -r dev-requirements.txt
     before_script: echo something!
     script:
       - cd "${TRAVIS_BUILD_DIR}"
+      - python -mnose -s tests/integration/test_authflows.py
       - echo I GET HERE YE YE
 
