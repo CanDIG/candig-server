@@ -91,3 +91,10 @@ class SearchResponseBuilder(object):
         self._protoObject.next_page_token = pb.string(self._nextPageToken)
         s = protocol.serialize(self._protoObject, self._return_mimetype)
         return s
+
+    def getProtoObject(self):
+        """
+        Returns the built proto object response
+        """
+        self._protoObject.next_page_token = pb.string(self._nextPageToken)
+        return self._protoObject

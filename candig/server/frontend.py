@@ -34,13 +34,11 @@ import candig.server.exceptions as exceptions
 import candig.server.datarepo as datarepo
 import candig.server.auth as auth
 import candig.server.network as network
+import candig.server.federation as federation
 
 import candig.schemas.protocol as protocol
 
-import base64
 import pandas as pd
-from collections import Counter
-from requests_futures.sessions import FuturesSession
 
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
@@ -493,285 +491,32 @@ def getFlaskResponse(responseString, httpStatus=200,
     return flask.Response(responseString, status=httpStatus, mimetype=mimetype)
 
 
-def federation(endpoint, request, return_mimetype, request_type='POST'):
+def federateRequest(endpoint, request, response_proto, return_mimetype, request_type='POST'):
     """
     Federate the queries by iterating through the peer list and merging the
     result.
 
-    Parameters:
-    ===========
-    endpoint: method
-        Method of a datamodel object that populates the response
-    request: string
-        Request send along with the query, like: id for GET requests
-    return_mimetype: string
-        'http/json or application/json'
-    request_type: string
-        Specify whether the request is a "GET" or a "POST" request
-
-    Returns:
-    ========
-    responseObject: json string
-        Merged responses from the servers. responseObject structure:
-
-    {
-    "status": {
-        "Successful communications": <number>,
-        "Known peers": <number>,
-        "Valid response": <true|false>,
-        "Queried peers": <number>
-        },
-    "results": {
-            "total": N
-            "datasets": [
-                    {record1},
-                    {record2},
-                    ...
-                    {recordN},
-                ]
-            }
-        ]
-    }
-
+    :return: an application/json format of result query for user-server calls
+             or serialized protocol buffer string for server-server calls
     """
-    request_dictionary = flask.request
-    federationResponse = FederationResponse(request, endpoint, return_mimetype, request_dictionary)
-    federationResponse.handleLocalRequest()
+    federationResponse = federation.FederationResponse(
+        request, endpoint, response_proto, request_type, return_mimetype, flask.request, app
+    )
+    federationResponse.handle_local_request()
 
-    # Apply federation by default or if it was specifically requested
-    if ('Federation' not in request_dictionary.headers or request_dictionary.headers.get('Federation') == 'True'):
-        federationResponse.handlePeerRequest(request_type)
+    if federationResponse.is_federated():
+        # handle peer requests and convert protocol messages to a json object
+        federationResponse.handle_peer_request(request_type)
+        responseObject = federationResponse.get_response_object()
+        return json.dumps(responseObject)
 
-    responseObject = federationResponse.getResponseObject()
-
-    # If no result has been found on any of the servers raise an error
-    if not responseObject['results']:
-        if request_type == 'GET':
-            raise exceptions.ObjectWithIdNotFoundException(request)
-        elif request_type == 'POST':
-            raise exceptions.ObjectWithIdNotFoundException(json.loads(request))
     else:
-        # Update total when it's a POST request
-        if request_type == 'POST':
-            table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
-            if endpoint != app.backend.runCountQuery:
-                responseObject['results']['total'] = len(responseObject['results'][table])
-        else:
-            pass
-
-    # Reformat the status response
-    responseObject['status'] = {
-
-        # All the peers plus self
-        'Known peers': len(app.serverStatus.getPeers()) + 1,
-
-        # Queried means http status code 200 and 404
-        'Queried peers': responseObject['status'].count(200) + responseObject['status'].count(404),
-
-        # Successful means http status code 200
-        'Successful communications': responseObject['status'].count(200),
-
-        # Invalid by default
-        'Valid response': False
-    }
-
-    # Decide on valid response
-    if responseObject['status']['Known peers'] == \
-            responseObject['status']['Queried peers']:
-        if request_type == 'GET':
-            if responseObject['status']['Successful communications'] >= 1:
-                responseObject['status']['Valid response'] = True
-        elif request_type == 'POST':
-            if responseObject['status']['Successful communications'] == \
-                    responseObject['status']['Queried peers']:
-                responseObject['status']['Valid response'] = True
-
-    return json.dumps(responseObject)
+        # return binary protocol buffer for non-federated requests (peer-to-peer)
+        message = federationResponse.get_proto()
+        return message.SerializeToString()
 
 
-def _parseTokenPayload(token):
-
-    try:
-        token_payload = token.split(".")[1]
-
-        # make sure token is padded properly for b64 decoding
-        padding = len(token_payload) % 4
-        if padding != 0:
-            token_payload += '=' * (4 - padding)
-        decoded_payload = base64.b64decode(token_payload)
-
-    except IndexError:
-        decoded_payload = '{}'
-
-    return json.loads(decoded_payload)
-
-
-class FederationResponse(object):
-
-    def __init__(self, request, endpoint, return_mimetype, request_dict):
-        self.results = {}
-        self.status = []
-        self.request = request
-        self.endpoint = endpoint
-        self.return_mimetype = return_mimetype
-        self.request_dict = request_dict
-        self.token, self.access_map = self.handleAccessPermission()
-
-    def handleAccessPermission(self):
-        """
-        user roles are loaded in to the server from the access_list.txt
-        a user-specific access map is generated here based on the id_token and
-        the in-memory server side access map
-
-        if running NoAuth config, user has full access to local datasets
-
-        :return: jwt token, python dict in the form {"project" : "access tier", ...}
-        """
-
-        access_map = {}
-
-        if app.config.get("TYK_ENABLED"):
-            if 'Authorization' in self.request_dict.headers:
-                access_token = self.request_dict.headers['Authorization']
-                parsed_payload = _parseTokenPayload(access_token)
-                issuer = parsed_payload.get('iss')
-                username = parsed_payload.get('preferred_username')
-                access_map = app.access_map.getUserAccessMap(issuer, username)
-            else:
-                raise exceptions.NotAuthenticatedException
-        else:
-            # for dev: mock full access when not using TYK config
-            access_token = None
-            for dataset in app.serverStatus.getDatasets():
-                access_map[dataset.getLocalId()] = 4
-
-        return access_token, access_map
-
-    def handleLocalRequest(self):
-        """
-        make local data request and set the results and status for a FederationResponse
-        """
-        try:
-            self.results = json.loads(
-                self.endpoint(
-                    self.request,
-                    return_mimetype=self.return_mimetype,
-                    access_map=self.access_map
-                )
-            )
-
-            self.status.append(200)
-
-        except (exceptions.ObjectWithIdNotFoundException, exceptions.NotFoundException):
-            self.status.append(404)
-
-        except (exceptions.NotAuthorizedException):
-            self.status.append(401)
-
-        print(">>> Local Response: " + str(self.status[0]))
-
-    def handlePeerRequest(self, request_type):
-        """
-        make peer data requests and update the results and status for a FederationResponse
-        """
-
-        header = {
-            'Content-Type': self.return_mimetype,
-            'Accept': self.return_mimetype,
-            'Federation': 'False',
-            'Authorization': self.token,
-        }
-
-        # generate peer uri
-        uri_list = []
-        for peer in app.serverStatus.getPeers():
-            uri = self.request_dict.url.replace(
-                self.request_dict.host_url,
-                peer.getUrl(),
-            )
-            uri_list.append(uri)
-
-        for future_response in self.async_requests(uri_list, request_type, header):
-            try:
-                response = future_response.result()
-            except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-                self.status.append(503)
-                continue
-            self.status.append(response.status_code)
-            # If the call was successful append the results
-            if response.status_code == 200:
-                try:
-                    if request_type == 'GET':
-                        self.results = response.json()['results']
-
-                    elif request_type == 'POST':
-                        peer_response = response.json()['results']
-
-                        if not self.results:
-                            self.results = peer_response
-                        else:
-                            for key in peer_response:
-                                if key in ['nextPageToken', 'total']:
-                                    if key not in self.results:
-                                        self.results[key] = peer_response[key]
-                                    continue
-                                for record in peer_response[key]:
-                                    self.results[key].append(record)
-                except ValueError:
-                    pass
-
-        if self.endpoint == app.backend.runCountQuery and self.results:
-            self.mergeCounts()
-
-    def mergeCounts(self):
-        """
-        merge federated counts and set results for a FederationResponse
-        """
-        table = list(set(self.results.keys()) - {"nextPageToken", "total"})[0]
-        prepare_counts = {}
-        for record in self.results[table]:
-            for k, v in record.items():
-                if k in prepare_counts:
-                    prepare_counts[k].append(Counter(v))
-                else:
-                    prepare_counts[k] = [Counter(v)]
-
-        merged_counts = {}
-        for field in prepare_counts:
-            count_total = Counter()
-            for count in prepare_counts[field]:
-                count_total = count_total + count
-            merged_counts[field] = dict(count_total)
-        self.results[table] = [merged_counts]
-
-    def getResponseObject(self):
-        """
-        :return: formatted dict that can be returned as application/json response
-        """
-        return {'status': self.status, 'results': self.results}
-
-    def async_requests(self, uri_list, request_type, header):
-        """
-        Use futures session type to async process peer requests
-        :return: list of future responses
-        """
-        async_session = FuturesSession(max_workers=10)  # capping max threads
-        if request_type == "GET":
-            responses = [
-                async_session.get(uri, headers=header)
-                for uri in uri_list
-            ]
-        elif request_type == "POST":
-            responses = [
-                async_session.post(uri, json=json.loads(self.request), headers=header)
-                for uri in uri_list
-            ]
-        else:
-            responses = []
-        return responses
-
-
-def handleHttpPost(request, endpoint):
+def handleHttpPost(request, endpoint, response_format):
     """
     Handles the specified HTTP POST request, which maps to the specified
     protocol handler endpoint and protocol request class.
@@ -782,9 +527,10 @@ def handleHttpPost(request, endpoint):
     request = request.get_data()
     if request == '' or request is None:
         request = '{}'
-    responseStr = federation(
+    responseStr = federateRequest(
         endpoint,
         request,
+        response_format,
         return_mimetype=return_mimetype,
         request_type='POST'
     )
@@ -800,16 +546,17 @@ def handleList(endpoint, request):
     return getFlaskResponse(responseStr, mimetype=return_mimetype)
 
 
-def handleHttpGet(id_, endpoint):
+def handleHttpGet(id_, endpoint, response_format):
     """
     Handles the specified HTTP GET request, which maps to the specified
     protocol handler endpoint and protocol request class
     """
     request = flask.request
     return_mimetype = chooseReturnMimetype(request)
-    responseStr = federation(
+    responseStr = federateRequest(
         endpoint,
         id_,
+        response_format,
         return_mimetype=return_mimetype,
         request_type='GET'
     )
@@ -947,13 +694,13 @@ def prevent_cache(response):
     return response
 
 
-def handleFlaskGetRequest(id_, flaskRequest, endpoint):
+def handleFlaskGetRequest(id_, flaskRequest, endpoint, response_format=None):
     """
     Handles the specified flask request for one of the GET URLs
     Invokes the specified endpoint to generate a response.
     """
     if flaskRequest.method == "GET":
-        return handleHttpGet(id_, endpoint)
+        return handleHttpGet(id_, endpoint, response_format)
     else:
         raise exceptions.MethodNotAllowedException()
 
@@ -967,13 +714,13 @@ def handleFlaskListRequest(id_, flaskRequest, endpoint):
     return handleList(endpoint, flaskRequest)
 
 
-def handleFlaskPostRequest(flaskRequest, endpoint):
+def handleFlaskPostRequest(flaskRequest, endpoint, response_format=None):
     """
     Handles the specified flask request for one of the POST URLS
     Invokes the specified endpoint to generate a response.
     """
     if flaskRequest.method == "POST":
-        return handleHttpPost(flaskRequest, endpoint)
+        return handleHttpPost(flaskRequest, endpoint, response_format)
     elif flaskRequest.method == "OPTIONS":
         return handleHttpOptions()
     else:
@@ -1085,7 +832,7 @@ def countQuery():
 @DisplayedRoute('/variantsbygenesearch', postMethod=True)
 def search_variant_by_gene_name():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchVariantsByGeneName)
+        flask.request, app.backend.runSearchVariantsByGeneName, protocol.SearchVariantsResponse)
 
 
 @app.route('/login_oidc', methods=LOGIN_ENDPOINT_METHODS)
@@ -1133,7 +880,7 @@ def login_oidc():
             flask.session["id_token"] = flask.request.headers["Authorization"][7:]
 
             # extract token data used in session
-            parsed_payload = _parseTokenPayload(flask.session["id_token"])
+            parsed_payload = federation.get_jwt_payload(flask.session["id_token"])
             flask.session["username"] = parsed_payload["preferred_username"]
             max_cookie_age = parsed_payload["exp"] - parsed_payload["iat"]
 
@@ -1226,7 +973,7 @@ def token():
 
     try:
         token = flask.request.headers["Authorization"][7:]
-        parsed_payload = _parseTokenPayload(token)
+        parsed_payload = federation.get_jwt_payload(token)
         token_expires = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(parsed_payload["exp"]))
 
         response["token"] = token
@@ -1368,7 +1115,7 @@ def searchVariantAnnotations():
 @requires_auth
 def searchDatasets():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchDatasets)
+        flask.request, app.backend.runSearchDatasets, protocol.SearchDatasetsResponse)
 
 
 @DisplayedRoute('/experiments/search', postMethod=True)
@@ -1432,105 +1179,105 @@ def searchIndividuals():
 @requires_auth
 def searchPatients():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchPatients)
+        flask.request, app.backend.runSearchPatients, protocol.SearchPatientsResponse)
 
 
 @DisplayedRoute('/enrollments/search', postMethod=True)
 @requires_auth
 def searchEnrollments():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchEnrollments)
+        flask.request, app.backend.runSearchEnrollments, protocol.SearchEnrollmentsResponse)
 
 
 @DisplayedRoute('/consents/search', postMethod=True)
 @requires_auth
 def searchConsents():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchConsents)
+        flask.request, app.backend.runSearchConsents, protocol.SearchConsentsResponse)
 
 
 @DisplayedRoute('/diagnoses/search', postMethod=True)
 @requires_auth
 def searchDiagnoses():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchDiagnoses)
+        flask.request, app.backend.runSearchDiagnoses, protocol.SearchDiagnosesResponse)
 
 
 @DisplayedRoute('/samples/search', postMethod=True)
 @requires_auth
 def searchSamples():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchSamples)
+        flask.request, app.backend.runSearchSamples, protocol.SearchSamplesResponse)
 
 
 @DisplayedRoute('/treatments/search', postMethod=True)
 @requires_auth
 def searchTreatments():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchTreatments)
+        flask.request, app.backend.runSearchTreatments, protocol.SearchTreatmentsResponse)
 
 
 @DisplayedRoute('/outcomes/search', postMethod=True)
 @requires_auth
 def searchOutcomes():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchOutcomes)
+        flask.request, app.backend.runSearchOutcomes, protocol.SearchOutcomesResponse)
 
 
 @DisplayedRoute('/complications/search', postMethod=True)
 @requires_auth
 def searchComplications():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchComplications)
+        flask.request, app.backend.runSearchComplications, protocol.SearchComplicationsResponse)
 
 
 @DisplayedRoute('/tumourboards/search', postMethod=True)
 @requires_auth
 def searchTumourboards():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchTumourboards)
+        flask.request, app.backend.runSearchTumourboards, protocol.SearchTumourboardsResponse)
 
 
 @DisplayedRoute('/chemotherapies/search', postMethod=True)
 @requires_auth
 def searchChemotherapies():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchChemotherapies)
+        flask.request, app.backend.runSearchChemotherapies, protocol.SearchChemotherapiesResponse)
 
 
 @DisplayedRoute('/radiotherapies/search', postMethod=True)
 @requires_auth
 def searchRadiotherapies():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchRadiotherapies)
+        flask.request, app.backend.runSearchRadiotherapies, protocol.SearchRadiotherapiesResponse)
 
 
 @DisplayedRoute('/surgeries/search', postMethod=True)
 @requires_auth
 def searchSurgeries():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchSurgeries)
+        flask.request, app.backend.runSearchSurgeries, protocol.SearchSurgeriesResponse)
 
 
 @DisplayedRoute('/immunotherapies/search', postMethod=True)
 @requires_auth
 def searchImmunotherapies():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchImmunotherapies)
+        flask.request, app.backend.runSearchImmunotherapies, protocol.SearchImmunotherapiesResponse)
 
 
 @DisplayedRoute('/celltransplants/search', postMethod=True)
 @requires_auth
 def searchCelltransplants():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchCelltransplants)
+        flask.request, app.backend.runSearchCelltransplants, protocol.SearchCelltransplantsResponse)
 
 
 @DisplayedRoute('/slides/search', postMethod=True)
 @requires_auth
 def searchSlides():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchSlides)
+        flask.request, app.backend.runSearchSlides, protocol.SearchSlidesResponse)
 
 
 @DisplayedRoute('/studies/search', postMethod=True)

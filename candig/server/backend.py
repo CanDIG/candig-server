@@ -275,8 +275,10 @@ class Backend(object):
         :param  access_map: user access levels for authz
         :return: patient id list
         """
+        return_mimetype = "application/json"
         request = json.dumps({"dataset_id": dataset_id})
-        all_pt = json.loads(self.runSearchPatients(request, 'application/json', access_map))
+        pb = self.runSearchPatients(request, return_mimetype, access_map)
+        all_pt = json.loads(protocol.serialize(pb, return_mimetype))
         return [pt["patientId"] for pt in all_pt["patients"]]
 
     def getResponsePatientId(self, response, dataset_id):
@@ -350,10 +352,8 @@ class Backend(object):
 
         for key in requests:
             requestStr = json.dumps(requests[key])
-
-            responseObj = json.loads(
-                self.endpointMapper[idMapper[key]](requestStr, return_mimetype, access_map)
-            )
+            response = self.endpointMapper[idMapper[key]](requestStr, return_mimetype, access_map)
+            responseObj = json.loads(protocol.serialize(response, "application/json"))
 
             try:
                 # TODO: this work around could probably be improved
@@ -370,12 +370,11 @@ class Backend(object):
                 request["page_token"] = nextToken
                 requestStr = json.dumps(request)
 
-                nextPageRequest = json.loads(
-                    self.endpointMapper[idMapper[key]](requestStr, return_mimetype, access_map)
-                )
+                nextPageRequest = self.endpointMapper[idMapper[key]](requestStr, return_mimetype, access_map)
+                responseObj = json.loads(protocol.serialize(nextPageRequest, "application/json"))
 
-                responses[key] += nextPageRequest[idMapper[key]]
-                nextToken = nextPageRequest.get('nextPageToken')
+                nextPageRequest[key] += responseObj[idMapper[key]]
+                nextToken = responseObj.get('nextPageToken')
 
         return responses
 
@@ -473,7 +472,7 @@ class Backend(object):
         :param field: array of field names to return
         :return: formatted results in string representation
         """
-        json_results = json.loads(results)
+        json_results = json.loads(protocol.serialize(results, "application/json"))
         json_array = json_results.get(table, [])
         filtered_results = []
         for entry in json_array:
@@ -493,7 +492,7 @@ class Backend(object):
         :param field: array of field names to aggregate on
         :return: formatted results in string representation
         """
-        json_results = json.loads(results)
+        json_results = json.loads(protocol.serialize(results, "application/json"))
         field_value_counts = {}
         if table == "variantsByGene":
             table = "variants"
@@ -1235,7 +1234,7 @@ class Backend(object):
             dataset = self.getDataRepository().getDataset(request.dataset_id)
             self.getUserAccessTier(dataset, access_map)
             variantSets = dataset.getVariantSets()
-        
+
         iterators = []
 
         for item in variantSets:
@@ -1496,14 +1495,7 @@ class Backend(object):
             self, requestStr, requestClass, responseClass, objectGenerator,
             access_map, return_mimetype="application/json"):
         """
-        Runs the specified request. The request is a string containing
-        a JSON representation of an instance of the specified requestClass.
-        We return a string representation of an instance of the
-        specified responseClass in return_mimetype format. Objects
-        are filled into the page list using the specified object
-        generator, which must return (object, nextPageToken) pairs,
-        and be able to resume iteration from any point using the
-        nextPageToken attribute of the request object.
+        Run the specified peer request and return the serialized response
         """
         self.startProfile()
         try:
@@ -1524,9 +1516,16 @@ class Backend(object):
             if responseBuilder.isFull():
                 break
         responseBuilder.setNextPageToken(nextPageToken)
-        responseString = responseBuilder.getSerializedResponse()
-        self.endProfile()
-        return responseString
+        message = responseBuilder.getProtoObject()
+
+        """
+        Retrieving message object
+        serialized = protocol.toProtobufString(message)
+        proto_response_message = responseClass()
+        proto_response_message.ParseFromString(serialized)
+        """
+
+        return message
 
     def runListReferenceBases(self, requestJson,
                               return_mimetype="application/json"):
@@ -2713,7 +2712,7 @@ class Backend(object):
 
         if request.gene != "":
             for featureset in dataset.getFeatureSets():
-                for feature in featureset.getFeatures(geneSymbol=request.gene, featureTypes=["gene"]):
+                for feature in featureset.getFeatures(geneSymbol=request.gene):
                     for variantset in processedVariantsets:
                         for variant in variantset.getVariants(
                                 referenceName=feature.reference_name.replace('chr', ''),
