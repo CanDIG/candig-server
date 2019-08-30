@@ -1,66 +1,53 @@
-############################################################
-## Dockerfile to build the ga4gh server on mod_wsgi-express
-## Configurable to use a local dataset
-############################################################
-FROM ubuntu
+# Using multi stage to prevent keeping a second copy of the package in the image
+FROM centos:7.6.1810
+RUN yum -y install epel-release
+RUN yum -y install python36-pip.noarch \
+ git \
+ libffi-devel.x86_64 gcc-c++.x86_64 \
+ python36-devel.x86_64 openssl-devel \
+ libxml2-devel.x86_64 libxslt-devel.x86_64  libcurl-devel.x86_64 make gcc  \
+ && pip3 install --upgrade pip setuptools
 
-# Originally created by Steve Hershman GitHub @hershman
-# previously maintained by Alastair Firth, and Maciek Smuga-Otto of the
-# UCSC Genomics Institute
-MAINTAINER David Steinberg <david@resium.com>
+ENV SCHEMA_V=v1.0.0 INGEST_V=v1.3.0
 
-# Update the sources list
-RUN apt-get update  --fix-missing
-RUN apt-get upgrade --yes
+RUN  pip install \
+  git+https://github.com/CanDIG/candig-schemas.git@${SHEMA_V}#egg=candig_schemas  \
+  git+https://github.com/CanDIG/candig-ingest.git@${INGEST_V}#egg=candig_ingest \
+  gevent
 
-# Install packages
-RUN apt-get install -y tar git curl libcurl4-openssl-dev wget dialog \
-    net-tools build-essential python python-dev python-distribute \
-    python-pip zlib1g-dev apache2 libapache2-mod-wsgi libxslt1-dev \
-    libffi-dev libssl-dev
+COPY . /tmp/server
+RUN cd /tmp/server/ && pip install .
 
-# Enable wsgi module
-RUN a2enmod wsgi
+RUN mkdir /data
+WORKDIR /data
+RUN mkdir  mkdir candig-example-data \
+  && touch access_list.tsv
 
-# Create cache directories
-RUN mkdir /var/cache/apache2/python-egg-cache && \
-    chown www-data:www-data /var/cache/apache2/python-egg-cache/
+RUN curl -Lo /tmp/mock_data.json  https://github.com/CanDIG/candig-ingest/releases/download/${INGEST_V}/mock_data.json \
+ && ingest candig-example-data/registry.db mock_data /tmp/mock_data.json
 
-# build the GA4GH server
-RUN mkdir -p /srv/ga4gh/server
-WORKDIR /srv/ga4gh/server
 
-# Configure the python requirements
-# Do this as a separate step prior to the build so that changes
-# to the GA4GH Server codebase do not trigger a full rebuild of the
-# pip requirements.
-COPY requirements.txt /srv/ga4gh/server/
-COPY constraints.txt /srv/ga4gh/server/
-RUN pip install -r requirements.txt -c constraints.txt
+FROM centos:7.6.1810
+MAINTAINER P-O Quirion <pierre-olivier.quirion@calculquebec.ca>
+RUN yum -y install epel-release
+RUN yum -y install  \
+ gcc-c++.x86_64 \
+ python36.x86_64 openssl-devel \
+ && yum clean all \
+ && rm -rf /var/cache/yum
 
-# Install the code
-COPY . /srv/ga4gh/server/
-RUN pip install . -c constraints.txt
+# 0 is the irst stage
 
-# Write new apache config
-COPY deploy/001-ga4gh.conf /etc/apache2/sites-available/001-ga4gh.conf
+RUN mkdir /etc/candig && chmod 777 /etc/candig
 
-# Write application.wsgi
-COPY deploy/application.wsgi /srv/ga4gh/application.wsgi
-COPY deploy/config.py /srv/ga4gh/config.py
+RUN mkdir -p /opt/candig_server/
+# The ls forces a cash flush
 
-# Configure apache to serve GA4GH site
-WORKDIR /etc/apache2/sites-enabled
-RUN a2dissite 000-default
-RUN a2ensite 001-ga4gh
+COPY --from=0 /data /data
+COPY --from=0 /usr/local /usr/local
 
-# Open port 80 for HTTP
+WORKDIR /data
 EXPOSE 80
 
-# Prepare container for deployment
-# The directory that the user will land in when executing an interactive shell
-WORKDIR /srv/ga4gh/server
-RUN python scripts/prepare_compliance_data.py -o ../ga4gh-compliance-data
-
-# Default action: Bring up a webserver instance to run as a daemon
-CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+ENTRYPOINT ["candig_server", "--host", "0.0.0.0", "--port", "80"]
+CMD  ["--workers", "1",  "--gunicorn", "-c", "NoAuth"]
