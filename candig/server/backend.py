@@ -2712,7 +2712,7 @@ class Backend(object):
 
         if request.gene != "":
             for featureset in dataset.getFeatureSets():
-                for feature in featureset.getFeatures(geneSymbol=request.gene):
+                for feature in featureset.getFeatures(geneSymbol=request.gene, featureTypes=["gene"]):
                     for variantset in processedVariantsets:
                         for variant in variantset.getVariants(
                                 referenceName=feature.reference_name.replace('chr', ''),
