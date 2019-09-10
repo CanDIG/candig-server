@@ -793,6 +793,45 @@ class SqlDataRepository(AbstractDataRepository):
             models.Peer.url).limit(limit).offset(offset)
         return [peers.Peer(p.url, record=p) for p in select]
 
+    def getSqlOntologyByName(self, name):
+        """
+        Returns the ontology set with the specified name.
+        """
+        select = list(models.Ontology.select().where(models.Ontology.name == name))
+
+        if len(select) == 0:
+            raise exceptions.ReferenceSetNameNotFoundException(name)
+        else:
+            ontology = ontologies.Ontology(select[0].name)
+            ontology.populateFromRow(select[0])
+            return ontology
+
+    def getSqlReferenceSetByName(self, name):
+        """
+        Returns the reference set with the specified name.
+        """
+        select = list(models.Referenceset.select().where(models.Referenceset.name == name))
+
+        if len(select) == 0:
+            raise exceptions.ReferenceSetNameNotFoundException(name)
+        else:
+            referenceSet = references.HtslibReferenceSet(select[0].name)
+            referenceSet.populateFromRow(select[0])
+            return referenceSet
+
+    def getSqlDatasetByName(self, name):
+        """
+        Returns the dataset with the specified name.
+        """
+        select = list(models.Dataset.select().where(models.Dataset.name == name))
+
+        if len(select) == 0:
+            raise exceptions.DatasetNameNotFoundException(name)
+        else:
+            dataset = datasets.Dataset(select[0].name)
+            dataset.populateFromRow(select[0])
+            return dataset
+
     def tableToTsv(self, model):
         """
         Takes a model class and attempts to create a table in TSV format

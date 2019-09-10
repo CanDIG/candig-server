@@ -12,6 +12,8 @@ import urllib.parse
 
 import candig.server.cli as cli
 import candig.server.datamodel.bio_metadata as bio_metadata
+import candig.server.datamodel.clinical_metadata as clinical_metadata
+import candig.server.datamodel.pipeline_metadata as pipeline_metadata
 import candig.server.datamodel.datasets as datasets
 import candig.server.datamodel.genotype_phenotype as genotype_phenotype
 import candig.server.datamodel.ontologies as ontologies
@@ -90,11 +92,17 @@ class RepoManager(object):
         finally:
             self._repo.close()
 
-    def _openRepo(self):
+    def _validateRepo(self):
+        """
+        Checks if the specified registry path has a valid repo.
+        """
         if not self._repo.exists():
             raise exceptions.RepoManagerException(
                 "Repo '{}' does not exist. Please create a new repo "
                 "using the 'init' command.".format(self._registryPath))
+
+    def _openRepo(self):
+        self._validateRepo()
         self._repo.open(datarepo.MODE_READ)
 
     def _checkSequenceOntology(self, ontology):
@@ -152,7 +160,7 @@ class RepoManager(object):
         """
         Adds a new Ontology to this repo.
         """
-        self._openRepo()
+        self._validateRepo()
         name = self._args.name
         filePath = self._getFilePath(self._args.filePath,
                                      self._args.relativePath)
@@ -166,7 +174,7 @@ class RepoManager(object):
         """
         Adds a new dataset into this repo.
         """
-        self._openRepo()
+        self._validateRepo()
         dataset = datasets.Dataset(self._args.datasetName)
         dataset.setDescription(self._args.description)
         dataset.setAttributes(json.loads(self._args.attributes))
@@ -176,7 +184,7 @@ class RepoManager(object):
         """
         Adds a new reference set into this repo.
         """
-        self._openRepo()
+        self._validateRepo()
         name = self._args.name
         filePath = self._getFilePath(self._args.filePath,
                                      self._args.relativePath)
@@ -201,8 +209,8 @@ class RepoManager(object):
         """
         Adds a new ReadGroupSet into this repo.
         """
-        self._openRepo()
-        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        self._validateRepo()
+        dataset = self._repo.getSqlDatasetByName(self._args.datasetName)
         dataUrl = self._args.dataFile
         indexFile = self._args.indexFile
         parsed = urllib.parse.urlparse(dataUrl)
@@ -226,7 +234,7 @@ class RepoManager(object):
         if referenceSetName is None:
             # Try to find a reference set name from the BAM header.
             referenceSetName = readGroupSet.getBamHeaderReferenceSetName()
-        referenceSet = self._repo.getReferenceSetByName(referenceSetName)
+        referenceSet = self._repo.getSqlReferenceSetByName(referenceSetName)
         readGroupSet.setReferenceSet(referenceSet)
         patientId = self._args.patientId
         if patientId is None:
@@ -247,8 +255,8 @@ class RepoManager(object):
         """
         Adds a new VariantSet into this repo.
         """
-        self._openRepo()
-        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        self._validateRepo()
+        dataset = self._repo.getSqlDatasetByName(self._args.datasetName)
         dataUrls = self._args.dataFiles
         name = self._args.name
         if len(dataUrls) == 1:
@@ -307,7 +315,7 @@ class RepoManager(object):
                 "Cannot infer the ReferenceSet from the VCF header. Please "
                 "specify the ReferenceSet to associate with this "
                 "VariantSet using the --referenceSetName option")
-        referenceSet = self._repo.getReferenceSetByName(referenceSetName)
+        referenceSet = self._repo.getSqlReferenceSetByName(referenceSetName)
         variantSet.setReferenceSet(referenceSet)
         patientId = self._args.patientId
         if patientId is None:
@@ -329,7 +337,7 @@ class RepoManager(object):
             if ontologyName is None:
                 raise exceptions.RepoManagerException(
                     "A sequence ontology name must be provided")
-            ontology = self._repo.getOntologyByName(ontologyName)
+            ontology = self._repo.getSqlOntologyByName(ontologyName)
             self._checkSequenceOntology(ontology)
             for annotationSet in variantSet.getVariantAnnotationSets():
                 annotationSet.setOntology(ontology)
@@ -382,8 +390,8 @@ class RepoManager(object):
         """
         Removes a referenceSet from the repo.
         """
-        self._openRepo()
-        referenceSet = self._repo.getReferenceSetByName(
+        self._validateRepo()
+        referenceSet = self._repo.getSqlReferenceSetByName(
             self._args.referenceSetName)
 
         def func():
@@ -419,8 +427,8 @@ class RepoManager(object):
         """
         Removes a dataset from the repo.
         """
-        self._openRepo()
-        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        self._validateRepo()
+        dataset = self._repo.getSqlDatasetByName(self._args.datasetName)
 
         def func():
             self._updateRepo(self._repo.removeDataset, dataset)
@@ -430,8 +438,8 @@ class RepoManager(object):
         """
         Adds a new feature set into this repo
         """
-        self._openRepo()
-        dataset = self._repo.getDatasetByName(self._args.datasetName)
+        self._validateRepo()
+        dataset = self._repo.getSqlDatasetByName(self._args.datasetName)
         filePath = self._getFilePath(self._args.filePath,
                                      self._args.relativePath)
         name = getNameFromPath(self._args.filePath)
@@ -441,13 +449,13 @@ class RepoManager(object):
         if referenceSetName is None:
             raise exceptions.RepoManagerException(
                 "A reference set name must be provided")
-        referenceSet = self._repo.getReferenceSetByName(referenceSetName)
+        referenceSet = self._repo.getSqlReferenceSetByName(referenceSetName)
         featureSet.setReferenceSet(referenceSet)
         ontologyName = self._args.ontologyName
         if ontologyName is None:
             raise exceptions.RepoManagerException(
                 "A sequence ontology name must be provided")
-        ontology = self._repo.getOntologyByName(ontologyName)
+        ontology = self._repo.getSqlOntologyByName(ontologyName)
         self._checkSequenceOntology(ontology)
         featureSet.setOntology(ontology)
         featureSet.populateFromFile(filePath)
@@ -549,7 +557,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        patient = bio_metadata.Patient(
+        patient = clinical_metadata.Patient(
             dataset, self._args.patientName)
         patient.populateFromJson(self._args.patient)
         self._updateRepo(self._repo.insertPatient, patient)
@@ -572,7 +580,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        enrollment = bio_metadata.Enrollment(
+        enrollment = clinical_metadata.Enrollment(
             dataset, self._args.enrollmentName)
         enrollment.populateFromJson(self._args.enrollment)
         self._updateRepo(self._repo.insertEnrollment, enrollment)
@@ -595,7 +603,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        consent = bio_metadata.Consent(
+        consent = clinical_metadata.Consent(
             dataset, self._args.consentName)
         consent.populateFromJson(self._args.consent)
         self._updateRepo(self._repo.insertConsent, consent)
@@ -618,7 +626,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        diagnosis = bio_metadata.Diagnosis(
+        diagnosis = clinical_metadata.Diagnosis(
             dataset, self._args.diagnosisName)
         diagnosis.populateFromJson(self._args.diagnosis)
         self._updateRepo(self._repo.insertDiagnosis, diagnosis)
@@ -641,7 +649,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        sample = bio_metadata.Sample(
+        sample = clinical_metadata.Sample(
             dataset, self._args.sampleName)
         sample.populateFromJson(self._args.sample)
         self._updateRepo(self._repo.insertSample, sample)
@@ -664,7 +672,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        treatment = bio_metadata.Treatment(
+        treatment = clinical_metadata.Treatment(
             dataset, self._args.treatmentName)
         treatment.populateFromJson(self._args.treatment)
         self._updateRepo(self._repo.insertTreatment, treatment)
@@ -687,7 +695,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        outcome = bio_metadata.Outcome(
+        outcome = clinical_metadata.Outcome(
             dataset, self._args.outcomeName)
         outcome.populateFromJson(self._args.outcome)
         self._updateRepo(self._repo.insertOutcome, outcome)
@@ -710,7 +718,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        complication = bio_metadata.Complication(
+        complication = clinical_metadata.Complication(
             dataset, self._args.complicationName)
         complication.populateFromJson(self._args.complication)
         self._updateRepo(self._repo.insertComplication, complication)
@@ -733,7 +741,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        tumourboard = bio_metadata.Tumourboard(
+        tumourboard = clinical_metadata.Tumourboard(
             dataset, self._args.tumourboardName)
         tumourboard.populateFromJson(self._args.tumourboard)
         self._updateRepo(self._repo.insertTumourboard, tumourboard)
@@ -756,7 +764,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        chemotherapy = bio_metadata.Chemotherapy(
+        chemotherapy = clinical_metadata.Chemotherapy(
             dataset, self._args.chemotherapyName)
         chemotherapy.populateFromJson(self._args.chemotherapy)
         self._updateRepo(self._repo.insertChemotherapy, chemotherapy)
@@ -779,7 +787,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        radiotherapy = bio_metadata.Radiotherapy(
+        radiotherapy = clinical_metadata.Radiotherapy(
             dataset, self._args.radiotherapyName)
         radiotherapy.populateFromJson(self._args.radiotherapy)
         self._updateRepo(self._repo.insertRadiotherapy, radiotherapy)
@@ -802,7 +810,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        surgery = bio_metadata.Surgery(
+        surgery = clinical_metadata.Surgery(
             dataset, self._args.surgeryName)
         surgery.populateFromJson(self._args.surgery)
         self._updateRepo(self._repo.insertSurgery, surgery)
@@ -825,7 +833,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        immunotherapy = bio_metadata.Immunotherapy(
+        immunotherapy = clinical_metadata.Immunotherapy(
             dataset, self._args.immunotherapyName)
         immunotherapy.populateFromJson(self._args.immunotherapy)
         self._updateRepo(self._repo.insertImmunotherapy, immunotherapy)
@@ -848,7 +856,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        celltransplant = bio_metadata.Celltransplant(
+        celltransplant = clinical_metadata.Celltransplant(
             dataset, self._args.celltransplantName)
         celltransplant.populateFromJson(self._args.celltransplant)
         self._updateRepo(self._repo.insertCelltransplant, celltransplant)
@@ -871,7 +879,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        slide = bio_metadata.Slide(
+        slide = clinical_metadata.Slide(
             dataset, self._args.slideName)
         slide.populateFromJson(self._args.slide)
         self._updateRepo(self._repo.insertSlide, slide)
@@ -894,7 +902,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        study = bio_metadata.Study(
+        study = clinical_metadata.Study(
             dataset, self._args.studyName)
         study.populateFromJson(self._args.study)
         self._updateRepo(self._repo.insertStudy, study)
@@ -917,7 +925,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        labtest = bio_metadata.Labtest(
+        labtest = clinical_metadata.Labtest(
             dataset, self._args.labtestName)
         labtest.populateFromJson(self._args.labtest)
         self._updateRepo(self._repo.insertLabtest, labtest)
@@ -940,7 +948,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        extraction = bio_metadata.Extraction(
+        extraction = pipeline_metadata.Extraction(
             dataset, self._args.extractionName)
         extraction.populateFromJson(self._args.extraction)
         self._updateRepo(self._repo.insertExtraction, extraction)
@@ -964,7 +972,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        sequencing = bio_metadata.Sequencing(
+        sequencing = pipeline_metadata.Sequencing(
             dataset, self._args.sequencingName)
         sequencing.populateFromJson(self._args.sequencing)
         self._updateRepo(self._repo.insertSequencing, sequencing)
@@ -988,7 +996,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        alignment = bio_metadata.Alignment(
+        alignment = pipeline_metadata.Alignment(
             dataset, self._args.alignmentName)
         alignment.populateFromJson(self._args.alignment)
         self._updateRepo(self._repo.insertAlignment, alignment)
@@ -1012,7 +1020,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        variantCalling = bio_metadata.VariantCalling(
+        variantCalling = pipeline_metadata.VariantCalling(
             dataset, self._args.variantCallingName)
         variantCalling.populateFromJson(self._args.variantCalling)
         self._updateRepo(self._repo.insertVariantCalling, variantCalling)
@@ -1036,7 +1044,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        fusionDetection = bio_metadata.FusionDetection(
+        fusionDetection = pipeline_metadata.FusionDetection(
             dataset, self._args.fusionDetectionName)
         fusionDetection.populateFromJson(self._args.fusionDetection)
         self._updateRepo(self._repo.insertFusionDetection, fusionDetection)
@@ -1060,7 +1068,7 @@ class RepoManager(object):
         """
         self._openRepo()
         dataset = self._repo.getDatasetByName(self._args.datasetName)
-        expressionAnalysis = bio_metadata.ExpressionAnalysis(
+        expressionAnalysis = pipeline_metadata.ExpressionAnalysis(
             dataset, self._args.expressionAnalysisName)
         expressionAnalysis.populateFromJson(self._args.expressionAnalysis)
         self._updateRepo(self._repo.insertExpressionAnalysis, expressionAnalysis)
