@@ -15,7 +15,7 @@
 candig-common==1.0.0
 candig-schemas==1.0.0
 
-Werkzeug==0.14.1
+Werkzeug==0.15.5
 MarkupSafe==0.23
 itsdangerous==0.24
 six==1.10.0

@@ -116,6 +116,7 @@ class Gff32Db(object):
         dbcur.execute((
             "create INDEX idx1 "
             "on feature(start, end, reference_name)"))
+        dbcur.execute("CREATE INDEX name_type_index ON FEATURE (gene_name, type)")
         dbcur.execute("PRAGMA INDEX_LIST('feature')")
 
         dbcur.close()
