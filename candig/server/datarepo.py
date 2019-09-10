@@ -800,7 +800,7 @@ class SqlDataRepository(AbstractDataRepository):
         select = list(models.Ontology.select().where(models.Ontology.name == name))
 
         if len(select) == 0:
-            raise exceptions.ReferenceSetNameNotFoundException(name)
+            raise exceptions.OntologyNameNotFoundException(name)
         else:
             ontology = ontologies.Ontology(select[0].name)
             ontology.populateFromRow(select[0])
