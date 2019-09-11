@@ -23,7 +23,6 @@ matrix:
       - pip install -r dev-requirements.txt
       - python scripts/build_test_data.py
       - ingest --version
-      - ingest tests/data/registry.db dataset1 tests/data/sample_clin_metadata.json
       - ingest tests/data/registry.db dataset1 tests/data/sample_pipe_metadata.json
     before_install:
       - bash tools/travis-install-protoc.sh 3.3.2
@@ -76,4 +75,3 @@ matrix:
       - cd "${TRAVIS_BUILD_DIR}"
       - python -mnose -s tests/integration/test_authflows.py
       - echo I GET HERE YE YE
-
