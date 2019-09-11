@@ -26,6 +26,8 @@ import candig.server.datamodel.pipeline_metadata as pipeline_metadata
 
 import candig.schemas.protocol as protocol
 
+import peewee
+
 MODE_READ = 'r'
 MODE_WRITE = 'w'
 
@@ -1496,8 +1498,9 @@ class SqlDataRepository(AbstractDataRepository):
                 attributes=json.dumps(readGroupSet.getAttributes()))
             for readGroup in readGroupSet.getReadGroups():
                 self.insertReadGroup(readGroup)
-        except Exception as e:
-            raise exceptions.RepoManagerException(e)
+        except peewee.IntegrityError as e:
+            raise exceptions.DuplicateNameException(readGroupSet.getLocalId(),
+                                                    readGroupSet.getParentContainer().getLocalId())
 
     def removeReferenceSet(self, referenceSet):
         """
@@ -1623,8 +1626,9 @@ class SqlDataRepository(AbstractDataRepository):
                 patientId = variantSet.getPatientId(),
                 sampleId = variantSet.getSampleId(),
                 attributes=json.dumps(variantSet.getAttributes()))
-        except Exception as e:
-            raise exceptions.RepoManagerException(e)
+        except peewee.IntegrityError as e:
+            raise exceptions.DuplicateNameException(variantSet.getLocalId(),
+                                                    variantSet.getParentContainer().getLocalId())
         for callSet in variantSet.getCallSets():
             self.insertCallSet(callSet)
 
@@ -1658,8 +1662,9 @@ class SqlDataRepository(AbstractDataRepository):
                 name=featureSet.getLocalId(),
                 dataurl=featureSet.getDataUrl(),
                 attributes=json.dumps(featureSet.getAttributes()))
-        except Exception as e:
-            raise exceptions.RepoManagerException(e)
+        except peewee.IntegrityError as e:
+            raise exceptions.DuplicateNameException(featureSet.getLocalId(),
+                                                    featureSet.getParentContainer().getLocalId())
 
     def _readFeatureSetTable(self):
         for featureSetRecord in models.Featureset.select():
