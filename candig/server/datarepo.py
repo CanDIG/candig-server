@@ -1498,8 +1498,9 @@ class SqlDataRepository(AbstractDataRepository):
                 attributes=json.dumps(readGroupSet.getAttributes()))
             for readGroup in readGroupSet.getReadGroups():
                 self.insertReadGroup(readGroup)
-        except Exception as e:
-            raise exceptions.RepoManagerException(e)
+        except peewee.IntegrityError as e:
+            raise exceptions.DuplicateNameException(readGroupSet.getLocalId(),
+                                                    readGroupSet.getParentContainer().getLocalId())
 
     def removeReferenceSet(self, referenceSet):
         """
@@ -1661,8 +1662,9 @@ class SqlDataRepository(AbstractDataRepository):
                 name=featureSet.getLocalId(),
                 dataurl=featureSet.getDataUrl(),
                 attributes=json.dumps(featureSet.getAttributes()))
-        except Exception as e:
-            raise exceptions.RepoManagerException(e)
+        except peewee.IntegrityError as e:
+            raise exceptions.DuplicateNameException(featureSet.getLocalId(),
+                                                    featureSet.getParentContainer().getLocalId())
 
     def _readFeatureSetTable(self):
         for featureSetRecord in models.Featureset.select():
