@@ -26,6 +26,8 @@ import candig.server.datamodel.pipeline_metadata as pipeline_metadata
 
 import candig.schemas.protocol as protocol
 
+import peewee
+
 MODE_READ = 'r'
 MODE_WRITE = 'w'
 
@@ -1623,8 +1625,9 @@ class SqlDataRepository(AbstractDataRepository):
                 patientId = variantSet.getPatientId(),
                 sampleId = variantSet.getSampleId(),
                 attributes=json.dumps(variantSet.getAttributes()))
-        except Exception as e:
-            raise exceptions.RepoManagerException(e)
+        except peewee.IntegrityError as e:
+            raise exceptions.DuplicateNameException(variantSet.getLocalId(),
+                                                    variantSet.getParentContainer().getLocalId())
         for callSet in variantSet.getCallSets():
             self.insertCallSet(callSet)
 
