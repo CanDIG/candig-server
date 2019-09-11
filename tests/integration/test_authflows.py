@@ -10,10 +10,6 @@ import unittest
 import json
 import csv
 
-from tests.end_to_end import server_test
-from tests.end_to_end import server
-
-import candig.server.frontend as frontend
 import tests.paths as paths
 
 with open('tests/integration/config.json', 'r') as test_config:
@@ -25,35 +21,9 @@ with open('tests/integration/config.json', 'r') as test_config:
     KC_REALM = parsed_config['realm']
     KC_CLIENT = parsed_config['client']
 
-# SKIP_FLAG = 0 when continuous test deployment if Tyk/KC works
-SKIP_FLAG = 1
-
 
 @unittest.skip("Enable this when continuous test deployment of Tyk/KC works")
-class TestIntegrationStart(unittest.TestCase):
-    def testIntegratedStart(self):
-        app = server.CandigIntegrationTestServer(
-            TYK_HOST, KC_HOST, KC_REALM, KC_CLIENT, paths.testDataRepo, paths.testAccessList)
-        try:
-            app.start()
-        finally:
-            app.shutdown()
-
-
-@unittest.skip("Enable this when continuous test deployment of Tyk/KC works")
-class TestIntegrationApi(server_test.ServerTestClass):
-    @classmethod
-    def setUpClass(cls):
-        cls.otherSetup()
-        cls.server = cls.getServer()
-        if not SKIP_FLAG == 1:
-            cls.server.start()
-
-    @classmethod
-    def getServer(cls):
-        return server.CandigIntegrationTestServer(
-            TYK_HOST, KC_HOST, KC_REALM, KC_CLIENT, paths.testDataRepo, paths.testAccessList)
-
+class TestIntegrationApi(unittest.TestCase):
     def login(self, username, password):
         # auth requests must be sent through gateway server
         token_endpoint = '{}/token'.format(TYK_HOST)
@@ -81,8 +51,11 @@ class TestIntegrationApi(server_test.ServerTestClass):
 
     def testDashboardRedirect(self):
         # Dashboard should be returning 302 to Keycloak login without token
-        frontend.configure(baseConfig="KeycloakOidConfig", configFile=self.server.configFile.name)
-        redirect_url = frontend._generate_login_url(TYK_HOST) + '/'
+        callback = TYK_HOST + '/login_oidc'
+        redirect_url = '{0}/auth/realms/{1}/protocol/openid-connect/auth?scope=openid+email&response_type=code&' \
+                       'client_id={2}&response_mode=form_post&redirect_uri={3}&return_url={4}/'.format(
+                        KC_HOST, KC_REALM, KC_CLIENT, callback, TYK_HOST
+        )
         r = requests.get(TYK_HOST, allow_redirects=False)
         self.assertEqual(r.status_code, 302)
         self.assertEqual(r.headers['Location'], redirect_url)
@@ -106,11 +79,11 @@ class TestIntegrationApi(server_test.ServerTestClass):
         self.assertEqual(r.status_code, 403)
 
         # after building the acl, should be 200
-        self.build_acl(KC_HOST, KC_REALM, TEST_USER)
+        # self.build_acl(KC_HOST, KC_REALM, TEST_USER)
         r = requests.post(test_endpoint, data=json.dumps({}), headers=headers)
         self.assertEqual(r.status_code, 200)
 
-        # acl should be empty resulting in 404
-        self.clear_acl()
-        r = requests.post(test_endpoint, data=json.dumps({}), headers=headers)
-        self.assertEqual(r.status_code, 404)
+        # # acl should be empty resulting in 404
+        # self.clear_acl()
+        # r = requests.post(test_endpoint, data=json.dumps({}), headers=headers)
+        # self.assertEqual(r.status_code, 404)
