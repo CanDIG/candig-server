@@ -61,7 +61,6 @@ var statusCode = 0; // Initial value, table is empty
         statusCode = 0;
     }
 
-    document.getElementById("searchBtn").addEventListener("click", submit);
     document.getElementById("confirmRG").addEventListener("click", rg_submit);
 
     function submit() {

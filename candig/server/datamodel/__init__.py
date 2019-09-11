@@ -30,7 +30,7 @@ class PysamFileHandleCache(object):
         self._cache = collections.deque()
         self._memoTable = dict()
         # Initialize the value even if it will be set up by the config
-        self._maxCacheSize = 50
+        self._maxCacheSize = 500
 
     def setMaxCacheSize(self, size):
         """

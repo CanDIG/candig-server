@@ -26,6 +26,8 @@ import candig.server.datamodel.pipeline_metadata as pipeline_metadata
 
 import candig.schemas.protocol as protocol
 
+import peewee
+
 MODE_READ = 'r'
 MODE_WRITE = 'w'
 
@@ -793,6 +795,45 @@ class SqlDataRepository(AbstractDataRepository):
             models.Peer.url).limit(limit).offset(offset)
         return [peers.Peer(p.url, record=p) for p in select]
 
+    def getSqlOntologyByName(self, name):
+        """
+        Returns the ontology set with the specified name.
+        """
+        select = list(models.Ontology.select().where(models.Ontology.name == name))
+
+        if len(select) == 0:
+            raise exceptions.OntologyNameNotFoundException(name)
+        else:
+            ontology = ontologies.Ontology(select[0].name)
+            ontology.populateFromRow(select[0])
+            return ontology
+
+    def getSqlReferenceSetByName(self, name):
+        """
+        Returns the reference set with the specified name.
+        """
+        select = list(models.Referenceset.select().where(models.Referenceset.name == name))
+
+        if len(select) == 0:
+            raise exceptions.ReferenceSetNameNotFoundException(name)
+        else:
+            referenceSet = references.HtslibReferenceSet(select[0].name)
+            referenceSet.populateFromRow(select[0])
+            return referenceSet
+
+    def getSqlDatasetByName(self, name):
+        """
+        Returns the dataset with the specified name.
+        """
+        select = list(models.Dataset.select().where(models.Dataset.name == name))
+
+        if len(select) == 0:
+            raise exceptions.DatasetNameNotFoundException(name)
+        else:
+            dataset = datasets.Dataset(select[0].name)
+            dataset.populateFromRow(select[0])
+            return dataset
+
     def tableToTsv(self, model):
         """
         Takes a model class and attempts to create a table in TSV format
@@ -1457,8 +1498,9 @@ class SqlDataRepository(AbstractDataRepository):
                 attributes=json.dumps(readGroupSet.getAttributes()))
             for readGroup in readGroupSet.getReadGroups():
                 self.insertReadGroup(readGroup)
-        except Exception as e:
-            raise exceptions.RepoManagerException(e)
+        except peewee.IntegrityError as e:
+            raise exceptions.DuplicateNameException(readGroupSet.getLocalId(),
+                                                    readGroupSet.getParentContainer().getLocalId())
 
     def removeReferenceSet(self, referenceSet):
         """
@@ -1584,8 +1626,9 @@ class SqlDataRepository(AbstractDataRepository):
                 patientId = variantSet.getPatientId(),
                 sampleId = variantSet.getSampleId(),
                 attributes=json.dumps(variantSet.getAttributes()))
-        except Exception as e:
-            raise exceptions.RepoManagerException(e)
+        except peewee.IntegrityError as e:
+            raise exceptions.DuplicateNameException(variantSet.getLocalId(),
+                                                    variantSet.getParentContainer().getLocalId())
         for callSet in variantSet.getCallSets():
             self.insertCallSet(callSet)
 
@@ -1619,8 +1662,9 @@ class SqlDataRepository(AbstractDataRepository):
                 name=featureSet.getLocalId(),
                 dataurl=featureSet.getDataUrl(),
                 attributes=json.dumps(featureSet.getAttributes()))
-        except Exception as e:
-            raise exceptions.RepoManagerException(e)
+        except peewee.IntegrityError as e:
+            raise exceptions.DuplicateNameException(featureSet.getLocalId(),
+                                                    featureSet.getParentContainer().getLocalId())
 
     def _readFeatureSetTable(self):
         for featureSetRecord in models.Featureset.select():
