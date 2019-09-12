@@ -3,7 +3,7 @@ sudo: false
 matrix:
   include:
   - python: "3.6"
-    if: branch != integration_testing
+    if: branch != merge_integration_testing
     language: python
     cache:
       directories:
