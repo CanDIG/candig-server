@@ -22,7 +22,6 @@ with open('tests/integration/config.json', 'r') as test_config:
     KC_CLIENT = parsed_config['client']
 
 
-@unittest.skip("Enable this when continuous test deployment of Tyk/KC works")
 class TestIntegrationApi(unittest.TestCase):
     def login(self, username, password):
         # auth requests must be sent through gateway server
@@ -41,7 +40,7 @@ class TestIntegrationApi(unittest.TestCase):
         access_list = paths.testAccessList
         with open(access_list, 'w+') as acl:
             tsv_writer = csv.writer(acl, delimiter='\t', lineterminator='\n')
-            tsv_writer.writerow(["issuer", "username", "dataset1"])
+            tsv_writer.writerow(["issuer", "username", "mock_data"])
             tsv_writer.writerow([issuer, test_user, 4])
 
     def clear_acl(self):

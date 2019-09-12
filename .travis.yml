@@ -61,7 +61,7 @@ matrix:
       - curl -L https://api.github.com/repos/CanDIG/candig_compose/tarball/${CANDIG_COMPOSE_VERSION} | tar --strip-components=1  -zxvf -
         -C ${COMPOSE_DIR}
       - cd ${TRAVIS_BUILD_DIR}
-      - docker pull ${IMAGE_NAME}
+      - docker pull ${IMAGE_NAME}:beta
       - docker build --tag  ${IMAGE_NAME} .
     install:
       - cd "${TRAVIS_BUILD_DIR}"
@@ -74,5 +74,5 @@ matrix:
       - ./candig_setup.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config" -k localhost:8081 -t localhost
     script:
       - cd "${TRAVIS_BUILD_DIR}"
-      - python -mnose -s tests/integration/test_authflows.py
+      - python -mnose -s tests/integration
       - echo I GET HERE YE YE
