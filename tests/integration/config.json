@@ -1,0 +1,8 @@
+{
+  "tyk": "http://localhost:8080",
+  "keycloak": "http://localhost:8081",
+  "realm": "Candig",
+  "client": "test_candig",
+  "username": "candig_user",
+  "password": "candig_pw"
+}

@@ -1,6 +1,6 @@
 # Using multi stage to prevent keeping a second copy of the package in the image
 FROM centos:7.6.1810
-RUN yum -y install epel-release
+RUN yum -y update && yum -y install epel-release
 RUN yum -y install python36-pip.noarch \
  git \
  libffi-devel.x86_64 gcc-c++.x86_64 \
@@ -29,20 +29,18 @@ RUN curl -Lo /tmp/mock_data.json  https://github.com/CanDIG/candig-ingest/releas
 
 FROM centos:7.6.1810
 MAINTAINER P-O Quirion <pierre-olivier.quirion@calculquebec.ca>
-RUN yum -y install epel-release
+RUN yum -y update && yum -y install epel-release
 RUN yum -y install  \
- gcc-c++.x86_64 \
  python36.x86_64 openssl-devel \
  && yum clean all \
  && rm -rf /var/cache/yum
 
-# 0 is the irst stage
 
 RUN mkdir /etc/candig && chmod 777 /etc/candig
 
 RUN mkdir -p /opt/candig_server/
-# The ls forces a cash flush
 
+# 0 is the first stage
 COPY --from=0 /data /data
 COPY --from=0 /usr/local /usr/local
 
