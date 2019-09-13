@@ -61,7 +61,6 @@ matrix:
       - curl -L https://api.github.com/repos/CanDIG/candig_compose/tarball/${CANDIG_COMPOSE_VERSION} | tar --strip-components=1  -zxvf -
         -C ${COMPOSE_DIR}
       - cd ${TRAVIS_BUILD_DIR}
-      - docker pull ${IMAGE_NAME}:beta
       - docker build --tag  ${IMAGE_NAME} .
     install:
       - cd "${TRAVIS_BUILD_DIR}"
