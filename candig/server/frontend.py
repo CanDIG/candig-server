@@ -779,7 +779,10 @@ def handleHttpPost(request, endpoint):
     if request.mimetype and request.mimetype not in protocol.MIMETYPES:
         raise exceptions.UnsupportedMediaTypeException()
     return_mimetype = chooseReturnMimetype(request)
-    request = request.get_data().decode()
+    try:
+        request = request.get_data().decode()
+    except AttributeError:
+        request = request.get_data()
     if request == '' or request is None:
         request = '{}'
     responseStr = federation(
