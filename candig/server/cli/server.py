@@ -55,6 +55,9 @@ def addServerOptions(parser):
         "--workers", "-w", default=1,
         help="number of gunicorn  worker.")
     parser.add_argument(
+        "--timeout", "-T", default=60,
+        help="Timeout limit of a request for gunicorn.")
+    parser.add_argument(
         "--worker_class", "-k", default='sync',
         help="The type of worker process to run. "
              "gevent or sync (default)")
@@ -93,6 +96,7 @@ def server_main(args=None):
         options = {
             'bind': '%s:%s' % (parsedArgs.host, parsedArgs.port),
             'workers': int(parsedArgs.workers),
+            'timeout': int(parsedArgs.timeout),
             'worker_class': parsedArgs.worker_class,
             'accesslog': '-',  # Puts the access log on stdout
             'errorlog': '-',  # Puts the error log on stdout
