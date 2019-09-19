@@ -1898,17 +1898,22 @@ class SqlDataRepository(AbstractDataRepository):
                 patient.getLocalId(),
                 patient.getParentContainer().getLocalId())
 
+    def _readClinPipeTable(self, dataset, pw_model, datamodel, addMethod):
+        """
+        A helper that reads clin/pipe table into memory
+        """
+        for record in pw_model.select().where(pw_model.datasetId == dataset.getId()):
+            result = datamodel(dataset, record.name)
+            result.populateFromRow(record)
+            assert result.getId() == record.id
+            addMethod(result)
+
     def _readPatientTable(self):
         """
         Read the Patient table upon load
         """
-        for patientRecord in models.Patient.select():
-            dataset = self.getDataset(patientRecord.datasetid.id)
-            patient = clinical_metadata.Patient(
-                dataset, patientRecord.name)
-            patient.populateFromRow(patientRecord)
-            assert patient.getId() == patientRecord.id
-            dataset.addPatient(patient)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Patient, clinical_metadata.Patient, dataset.addPatient)
 
     def _createEnrollmentTable(self):
         self.database.create_table(models.Enrollment)
@@ -1971,13 +1976,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Enrollment table upon load
         """
-        for enrollmentRecord in models.Enrollment.select():
-            dataset = self.getDataset(enrollmentRecord.datasetid.id)
-            enrollment = clinical_metadata.Enrollment(
-                dataset, enrollmentRecord.name)
-            enrollment.populateFromRow(enrollmentRecord)
-            assert enrollment.getId() == enrollmentRecord.id
-            dataset.addEnrollment(enrollment)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Enrollment, clinical_metadata.Enrollment, dataset.addEnrollment)
 
     def _createConsentTable(self):
         self.database.create_table(models.Consent)
@@ -2048,13 +2048,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Consent table upon load
         """
-        for consentRecord in models.Consent.select():
-            dataset = self.getDataset(consentRecord.datasetid.id)
-            consent = clinical_metadata.Consent(
-                dataset, consentRecord.name)
-            consent.populateFromRow(consentRecord)
-            assert consent.getId() == consentRecord.id
-            dataset.addConsent(consent)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Consent, clinical_metadata.Consent, dataset.addConsent)
 
     def _createDiagnosisTable(self):
         self.database.create_table(models.Diagnosis)
@@ -2143,13 +2138,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Diagnosis table upon load
         """
-        for diagnosisRecord in models.Diagnosis.select():
-            dataset = self.getDataset(diagnosisRecord.datasetid.id)
-            diagnosis = clinical_metadata.Diagnosis(
-                dataset, diagnosisRecord.name)
-            diagnosis.populateFromRow(diagnosisRecord)
-            assert diagnosis.getId() == diagnosisRecord.id
-            dataset.addDiagnosis(diagnosis)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Diagnosis, clinical_metadata.Diagnosis, dataset.addDiagnosis)
 
     def _createSampleTable(self):
         self.database.create_table(models.Sample)
@@ -2228,13 +2218,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Sample table upon load
         """
-        for sampleRecord in models.Sample.select():
-            dataset = self.getDataset(sampleRecord.datasetid.id)
-            sample = clinical_metadata.Sample(
-                dataset, sampleRecord.name)
-            sample.populateFromRow(sampleRecord)
-            assert sample.getId() == sampleRecord.id
-            dataset.addSample(sample)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Sample, clinical_metadata.Sample, dataset.addSample)
 
     def _createTreatmentTable(self):
         self.database.create_table(models.Treatment)
@@ -2289,13 +2274,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Treatment table upon load
         """
-        for treatmentRecord in models.Treatment.select():
-            dataset = self.getDataset(treatmentRecord.datasetid.id)
-            treatment = clinical_metadata.Treatment(
-                dataset, treatmentRecord.name)
-            treatment.populateFromRow(treatmentRecord)
-            assert treatment.getId() == treatmentRecord.id
-            dataset.addTreatment(treatment)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Treatment, clinical_metadata.Treatment, dataset.addTreatment)
 
     def _createOutcomeTable(self):
         self.database.create_table(models.Outcome)
@@ -2358,13 +2338,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Outcome table upon load
         """
-        for outcomeRecord in models.Outcome.select():
-            dataset = self.getDataset(outcomeRecord.datasetid.id)
-            outcome = clinical_metadata.Outcome(
-                dataset, outcomeRecord.name)
-            outcome.populateFromRow(outcomeRecord)
-            assert outcome.getId() == outcomeRecord.id
-            dataset.addOutcome(outcome)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Outcome, clinical_metadata.Outcome, dataset.addOutcome)
 
     def _createComplicationTable(self):
         self.database.create_table(models.Complication)
@@ -2407,13 +2382,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Complication table upon load
         """
-        for complicationRecord in models.Complication.select():
-            dataset = self.getDataset(complicationRecord.datasetid.id)
-            complication = clinical_metadata.Complication(
-                dataset, complicationRecord.name)
-            complication.populateFromRow(complicationRecord)
-            assert complication.getId() == complicationRecord.id
-            dataset.addComplication(complication)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Complication, clinical_metadata.Complication, dataset.addComplication)
 
     def _createTumourboardTable(self):
         self.database.create_table(models.Tumourboard)
@@ -2504,13 +2474,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Tumourboard table upon load
         """
-        for tumourboardRecord in models.Tumourboard.select():
-            dataset = self.getDataset(tumourboardRecord.datasetid.id)
-            tumourboard = clinical_metadata.Tumourboard(
-                dataset, tumourboardRecord.name)
-            tumourboard.populateFromRow(tumourboardRecord)
-            assert tumourboard.getId() == tumourboardRecord.id
-            dataset.addTumourboard(tumourboard)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Tumourboard, clinical_metadata.Tumourboard, dataset.addTumourboard)
 
     def _createChemotherapyTable(self):
         self.database.create_table(models.Chemotherapy)
@@ -2575,13 +2540,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Chemotherapy table upon load
         """
-        for chemotherapyRecord in models.Chemotherapy.select():
-            dataset = self.getDataset(chemotherapyRecord.datasetid.id)
-            chemotherapy = clinical_metadata.Chemotherapy(
-                dataset, chemotherapyRecord.name)
-            chemotherapy.populateFromRow(chemotherapyRecord)
-            assert chemotherapy.getId() == chemotherapyRecord.id
-            dataset.addChemotherapy(chemotherapy)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Chemotherapy, clinical_metadata.Chemotherapy, dataset.addChemotherapy)
 
     def _createRadiotherapyTable(self):
         self.database.create_table(models.Radiotherapy)
@@ -2665,13 +2625,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Radiotherapy table upon load
         """
-        for radiotherapyRecord in models.Radiotherapy.select():
-            dataset = self.getDataset(radiotherapyRecord.datasetid.id)
-            radiotherapy = clinical_metadata.Radiotherapy(
-                dataset, radiotherapyRecord.name)
-            radiotherapy.populateFromRow(radiotherapyRecord)
-            assert radiotherapy.getId() == radiotherapyRecord.id
-            dataset.addRadiotherapy(radiotherapy)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Radiotherapy, clinical_metadata.Radiotherapy, dataset.addRadiotherapy)
 
     def _createSurgeryTable(self):
         self.database.create_table(models.Surgery)
@@ -2725,13 +2680,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Surgery table upon load
         """
-        for surgeryRecord in models.Surgery.select():
-            dataset = self.getDataset(surgeryRecord.datasetid.id)
-            surgery = clinical_metadata.Surgery(
-                dataset, surgeryRecord.name)
-            surgery.populateFromRow(surgeryRecord)
-            assert surgery.getId() == surgeryRecord.id
-            dataset.addSurgery(surgery)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Surgery, clinical_metadata.Surgery, dataset.addSurgery)
 
     def _createImmunotherapyTable(self):
         self.database.create_table(models.Immunotherapy)
@@ -2777,13 +2727,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Immunotherapy table upon load
         """
-        for immunotherapyRecord in models.Immunotherapy.select():
-            dataset = self.getDataset(immunotherapyRecord.datasetid.id)
-            immunotherapy = clinical_metadata.Immunotherapy(
-                dataset, immunotherapyRecord.name)
-            immunotherapy.populateFromRow(immunotherapyRecord)
-            assert immunotherapy.getId() == immunotherapyRecord.id
-            dataset.addImmunotherapy(immunotherapy)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Immunotherapy, clinical_metadata.Immunotherapy, dataset.addImmunotherapy)
 
     def _createCelltransplantTable(self):
         self.database.create_table(models.Celltransplant)
@@ -2827,13 +2772,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Celltransplant table upon load
         """
-        for celltransplantRecord in models.Celltransplant.select():
-            dataset = self.getDataset(celltransplantRecord.datasetid.id)
-            celltransplant = clinical_metadata.Celltransplant(
-                dataset, celltransplantRecord.name)
-            celltransplant.populateFromRow(celltransplantRecord)
-            assert celltransplant.getId() == celltransplantRecord.id
-            dataset.addCelltransplant(celltransplant)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Celltransplant, clinical_metadata.Celltransplant, dataset.addCelltransplant)
 
     def _createSlideTable(self):
         self.database.create_table(models.Slide)
@@ -2899,13 +2839,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Slide table upon load
         """
-        for slideRecord in models.Slide.select():
-            dataset = self.getDataset(slideRecord.datasetid.id)
-            slide = clinical_metadata.Slide(
-                dataset, slideRecord.name)
-            slide.populateFromRow(slideRecord)
-            assert slide.getId() == slideRecord.id
-            dataset.addSlide(slide)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Slide, clinical_metadata.Slide, dataset.addSlide)
 
     def _createStudyTable(self):
         self.database.create_table(models.Study)
@@ -2947,13 +2882,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Study table upon load
         """
-        for studyRecord in models.Study.select():
-            dataset = self.getDataset(studyRecord.datasetid.id)
-            study = clinical_metadata.Study(
-                dataset, studyRecord.name)
-            study.populateFromRow(studyRecord)
-            assert study.getId() == studyRecord.id
-            dataset.addStudy(study)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Study, clinical_metadata.Study, dataset.addStudy)
 
     def _createLabtestTable(self):
         self.database.create_table(models.Labtest)
@@ -3001,13 +2931,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Labtest table upon load
         """
-        for labtestRecord in models.Labtest.select():
-            dataset = self.getDataset(labtestRecord.datasetid.id)
-            labtest = clinical_metadata.Labtest(
-                dataset, labtestRecord.name)
-            labtest.populateFromRow(labtestRecord)
-            assert labtest.getId() == labtestRecord.id
-            dataset.addLabtest(labtest)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Labtest, clinical_metadata.Labtest, dataset.addLabtest)
 
     def _createExtractionTable(self):
         self.database.create_table(models.Extraction)
@@ -3051,13 +2976,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Extraction table upon load
         """
-        for extractionRecord in models.Extraction.select():
-            dataset = self.getDataset(extractionRecord.datasetid.id)
-            extraction = pipeline_metadata.Extraction(
-                dataset, extractionRecord.name)
-            extraction.populateFromRow(extractionRecord)
-            assert extraction.getId() == extractionRecord.id
-            dataset.addExtraction(extraction)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Extraction, pipeline_metadata.Extraction, dataset.addExtraction)
 
     def _createSequencingTable(self):
         self.database.create_table(models.Sequencing)
@@ -3109,13 +3029,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Sequencing table upon load
         """
-        for sequencingRecord in models.Sequencing.select():
-            dataset = self.getDataset(sequencingRecord.datasetid.id)
-            sequencing = pipeline_metadata.Sequencing(
-                dataset, sequencingRecord.name)
-            sequencing.populateFromRow(sequencingRecord)
-            assert sequencing.getId() == sequencingRecord.id
-            dataset.addSequencing(sequencing)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Sequencing, pipeline_metadata.Sequencing, dataset.addSequencing)
 
     def _createAlignmentTable(self):
         self.database.create_table(models.Alignment)
@@ -3181,13 +3096,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the Alignment table upon load
         """
-        for alignmentRecord in models.Alignment.select():
-            dataset = self.getDataset(alignmentRecord.datasetid.id)
-            alignment = pipeline_metadata.Alignment(
-                dataset, alignmentRecord.name)
-            alignment.populateFromRow(alignmentRecord)
-            assert alignment.getId() == alignmentRecord.id
-            dataset.addAlignment(alignment)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.Alignment, pipeline_metadata.Alignment, dataset.addAlignment)
 
     def _createVariantCallingTable(self):
         self.database.create_table(models.VariantCalling)
@@ -3248,13 +3158,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the VariantCalling table upon load
         """
-        for variantCallingRecord in models.VariantCalling.select():
-            dataset = self.getDataset(variantCallingRecord.datasetid.id)
-            variantCalling = pipeline_metadata.VariantCalling(
-                dataset, variantCallingRecord.name)
-            variantCalling.populateFromRow(variantCallingRecord)
-            assert variantCalling.getId() == variantCallingRecord.id
-            dataset.addVariantCalling(variantCalling)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.VariantCalling, pipeline_metadata.VariantCalling, dataset.addVariantCalling)
 
     def _createFusionDetectionTable(self):
         self.database.create_table(models.FusionDetection)
@@ -3306,13 +3211,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the FusionDetection table upon load
         """
-        for fusionDetectionRecord in models.FusionDetection.select():
-            dataset = self.getDataset(fusionDetectionRecord.datasetid.id)
-            fusionDetection = pipeline_metadata.FusionDetection(
-                dataset, fusionDetectionRecord.name)
-            fusionDetection.populateFromRow(fusionDetectionRecord)
-            assert fusionDetection.getId() == fusionDetectionRecord.id
-            dataset.addFusionDetection(fusionDetection)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.FusionDetection, pipeline_metadata.FusionDetection, dataset.addFusionDetection)
 
     def _createExpressionAnalysisTable(self):
         self.database.create_table(models.ExpressionAnalysis)
@@ -3360,13 +3260,8 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Read the ExpressionAnalysis table upon load
         """
-        for expressionAnalysisRecord in models.ExpressionAnalysis.select():
-            dataset = self.getDataset(expressionAnalysisRecord.datasetid.id)
-            expressionAnalysis = pipeline_metadata.ExpressionAnalysis(
-                dataset, expressionAnalysisRecord.name)
-            expressionAnalysis.populateFromRow(expressionAnalysisRecord)
-            assert expressionAnalysis.getId() == expressionAnalysisRecord.id
-            dataset.addExpressionAnalysis(expressionAnalysis)
+        for dataset in self.getDatasets():
+            self._readClinPipeTable(dataset, models.ExpressionAnalysis, pipeline_metadata.ExpressionAnalysis, dataset.addExpressionAnalysis)
 
     def _createIndividualTable(self):
         self.database.create_table(models.Individual)
