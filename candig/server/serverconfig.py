@@ -212,4 +212,4 @@ class NoAuth(DevelopmentConfig):
     """
 
     TYK_ENABLED = False
-    TYK_SERVER = TYK_LISTEN_PATH = KC_SERVER = KC_LOGIN_REDIRECT = ''
+    TYK_SERVER = TYK_LISTEN_PATH = ''

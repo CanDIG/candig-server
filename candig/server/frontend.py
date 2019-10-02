@@ -294,17 +294,28 @@ def load_access_map():
 
 def render_candig_template(template_path, **kwargs):
     """
-    wrapper for flask render template to apply preset environment variables
+    Wrapper for flask render template to customize dashboard using ID tokens
 
     :param template_path: template file to render
     :param kwargs: additional variables
     :return: call to flask.render_template
     """
+
+    session_id = ''
+    session_user = 'n/a'
+
+    if app.config.get('TYK_ENABLED'):
+        try:
+            session_id = flask.request.headers["Authorization"][7:]
+            session_user = _parseTokenPayload(session_id)["preferred_username"]
+        except KeyError:
+            raise exceptions.NotAuthenticatedException()
+
     return flask.render_template(
         template_path,
-        session_id=flask.session.get('id_token', ''),
+        session_id=session_id,
         prepend_path=app.config.get('TYK_LISTEN_PATH', ''),
-        username=flask.session.get('username', 'N/A'),
+        username=session_user,
         **kwargs
     )
 
@@ -862,26 +873,6 @@ def handleException(exception):
                                 mimetype=return_mimetype)
 
 
-def requires_session(f):
-    """
-    Decorator for browser session routes. Inspects tokens and ensures client sessions + server
-    sessions are aligned.
-    """
-    @functools.wraps(f)
-    def decorated(*args, **kargs):
-        if app.config.get("TYK_ENABLED"):
-            if 'id_token' not in flask.session:
-                try:
-                    id_token = flask.request.headers["Authorization"][7:]
-                    parsed_payload = _parseTokenPayload(id_token)
-                    flask.session["id_token"] = id_token
-                    flask.session["username"] = parsed_payload["preferred_username"]
-                except KeyError:
-                    raise exceptions.NotAuthenticatedException()
-        return f(*args, **kargs)
-    return decorated
-
-
 @app.before_request
 def checkAuthorization():
     if app.config.get("TYK_ENABLED"):
@@ -968,73 +959,45 @@ class DisplayedRoute(object):
 
 
 @app.route('/')
-@requires_session
+@requires_auth
 def index():
     return render_candig_template('dashboard.html')
 
 
 @app.route('/gene_search')
-@requires_session
+@requires_auth
 def gene_search():
     return render_candig_template('gene_search.html')
 
 
 @app.route('/patients_overview')
-@requires_session
+@requires_auth
 def patients_overview():
     return render_candig_template('patients_overview.html')
 
 
 @app.route('/sample_analysis')
-@requires_session
+@requires_auth
 def sample_analysis():
     return render_candig_template('sample_analysis.html')
 
 
 @app.route('/custom_visualization')
-@requires_session
+@requires_auth
 def custom_visualization():
     return render_candig_template('custom_visualization.html')
 
 
 @app.route('/api_info')
-@requires_session
+@requires_auth
 def swagger():
     return render_candig_template('swagger.html')
 
 
 @app.route('/serverinfo')
-@requires_session
+@requires_auth
 def server_info():
-    response = flask.render_template('index.html',
-                                     info=app.serverStatus)
-    if app.config.get('AUTH0_ENABLED'):
-        key = (flask.request.args.get('key'))
-        try:
-            print(key)
-            profile = app.cache.get(key)
-        except:
-            raise exceptions.NotAuthorizedException()
-        if (profile):
-            return response
-        else:
-            exceptions.NotAuthenticatedException()
-    else:
-        return response
-
-
-@requires_session
-@app.route('/logout')
-def logout_redirect():
-    """
-    Need to clear the flask session before logging out at gate way level
-    """
-    if app.config.get('TYK_ENABLED'):
-        flask.session.clear()
-        return flask.redirect('{0}/auth/logout?app_url={1}'.format(
-            app.config.get('TYK_SERVER'), ''))
-    else:
-        raise exceptions.NotImplementedException()
+    return flask.render_template('index.html', info=app.serverStatus)
 
 
 # SEARCH
