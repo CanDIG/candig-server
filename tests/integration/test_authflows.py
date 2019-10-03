@@ -17,16 +17,13 @@ with open('tests/integration/config.json', 'r') as test_config:
     TEST_USER = parsed_config['username']
     TEST_PW = parsed_config['password']
     TYK_HOST = parsed_config['tyk']
-    KC_HOST = parsed_config['keycloak']
-    KC_REALM = parsed_config['realm']
-    KC_CLIENT = parsed_config['client']
 
 
 @unittest.skip("Enable this when continuous test deployment of Tyk/KC works")
 class TestIntegrationApi(unittest.TestCase):
     def api_login(self, username, password):
         # auth requests must be sent through gateway server
-        token_endpoint = '{}/token'.format(TYK_HOST)
+        token_endpoint = '{}/auth/token'.format(TYK_HOST)
         headers = {'Content-type': 'application/json'}
         body = {'username': username, 'password': password}
         r = requests.post(token_endpoint, data=json.dumps(body), headers=headers)
@@ -74,7 +71,7 @@ class TestIntegrationApi(unittest.TestCase):
     def testInvalidCredentials(self):
         login_response = self.api_login('invalid_user', 'invalid_password')
         self.assertEqual(login_response["code"], 401)
-        token = login_response["body"].get("token")
+        token = login_response["body"].get("id_token")
         self.assertIsNone(token)
 
     def testTokenAuthFlow(self):
@@ -83,7 +80,7 @@ class TestIntegrationApi(unittest.TestCase):
         """
         login_response = self.api_login(TEST_USER, TEST_PW)
         self.assertEqual(login_response["code"], 200)
-        token = login_response["body"].get("token")
+        token = login_response["body"].get("id_token")
 
         token_as_bearer = 'Bearer {}'.format(token)
         headers = {'Authorization': token_as_bearer}
