@@ -6,7 +6,6 @@ TODO Document properly.
 
 import os
 import datetime
-import time
 import socket
 import urllib.parse
 import functools
