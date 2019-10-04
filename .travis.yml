@@ -66,6 +66,8 @@ matrix:
       - cd "${TRAVIS_BUILD_DIR}"
       - pip install -r dev-requirements.txt
     before_script:
+      - echo "127.0.0.1       candigauth" >> /etc/hosts
+      - echo "127.0.0.1       candig" >> /etc/hosts
       - cd ${COMPOSE_DIR}
       - ./create_compose.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config"
       - docker-compose -f yml/containers_network.yml -f yml/volumes.yml up -d
