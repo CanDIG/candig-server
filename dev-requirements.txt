@@ -21,6 +21,7 @@ nose
 pep8
 flake8==3.2.0
 coverage
+selenium==3.141.0
 
 PyVCF==0.6.8
 freezegun==0.3.6
