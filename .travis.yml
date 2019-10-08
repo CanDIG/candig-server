@@ -94,5 +94,5 @@ matrix:
       - python -mnose -s tests/integration
     after_script:
       - echo -n ${DOCKERHUB_TOKEN} | docker login -u poquirion --password-stdin
-      - docker push ${IMAGE_NAME}:testing
       - docker tag ${IMAGE_NAME} ${IMAGE_NAME}:testing
+      - docker push ${IMAGE_NAME}:testing
