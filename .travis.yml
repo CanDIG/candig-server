@@ -47,6 +47,9 @@ matrix:
   - service: docker
     language: python
     python: 3.6
+    addons:
+      chrome: stable
+      firefox: latest
     cache:
       directories:
         - $HOME/.cache/pip
@@ -66,12 +69,8 @@ matrix:
       - curl -L https://api.github.com/repos/CanDIG/candig_compose/tarball/${CANDIG_COMPOSE_VERSION} | tar --strip-components=1  -zxvf -
         -C ${COMPOSE_DIR}
       - cd ${TRAVIS_BUILD_DIR}
-      - docker pull ${IMAGE_NAME}
       - docker pull ${IMAGE_NAME}:testing
       - docker build --tag  ${IMAGE_NAME} .
-      - docker tag ${IMAGE_NAME} ${IMAGE_NAME}:testing
-      - echo -n ${DOCKERHUB_TOKEN} | docker login -u poquirion --password-stdin
-      - docker push ${IMAGE_NAME}:testing
     install:
       - cd "${TRAVIS_BUILD_DIR}"
       - pip install -r dev-requirements.txt
@@ -93,3 +92,7 @@ matrix:
     script:
       - cd "${TRAVIS_BUILD_DIR}"
       - python -mnose -s tests/integration
+    after_script:
+      - echo -n ${DOCKERHUB_TOKEN} | docker login -u poquirion --password-stdin
+      - docker push ${IMAGE_NAME}:testing
+      - docker tag ${IMAGE_NAME} ${IMAGE_NAME}:testing
