@@ -8,6 +8,7 @@ NOTE: Pre-configuration required. Tyk and Keycloak must be configured to communi
 import requests
 import unittest
 import json
+import time
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
@@ -22,7 +23,8 @@ with open('tests/integration/config.json', 'r') as test_config:
 class TestIntegrationApi(unittest.TestCase):
     def api_login(self, username, password):
         # auth requests must be sent through gateway server
-        token_endpoint = '{}/auth/token'.format(TYK_HOST)
+        # token_endpoint = '{}/auth/token'.format(TYK_HOST)
+        token_endpoint = '{}/token'.format(TYK_HOST)
         headers = {'Content-type': 'application/json'}
         body = {'username': username, 'password': password}
         r = requests.post(token_endpoint, data=json.dumps(body), headers=headers)
@@ -45,7 +47,9 @@ class TestIntegrationApi(unittest.TestCase):
             password_dom.send_keys(TEST_PW)
 
             driver.find_element_by_id("kc-login").click()
+            time.sleep(.5)
             driver.find_element_by_id("user-dropdown-top").click()
+            time.sleep(.5)
             driver.find_element_by_link_text("Logout").click()
             driver.quit()
 
@@ -79,14 +83,15 @@ class TestIntegrationApi(unittest.TestCase):
         """
         login_response = self.api_login(TEST_USER, TEST_PW)
         self.assertEqual(login_response["code"], 200)
-        token = login_response["body"].get("id_token")
+        # token = login_response["body"].get("id_token")
+        token = login_response["body"].get("token")
 
         token_as_bearer = 'Bearer {}'.format(token)
         headers = {'Authorization': token_as_bearer}
         test_endpoint = '{}/datasets/search'.format(TYK_HOST)
 
         r = requests.post(test_endpoint, data=json.dumps({}))
-        self.assertEqual(r.status_code, 403)
+        self.assertEqual(r.status_code, 401)
 
         r = requests.post(test_endpoint, data=json.dumps({}), headers=headers)
         self.assertEqual(r.status_code, 200)
