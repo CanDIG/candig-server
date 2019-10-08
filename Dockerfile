@@ -1,13 +1,5 @@
 # Using multi stage to prevent keeping a second copy of the package in the image
 FROM c3genomics/centos7_dev:1.0
-RUN yum -y update && yum -y install epel-release
-RUN yum -y install python36-pip.noarch \
- git \
- libffi-devel.x86_64 gcc-c++.x86_64 \
- python36-devel.x86_64 openssl-devel \
- libxml2-devel.x86_64 libxslt-devel.x86_64  libcurl-devel.x86_64 make gcc  \
- && pip3 install --upgrade pip setuptools
-
 ENV INGEST_V=v1.3.0
  
 RUN  pip install \
@@ -31,12 +23,6 @@ RUN curl -Lo /tmp/mock_data.json  https://github.com/CanDIG/candig-ingest/releas
 
 FROM c3genomics/centos7_run:1.0
 MAINTAINER P-O Quirion <pierre-olivier.quirion@calculquebec.ca>
-RUN yum -y update && yum -y install epel-release
-RUN yum -y install  \
- python36.x86_64 openssl-devel \
- && yum clean all \
- && rm -rf /var/cache/yum
-
 
 RUN mkdir /etc/candig && chmod 777 /etc/candig
 
