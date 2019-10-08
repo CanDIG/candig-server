@@ -50,6 +50,9 @@ matrix:
     addons:
       chrome: stable
       firefox: latest
+      hosts:
+        - candig
+        - candigauth
     cache:
       directories:
         - $HOME/.cache/pip
@@ -69,12 +72,11 @@ matrix:
       - curl -L https://api.github.com/repos/CanDIG/candig_compose/tarball/${CANDIG_COMPOSE_VERSION} | tar --strip-components=1  -zxvf -
         -C ${COMPOSE_DIR}
       - cd ${TRAVIS_BUILD_DIR}
-      - docker pull ${IMAGE_NAME}:testing
       - docker build --tag  ${IMAGE_NAME} .
     install:
       - cd "${TRAVIS_BUILD_DIR}"
       - pip install -r dev-requirements.txt
-      - wget https://chromedriver.storage.googleapis.com/77.0.3865.40/chromedriver_linux64.zip
+      - wget https://chromedriver.storage.googleapis.com/73.0.3683.68/chromedriver_linux64.zip
       - wget https://github.com/mozilla/geckodriver/releases/download/v0.25.0/geckodriver-v0.25.0-linux64.tar.gz
       - unzip chromedriver_linux64.zip
       - mkdir -p /tmp/bin
@@ -82,8 +84,6 @@ matrix:
       - tar -xvf geckodriver-v0.25.0-linux64.tar.gz
       - mv geckodriver chromedriver /tmp/bin
     before_script:
-      - echo "127.0.0.1       candigauth >> /etc/hosts"
-      - echo "127.0.0.1       candig >> /etc/hosts"
       - cd ${COMPOSE_DIR}
       - ./create_compose.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config"
       - docker-compose -f yml/containers_network.yml -f yml/volumes.yml up -d
@@ -92,7 +92,3 @@ matrix:
     script:
       - cd "${TRAVIS_BUILD_DIR}"
       - python -mnose -s tests/integration
-    after_script:
-      - echo -n ${DOCKERHUB_TOKEN} | docker login -u poquirion --password-stdin
-      - docker tag ${IMAGE_NAME} ${IMAGE_NAME}:testing
-      - docker push ${IMAGE_NAME}:testing
