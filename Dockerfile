@@ -1,5 +1,5 @@
 # Using multi stage to prevent keeping a second copy of the package in the image
-FROM centos:7.6.1810
+FROM centos:7.6.1810 AS c3genomics/buildlayer
 RUN yum -y update && yum -y install epel-release
 RUN yum -y install python36-pip.noarch \
  git \
@@ -8,12 +8,14 @@ RUN yum -y install python36-pip.noarch \
  libxml2-devel.x86_64 libxslt-devel.x86_64  libcurl-devel.x86_64 make gcc  \
  && pip3 install --upgrade pip setuptools
 
-ENV SCHEMA_V=v1.0.0 INGEST_V=v1.3.0
-
+ENV INGEST_V=v1.3.0
+ 
 RUN  pip install \
-  git+https://github.com/CanDIG/candig-schemas.git@${SHEMA_V}#egg=candig_schemas  \
   git+https://github.com/CanDIG/candig-ingest.git@${INGEST_V}#egg=candig_ingest \
   gevent
+
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
 
 COPY . /tmp/server
 RUN cd /tmp/server/ && pip install .
