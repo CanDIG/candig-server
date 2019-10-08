@@ -3,15 +3,12 @@ export OUPTUT_CONFIGURATION_DIR=/tmp/volume_mount
 
 export CANDIG_PUBLIC_URL=http://candig
 
-#export CANDIG_PUBLIC_URL=http://candig
-#export CANDIG_PUBLIC_URL=http://localhost
 export CANDIG_PUBLIC_PORT=8080
 export TYK_GATW_LOCAL_URL=localhost
 export TYK_GATW_LOCAL_PORT=8080
 export TYK_DASHB_LOCAL_URL=localhost
 export TYK_DASHB_LOCAL_PORT=3000
 export KC_PUBLIC_URL=http://candigauth
-#export KC_PUBLIC_URL=http://localhost
 export KC_PUBLIC_PORT=8081
 
 export KC_LOCAL_URL=localhost
