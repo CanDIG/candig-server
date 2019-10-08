@@ -70,6 +70,7 @@ matrix:
       - docker pull ${IMAGE_NAME}:testing
       - docker build --tag  ${IMAGE_NAME} .
       - docker tag ${IMAGE_NAME} ${IMAGE_NAME}:testing
+      - echo -n ${DOCKERHUB_TOKEN} | docker login -u poquirion --password-stdin
       - docker  push ${IMAGE_NAME}:testing
     install:
       - cd "${TRAVIS_BUILD_DIR}"
