@@ -6,9 +6,6 @@ RUN  pip install \
   git+https://github.com/CanDIG/candig-ingest.git@${INGEST_V}#egg=candig_ingest \
   gevent
 
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install -r /tmp/requirements.txt
-
 COPY . /tmp/server
 RUN cd /tmp/server/ && pip install .
 
