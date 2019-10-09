@@ -87,7 +87,7 @@ matrix:
       - cd ${COMPOSE_DIR}
       - ./create_compose.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config"
       - docker-compose -f yml/containers_network.yml -f yml/volumes.yml up -d
-      - sleep 10
+      - while !  docker-compose -f yml/volumes.yml -f yml/containers_network.yml logs | grep "candigauth_1.*started in.*Started.*services" ; do sleep 1 ; done
       - ./candig_setup.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config" -k localhost:8081 -t localhost
     script:
       - cd "${TRAVIS_BUILD_DIR}"
