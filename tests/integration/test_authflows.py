@@ -22,6 +22,7 @@ with open('tests/integration/config.json', 'r') as test_config:
 
 
 class TestIntegrationApi(unittest.TestCase):
+
     def api_login(self, username, password):
         # auth requests must be sent through gateway server
         # token_endpoint = '{}/auth/token'.format(TYK_HOST)
@@ -58,6 +59,7 @@ class TestIntegrationApi(unittest.TestCase):
             driver.quit()
             self.assertTrue(False, msg="Could not complete login/logout flow")
 
+    @unittest.skip('Skippy')
     def testFirefoxAuthFlow(self):
         """
         Performs a Firefox browser login and logout
@@ -67,6 +69,7 @@ class TestIntegrationApi(unittest.TestCase):
         driver = webdriver.Firefox(options=options)  # requires geckodriver defined in $PATH
         self.browser_login(driver)
 
+    @unittest.skip('Skippy')
     def testChromeAuthFlow(self):
         """
         Performs a Chrome browser login and logout
