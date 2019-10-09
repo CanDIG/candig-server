@@ -6,3 +6,7 @@ RUN yum -y install python36-pip.noarch \
  python36-devel.x86_64 openssl-devel \
  libxml2-devel.x86_64 libxslt-devel.x86_64  libcurl-devel.x86_64 make gcc  \
  && pip3 install --upgrade pip setuptools
+
+ENV INGEST_V=v1.3.0
+RUN pip install git+https://github.com/CanDIG/candig-ingest.git@${INGEST_V}#egg=candig_ingest 
+

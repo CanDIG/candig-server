@@ -1,5 +1,8 @@
-# Using multi stage to prevent keeping a second copy of the package in the image
-FROM c3genomics/centos7_dev:1.0
+# Using multi stage to prevent keeping a second copy of
+# the package in the image
+# See current Dockerfile_dev in the tests/build_layer_image dir to
+# get the FROM layer
+FROM c3genomics/centos7_dev:1.1
 ENV INGEST_V=v1.3.0
  
 RUN  pip install \

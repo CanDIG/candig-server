@@ -11,6 +11,7 @@ import json
 import time
 
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options as FireFoxOptions
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
 with open('tests/integration/config.json', 'r') as test_config:
@@ -47,9 +48,9 @@ class TestIntegrationApi(unittest.TestCase):
             password_dom.send_keys(TEST_PW)
 
             driver.find_element_by_id("kc-login").click()
-            time.sleep(.5)
+            time.sleep(1.0)
             driver.find_element_by_id("user-dropdown-top").click()
-            time.sleep(.5)
+            time.sleep(1.0)
             driver.find_element_by_link_text("Logout").click()
             driver.quit()
 
@@ -61,14 +62,19 @@ class TestIntegrationApi(unittest.TestCase):
         """
         Performs a Firefox browser login and logout
         """
-        driver = webdriver.Firefox()  # requires geckodriver defined in $PATH
+        options = webdriver.firefox.options.Options()
+        options.headless = True
+        driver = webdriver.Firefox(options=options)  # requires geckodriver defined in $PATH
         self.browser_login(driver)
 
     def testChromeAuthFlow(self):
         """
         Performs a Chrome browser login and logout
         """
-        driver = webdriver.Chrome()  # requires chromedriver defined in $PATH
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")
+        driver = webdriver.Chrome(options=options)  # requires chromedriver defined in $PATH
+
         self.browser_login(driver)
 
     def testInvalidCredentials(self):
