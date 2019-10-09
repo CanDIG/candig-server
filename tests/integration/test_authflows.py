@@ -9,10 +9,14 @@ import requests
 import unittest
 import json
 import time
+import logging
 
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FireFoxOptions
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
+
+
+logger = logging.getLogger(__file__)
 
 with open('tests/integration/config.json', 'r') as test_config:
     parsed_config = json.load(test_config)
@@ -80,7 +84,6 @@ class TestIntegrationApi(unittest.TestCase):
 
         self.browser_login(driver)
 
-    @unittest.skip('Skippy')
     def testInvalidCredentials(self):
         login_response = self.api_login('invalid_user', 'invalid_password')
         self.assertIn(login_response["code"], [401, 403])
@@ -95,6 +98,8 @@ class TestIntegrationApi(unittest.TestCase):
         self.assertEqual(login_response["code"], 200)
         # token = login_response["body"].get("id_token")
         token = login_response["body"].get("token")
+        logger.info('got token {}'.format(token))
+        logger.debug('got token {}'.format(login_response))
 
         token_as_bearer = 'Bearer {}'.format(token)
         headers = {'Authorization': token_as_bearer}
