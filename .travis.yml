@@ -82,7 +82,8 @@ matrix:
 #      - tar -xvf geckodriver-v0.25.0-linux64.tar.gz
 #      - chmod 777  chromedriver
 #      - sudo mv  chromedriver /usr/local/bin/.
-      - sudo apt-get install firefox firefox-geckodriver google-chrome-stable chromium-chromedriver
+      -  sudo apt-get install firefox firefox-geckodriver chromium-chromedriver chromium-browser
+      -  sudo rm  /usr/bin/google-chrome && sudo ln -s /usr/bin/chromium-browser  /usr/bin/google-chrome
     before_script:
       - cd ${COMPOSE_DIR}
       - ./create_compose.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config"
