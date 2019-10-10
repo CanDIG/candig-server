@@ -48,8 +48,6 @@ matrix:
     language: python
     python: 3.6
     addons:
-      chrome: stable
-      firefox: latest
       hosts:
         - candig
         - candigauth
@@ -78,12 +76,13 @@ matrix:
     install:
       - cd "${TRAVIS_BUILD_DIR}"
       - pip install -r dev-requirements.txt
-      - wget https://chromedriver.storage.googleapis.com/73.0.3683.68/chromedriver_linux64.zip
-      - wget https://github.com/mozilla/geckodriver/releases/download/v0.25.0/geckodriver-v0.25.0-linux64.tar.gz
-      - unzip chromedriver_linux64.zip
-      - tar -xvf geckodriver-v0.25.0-linux64.tar.gz
-      - chmod 777 geckodriver chromedriver
-      - sudo mv geckodriver chromedriver /usr/local/bin/.
+#      - wget https://chromedriver.storage.googleapis.com/73.0.3683.68/chromedriver_linux64.zip
+#      - wget https://github.com/mozilla/geckodriver/releases/download/v0.25.0/geckodriver-v0.25.0-linux64.tar.gz
+#      - unzip chromedriver_linux64.zip
+#      - tar -xvf geckodriver-v0.25.0-linux64.tar.gz
+#      - chmod 777  chromedriver
+#      - sudo mv  chromedriver /usr/local/bin/.
+      - sudo apt-get install firefox firefox-geckodriver google-chrome-stable chromium-chromedriver
     before_script:
       - cd ${COMPOSE_DIR}
       - ./create_compose.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config"
