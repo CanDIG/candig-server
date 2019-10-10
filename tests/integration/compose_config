@@ -51,7 +51,7 @@ export LOCAL_CANDIG_SERVER="http://candig_server:80"
 ############################3
 
 # Keycloak settings with redirection through tyk
-export KC_REALM='candig'
+export KC_REALM='Candig'
 export KC_SERVER="${KC_PUBLIC_URL}:${KC_PUBLIC_PORT}"
 export KC_CLIENT_ID='test_candig'
 export KC_LOGIN_REDIRECT_PATH='/login_oidc'
