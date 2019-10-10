@@ -39,6 +39,7 @@ matrix:
               --with-coverage --cover-package candig.server
               --cover-inclusive --cover-min-percentage 75
               --cover-branches --cover-erase
+              --ignore-files="test_authflows.py"
       - make clean -C docs
       - make -C docs
     after_success:
