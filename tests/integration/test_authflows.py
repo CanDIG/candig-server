@@ -68,7 +68,7 @@ class TestIntegrationApi(unittest.TestCase):
         """
         Performs a Firefox browser login and logout
         """
-        options = webdriver.firefox.options.Options()
+        options = FireFoxOptions()
         options.headless = True
         driver = webdriver.Firefox(options=options)  # requires geckodriver defined in $PATH
         self.browser_login(driver)
