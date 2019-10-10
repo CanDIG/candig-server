@@ -3,15 +3,12 @@ export OUPTUT_CONFIGURATION_DIR=/tmp/volume_mount
 
 export CANDIG_PUBLIC_URL=http://candig
 
-#export CANDIG_PUBLIC_URL=http://candig
-#export CANDIG_PUBLIC_URL=http://localhost
 export CANDIG_PUBLIC_PORT=8080
 export TYK_GATW_LOCAL_URL=localhost
 export TYK_GATW_LOCAL_PORT=8080
 export TYK_DASHB_LOCAL_URL=localhost
 export TYK_DASHB_LOCAL_PORT=3000
 export KC_PUBLIC_URL=http://candigauth
-#export KC_PUBLIC_URL=http://localhost
 export KC_PUBLIC_PORT=8081
 
 export KC_LOCAL_URL=localhost
@@ -54,7 +51,7 @@ export LOCAL_CANDIG_SERVER="http://candig_server:80"
 ############################3
 
 # Keycloak settings with redirection through tyk
-export KC_REALM='candig'
+export KC_REALM='Candig'
 export KC_SERVER="${KC_PUBLIC_URL}:${KC_PUBLIC_PORT}"
 export KC_CLIENT_ID='test_candig'
 export KC_LOGIN_REDIRECT_PATH='/login_oidc'

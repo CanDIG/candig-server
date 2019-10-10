@@ -1,0 +1,12 @@
+FROM centos:7.6.1810
+RUN yum -y update && yum -y install epel-release
+RUN yum -y install python36-pip.noarch \
+ git \
+ libffi-devel.x86_64 gcc-c++.x86_64 \
+ python36-devel.x86_64 openssl-devel \
+ libxml2-devel.x86_64 libxslt-devel.x86_64  libcurl-devel.x86_64 make gcc  \
+ && pip3 install --upgrade pip setuptools
+
+ENV INGEST_V=v1.3.0
+RUN pip install git+https://github.com/CanDIG/candig-ingest.git@${INGEST_V}#egg=candig_ingest 
+
