@@ -14,6 +14,9 @@ import logging
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FireFoxOptions
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 logger = logging.getLogger(__file__)
@@ -46,8 +49,15 @@ class TestIntegrationApi(unittest.TestCase):
             self.assertTrue(False, msg="Could not load driver")
 
         try:
-            username_dom = driver.find_element_by_id("username")
-            password_dom = driver.find_element_by_id("password")
+            username_dom = WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.ID, "username"))
+            )
+
+            password_dom = WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.ID, "password"))
+            )
+
+            # password_dom = driver.find_element_by_id("password")
 
             username_dom.send_keys(TEST_USER)
             password_dom.send_keys(TEST_PW)
@@ -60,6 +70,9 @@ class TestIntegrationApi(unittest.TestCase):
             driver.quit()
 
         except NoSuchElementException:
+            driver.quit()
+            self.assertTrue(False, msg="Could not complete login/logout flow")
+        finally:
             driver.quit()
             self.assertTrue(False, msg="Could not complete login/logout flow")
 
