@@ -56,7 +56,7 @@ class TestIntegrationApi(unittest.TestCase):
             time.sleep(1.0)
             driver.find_element_by_id("user-dropdown-top").click()
             time.sleep(1.0)
-            driver.find_element_by_link_text(" Logout").click()
+            driver.find_element_by_link_text("Logout").click()
             driver.quit()
 
         except NoSuchElementException:
