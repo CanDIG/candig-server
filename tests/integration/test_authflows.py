@@ -46,7 +46,6 @@ class TestIntegrationApi(unittest.TestCase):
             self.assertTrue(False, msg="Could not load driver")
 
         try:
-            time.sleep(3)
             username_dom = driver.find_element_by_id("username")
             password_dom = driver.find_element_by_id("password")
 
@@ -71,6 +70,7 @@ class TestIntegrationApi(unittest.TestCase):
         options = FireFoxOptions()
         options.headless = True
         driver = webdriver.Firefox(options=options, executable_path='/usr/local/bin/geckodriver')  # requires geckodriver defined in $PATH
+        driver.implicitly_wait(5)
         self.browser_login(driver)
 
     def testChromeAuthFlow(self):
