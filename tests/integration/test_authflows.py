@@ -69,7 +69,7 @@ class TestIntegrationApi(unittest.TestCase):
         """
         options = FireFoxOptions()
         options.headless = True
-        driver = webdriver.Firefox(options=options, executable_path='/usr/local/bin/geckodriver')  # requires geckodriver defined in $PATH
+        driver = webdriver.Firefox(options=options)  # requires geckodriver defined in $PATH
         driver.implicitly_wait(5)
         self.browser_login(driver)
 
