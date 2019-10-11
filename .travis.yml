@@ -49,6 +49,7 @@ matrix:
     language: python
     python: 3.6
     addons:
+      firefox: latest
       hosts:
         - candig
         - candigauth
