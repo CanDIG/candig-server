@@ -70,6 +70,7 @@ class TestIntegrationApi(unittest.TestCase):
         options = FireFoxOptions()
         options.headless = True
         driver = webdriver.Firefox(options=options, executable_path='/usr/local/bin/geckodriver')  # requires geckodriver defined in $PATH
+        time.sleep(5)
         self.browser_login(driver)
 
     def testChromeAuthFlow(self):
