@@ -1,10 +1,10 @@
 # Using multi stage to prevent keeping a second copy of the package in the image
 FROM centos:7.6.1810
 RUN yum -y install epel-release
-RUN yum -y install python36-pip.noarch \
+RUN yum -y install python3-pip.noarch \
  git \
  libffi-devel.x86_64 gcc-c++.x86_64 \
- python36-devel.x86_64 openssl-devel \
+ python3-devel.x86_64 openssl-devel \
  libxml2-devel.x86_64 libxslt-devel.x86_64  libcurl-devel.x86_64 make gcc  \
  && pip3 install --upgrade pip setuptools
 
