@@ -4,7 +4,7 @@
 # get the FROM layer
 FROM c3genomics/centos7_dev:1.1
 ENV INGEST_V=v1.3.0
- 
+
 RUN  pip install \
   git+https://github.com/CanDIG/candig-ingest.git@${INGEST_V}#egg=candig_ingest \
   gevent
