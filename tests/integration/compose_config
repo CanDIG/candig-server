@@ -1,0 +1,61 @@
+export INPUT_TEMPLATE_DIR=${COMPOSE_DIR}/template
+export OUPTUT_CONFIGURATION_DIR=/tmp/volume_mount
+
+export CANDIG_PUBLIC_URL=http://candig
+
+export CANDIG_PUBLIC_PORT=8080
+export TYK_GATW_LOCAL_URL=localhost
+export TYK_GATW_LOCAL_PORT=8080
+export TYK_DASHB_LOCAL_URL=localhost
+export TYK_DASHB_LOCAL_PORT=3000
+export KC_PUBLIC_URL=http://candigauth
+export KC_PUBLIC_PORT=8081
+
+export KC_LOCAL_URL=localhost
+export KC_LOCAL_PORT=8081
+
+export LOCAL_TYK_CONFIG_PATH=${OUPTUT_CONFIGURATION_DIR}/tyk/confs
+export LOCAL_KC_CONFIG_PATH=${OUPTUT_CONFIGURATION_DIR}/keycloak/configuration
+export LOCAL_CANDIG_CONFIG_PATH=${OUPTUT_CONFIGURATION_DIR}/candig_server
+
+# True for https False for http
+export SESSION_COOKIE_SECURE=False
+export SECRET_KEY=A.PRETTY.LONG.MOTS.DANS.PLUSIEURS.langues.med.chokolade.til
+# listen_path is empty "", put a slash only if there is a path "/<path>"
+export TYK_LISTEN_PATH=""
+
+#Default user in keycloak
+export KC_TEST_USER=candig_user
+export KC_TEST_USER_PW=candig_pw
+
+
+# Admin user of the keycloak
+export KC_ADMIN_USER=admin_per
+export KC_PW=a_long_phrase_easy_to_learn_that_i_will_not_forget
+# True if the keycoak is behind a proxy, typically nginx or apache.
+# false otherwise
+export PROXY_ADDRESS_FORWARDING=false
+
+
+export CANDIG_TYK_USERNAME=test_bed@mail.com
+export CANDIG_TYK_PASSWORD=my.only.bonne.idee.pour.un.good.pasword
+
+export TYK_DASH_FROM_EMAIL=support@calculcanada.ca
+export TYK_DASH_FROM_NAME="Pierre-Olivier Quirion"
+
+
+export LOCAL_CANDIG_SERVER="http://candig_server:80"
+
+
+
+############################3
+
+# Keycloak settings with redirection through tyk
+export KC_REALM='Candig'
+export KC_SERVER="${KC_PUBLIC_URL}:${KC_PUBLIC_PORT}"
+export KC_CLIENT_ID='test_candig'
+export KC_LOGIN_REDIRECT_PATH='/login_oidc'
+
+export API_NAME="Candig Api"
+
+export TYK_POLICY_NAME="Candig policy"

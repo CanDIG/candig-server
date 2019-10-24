@@ -1,49 +1,100 @@
-language: python
-python:
-  - "3.6"
 sudo: false
 
-cache:
-  directories:
-    - $HOME/.cache/pip
-    - /tmp/proto3.3.2
-
-install:
-  - pip install pip --upgrade
-# RDFLib requres html5lib;  html5lib requires setuptools version 18.5 or above;
-  - pip install -U setuptools
-  - python setup.py sdist
-  - pip install dist/candig*.tar.gz -c constraints.txt
-# every installable in setup.py's entry_points should be tested here
-  - candig_configtest --version
-  - candig_server --version
-  - candig_repo --version
-
-before_script:
-  - pip install -r dev-requirements.txt
-  - python scripts/build_test_data.py
-  - ingest --version
-  - ingest tests/data/registry.db dataset1 tests/data/sample_clin_metadata.json
-  - ingest tests/data/registry.db dataset1 tests/data/sample_pipe_metadata.json
-    
-before_install:
-    - bash tools/travis-install-protoc.sh 3.3.2
-    - export PATH=/tmp/proto3.3.2/bin:$PATH
-
-# run_tests.py runs everything under the script: tag so only put commands
-# under it that we want to run (and want to be able to run) as local tests
-script: 
-  - flake8 configtest_dev.py convert_error_code.py
+matrix:
+  include:
+  - python: "3.6"
+    if: branch != merge_integration_testing
+    language: python
+    cache:
+      directories:
+        - $HOME/.cache/pip
+        - /tmp/proto3.3.2
+    install:
+      - pip install pip --upgrade
+    # RDFLib requres html5lib;  html5lib requires setuptools version 18.5 or above;
+      - pip install -U setuptools
+      - python setup.py sdist
+      - pip install dist/candig*.tar.gz -c constraints.txt
+    # every installable in setup.py's entry_points should be tested here
+      - candig_configtest --version
+      - candig_server --version
+      - candig_repo --version
+    before_script:
+      - pip install -r dev-requirements.txt
+      - python scripts/build_test_data.py
+      - ingest --version
+      - ingest tests/data/registry.db dataset1 tests/data/sample_clin_metadata.json
+      - ingest tests/data/registry.db dataset1 tests/data/sample_pipe_metadata.json
+    before_install:
+      - bash tools/travis-install-protoc.sh 3.3.2
+      - export PATH=/tmp/proto3.3.2/bin:$PATH
+    # run_tests.py runs everything under the script: tag so only put commands
+    # under it that we want to run (and want to be able to run) as local tests
+    script:
+      - flake8 configtest_dev.py convert_error_code.py
            repo_dev.py server_dev.py
            setup.py
            tests candig scripts
-  - python -mnose tests 
+      - python -mnose tests
               --with-coverage --cover-package candig.server
               --cover-inclusive --cover-min-percentage 75
               --cover-branches --cover-erase
-  - make clean -C docs
-  - make -C docs
-
-after_success:
-# run codecov
-  - bash <(curl -s https://codecov.io/bash)
+              --ignore-files="test_authflows.py"
+      - make clean -C docs
+      - make -C docs
+    after_success:
+      # run codecov
+      - bash <(curl -s https://codecov.io/bash)
+  - service: docker
+    language: python
+    python: 3.6
+    addons:
+      firefox: latest
+      hosts:
+        - candig
+        - candigauth
+    cache:
+      directories:
+        - $HOME/.cache/pip
+#        - $HOME/virtualenv/python3.6.7
+#        - $HOME/virtualenv/python3.6
+    before_cache:
+      - rm -f $HOME/.cache/pip/log/debug.log
+    env:
+      - DOCKER_COMPOSE_VERSION=1.24.1
+      - COMPOSE_DIR=/tmp/compose
+      - IMAGE_NAME=c3genomics/candig_server
+      - CANDIG_COMPOSE_VERSION=v1.0.3
+    before_install:
+      - sudo rm /usr/local/bin/docker-compose
+      - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+      - chmod +x docker-compose
+      - sudo mv docker-compose /usr/local/bin
+      - mkdir -p ${COMPOSE_DIR}
+      - curl -L https://api.github.com/repos/CanDIG/candig_compose/tarball/${CANDIG_COMPOSE_VERSION} | tar --strip-components=1  -zxvf -
+        -C ${COMPOSE_DIR}
+      - cd ${TRAVIS_BUILD_DIR}
+      - docker build --tag  ${IMAGE_NAME} .
+    install:
+      - cd "${TRAVIS_BUILD_DIR}"
+      - pip install -r dev-requirements.txt
+#      - wget https://chromedriver.storage.googleapis.com/73.0.3683.68/chromedriver_linux64.zip
+      - wget https://github.com/mozilla/geckodriver/releases/download/v0.25.0/geckodriver-v0.25.0-linux64.tar.gz
+#      - unzip chromedriver_linux64.zip
+      - tar -xvf geckodriver-v0.25.0-linux64.tar.gz
+      - sudo mv geckodriver /usr/local/bin
+      - chmod +x /usr/local/bin/geckodriver
+#      - chmod 777  chromedriver
+#      - sudo mv  chromedriver /usr/local/bin/.
+      - sudo apt-get install chromium-chromedriver chromium-browser
+      - sudo rm  /usr/bin/google-chrome && sudo ln -s /usr/bin/chromium-browser  /usr/bin/google-chrome
+    before_script:
+      - cd ${COMPOSE_DIR}
+      - ./create_compose.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config"
+      - docker-compose -f yml/containers_network.yml -f yml/volumes.yml up -d
+      - while !  docker-compose -f yml/volumes.yml -f yml/containers_network.yml logs | grep "candigauth_1.*started in.*Started.*services" ; do sleep 1 ; done
+      - ./candig_setup.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config" -k localhost:8081 -t localhost
+      - sleep 45
+    script:
+      - cd "${TRAVIS_BUILD_DIR}"
+      - python -mnose -s tests/integration

@@ -20,6 +20,7 @@ def getGa4ghFilePath():
 testDir = 'tests'
 testDataDir = os.path.join(testDir, 'data')
 testDataRepo = os.path.join(testDataDir, 'registry.db')
+testAccessList = os.path.join(testDataDir, 'acl.tsv')
 
 # datasets
 datasetName = "dataset1"
