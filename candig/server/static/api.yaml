@@ -20,7 +20,7 @@ paths:
   /datasets/search:
     post:
       tags:
-      - Metadata Service
+      - Dataset Service
       summary: Gets a list of Dataset matching the search criteria.
       description: |-
         POST /datasets/search must accept a JSON version of
@@ -44,7 +44,7 @@ paths:
   /datasets/{datasetId}:
     get:
       tags:
-      - Metadata Service
+      - Dataset Service
       summary: Gets a Dataset by ID.
       description: |-
         GET /datasets/{datasetId} will return a JSON version of
@@ -67,7 +67,7 @@ paths:
   /celltransplants/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Celltransplants accessible through the API.
@@ -89,7 +89,7 @@ paths:
   /celltransplants/{celltransplant_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Celltransplant by ID.
@@ -111,7 +111,7 @@ paths:
   /chemotherapies/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Chemotherapies accessible through the API.
@@ -133,7 +133,7 @@ paths:
   /chemotherapies/{chemotherapy_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Chemotherapy by ID.
@@ -155,7 +155,7 @@ paths:
   /complications/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Complications accessible through the API.
@@ -177,7 +177,7 @@ paths:
   /complications/{complication_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Complication by ID.
@@ -199,7 +199,7 @@ paths:
   /consents/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Consents accessible through the API.
@@ -221,7 +221,7 @@ paths:
   /consents/{consent_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Consent by ID.
@@ -243,7 +243,7 @@ paths:
   /diagnoses/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Diagnoses accessible through the API.
@@ -265,7 +265,7 @@ paths:
   /diagnoses/{diagnosis_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Diagnosis by ID.
@@ -287,7 +287,7 @@ paths:
   /enrollments/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Enrollments accessible through the API.
@@ -309,7 +309,7 @@ paths:
   /enrollments/{enrollment_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Enrollment by ID.
@@ -331,7 +331,7 @@ paths:
   /immunotherapies/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Immunotherapies accessible through the API.
@@ -353,7 +353,7 @@ paths:
   /immunotherapies/{immunotherapy_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Immunotherapy by ID.
@@ -375,7 +375,7 @@ paths:
   /labtests/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Labtests accessible through the API.
@@ -397,7 +397,7 @@ paths:
   /labtests/{labtest_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Labtest by ID.
@@ -419,7 +419,7 @@ paths:
   /outcomes/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Outcomes accessible through the API.
@@ -441,7 +441,7 @@ paths:
   /outcomes/{outcome_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Outcome by ID.
@@ -463,7 +463,7 @@ paths:
   /patients/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Patients accessible through the API.
@@ -485,7 +485,7 @@ paths:
   /patients/{patientId}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Patient by ID.
@@ -507,7 +507,7 @@ paths:
   /radiotherapies/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Radiotherapies accessible through the API.
@@ -529,7 +529,7 @@ paths:
   /radiotherapies/{radiotherapy_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Radiotherapy by ID.
@@ -551,7 +551,7 @@ paths:
   /samples/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Samples accessible through the API.
@@ -573,7 +573,7 @@ paths:
   /samples/{sampleId}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Sample by ID.
@@ -595,7 +595,7 @@ paths:
   /slides/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Slides accessible through the API.
@@ -617,7 +617,7 @@ paths:
   /slides/{slide_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Slide by ID.
@@ -639,7 +639,7 @@ paths:
   /studies/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Studies accessible through the API.
@@ -661,7 +661,7 @@ paths:
   /studies/{study_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Study by ID.
@@ -683,7 +683,7 @@ paths:
   /surgeries/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Surgeries accessible through the API.
@@ -705,7 +705,7 @@ paths:
   /surgeries/{surgery_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Surgery by ID.
@@ -727,7 +727,7 @@ paths:
   /treatments/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Treatments accessible through the API.
@@ -749,7 +749,7 @@ paths:
   /treatments/{treatment_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Treatment by ID.
@@ -771,7 +771,7 @@ paths:
   /tumourboards/search:
     post:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets a list of Tumourboards accessible through the API.
@@ -793,7 +793,7 @@ paths:
   /tumourboards/{tumourboard_id}:
     get:
       tags:
-      - ClinicalMetadataService
+      - Clinical Metadata Service
       summary: |2
 
         Gets Tumourboard by ID.
@@ -815,7 +815,7 @@ paths:
   /alignments/search:
     post:
       tags:
-      - PipelineMetadataService
+      - Pipeline Metadata Service
       summary: Gets a list of Alignments accessible through the API.
       operationId: SearchAlignments
       requestBody:
@@ -835,7 +835,7 @@ paths:
   /alignments/{alignment_id}:
     get:
       tags:
-      - PipelineMetadataService
+      - Pipeline Metadata Service
       summary: Gets Alignment by ID.
       operationId: GetAlignment
       parameters:
@@ -855,7 +855,7 @@ paths:
   /expressionanalysis/search:
     post:
       tags:
-      - PipelineMetadataService
+      - Pipeline Metadata Service
       summary: Gets a list of ExpressionAnalysis metadata accessible through the API.
       operationId: SearchExpressionAnalysis
       requestBody:
@@ -872,14 +872,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchExpressionAnalysisResponse'
       x-codegen-request-body-name: body
-  /expressionanalysis/{expressionanalysis_id}:
+  /expressionanalysis/{expressionAnalysisId}:
     get:
       tags:
-      - PipelineMetadataService
+      - Pipeline Metadata Service
       summary: Gets ExpressionAnalysis by ID.
       operationId: GetExpressionAnalysis
       parameters:
-      - name: expressionanalysis_id
+      - name: expressionAnalysisId
         in: path
         description: The ID of the expressionanalysis requested
         required: true
@@ -895,7 +895,7 @@ paths:
   /extractions/search:
     post:
       tags:
-      - PipelineMetadataService
+      - Pipeline Metadata Service
       summary: Gets a list of Extractions accessible through the API.
       operationId: SearchExtractions
       requestBody:
@@ -915,7 +915,7 @@ paths:
   /extractions/{extraction_id}:
     get:
       tags:
-      - PipelineMetadataService
+      - Pipeline Metadata Service
       summary: Gets Extraction by ID.
       operationId: GetExtraction
       parameters:
@@ -932,14 +932,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/candigExtraction'
-  /fusiondetection/{fusiondetection_id}:
+  /fusiondetection/{fusionDetectionId}:
     get:
       tags:
-      - PipelineMetadataService
+      - Pipeline Metadata Service
       summary: Gets FusionDetection by ID.
       operationId: GetFusionDetection
       parameters:
-      - name: fusiondetection_id
+      - name: fusionDetectionId
         in: path
         description: The ID of the fusion/sv detection requested
         required: true
@@ -955,7 +955,7 @@ paths:
   /fusiondetections/search:
     post:
       tags:
-      - PipelineMetadataService
+      - Pipeline Metadata Service
       summary: Gets a list of FusionDetections accessible through the API.
       operationId: SearchFusionDetections
       requestBody:
@@ -975,7 +975,7 @@ paths:
   /sequencing/search:
     post:
       tags:
-      - PipelineMetadataService
+      - Pipeline Metadata Service
       summary: Gets a list of Sequencing metadata accessible through the API.
       operationId: SearchSequencing
       requestBody:
@@ -995,7 +995,7 @@ paths:
   /sequencing/{sequencing_id}:
     get:
       tags:
-      - PipelineMetadataService
+      - Pipeline Metadata Service
       summary: Gets Sequencing by ID.
       operationId: GetSequencing
       parameters:
@@ -1015,7 +1015,7 @@ paths:
   /variantcalling/search:
     post:
       tags:
-      - PipelineMetadataService
+      - Pipeline Metadata Service
       summary: Gets a list of VariantCalling metadata accessible through the API.
       operationId: SearchVariantCalling
       requestBody:
@@ -1035,7 +1035,7 @@ paths:
   /variantcalling/{variantcalling_id}:
     get:
       tags:
-      - PipelineMetadataService
+      - Pipeline Metadata Service
       summary: Gets VariantCalling by ID.
       operationId: GetVariantCalling
       parameters:
@@ -1055,7 +1055,7 @@ paths:
   /readgroupsets/search:
     post:
       tags:
-      - ReadService
+      - Read Service
       summary: Gets a list of ReadGroupSet matching the search criteria.
       description: |-
         POST /readgroupsets/search must accept a JSON version of
@@ -1081,7 +1081,7 @@ paths:
   /readgroupsets/{readGroupSetId}:
     get:
       tags:
-      - ReadService
+      - Read Service
       summary: Gets a ReadGroupSet by ID.
       description: |-
         GET /readgroupsets/{readGroupSetId} will return a JSON version of
@@ -1104,7 +1104,7 @@ paths:
   /reads/search:
     post:
       tags:
-      - ReadService
+      - Read Service
       summary: Gets a list of ReadAlignment s for one or more ReadGroup s.
       description: |-
         searchReads operates over a genomic coordinate space of reference sequence
@@ -1143,7 +1143,7 @@ paths:
   /references/search:
     post:
       tags:
-      - ReferenceService
+      - Reference Service
       summary: Gets a list of Reference matching the search criteria.
       description: |-
         POST /references/search must accept a JSON version of
@@ -1167,7 +1167,7 @@ paths:
   /references/{referenceId}:
     get:
       tags:
-      - ReferenceService
+      - Reference Service
       summary: Gets a Reference by ID.
       description: |-
         GET /references/{referenceId} will return a JSON version of
@@ -1190,7 +1190,7 @@ paths:
   /references/{referenceId}/bases:
     post:
       tags:
-      - ReferenceService
+      - Reference Service
       summary: Lists Reference bases by ID and optional range.
       description: |-
         POST /listreferencebases will return a JSON version of
@@ -1220,7 +1220,7 @@ paths:
   /referencesets/search:
     post:
       tags:
-      - ReferenceService
+      - Reference Service
       summary: Gets a list of ReferenceSet matching the search criteria.
       description: |-
         POST /referencesets/search must accept a JSON version of
@@ -1244,7 +1244,7 @@ paths:
   /referencesets/{referenceSetId}:
     get:
       tags:
-      - ReferenceService
+      - Reference Service
       summary: Gets a ReferenceSet by ID.
       description: |-
         GET /referencesets/{referenceSetId} will return a JSON version of
@@ -1264,48 +1264,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/candigReferenceSet'
-  /search:
-    post:
-      tags:
-      - SearchService
-      operationId: GetItem
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/candigSearchQueryRequest'
-        required: true
-      responses:
-        200:
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/candigSearchQueryResponse'
-      x-codegen-request-body-name: body
-  /count:
-    post:
-      tags:
-      - SearchService
-      operationId: GetCount
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/candigSearchQueryRequest'
-        required: true
-      responses:
-        200:
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/candigSearchQueryResponse'
-      x-codegen-request-body-name: body
   /expressionlevels/search:
     post:
       tags:
-      - RnaQuantificationService
+      - RNA Quantification Service
       summary: |-
         'POST /expressionlevels/search' must accept JSON version of
         'SearchExpressionLevelsRequest' as the post body and will return a JSON
@@ -1328,7 +1290,7 @@ paths:
   /expressionlevels/{expression_level_id}:
     get:
       tags:
-      - RnaQuantificationService
+      - RNA Quantification Service
       summary: |-
         Gets a ExpressionLevel by ID.
         GET /expressionlevels/{id} will return a JSON version of
@@ -1351,7 +1313,7 @@ paths:
   /rnaquantifications/search:
     post:
       tags:
-      - RnaQuantificationService
+      - RNA Quantification Service
       summary: |-
         Gets a list of 'RnaQuantification' matching the search criteria.
         'POST /rnaquantifications/search' must accept JSON version of
@@ -1375,7 +1337,7 @@ paths:
   /rnaquantifications/{rnaQuantificationId}:
     get:
       tags:
-      - RnaQuantificationService
+      - RNA Quantification Service
       summary: |-
         Gets a RnaQuantification by ID.
         GET /rnaquantifications/{id} will return a JSON version of
@@ -1398,7 +1360,7 @@ paths:
   /rnaquantificationsets/search:
     post:
       tags:
-      - RnaQuantificationService
+      - RNA Quantification Service
       summary: |-
         Gets a list of 'RnaQuantificationSet' matching the search criteria.
         'POST /rnaquantificationsets/search' must accept JSON version of
@@ -1422,7 +1384,7 @@ paths:
   /rnaquantificationsets/{rnaQuantificationSetId}:
     get:
       tags:
-      - RnaQuantificationService
+      - RNA Quantification Service
       summary: |-
         Gets a RnaQuantificationSet by ID.
         GET /rnaquantificationsets/{id} will return a JSON version of
@@ -1445,7 +1407,7 @@ paths:
   /features/search:
     post:
       tags:
-      - SequenceAnnotationService
+      - Sequence Annotation Service
       summary: Gets a list of Feature matching the search criteria.
       description: |-
         POST /features/search must accept a JSON version of
@@ -1469,7 +1431,7 @@ paths:
   /features/{feature_id}:
     get:
       tags:
-      - SequenceAnnotationService
+      - Sequence Annotation Service
       summary: Gets a Feature by ID.
       description: 'GET /features/{id} will return a JSON version of Feature.'
       operationId: GetFeature
@@ -1490,7 +1452,7 @@ paths:
   /featuresets/search:
     post:
       tags:
-      - SequenceAnnotationService
+      - Sequence Annotation Service
       summary: Gets a list of FeatureSet matching the search criteria.
       description: |-
         POST /featuresets/search must accept a JSON version of
@@ -1514,7 +1476,7 @@ paths:
   /featuresets/{featureSetId}:
     get:
       tags:
-      - SequenceAnnotationService
+      - Sequence Annotation Service
       summary: Gets a FeatureSet by ID.
       description: 'GET /featuresets/{id} will return a JSON version of FeatureSet.'
       operationId: GetFeatureSet
@@ -1535,7 +1497,7 @@ paths:
   /continuous/search:
     post:
       tags:
-      - SequenceAnnotationService
+      - Sequence Annotation Service
       summary: Gets continuous values matching the search criteria.
       description: |-
         POST /continuous/search must accept a JSON version of
@@ -1559,7 +1521,7 @@ paths:
   /continuoussets/search:
     post:
       tags:
-      - SequenceAnnotationService
+      - Sequence Annotation Service
       summary: Gets a list of ContinuousSet matching the search criteria.
       description: |-
         POST /continuoussets/search must accept a JSON version of
@@ -1583,7 +1545,7 @@ paths:
   /continuoussets/{continuousSetId}:
     get:
       tags:
-      - SequenceAnnotationService
+      - Sequence Annotation Service
       summary: Gets a ContinuousSet by ID.
       description: 'GET /continuoussets/{id} will return a JSON version of ContinuousSet.'
       operationId: GetContinuousSet
@@ -1604,7 +1566,7 @@ paths:
   /callsets/search:
     post:
       tags:
-      - VariantService
+      - Variant Service
       summary: Gets a list of call sets matching the search criteria.
       description: |-
         POST /callsets/search must accept a JSON version of
@@ -1628,7 +1590,7 @@ paths:
   /callsets/{callSetId}:
     get:
       tags:
-      - VariantService
+      - Variant Service
       summary: Gets a CallSet by ID.
       description: 'GET /callsets/{id} will return a JSON version of CallSet.'
       operationId: GetCallSet
@@ -1649,7 +1611,7 @@ paths:
   /variants/search:
     post:
       tags:
-      - VariantService
+      - Variant Service
       summary: Gets a list of Variant matching the search criteria.
       description: |-
         POST /variants/search must accept a JSON version of
@@ -1673,7 +1635,7 @@ paths:
   /variants/{variantId}:
     post:
       tags:
-      - VariantService
+      - Variant Service
       summary: Gets a Variant by ID.
       description: 'GET /variants/{id} will return a JSON version of Variant.'
       operationId: GetVariant
@@ -1694,7 +1656,7 @@ paths:
   /variantsbygenesearch:
     post:
       tags:
-      - VariantService
+      - Variant Service
       summary: Gets a list of Variants matching the search criteria.
       description: |-
         POST /variantsetsByGeneName/search must accept a JSON version of
@@ -1718,7 +1680,7 @@ paths:
   /variantsets/search:
     post:
       tags:
-      - VariantService
+      - Variant Service
       summary: Gets a list of VariantSet matching the search criteria.
       description: |-
         POST /variantsets/search must accept a JSON version of
@@ -1742,7 +1704,7 @@ paths:
   /variantsets/{variantSetId}:
     get:
       tags:
-      - VariantService
+      - Variant Service
       summary: Gets a VariantSet by ID.
       description: |-
         GET /variantsets/{variantSetId} will return a JSON version of
@@ -1764,6 +1726,21 @@ paths:
                 $ref: '#/components/schemas/candigVariantSet'
 components:
   schemas:
+    candigStatus:
+      type: object
+      properties:
+        Known peers:
+          type: integer
+          example: 1
+          description: The number of peers registered
+        Queried peers:
+          type: integer
+          example: 1
+          description: The number of peers that return 200 or 404
+        Successful communciations:
+          type: integer
+          description: The number of peers that return 200
+          example: 1
     candigAnalysis:
       type: object
       properties:
@@ -2032,33 +2009,44 @@ components:
       properties:
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
             nextPageToken from the previous response.
       description: This request maps to the body of POST /datasets/search as JSON.
     candigSearchDatasetsResponse:
-      type: object
-      properties:
-        datasets:
-          type: array
-          description: The list of datasets.
-          items:
-            $ref: '#/components/schemas/candigDataset'
-        nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
       description: This is the response from POST /datasets/search expressed as
         JSON.
+      type: object
+      properties:
+        status:
+            $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            datasets:
+              type: array
+              description: The list of datasets.
+              items:
+                $ref: '#/components/schemas/candigDataset'
+            nextPageToken:
+              type: string
+              description: |-
+                The continuation token, which is used to page through large result sets.
+                Provide this value in a subsequent request to return the next page of
+                results. This field will be empty if there aren't any additional results.
+            total:
+              type: integer
+              description: Number of results in the list
+              example: 1
     candigCelltransplant:
       type: object
       properties:
@@ -2764,12 +2752,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -2812,12 +2802,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -2860,12 +2852,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -2908,12 +2902,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -2956,12 +2952,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -3004,12 +3002,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -3052,12 +3052,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -3100,12 +3102,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -3148,12 +3152,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -3196,12 +3202,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -3244,12 +3252,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -3292,12 +3302,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -3339,12 +3351,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -3386,12 +3400,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -3433,12 +3449,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -3481,12 +3499,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -3529,12 +3549,14 @@ components:
             $ref: '#/components/schemas/candigFilter'
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -4026,11 +4048,13 @@ components:
           type: string
         pageSize:
           type: integer
+          example: 1000
           description: Specifies the maximum number of results to return in a single
             page.If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: The continuation token, which is used to page through large
             result sets.To get the next page of results, set this parameter to the
             value ofnextPageToken from the previous response.
@@ -4072,11 +4096,13 @@ components:
           type: string
         pageSize:
           type: integer
+          example: 1000
           description: Specifies the maximum number of results to return in a single
             page.If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: The continuation token, which is used to page through large
             result sets.To get the next page of results, set this parameter to the
             value ofnextPageToken from the previous response.
@@ -4115,11 +4141,13 @@ components:
             string matching.
         pageSize:
           type: integer
+          example: 1000
           description: Specifies the maximum number of results to return in a single
             page.If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: The continuation token, which is used to page through large
             result sets.To get the next page of results, set this parameter to the
             value ofnextPageToken from the previous response.
@@ -4164,11 +4192,13 @@ components:
           type: string
         pageSize:
           type: integer
+          example: 1000
           description: Specifies the maximum number of results to return in a single
             page.If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: The continuation token, which is used to page through large
             result sets.To get the next page of results, set this parameter to the
             value ofnextPageToken from the previous response.
@@ -4210,11 +4240,13 @@ components:
           type: string
         pageSize:
           type: integer
+          example: 1000
           description: Specifies the maximum number of results to return in a single
             page.If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: The continuation token, which is used to page through large
             result sets.To get the next page of results, set this parameter to the
             value ofnextPageToken from the previous response.
@@ -4256,11 +4288,13 @@ components:
           type: string
         pageSize:
           type: integer
+          example: 1000
           description: Specifies the maximum number of results to return in a single
             page.If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: The continuation token, which is used to page through large
             result sets.To get the next page of results, set this parameter to the
             value ofnextPageToken from the previous response.
@@ -4734,12 +4768,14 @@ components:
              with the given biosampleId.
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -4799,12 +4835,14 @@ components:
           format: int64
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -4868,6 +4906,7 @@ components:
           format: int64
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -5026,12 +5065,14 @@ components:
             matches this string (case-sensitive, exact match).
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -5074,12 +5115,14 @@ components:
             matches this string (case-sensitive, exact match).
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -5241,132 +5284,6 @@ components:
             response format if included.
           items:
             type: string
-    candigSearchQueryRequest:
-      title: Request object for the search function
-      type: object
-      properties:
-        datasetId:
-          type: string
-        logic:
-          $ref: '#/components/schemas/candigLogic'
-        components:
-          title: Array of single table queries
-          type: array
-          items:
-            $ref: '#/components/schemas/candigComponent'
-        results:
-          title: Definition of the requested tables and fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigResult'
-        limit:
-          title: Limit of the maximum number of records
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
-        pageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
-    candigSearchQueryResponse:
-      title: Response object for the search function
-      type: object
-      properties:
-        patients:
-          title: List of patients
-          type: array
-          items:
-            $ref: '#/components/schemas/candigPatient'
-        enrollments:
-          title: List of enrollments
-          type: array
-          items:
-            $ref: '#/components/schemas/candigEnrollment'
-        consents:
-          title: List of consents
-          type: array
-          items:
-            $ref: '#/components/schemas/candigConsent'
-        diagnoses:
-          title: List of diagnoses
-          type: array
-          items:
-            $ref: '#/components/schemas/candigDiagnosis'
-        samples:
-          title: List of samples
-          type: array
-          items:
-            $ref: '#/components/schemas/candigSample'
-        treatments:
-          title: List of treatments
-          type: array
-          items:
-            $ref: '#/components/schemas/candigTreatment'
-        outcomes:
-          title: List of outcomes
-          type: array
-          items:
-            $ref: '#/components/schemas/candigOutcome'
-        complications:
-          title: List of complications
-          type: array
-          items:
-            $ref: '#/components/schemas/candigComplication'
-        tumourboards:
-          title: List of tumourboard results
-          type: array
-          items:
-            $ref: '#/components/schemas/candigTumourboard'
-        variants:
-          title: List of variants
-          type: array
-          items:
-            $ref: '#/components/schemas/candigVariant'
-        slides:
-          type: array
-          items:
-            $ref: '#/components/schemas/candigSlide'
-        studies:
-          type: array
-          items:
-            $ref: '#/components/schemas/candigStudy'
-        labtests:
-          type: array
-          items:
-            $ref: '#/components/schemas/candigLabtest'
-        surgeries:
-          type: array
-          items:
-            $ref: '#/components/schemas/candigSurgery'
-        chemotherapies:
-          type: array
-          items:
-            $ref: '#/components/schemas/candigChemotherapy'
-        immunotherapies:
-          type: array
-          items:
-            $ref: '#/components/schemas/candigImmunotherapy'
-        radiotherapies:
-          type: array
-          items:
-            $ref: '#/components/schemas/candigRadiotherapy'
-        celltransplants:
-          type: array
-          items:
-            $ref: '#/components/schemas/candigCelltransplant'
-        nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
     candigSearchVariantsByGeneNameRequest:
       type: object
       properties:
@@ -5378,12 +5295,14 @@ components:
           type: string
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -5450,12 +5369,14 @@ components:
           format: int64
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -5800,12 +5721,14 @@ components:
           format: float
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -5838,12 +5761,14 @@ components:
           description: The Dataset to search.
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -5881,12 +5806,14 @@ components:
             Optional.
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -6072,12 +5999,14 @@ components:
           format: int64
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -6113,12 +6042,14 @@ components:
           description: The Dataset to search.
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -6149,12 +6080,14 @@ components:
           description: The Dataset to search.
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -6234,12 +6167,14 @@ components:
             type: string
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -6312,12 +6247,14 @@ components:
             ID.
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
@@ -6349,12 +6286,14 @@ components:
           description: The Dataset to search.
         pageSize:
           type: integer
+          example: 1000
           description: |-
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
           format: int32
         pageToken:
           type: string
+          example: "0"
           description: |-
             The continuation token, which is used to page through large result sets. To
             get the next page of results, set this parameter to the value of
