@@ -1078,17 +1078,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchReadGroupSetsResponse'
       x-codegen-request-body-name: body
-  /readgroupsets/{read_group_set_id}:
+  /readgroupsets/{readGroupSetId}:
     get:
       tags:
       - ReadService
       summary: Gets a ReadGroupSet by ID.
       description: |-
-        GET /readgroupsets/{read_group_set_id} will return a JSON version of
+        GET /readgroupsets/{readGroupSetId} will return a JSON version of
         ReadGroupSet.
       operationId: GetReadGroupSet
       parameters:
-      - name: read_group_set_id
+      - name: readGroupSetId
         in: path
         description: The ID of the ReadGroupSet to be retrieved.
         required: true
@@ -1164,17 +1164,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchReferencesResponse'
       x-codegen-request-body-name: body
-  /references/{reference_id}:
+  /references/{referenceId}:
     get:
       tags:
       - ReferenceService
       summary: Gets a Reference by ID.
       description: |-
-        GET /references/{reference_id} will return a JSON version of
+        GET /references/{referenceId} will return a JSON version of
         Reference.
       operationId: GetReference
       parameters:
-      - name: reference_id
+      - name: referenceId
         in: path
         description: The ID of the Reference to be retrieved.
         required: true
@@ -1187,7 +1187,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/candigReference'
-  /references/{reference_id}/bases:
+  /references/{referenceId}/bases:
     post:
       tags:
       - ReferenceService
@@ -1197,7 +1197,7 @@ paths:
         ListReferenceBasesResponse.
       operationId: ListReferenceBases
       parameters:
-      - name: reference_id
+      - name: referenceId
         in: path
         description: The ID of the Reference to be retrieved.
         required: true
@@ -1241,17 +1241,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchReferenceSetsResponse'
       x-codegen-request-body-name: body
-  /referencesets/{reference_set_id}:
+  /referencesets/{referenceSetId}:
     get:
       tags:
       - ReferenceService
       summary: Gets a ReferenceSet by ID.
       description: |-
-        GET /referencesets/{reference_set_id} will return a JSON version of
+        GET /referencesets/{referenceSetId} will return a JSON version of
         ReferenceSet.
       operationId: GetReferenceSet
       parameters:
-      - name: reference_set_id
+      - name: referenceSetId
         in: path
         description: The ID of the ReferenceSet to be retrieved.
         required: true
@@ -1372,7 +1372,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchRnaQuantificationsResponse'
       x-codegen-request-body-name: body
-  /rnaquantifications/{rna_quantification_id}:
+  /rnaquantifications/{rnaQuantificationId}:
     get:
       tags:
       - RnaQuantificationService
@@ -1382,7 +1382,7 @@ paths:
         RnaQuantification.
       operationId: GetRnaQuantification
       parameters:
-      - name: rna_quantification_id
+      - name: rnaQuantificationId
         in: path
         description: The ID of the RnaQuantification.
         required: true
@@ -1419,7 +1419,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchRnaQuantificationSetsResponse'
       x-codegen-request-body-name: body
-  /rnaquantificationsets/{rna_quantification_set_id}:
+  /rnaquantificationsets/{rnaQuantificationSetId}:
     get:
       tags:
       - RnaQuantificationService
@@ -1429,7 +1429,7 @@ paths:
         RnaQuantificationSet.
       operationId: GetRnaQuantificationSet
       parameters:
-      - name: rna_quantification_set_id
+      - name: rnaQuantificationSetId
         in: path
         description: The ID of the RnaQuantificationSet.
         required: true
@@ -1511,7 +1511,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchFeatureSetsResponse'
       x-codegen-request-body-name: body
-  /featuresets/{feature_set_id}:
+  /featuresets/{featureSetId}:
     get:
       tags:
       - SequenceAnnotationService
@@ -1519,7 +1519,7 @@ paths:
       description: 'GET /featuresets/{id} will return a JSON version of FeatureSet.'
       operationId: GetFeatureSet
       parameters:
-      - name: feature_set_id
+      - name: featureSetId
         in: path
         description: The ID of the FeatureSet to be retrieved.
         required: true
@@ -1580,7 +1580,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchContinuousSetsResponse'
       x-codegen-request-body-name: body
-  /continuoussets/{continuous_set_id}:
+  /continuoussets/{continuousSetId}:
     get:
       tags:
       - SequenceAnnotationService
@@ -1588,7 +1588,7 @@ paths:
       description: 'GET /continuoussets/{id} will return a JSON version of ContinuousSet.'
       operationId: GetContinuousSet
       parameters:
-      - name: continuous_set_id
+      - name: continuousSetId
         in: path
         description: The ID of the ContinuousSet to be retrieved.
         required: true
@@ -1625,7 +1625,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchCallSetsResponse'
       x-codegen-request-body-name: body
-  /callsets/{call_set_id}:
+  /callsets/{callSetId}:
     get:
       tags:
       - VariantService
@@ -1633,7 +1633,7 @@ paths:
       description: 'GET /callsets/{id} will return a JSON version of CallSet.'
       operationId: GetCallSet
       parameters:
-      - name: call_set_id
+      - name: callSetId
         in: path
         description: The ID of the CallSet to be retrieved.
         required: true
@@ -1670,7 +1670,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchVariantsResponse'
       x-codegen-request-body-name: body
-  /variants/{variant_id}:
+  /variants/{variantId}:
     post:
       tags:
       - VariantService
@@ -1678,7 +1678,7 @@ paths:
       description: 'GET /variants/{id} will return a JSON version of Variant.'
       operationId: GetVariant
       parameters:
-      - name: variant_id
+      - name: variantId
         in: path
         description: The ID of the Variant to be retrieved.
         required: true
@@ -1739,17 +1739,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchVariantSetsResponse'
       x-codegen-request-body-name: body
-  /variantsets/{variant_set_id}:
+  /variantsets/{variantSetId}:
     get:
       tags:
       - VariantService
       summary: Gets a VariantSet by ID.
       description: |-
-        GET /variantsets/{variant_set_id} will return a JSON version of
+        GET /variantsets/{variantSetId} will return a JSON version of
         VariantSet.
       operationId: GetVariantSet
       parameters:
-      - name: variant_set_id
+      - name: variantSetId
         in: path
         description: The ID of the VariantSet to be retrieved.
         required: true
@@ -4484,7 +4484,7 @@ components:
     candigPosition:
       type: object
       properties:
-        reference_name:
+        referenceName:
           type: string
           description: The name of the Reference on which the Position is located.
         position:
@@ -4512,7 +4512,7 @@ components:
             For performance reasons, this field may be omitted by a backend.
             If provided, its intended use is to make caching and UI display easier for
             genome browsers and other lightweight clients.
-        read_group_id:
+        readGroupId:
           title: |-
             The ID of the read group this read belongs to.
             (Every read must belong to exactly one read group.)
@@ -4663,7 +4663,7 @@ components:
             was generated.
           items:
             $ref: '#/components/schemas/candigProgram'
-        reference_set_id:
+        referenceSetId:
           type: string
           description: |-
             The ID of the reference set to which the reads in this read group are
@@ -4755,7 +4755,7 @@ components:
     candigSearchReadGroupSetsResponse:
       type: object
       properties:
-        read_group_sets:
+        readGroupSets:
           type: array
           description: The list of matching read group sets.
           items:
@@ -4771,12 +4771,12 @@ components:
     candigSearchReadsRequest:
       type: object
       properties:
-        read_group_ids:
+        readGroupIds:
           type: array
           description: The ReadGroups to search. At least one id must be specified.
           items:
             type: string
-        reference_id:
+        referenceId:
           type: string
           description: |-
             The reference to query. Leaving blank returns results from all
@@ -4849,7 +4849,7 @@ components:
     candigListReferenceBasesRequest:
       type: object
       properties:
-        reference_id:
+        referenceId:
           type: string
           description: The ID of the Reference to be retrieved.
         start:
@@ -5058,7 +5058,7 @@ components:
     candigSearchReferencesRequest:
       type: object
       properties:
-        reference_set_id:
+        referenceSetId:
           type: string
           description: The ReferenceSet to search.
         md5checksum:
@@ -5114,7 +5114,7 @@ components:
             SearchCallSetsRequest over this VariantSet is guaranteed to match
             the ordering of the calls on this Variant.
             The number of results will also be the same.
-        call_set_id:
+        callSetId:
           type: string
           description: |-
             The ID of the call set this variant call belongs to.
@@ -5403,11 +5403,11 @@ components:
             endpoint
           type: string
           format: int64
-        reference_name:
+        referenceName:
           type: string
           description: Reference genome. Used in advanced searchesif the user is requesting
             variants endpoint.
-        call_set_ids:
+        callSetIds:
           type: array
           description: |-
             Only return variant calls which belong to call sets with these IDs.
@@ -5423,14 +5423,14 @@ components:
         datasetId:
           type: string
           description: The dataset to search.
-        call_set_ids:
+        callSetIds:
           type: array
           description: |-
             Only return variant calls which belong to call sets with these IDs.
             If unspecified, return all variants and no variant call objects.
           items:
             type: string
-        reference_name:
+        referenceName:
           type: string
           description: Required. Only return variants on this reference.
         start:
@@ -5460,7 +5460,7 @@ components:
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
             nextPageToken from the previous response.
-        variant_set_ids:
+        variantSetIds:
           title: a list of variant sets to search from
           type: array
           items:
@@ -5474,7 +5474,7 @@ components:
         id:
           type: string
           description: The variant ID.
-        variant_set_id:
+        variantSetId:
           type: string
           description: |-
             The ID of the VariantSet this variant belongs to. This transitively
@@ -5496,7 +5496,7 @@ components:
             The time at which this variant was last updated in
             milliseconds from the epoch.
           format: int64
-        reference_name:
+        referenceName:
           title: |-
             The reference on which this variant occurs.
             (e.g. chr20 or X)
@@ -5681,7 +5681,7 @@ components:
         name:
           title: Name
           type: string
-        rna_quantification_id:
+        rnaQuantificationId:
           title: The associated RnaQuantification
           type: string
         raw_read_count:
@@ -5737,7 +5737,7 @@ components:
         description:
           title: Description
           type: string
-        read_group_ids:
+        readGroupIds:
           type: array
           description: ID(s) of the ReadGroup(s) providing the reads for the analysis.
           items:
@@ -5748,12 +5748,12 @@ components:
             was quantified.
           items:
             $ref: '#/components/schemas/candigProgram'
-        feature_set_ids:
+        featureSetIds:
           type: array
           description: List of annotation sets used.
           items:
             type: string
-        rna_quantification_set_id:
+        rnaQuantificationSetId:
           type: string
           description: ID of the containing RnaQuantificationSet.
         sampleId:
@@ -5783,7 +5783,7 @@ components:
     candigSearchExpressionLevelsRequest:
       type: object
       properties:
-        rna_quantification_id:
+        rnaQuantificationId:
           type: string
           description: The rnaQuantification to restrict search to.
         names:
@@ -5870,7 +5870,7 @@ components:
     candigSearchRnaQuantificationsRequest:
       type: object
       properties:
-        rna_quantification_set_id:
+        rnaQuantificationSetId:
           type: string
           description: |-
             Return only Rna Quantifications which belong to this set.
@@ -5932,10 +5932,10 @@ components:
           items:
             type: number
             format: double
-        continuous_set_id:
+        continuousSetId:
           type: string
           description: Identifier for the containing continous set.
-        reference_name:
+        referenceName:
           type: string
           description: The reference on which this signal is defined (e.g. chr20
             or X).
@@ -5952,7 +5952,7 @@ components:
         datasetId:
           type: string
           description: The ID of the dataset this annotation set belongs to.
-        reference_set_id:
+        referenceSetId:
           type: string
           description: |-
             The ID of the reference set which defines the coordinate-space for this
@@ -5996,10 +5996,10 @@ components:
             parent_id's of the children alone.
           items:
             type: string
-        feature_set_id:
+        featureSetId:
           type: string
           description: Identifier for the containing feature set.
-        reference_name:
+        referenceName:
           type: string
           description: The reference on which this feature occurs (e.g. chr20 or
             X).
@@ -6035,7 +6035,7 @@ components:
         datasetId:
           type: string
           description: The ID of the dataset this annotation set belongs to.
-        reference_set_id:
+        referenceSetId:
           type: string
           description: |-
             The ID of the reference set which defines the coordinate-space for this
@@ -6052,10 +6052,10 @@ components:
     candigSearchContinuousRequest:
       type: object
       properties:
-        continuous_set_id:
+        continuousSetId:
           type: string
           description: The annotation set to search within. Required value.
-        reference_name:
+        referenceName:
           type: string
           description: Get continuous values on this reference. Required value.
         start:
@@ -6180,10 +6180,10 @@ components:
     candigSearchFeaturesRequest:
       type: object
       properties:
-        feature_set_id:
+        featureSetId:
           type: string
           description: |-
-            The annotation set to search within. Either feature_set_id or
+            The annotation set to search within. Either featureSetId or
             parent_id must be non-empty.
         name:
           type: string
@@ -6200,8 +6200,8 @@ components:
           type: string
           description: |-
             Restricts the search to direct children of the given parent feature
-            ID. Either feature_set_id or parent_id must be non-empty.
-        reference_name:
+            ID. Either featureSetId or parent_id must be non-empty.
+        referenceName:
           type: string
           description: |-
             Only return features on the reference with this name
@@ -6275,7 +6275,7 @@ components:
         biosampleId:
           type: string
           description: The Biosample the call set data was generated from.
-        variant_set_ids:
+        variantSetIds:
           type: array
           description: The IDs of the variant sets this call set has calls in.
           items:
@@ -6299,7 +6299,7 @@ components:
     candigSearchCallSetsRequest:
       type: object
       properties:
-        variant_set_id:
+        variantSetId:
           type: string
           description: The VariantSet to search.
         name:
@@ -6365,7 +6365,7 @@ components:
     candigSearchVariantSetsResponse:
       type: object
       properties:
-        variant_sets:
+        variantSets:
           type: array
           description: The list of matching variant sets.
           items:
@@ -6434,7 +6434,7 @@ components:
         datasetId:
           type: string
           description: The ID of the dataset this variant set belongs to.
-        reference_set_id:
+        referenceSetId:
           type: string
           description: |-
             The ID of the reference set that describes the sequences used by the
