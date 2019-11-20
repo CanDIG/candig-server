@@ -1,11 +1,10 @@
-.. image:: _static/logo_ga.png
+.. image:: _static/logo.png
 
 ==============================
-GA4GH Reference Implementation
+CanDIG Server
 ==============================
 
-This the documentation for version |version| of the GA4GH reference
-implementation.
+This the documentation for version |version| of the candig-server.
 
 ********
 Contents

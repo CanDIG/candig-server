@@ -4,26 +4,47 @@
 Data repository
 ***************
 
-Each GA4GH server represents a repository of information. This repository
+Each candig-server represents a repository of information. This repository
 consists of the reference sets, datasets, readgroup sets, variant sets etc. in
 the server's data model and may contain data from many different unrelated
 projects. The server administrator defines and manages this repository using
 the ``candig_repo`` command line interface, which provides commands to manage
-all of the objects represented by a GA4GH server.
+all of the objects represented by a candig-server.
 
-The information about the objects in the GA4GH data model is stored in an SQL
-database, called the "registry DB" or "registry". The registry DB does not
-contain the raw bulk data but rather "registers" the information about where
-the server can find this information and some metadata about the object in
-question. For example, if we have a variant set that is backed by a single VCF
-file, the registry DB will contain the path to this file as well as the name of
-the variant set, the reference set it is defined by, and other information
-necessary to implement the GA4GH protocol. This registry architecture allows us
-a lot of flexibility in the sources of data that we can use.
+The registry contains links to files, as well as some metadata.
+
+For instructions on adding metadata in bulk, see here.
 
 ++++++++++++
 Command Line
 ++++++++++++
+
+------
+ingest
+------
+The ``ingest`` command is the preferred way to import metadata in bulk. It does not come with
+candig-server by default, to use it, you need to install `candig-ingest` by running:
+
+`pip install candig-ingest`
+
+To import metadata in bulk, you need to have a specially formatted json file. A mock json
+file is available from https://github.com/CanDIG/candig-ingest/blob/master/candig/ingest/mock_data/clinical_metadata_tier1.json
+
+To ingest the data, you need to run
+
+.. code-block:: bash
+
+    usage: ingest registryPath datasetName metadataPath
+
+If the dataset does not exist, it will create a new dataset of this name. There is no need
+to run ``init`` command before running ``ingest``.
+
+**Examples:**
+
+.. code-block:: bash
+
+    $ ingest registry.db mock1 mock_data.json
+
 
 ----
 init
@@ -240,6 +261,9 @@ files can be specified either directly on the command line or by
 providing a single directory argument that contains indexed VCF files.
 If remote URLs are used then index files in the local file system must be
 provided using the ``-I`` option.
+
+Note: Starting from 0.9.3, you now need to specify a ``patientId`` and a ``sampleId``. The server
+does not validate either, so please double check to make sure the IDs are correct.
 
 .. argparse::
     :module: candig.server.cli.repomanager
