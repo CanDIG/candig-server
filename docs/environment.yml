@@ -10,7 +10,7 @@ dependencies:
 - sqlite=3.13.0
 - tk=8.5.18
 - wheel=0.29.0
-- sphinx=1.5.1
+- sphinx<1.6
 - pip:
     - protobuf==3.3.0
     - candig-common
