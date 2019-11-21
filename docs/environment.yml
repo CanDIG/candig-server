@@ -16,7 +16,7 @@ dependencies:
     - candig-common
     - candig-schemas
     - sphinx-argparse
-    - sphinx<1.7
+    - sphinx==1.6.7
     - pysam==0.9.1.4
     - RDFLib==4.2.1
     - peewee==2.8.5
