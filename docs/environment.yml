@@ -14,7 +14,6 @@ dependencies:
     - protobuf==3.3.0
     - candig-common
     - candig-schemas
-    - candig-client
     - sphinx-argparse==0.1.15
     - sphinx==1.5.1
     - pysam==0.9.1.4
