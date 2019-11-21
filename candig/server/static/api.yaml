@@ -7,10 +7,10 @@ info:
     
     At this time, this page does not contain any information for /search and /count endpoints. For /search and /count endpoints, refer to [this documentation](https://www.distributedgenomics.ca/static/search_count_services_usage.pdf) for instructions and sample queries.<br/>
     
-    For all metadata and variant services endpoints, refer to [this documentation](https://www.distributedgenomics.ca/static/metadata_variants_services_sample_queries.pdf) for some ready-to-use sample queries.
+    For all metadata and variant services endpoints, you can also refer to [this documentation](https://www.distributedgenomics.ca/static/metadata_variants_services_sample_queries.pdf) for some ready-to-use sample queries.
 
     ---
-    *`Warning`: developers, please note that the API definition was primarily created to display the UI, and shorten the learning curve for non-developer users. While reasonable efforts have been made, at this time, we cannot guarantee that the spec to be openAPI compatiable or machine-readable.*
+    *Warning: developers, please note that the API definition was primarily created to display the UI and shorten the learning curve for non-developer users. While reasonable efforts have been made to validate all the requests and response schemas listed here, at this time, we cannot guarantee that the spec to be fully openAPI compatiable or machine-readable. However, if you encounter do find any issues with the spec here, please let us know.*
     ---
 
   version: "1.1"
@@ -70,7 +70,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Celltransplants accessible through the API.
+        Gets a list of Celltransplants.
       operationId: SearchCelltransplants
       requestBody:
         content:
@@ -114,7 +114,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Chemotherapies accessible through the API.
+        Gets a list of Chemotherapies.
       operationId: SearchChemotherapies
       requestBody:
         content:
@@ -158,7 +158,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Complications accessible through the API.
+        Gets a list of Complications.
       operationId: SearchComplications
       requestBody:
         content:
@@ -202,7 +202,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Consents accessible through the API.
+        Gets a list of Consents.
       operationId: SearchConsents
       requestBody:
         content:
@@ -246,7 +246,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Diagnoses accessible through the API.
+        Gets a list of Diagnoses.
       operationId: SearchDiagnoses
       requestBody:
         content:
@@ -290,7 +290,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Enrollments accessible through the API.
+        Gets a list of Enrollments.
       operationId: SearchEnrollments
       requestBody:
         content:
@@ -334,7 +334,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Immunotherapies accessible through the API.
+        Gets a list of Immunotherapies.
       operationId: SearchImmunotherapies
       requestBody:
         content:
@@ -378,7 +378,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Labtests accessible through the API.
+        Gets a list of Labtests.
       operationId: SearchLabtests
       requestBody:
         content:
@@ -422,7 +422,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Outcomes accessible through the API.
+        Gets a list of Outcomes.
       operationId: SearchOutcomes
       requestBody:
         content:
@@ -466,7 +466,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Patients accessible through the API.
+        Gets a list of Patients.
       operationId: SearchPatients
       requestBody:
         content:
@@ -510,7 +510,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Radiotherapies accessible through the API.
+        Gets a list of Radiotherapies.
       operationId: SearchRadiotherapies
       requestBody:
         content:
@@ -554,7 +554,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Samples accessible through the API.
+        Gets a list of Samples.
       operationId: SearchSamples
       requestBody:
         content:
@@ -598,7 +598,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Slides accessible through the API.
+        Gets a list of Slides.
       operationId: SearchSlides
       requestBody:
         content:
@@ -642,7 +642,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Studies accessible through the API.
+        Gets a list of Studies.
       operationId: SearchStudies
       requestBody:
         content:
@@ -686,7 +686,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Surgeries accessible through the API.
+        Gets a list of Surgeries.
       operationId: SearchSurgeries
       requestBody:
         content:
@@ -730,7 +730,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Treatments accessible through the API.
+        Gets a list of Treatments.
       operationId: SearchTreatments
       requestBody:
         content:
@@ -774,7 +774,7 @@ paths:
       - Clinical Metadata Service
       summary: |2
 
-        Gets a list of Tumourboards accessible through the API.
+        Gets a list of Tumourboards.
       operationId: SearchTumourboards
       requestBody:
         content:
@@ -816,7 +816,7 @@ paths:
     post:
       tags:
       - Pipeline Metadata Service
-      summary: Gets a list of Alignments accessible through the API.
+      summary: Gets a list of Alignments.
       operationId: SearchAlignments
       requestBody:
         content:
@@ -856,7 +856,7 @@ paths:
     post:
       tags:
       - Pipeline Metadata Service
-      summary: Gets a list of ExpressionAnalysis metadata accessible through the API.
+      summary: Gets a list of ExpressionAnalysis metadata.
       operationId: SearchExpressionAnalysis
       requestBody:
         content:
@@ -896,7 +896,7 @@ paths:
     post:
       tags:
       - Pipeline Metadata Service
-      summary: Gets a list of Extractions accessible through the API.
+      summary: Gets a list of Extractions.
       operationId: SearchExtractions
       requestBody:
         content:
@@ -932,6 +932,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/candigExtraction'
+  /fusiondetections/search:
+    post:
+      tags:
+      - Pipeline Metadata Service
+      summary: Gets a list of FusionDetections.
+      operationId: SearchFusionDetections
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/candigSearchFusionDetectionRequest'
+        required: true
+      responses:
+        200:
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/candigSearchFusionDetectionResponse'
+      x-codegen-request-body-name: body
   /fusiondetection/{fusionDetectionId}:
     get:
       tags:
@@ -952,31 +972,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/candigFusionDetection'
-  /fusiondetections/search:
-    post:
-      tags:
-      - Pipeline Metadata Service
-      summary: Gets a list of FusionDetections accessible through the API.
-      operationId: SearchFusionDetections
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/candigSearchFusionDetectionRequest'
-        required: true
-      responses:
-        200:
-          description: A successful response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/candigSearchFusionDetectionResponse'
-      x-codegen-request-body-name: body
   /sequencing/search:
     post:
       tags:
       - Pipeline Metadata Service
-      summary: Gets a list of Sequencing metadata accessible through the API.
+      summary: Gets a list of Sequencing metadata.
       operationId: SearchSequencing
       requestBody:
         content:
@@ -1016,7 +1016,7 @@ paths:
     post:
       tags:
       - Pipeline Metadata Service
-      summary: Gets a list of VariantCalling metadata accessible through the API.
+      summary: Gets a list of VariantCalling metadata.
       operationId: SearchVariantCalling
       requestBody:
         content:
