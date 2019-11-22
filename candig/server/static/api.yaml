@@ -64,7 +64,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigDataset'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigDataset'
   /celltransplants/search:
     post:
       tags:
@@ -108,7 +113,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigCelltransplant'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigCelltransplant'
   /chemotherapies/search:
     post:
       tags:
@@ -152,7 +162,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigChemotherapy'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigChemotherapy'
   /complications/search:
     post:
       tags:
@@ -196,7 +211,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigComplication'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigComplication'
   /consents/search:
     post:
       tags:
@@ -240,7 +260,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigConsent'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigConsent'
   /diagnoses/search:
     post:
       tags:
@@ -284,7 +309,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigDiagnosis'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigDiagnosis'
   /enrollments/search:
     post:
       tags:
@@ -328,7 +358,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigEnrollment'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigEnrollment'
   /immunotherapies/search:
     post:
       tags:
@@ -372,7 +407,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigImmunotherapy'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigImmunotherapy'
   /labtests/search:
     post:
       tags:
@@ -416,7 +456,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigLabtest'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigLabtest'
   /outcomes/search:
     post:
       tags:
@@ -460,7 +505,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigOutcome'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigOutcome'
   /patients/search:
     post:
       tags:
@@ -504,7 +554,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigPatient'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigPatient'
   /radiotherapies/search:
     post:
       tags:
@@ -548,7 +603,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigRadiotherapy'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigRadiotherapy'
   /samples/search:
     post:
       tags:
@@ -592,7 +652,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigSample'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigSample'
   /slides/search:
     post:
       tags:
@@ -636,7 +701,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigSlide'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigSlide'
   /studies/search:
     post:
       tags:
@@ -680,7 +750,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigStudy'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigStudy'
   /surgeries/search:
     post:
       tags:
@@ -724,7 +799,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigSurgery'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigSurgery'
   /treatments/search:
     post:
       tags:
@@ -768,7 +848,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigTreatment'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigTreatment'
   /tumourboards/search:
     post:
       tags:
@@ -812,7 +897,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigTumourboard'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigTumourboard'
   /alignments/search:
     post:
       tags:
@@ -852,7 +942,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigAlignment'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigAlignment'
   /expressionanalysis/search:
     post:
       tags:
@@ -892,7 +987,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigExpressionAnalysis'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigExpressionAnalysis'
   /extractions/search:
     post:
       tags:
@@ -932,7 +1032,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigExtraction'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigExtraction'
   /fusiondetections/search:
     post:
       tags:
@@ -972,7 +1077,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigFusionDetection'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigFusionDetection'
   /sequencing/search:
     post:
       tags:
@@ -1012,7 +1122,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigSequencing'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigSequencing'
   /variantcalling/search:
     post:
       tags:
@@ -1052,7 +1167,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigVariantCalling'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigVariantCalling'
   /readgroupsets/search:
     post:
       tags:
@@ -1101,7 +1221,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigReadGroupSet'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigReadGroupSet'
   /reads/search:
     post:
       tags:
@@ -1187,7 +1312,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigReference'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigReference'
   /references/{referenceId}/bases:
     post:
       tags:
@@ -1264,7 +1394,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigReferenceSet'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigReferenceSet'
   /expressionlevels/search:
     post:
       tags:
@@ -1310,7 +1445,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigExpressionLevel'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigExpressionLevel'
   /rnaquantifications/search:
     post:
       tags:
@@ -1357,7 +1497,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigRnaQuantification'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigRnaQuantification'
   /rnaquantificationsets/search:
     post:
       tags:
@@ -1404,7 +1549,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigRnaQuantificationSet'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigRnaQuantificationSet'
   /features/search:
     post:
       tags:
@@ -1449,7 +1599,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigFeature'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigFeature'
   /featuresets/search:
     post:
       tags:
@@ -1494,7 +1649,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigFeatureSet'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigFeatureSet'
   /continuous/search:
     post:
       tags:
@@ -1563,7 +1723,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigContinuousSet'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigContinuousSet'
   /callsets/search:
     post:
       tags:
@@ -1608,7 +1773,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigCallSet'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigCallSet'
   /variants/search:
     post:
       tags:
@@ -1634,7 +1804,7 @@ paths:
                 $ref: '#/components/schemas/candigSearchVariantsResponse'
       x-codegen-request-body-name: body
   /variants/{variantId}:
-    post:
+    get:
       tags:
       - Variant Service
       summary: Gets a Variant by ID.
@@ -1653,7 +1823,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigVariant'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigVariant'
   /variantsbygenesearch:
     post:
       tags:
@@ -1724,7 +1899,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/candigVariantSet'
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigVariantSet'
 components:
   schemas:
     candigStatus:
@@ -1742,6 +1922,10 @@ components:
           type: integer
           description: The number of peers that return 200
           example: 1
+        Valid response:
+          type: boolean
+          description: If number of queried peers equal to the successful communciation, this is true.
+          example: true
     candigAnalysis:
       type: object
       properties:
@@ -2419,6 +2603,13 @@ components:
         The continuation token, which is used to page through large result sets.
         To get the next page of results, set this parameter to the value of
         nextPageToken from the previous response.
+    candigNextPageToken:
+      type: string
+      description: |-
+        The continuation token, which is used to page through large
+        result sets.Provide this value in a subsequent request to return the next
+        page of results. This field will be empty if there aren't any additional
+        results.
     candigImmunotherapy:
       type: object
       properties:
@@ -2793,11 +2984,7 @@ components:
           items:
             $ref: '#/components/schemas/candigCelltransplant'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /celltransplants/search expressed
         as JSON.
     candigSearchChemotherapiesRequest:
@@ -2830,11 +3017,7 @@ components:
           items:
             $ref: '#/components/schemas/candigChemotherapy'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /chemotherapies/search expressed
         as JSON.
     candigSearchComplicationsRequest:
@@ -2867,11 +3050,7 @@ components:
           items:
             $ref: '#/components/schemas/candigComplication'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /complications/search expressed
         as JSON.
     candigSearchConsentsRequest:
@@ -2904,11 +3083,7 @@ components:
           items:
             $ref: '#/components/schemas/candigConsent'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /consents/search expressed as
         JSON.
     candigSearchDiagnosesRequest:
@@ -2941,11 +3116,7 @@ components:
           items:
             $ref: '#/components/schemas/candigDiagnosis'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /diagnoses/search expressed as
         JSON.
     candigSearchEnrollmentsRequest:
@@ -2978,11 +3149,7 @@ components:
           items:
             $ref: '#/components/schemas/candigEnrollment'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /enrollments/search expressed
         as JSON.
     candigSearchImmunotherapiesRequest:
@@ -3015,11 +3182,7 @@ components:
           items:
             $ref: '#/components/schemas/candigImmunotherapy'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /immunotherapies/search expressed
         as JSON.
     candigSearchLabtestsRequest:
@@ -3052,11 +3215,7 @@ components:
           items:
             $ref: '#/components/schemas/candigLabtest'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /labtests/search expressed as
         JSON.
     candigSearchOutcomesRequest:
@@ -3089,11 +3248,7 @@ components:
           items:
             $ref: '#/components/schemas/candigOutcome'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /outcomes/search expressed as
         JSON.
     candigSearchPatientsRequest:
@@ -3126,11 +3281,7 @@ components:
           items:
             $ref: '#/components/schemas/candigPatient'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /patients/search expressed as
         JSON.
     candigSearchRadiotherapiesRequest:
@@ -3163,11 +3314,7 @@ components:
           items:
             $ref: '#/components/schemas/candigRadiotherapy'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /radiotherapies/search expressed
         as JSON.
     candigSearchSamplesRequest:
@@ -3200,11 +3347,7 @@ components:
           items:
             $ref: '#/components/schemas/candigSample'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /samples/search expressed as JSON.
     candigSearchSlidesRequest:
       type: object
@@ -3236,11 +3379,7 @@ components:
           items:
             $ref: '#/components/schemas/candigSlide'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /slides/search expressed as JSON.
     candigSearchStudiesRequest:
       type: object
@@ -3272,11 +3411,7 @@ components:
           items:
             $ref: '#/components/schemas/candigStudy'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /studies/search expressed as JSON.
     candigSearchSurgeriesRequest:
       type: object
@@ -3308,11 +3443,7 @@ components:
           items:
             $ref: '#/components/schemas/candigSurgery'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /surgeries/search expressed as
         JSON.
     candigSearchTreatmentsRequest:
@@ -3345,11 +3476,7 @@ components:
           items:
             $ref: '#/components/schemas/candigTreatment'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /treatments/search expressed as
         JSON.
     candigSearchTumourboardsRequest:
@@ -3382,11 +3509,7 @@ components:
           items:
             $ref: '#/components/schemas/candigTumourboard'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /tumourboards/search expressed
         as JSON.
     candigSlide:
@@ -4576,11 +4699,7 @@ components:
           items:
             $ref: '#/components/schemas/candigReadGroupSet'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /readgroupsets/search expressed
         as JSON.
     candigSearchReadsRequest:
@@ -4634,11 +4753,7 @@ components:
           items:
             $ref: '#/components/schemas/candigReadAlignment'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /reads/search expressed as JSON.
     candigStrand:
       type: string
@@ -4692,11 +4807,7 @@ components:
             A substring of the bases that make up this reference. Bases are represented
             as IUPAC-IUB codes; this string matches the regexp [ACGTMRWSYKVHDBN]*.
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: The response from POST /listreferencebases expressed as JSON.
     candigReference:
       type: object
@@ -4843,11 +4954,7 @@ components:
           items:
             $ref: '#/components/schemas/candigReferenceSet'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /referencesets/search expressed
         as JSON.
     candigSearchReferencesRequest:
@@ -4883,11 +4990,7 @@ components:
           items:
             $ref: '#/components/schemas/candigReference'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /references/search expressed as
         JSON.
     candigCall:
@@ -5726,11 +5829,7 @@ components:
           items:
             $ref: '#/components/schemas/candigContinuous'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /continuous/search expressed as
         JSON.
     candigSearchContinuousSetsRequest:
@@ -5754,11 +5853,7 @@ components:
           items:
             $ref: '#/components/schemas/candigContinuousSet'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /continuoussets/search expressed
         as JSON.
     candigSearchFeatureSetsRequest:
@@ -5782,11 +5877,7 @@ components:
           items:
             $ref: '#/components/schemas/candigFeatureSet'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /featuresets/search expressed
         as JSON.
     candigSearchFeaturesRequest:
@@ -5860,11 +5951,7 @@ components:
           items:
             $ref: '#/components/schemas/candigFeature'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /features/search expressed as
         JSON.
     candigCallSet:
@@ -5930,11 +6017,7 @@ components:
           items:
             $ref: '#/components/schemas/candigCallSet'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /callsets/search expressed as
         JSON.
     candigSearchVariantSetsRequest:
@@ -5964,11 +6047,7 @@ components:
           items:
             $ref: '#/components/schemas/candigVariantSet'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /variantsets/search expressed
         as JSON.
     candigSearchVariantsByGeneNameResponse:
@@ -5986,11 +6065,7 @@ components:
           items:
             $ref: '#/components/schemas/candigVariant'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /variantsbygenename expressed
         as JSON.
     candigSearchVariantsResponse:
@@ -6008,11 +6083,7 @@ components:
           items:
             $ref: '#/components/schemas/candigVariant'
         nextPageToken:
-          type: string
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            Provide this value in a subsequent request to return the next page of
-            results. This field will be empty if there aren't any additional results.
+          $ref: '#/components/schemas/candigNextPageToken'
       description: This is the response from POST /variants/search expressed as
         JSON.
     candigVariantSet:
