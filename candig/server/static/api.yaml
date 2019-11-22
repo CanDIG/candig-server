@@ -54,6 +54,7 @@ paths:
       - name: datasetId
         in: path
         description: The ID of the Dataset to be retrieved.
+        example: WyJtb2NrMSJd
         required: true
         schema:
           type: string
@@ -86,7 +87,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchCelltransplantsResponse'
       x-codegen-request-body-name: body
-  /celltransplants/{celltransplant_id}:
+  /celltransplants/{celltransplantId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -95,7 +96,7 @@ paths:
         Gets Celltransplant by ID.
       operationId: GetCelltransplant
       parameters:
-      - name: celltransplant_id
+      - name: celltransplantId
         in: path
         description: The ID of the celltransplant requested
         required: true
@@ -130,7 +131,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchChemotherapiesResponse'
       x-codegen-request-body-name: body
-  /chemotherapies/{chemotherapy_id}:
+  /chemotherapies/{chemotherapyId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -139,7 +140,7 @@ paths:
         Gets Chemotherapy by ID.
       operationId: GetChemotherapy
       parameters:
-      - name: chemotherapy_id
+      - name: chemotherapyId
         in: path
         description: The ID of the chemotherapy requested
         required: true
@@ -174,7 +175,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchComplicationsResponse'
       x-codegen-request-body-name: body
-  /complications/{complication_id}:
+  /complications/{complicationId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -183,7 +184,7 @@ paths:
         Gets Complication by ID.
       operationId: GetComplication
       parameters:
-      - name: complication_id
+      - name: complicationId
         in: path
         description: The ID of the complication requested
         required: true
@@ -218,7 +219,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchConsentsResponse'
       x-codegen-request-body-name: body
-  /consents/{consent_id}:
+  /consents/{consentId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -227,7 +228,7 @@ paths:
         Gets Consent by ID.
       operationId: GetConsent
       parameters:
-      - name: consent_id
+      - name: consentId
         in: path
         description: The ID of the consent requested
         required: true
@@ -262,7 +263,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchDiagnosesResponse'
       x-codegen-request-body-name: body
-  /diagnoses/{diagnosis_id}:
+  /diagnoses/{diagnosisId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -271,7 +272,7 @@ paths:
         Gets Diagnosis by ID.
       operationId: GetDiagnosis
       parameters:
-      - name: diagnosis_id
+      - name: diagnosisId
         in: path
         description: The ID of the diagnosis requested
         required: true
@@ -306,7 +307,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchEnrollmentsResponse'
       x-codegen-request-body-name: body
-  /enrollments/{enrollment_id}:
+  /enrollments/{enrollmentId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -315,7 +316,7 @@ paths:
         Gets Enrollment by ID.
       operationId: GetEnrollment
       parameters:
-      - name: enrollment_id
+      - name: enrollmentId
         in: path
         description: The ID of the enrollment requested
         required: true
@@ -350,7 +351,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchImmunotherapiesResponse'
       x-codegen-request-body-name: body
-  /immunotherapies/{immunotherapy_id}:
+  /immunotherapies/{immunotherapyId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -359,7 +360,7 @@ paths:
         Gets Immunotherapy by ID.
       operationId: GetImmunotherapy
       parameters:
-      - name: immunotherapy_id
+      - name: immunotherapyId
         in: path
         description: The ID of the immunotherapy requested
         required: true
@@ -394,7 +395,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchLabtestsResponse'
       x-codegen-request-body-name: body
-  /labtests/{labtest_id}:
+  /labtests/{labtestId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -403,7 +404,7 @@ paths:
         Gets Labtest by ID.
       operationId: GetLabtest
       parameters:
-      - name: labtest_id
+      - name: labtestId
         in: path
         description: The ID of the labtest requested
         required: true
@@ -438,7 +439,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchOutcomesResponse'
       x-codegen-request-body-name: body
-  /outcomes/{outcome_id}:
+  /outcomes/{outcomeId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -447,7 +448,7 @@ paths:
         Gets Outcome by ID.
       operationId: GetOutcome
       parameters:
-      - name: outcome_id
+      - name: outcomeId
         in: path
         description: The ID of the outcome requested
         required: true
@@ -526,7 +527,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchRadiotherapiesResponse'
       x-codegen-request-body-name: body
-  /radiotherapies/{radiotherapy_id}:
+  /radiotherapies/{radiotherapyId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -535,7 +536,7 @@ paths:
         Gets Radiotherapy by ID.
       operationId: GetRadiotherapy
       parameters:
-      - name: radiotherapy_id
+      - name: radiotherapyId
         in: path
         description: The ID of the radiotherapy requested
         required: true
@@ -614,7 +615,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchSlidesResponse'
       x-codegen-request-body-name: body
-  /slides/{slide_id}:
+  /slides/{slideId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -623,7 +624,7 @@ paths:
         Gets Slide by ID.
       operationId: GetSlide
       parameters:
-      - name: slide_id
+      - name: slideId
         in: path
         description: The ID of the slide requested
         required: true
@@ -658,7 +659,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchStudiesResponse'
       x-codegen-request-body-name: body
-  /studies/{study_id}:
+  /studies/{studyId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -667,7 +668,7 @@ paths:
         Gets Study by ID.
       operationId: GetStudy
       parameters:
-      - name: study_id
+      - name: studyId
         in: path
         description: The ID of the study requested
         required: true
@@ -702,7 +703,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchSurgeriesResponse'
       x-codegen-request-body-name: body
-  /surgeries/{surgery_id}:
+  /surgeries/{surgeryId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -711,7 +712,7 @@ paths:
         Gets Surgery by ID.
       operationId: GetSurgery
       parameters:
-      - name: surgery_id
+      - name: surgeryId
         in: path
         description: The ID of the surgery requested
         required: true
@@ -746,7 +747,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchTreatmentsResponse'
       x-codegen-request-body-name: body
-  /treatments/{treatment_id}:
+  /treatments/{treatmentId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -755,7 +756,7 @@ paths:
         Gets Treatment by ID.
       operationId: GetTreatment
       parameters:
-      - name: treatment_id
+      - name: treatmentId
         in: path
         description: The ID of the treatment requested
         required: true
@@ -790,7 +791,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchTumourboardsResponse'
       x-codegen-request-body-name: body
-  /tumourboards/{tumourboard_id}:
+  /tumourboards/{tumourboardId}:
     get:
       tags:
       - Clinical Metadata Service
@@ -799,7 +800,7 @@ paths:
         Gets Tumourboard by ID.
       operationId: GetTumourboard
       parameters:
-      - name: tumourboard_id
+      - name: tumourboardId
         in: path
         description: The ID of the tumourboard requested
         required: true
@@ -832,14 +833,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchAlignmentsResponse'
       x-codegen-request-body-name: body
-  /alignments/{alignment_id}:
+  /alignments/{alignmentId}:
     get:
       tags:
       - Pipeline Metadata Service
       summary: Gets Alignment by ID.
       operationId: GetAlignment
       parameters:
-      - name: alignment_id
+      - name: alignmentId
         in: path
         description: The ID of the alignment requested
         required: true
@@ -912,14 +913,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchExtractionsResponse'
       x-codegen-request-body-name: body
-  /extractions/{extraction_id}:
+  /extractions/{extractionId}:
     get:
       tags:
       - Pipeline Metadata Service
       summary: Gets Extraction by ID.
       operationId: GetExtraction
       parameters:
-      - name: extraction_id
+      - name: extractionId
         in: path
         description: The ID of the patient requested
         required: true
@@ -992,14 +993,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchSequencingResponse'
       x-codegen-request-body-name: body
-  /sequencing/{sequencing_id}:
+  /sequencing/{sequencingId}:
     get:
       tags:
       - Pipeline Metadata Service
       summary: Gets Sequencing by ID.
       operationId: GetSequencing
       parameters:
-      - name: sequencing_id
+      - name: sequencingId
         in: path
         description: The ID of the sequencing requested
         required: true
@@ -1845,12 +1846,15 @@ components:
         id:
           type: string
           description: The dataset's id, locally unique to the server instance.
+          example: WyJtb2NrMSJd
         name:
           type: string
           description: The name of the dataset.
+          example: mock1
         description:
           type: string
           description: Additional, human-readable information on the dataset.
+          example: A mock dataset.
       description: |-
         A Dataset is a collection of related data of multiple types.
         Data providers decide how to group data into datasets.
@@ -2008,19 +2012,9 @@ components:
       type: object
       properties:
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: This request maps to the body of POST /datasets/search as JSON.
     candigSearchDatasetsResponse:
       description: This is the response from POST /datasets/search expressed as
@@ -2373,24 +2367,58 @@ components:
           type: string
         treatingCentreProvince:
           type: string
-    candigFilter:
+    candigFilterValue:
       title: Contains a single statement about any field of any of tables
       type: object
       properties:
         field:
-          title: Name one of the table field on which the filter should be applied
+          title: Name of a field on which the filter should be applied
           type: string
         operator:
           title: Relationship between field and value
           type: string
+          enum: [">","<",">=","<=","=","==","!=","contains"]
         value:
           title: A level of the field content
           type: string
+    candigFilterValues:
+      title: Contains a single statement about any field of any of tables
+      type: object
+      properties:
+        field:
+          title: Name of one of the table field on which the filter should be applied
+          type: string
+        operator:
+          title: Relationship between field and value
+          type: string
+          enum: ["in"]
         values:
           title: List of values to be able to provide multiple possibilities
           type: array
           items:
             type: string
+    candigFilters:
+      title: Filter on any of the fields
+      description: There are two types of `filter` object. The first type has `in` as the operator, and only accepts `values`, which is a list. The second type accept one of `>, <, >=, <=, =, == !=, contains` as the operators, but only accept `value`. Note that `=` and `==` are equivalent. You may write any number of filter objects with `value` or `values`.
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/components/schemas/candigFilterValue'
+          - $ref: '#/components/schemas/candigFilterValues'
+    candigPageSize:
+      type: integer
+      example: 1000
+      description: |-
+        Specifies the maximum number of results to return in a single page.
+        If unspecified, a system default will be used.
+      format: int32
+    candigPageToken:
+      type: string
+      example: "0"
+      description: |-
+        The continuation token, which is used to page through large result sets.
+        To get the next page of results, set this parameter to the value of
+        nextPageToken from the previous response.
     candigImmunotherapy:
       type: object
       properties:
@@ -2746,24 +2774,11 @@ components:
           description: Returns Celltransplants with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Celltransplant
@@ -2796,24 +2811,11 @@ components:
           description: Returns Chemotherapies with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Chemotherapy
@@ -2846,24 +2848,11 @@ components:
           description: Returns Complications with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Complication
@@ -2896,24 +2885,11 @@ components:
           description: Returns Consents with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Consent
@@ -2946,24 +2922,11 @@ components:
           description: Returns Diagnoses with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Diagnosis
@@ -2996,24 +2959,11 @@ components:
           description: Returns Enrollments with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Enrollment
@@ -3046,24 +2996,11 @@ components:
           description: Returns Immunotherapies with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Immunotherapy
@@ -3096,24 +3033,11 @@ components:
           description: Returns Labtests with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Labtest
@@ -3146,24 +3070,11 @@ components:
           description: Returns Outcomes with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Outcome
@@ -3196,24 +3107,11 @@ components:
           description: Returns Patients with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Patient
@@ -3246,24 +3144,11 @@ components:
           description: Returns Radiotherapies with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Radiotherapy
@@ -3296,24 +3181,11 @@ components:
           description: Returns Samples with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Sample
@@ -3345,24 +3217,11 @@ components:
           description: Returns Slides with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Slide
@@ -3394,24 +3253,11 @@ components:
           description: Returns Studies with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Study
@@ -3443,24 +3289,11 @@ components:
           description: Returns Surgeries with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Surgery
@@ -3493,24 +3326,11 @@ components:
           description: Returns Treatments with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Treatment
@@ -3543,24 +3363,11 @@ components:
           description: Returns Tumourboards with the given name found by case-sensitive
             string matching.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |2-
 
         Tumourboard
@@ -4059,10 +3866,7 @@ components:
             result sets.To get the next page of results, set this parameter to the
             value ofnextPageToken from the previous response.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
       description: AlignmentThis request maps to the body of POST /alignments/search
         as JSON.
     candigSearchAlignmentsResponse:
@@ -4107,10 +3911,7 @@ components:
             result sets.To get the next page of results, set this parameter to the
             value ofnextPageToken from the previous response.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
       description: ExpressionAnalysisThis request maps to the body of POST /expressionanalysis/search
         as JSON.
     candigSearchExpressionAnalysisResponse:
@@ -4155,10 +3956,7 @@ components:
           type: string
           description: Optionally specify the sample to search within.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
       description: ExtractionThis request maps to the body of POST /extractions/search
         as JSON.
     candigSearchExtractionsResponse:
@@ -4203,10 +4001,7 @@ components:
             result sets.To get the next page of results, set this parameter to the
             value ofnextPageToken from the previous response.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
       description: FusionDetectionThis request maps to the body of POST /fusiondetection/search
         as JSON.
     candigSearchFusionDetectionResponse:
@@ -4251,10 +4046,7 @@ components:
             result sets.To get the next page of results, set this parameter to the
             value ofnextPageToken from the previous response.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
       description: SequencingThis request maps to the body of POST /sequencing/search
         as JSON.
     candigSearchSequencingResponse:
@@ -4299,10 +4091,7 @@ components:
             result sets.To get the next page of results, set this parameter to the
             value ofnextPageToken from the previous response.
         filters:
-          title: Filter on any of the fields
-          type: array
-          items:
-            $ref: '#/components/schemas/candigFilter'
+          $ref: '#/components/schemas/candigFilters'
       description: VariantCallingThis request maps to the body of POST /variantcalling/search
         as JSON.
     candigSearchVariantCallingResponse:
@@ -4767,19 +4556,9 @@ components:
             Specifying the id of a Biosample record will return only readgroups
              with the given biosampleId.
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |-
         This request maps to the body of POST /readgroupsets/search as JSON.
 
@@ -4834,19 +4613,9 @@ components:
             reference's length.
           format: int64
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |-
         ******************  /reads  *********************
         This request maps to the body of POST /reads/search as JSON.
@@ -4905,12 +4674,7 @@ components:
             to the length of this Reference.
           format: int64
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: "This request retrieves a region of a reference genome when sent\
         \ to \nthe /listreferencebases endpoint."
     candigListReferenceBasesResponse:
@@ -5064,19 +4828,9 @@ components:
             If unset, return the reference sets for which the assemblyId
             matches this string (case-sensitive, exact match).
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |-
         ****************  /referencesets  *******************
         This request maps to the body of POST /referencesets/search as JSON.
@@ -5114,19 +4868,9 @@ components:
             If specified, return the references for which the accession
             matches this string (case-sensitive, exact match).
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |-
         ****************  /references  *******************
         This request maps to the body of POST /references/search as JSON.
@@ -5294,19 +5038,9 @@ components:
           title: The gene name to search
           type: string
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
         patient_list:
           title: List of patient ID's used in advanced searches
           type: array
@@ -5368,19 +5102,9 @@ components:
             variants should be returned.
           format: int64
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
         variantSetIds:
           title: a list of variant sets to search from
           type: array
@@ -5720,12 +5444,7 @@ components:
           type: number
           format: float
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
           type: string
           example: "0"
@@ -5760,12 +5479,7 @@ components:
           type: string
           description: The Dataset to search.
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
           type: string
           example: "0"
@@ -5805,12 +5519,7 @@ components:
           description: Return only RNA quantifications regarding the specified biosample.
             Optional.
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
           type: string
           example: "0"
@@ -5998,19 +5707,9 @@ components:
             values should be returned. \nRequired value."
           format: int64
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: This request maps to the body of POST /continuous/search as JSON.
     candigSearchContinuousResponse:
       type: object
@@ -6041,19 +5740,9 @@ components:
           type: string
           description: The Dataset to search.
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: '* This request maps to the body of POST /continuoussets/search
         as JSON.'
     candigSearchContinuousSetsResponse:
@@ -6079,19 +5768,9 @@ components:
           type: string
           description: The Dataset to search.
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: '* This request maps to the body of POST /featuresets/search
         as JSON.'
     candigSearchFeatureSetsResponse:
@@ -6166,19 +5845,9 @@ components:
           items:
             type: string
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: This request maps to the body of POST /features/search as JSON.
     candigSearchFeaturesResponse:
       type: object
@@ -6246,19 +5915,9 @@ components:
           description: Return only call sets generated from the provided Biosample
             ID.
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
-          type: string
-          example: "0"
-          description: |-
-            The continuation token, which is used to page through large result sets.
-            To get the next page of results, set this parameter to the value of
-            nextPageToken from the previous response.
+          $ref: '#/components/schemas/candigPageToken'
       description: |-
         ******************  /callsets  *********************
         This request maps to the body of POST /callsets/search as JSON.
@@ -6285,12 +5944,7 @@ components:
           type: string
           description: The Dataset to search.
         pageSize:
-          type: integer
-          example: 1000
-          description: |-
-            Specifies the maximum number of results to return in a single page.
-            If unspecified, a system default will be used.
-          format: int32
+          $ref: '#/components/schemas/candigPageSize'
         pageToken:
           type: string
           example: "0"
