@@ -1,8 +1,8 @@
 .. _development:
 
------------
-Development
------------
+-----------------
+Development Setup
+-----------------
 
 Thanks for your interest in the candig-server. If you have any questions,
 `please let us know <https://github.com/candig/candig-server/issues>`_

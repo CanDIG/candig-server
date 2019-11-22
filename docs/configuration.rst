@@ -1,8 +1,8 @@
 .. _configuration:
 
-*************
-Configuration
-*************
+*********************
+Production Deployment
+*********************
 
 The candig-server has a  `Configuration file`_. allows Flask and application
 specific configuration values to be set.

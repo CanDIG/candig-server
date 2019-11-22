@@ -15,10 +15,11 @@ Contents
 
     introduction
     demo
-    installation
+    data
+    development
     configuration
     datarepo
-    development
+    contribution
     status
 
 
