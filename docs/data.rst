@@ -17,6 +17,10 @@ by the candig-server.
 Clinical and Pipeline Metadata
 ------------------------------------
 
++++++++++++++++++++++++++++++++++++
+File format required for ingestion
++++++++++++++++++++++++++++++++++++
+
 We strongly recommend using the ``ingest`` command to ingest any clinical and pipeline
 metadata, detailed instructions for ingestion can be found at :ref:`datarepo`.
 

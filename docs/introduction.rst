@@ -13,11 +13,6 @@ The candig-server is a CanDIG project, aiming to provide distributed, secure dat
 to participating institutions across Canada. You can learn more about our work from
 https://www.distributedgenomics.ca
 
-`GA4GH <http://genomicsandhealth.org/>`_
-defined an `API <https://ga4gh-schemas.readthedocs.org/en/latest/>`_
-to facilitate interoperable exchange of genomic data, and implemented a reference server,
-but the development was ceased.
-
-Since the CanDIG Team took over, we have focused on adding native support for peer-to-peer
-communications, upgrading the codebase to be Python 3 compatiable, as well as clinical
-and pipeline metadata support.
+It has been built on the `ga4gh-server <https://github.com/ga4gh/ga4gh-server/>` with
+extended functionalities including native support for peer-to-peer communications, clinical
+and pipeline metadata support, as well as the upgraded codebase, written in Python 3.
