@@ -13,9 +13,9 @@ The candig-server has a general guideline on which data are accepted.
 The following sections will talk about how to prepare for the data that is accepted
 by the candig-server.
 
-++++++++++++++++++++++++++++++++++++
+------------------------------------
 Clinical and Pipeline Metadata
-++++++++++++++++++++++++++++++++++++
+------------------------------------
 
 We strongly recommend using the ``ingest`` command to ingest any clinical and pipeline
 metadata, detailed instructions for ingestion can be found at :ref:`datarepo`.
@@ -114,3 +114,14 @@ If your clinical meta data is on RedCapCloud, we provide a script that would tra
 the related data into ready-to-ingest format.
 
 It is available from here: https://github.com/CanDIG/redcap-cloud
+
+
+------------------
+Data Use Ontology
+------------------
+
+
+------------------------------------
+Reads, Variants and References Data
+------------------------------------
+

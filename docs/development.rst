@@ -26,8 +26,3 @@ and run
     pip clone https://github.com/CanDIG/candig-server.git
     pip install dev-requirements.txt
 
-
-***************
-GitHub workflow
-***************
-
