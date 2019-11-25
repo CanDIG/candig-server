@@ -124,6 +124,40 @@ It is available from here: https://github.com/CanDIG/redcap-cloud
 Data Use Ontology
 ------------------
 
+To enable future automated discovery, we have adopted the use of `Data Use Ontology (DUO)`
+Terms to describe our datasets. For the current version of candig-server, you have
+the option to use a json file to define your dataset.
+
+You can find a list of DUO Terms `here <https://github.com/EBISPOT/DUO/blob/master/src/ontology/duo.csv>`_.
+
+.. warning::
+    `DUO:0000025` and `DUO:0000022` are not currently supported. Attempts to ingest them two
+    DUO Terms will be rejected.
+
+To ingest the DUO Terms, you need to prepare a json file listed like below.
+
+.. code-block:: json
+
+    {
+        "duo": [
+            {
+                "id": "DUO:0000021"
+            },
+            {
+                "id": "DUO:0000024",
+                "modifier": "2020-01-01"
+            }
+        ]
+    }
+
+.. warning::
+    For now, `DUO:0000024` is the only DUO Term that requires `modifier`. The modifier
+    has to be formatted exactly like `YYYY-MM-DD`, invalid dates will be rejected.
+
+When your file is ready, run the `add-dataset-duo` command to populate the DUO information
+of the dataset. Please note that this command will always overwrite the existing DUO
+information stored.
+
 
 ------------------------------------
 Reads, Variants and References Data

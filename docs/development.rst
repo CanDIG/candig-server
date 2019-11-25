@@ -32,8 +32,23 @@ Assume your local `python3` instance is of Python 3.6, with sqlite3 and other re
 modules built, you can run the following script to set up a dev server in a few minutes.
 Even better, it will be populated with two datasets with mock data.
 
-Test has been done on CentOS and MacOS, we expect the install to run OK on most unix
-distributions. We have not tested deployment on Windows, and do not expect it to work.
+The script has been tested on CentOS machines, and we expect the install to
+run OK on most unix distributions. You can run it on `MacOS`, but `wget` likely won't
+work and you should either download the files yourself, or use a replacement for `wget`.
+
+Optionally, you can run two servers with federation set up. Assume you have server A running
+at ``0.0.0.0:3000``, you need to run the script again to set up a server B.
+Use `this file <https://raw.githubusercontent.com/CanDIG/candig-ingest/master/candig/ingest/mock_data/clinical_metadata_tier3.json>`_
+as the clinical data for your server B, and run your server B at ``0.0.0.0:3001``.
+
+Since the script already adds a peer at ``0.0.0.0:3001``, you will get federated response
+from both servers A and B. You can certainly choose to run them on different ports, or different
+servers, the script makes these assumptions only for your convenience.
+
+.. warning::
+    Please note that by default, the script installs the server on the directory
+    `test_server`. You can either change it, or make sure that you do not have a
+    `test_server` directory.
 
 
 .. code-block:: bash
@@ -58,12 +73,13 @@ distributions. We have not tested deployment on Windows, and do not expect it to
 
     mkdir candig-example-data
 
-    wget https://raw.githubusercontent.com/CanDIG/PROFYLE_ingest/develop/PROFYLE_ingest/clinical_metadata_tier.json1
-    wget https://raw.githubusercontent.com/CanDIG/PROFYLE_ingest/develop/PROFYLE_ingest/clinical_metadata_tier.json2
-    ingest candig-example-data/registry.db mock1 clinical_metadata_tier.json1
-    ingest candig-example-data/registry.db mock2 clinical_metadata_tier.json2
+    wget https://raw.githubusercontent.com/CanDIG/candig-ingest/master/candig/ingest/mock_data/clinical_metadata_tier1.json
+    wget https://raw.githubusercontent.com/CanDIG/candig-ingest/master/candig/ingest/mock_data/clinical_metadata_tier2.json
+    ingest candig-example-data/registry.db mock1 clinical_metadata_tier1.json
+    ingest candig-example-data/registry.db mock2 clinical_metadata_tier2.json
 
+    candig_repo add-peer candig-example-data/registry.db http://0.0.0.0:3001
 
-    echo "server 190918 set up complete"
+    echo "test server set up has completed."
 
     candig_server --host 0.0.0.0 --port 3000

@@ -182,6 +182,11 @@ Adds a reference set used in the 1000 Genomes project using the name
 add-biosample
 -------------
 
+.. warning::
+
+    This command is deprecated, and may be removed soon in future. Use ingest command
+    to add Sample-related information.
+
 Adds a new biosample to the repository. The biosample argument is
 a JSON document according to the GA4GH JSON schema.
 
@@ -204,6 +209,12 @@ Adds the biosample named HG00096 to the repository with the individual ID
 --------------
 add-individual
 --------------
+
+.. warning::
+
+    This command is deprecated, and may be removed soon in future. Use ingest command
+    to add Patient-related information.
+
 
 Adds a new individual to the repository. The individual argument is
 a JSON document following the GA4GH JSON schema.
@@ -768,3 +779,24 @@ Examples:
 .. code-block:: bash
 
     $ candig_repo remove-phenotypeassociationset registry.db dataset1  cgd
+
+--------------
+remove-patient
+--------------
+
+remove a patient.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-patient
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-patient registry.db dataset1 mock1_15322
+
+
