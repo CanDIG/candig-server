@@ -14,11 +14,11 @@ Contents
     :maxdepth: 2
 
     introduction
-    demo
     data
     development
     configuration
     datarepo
+    api
     contribution
     status
 

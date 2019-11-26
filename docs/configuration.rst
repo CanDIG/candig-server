@@ -71,15 +71,16 @@ INITIAL_PEERS
     the registry as initial peers. Each time the server starts, this set of
     peers will be announced and added to the registry.
 
-LANDING_MESSAGE_HTML
-    The server provides a simple landing page at its root. By setting this
-    value to point at a file containing an HTML block element it is possible to
-    customize the landing page. This can be helpful to provide support links
-    or details about the hosted datasets.
-
 
 ------------------
 Docker Deployment
+------------------
+
+
+
+
+------------------
+Access List Setup
 ------------------
 
 

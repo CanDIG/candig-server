@@ -11,7 +11,7 @@ Prepare data for the server
 The candig-server has a general guideline on which data are accepted.
 
 The following sections will talk about how to prepare for the data that is accepted
-by the candig-server.
+by the candig-server, and provide you with some mock data for testing.
 
 ------------------------------------
 Clinical and Pipeline Metadata
@@ -109,7 +109,13 @@ Mock data for testing
 We provide some mock data files, should you want to use them to quickly test your server.
 
 They are available from https://github.com/CanDIG/candig-ingest/tree/master/candig/ingest/mock_data
+Use the ``clinical_metadata_tier[1,2,3].json`` files.
 
+.. note::
+    If you are interested in testing the 1k genome data, you can find a ``ingest-compliant``
+    clinical mock dataset here https://github.com/CanDIG/candig-ingest/releases/tag/v1.3.1
+
+    This contains all individuals information.
 
 ++++++++++++++++++++++++++++++
 Migrate data from RedCap Cloud
@@ -163,4 +169,14 @@ information stored.
 ------------------------------------
 Reads, Variants and References Data
 ------------------------------------
+
+If you are interested in testing the candig-server with some variants data, we provide
+a mock dataset here: https://github.com/CanDIG/test_data/releases
+
+Currently, there are three groups of test data provided, containing clinical, pipeline
+metadata, as well as the variants data. We have provided a loading script, note that
+you might need to modify the DB path, or the dataset name.
+
+We provide three `group` datasets since we often use it to test federation of three test
+servers.
 

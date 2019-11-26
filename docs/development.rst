@@ -11,9 +11,9 @@ Thanks for your interest in the candig-server. If you have any questions,
 
     This guide is a work in progress, and is incomplete.
 
-***********************
-Development environment
-***********************
+******************************
+Standalone candig-server Setup
+******************************
 
 You will need Python 3.6.x to successfully run the candig-server.
 
@@ -83,3 +83,11 @@ servers, the script makes these assumptions only for your convenience.
     echo "test server set up has completed."
 
     candig_server --host 0.0.0.0 --port 3000
+
+
+**********************
+Tyk and Keycloak Setup
+**********************
+
+It is possible to run set up a local test server, with Tyk and Keycloak set up. These two
+components provide authentication capabilities.
