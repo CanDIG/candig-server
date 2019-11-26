@@ -1,54 +1,41 @@
 .. _datarepo:
 
-***************
-Data repository
-***************
+**********************
+Command Line Interface
+**********************
 
-Each candig-server represents a repository of information. This repository
-consists of the reference sets, datasets, readgroup sets, variant sets etc. in
-the server's data model and may contain data from many different unrelated
-projects. The server administrator defines and manages this repository using
-the ``candig_repo`` command line interface, which provides commands to manage
-all of the objects represented by a candig-server.
+With the exception of using ``ingest`` to ingest the clinical and pipeline metadata
+in bulk, ``candig_repo`` command line interface is used for all other operation.
 
 The registry contains links to files, as well as some metadata.
 
-For instructions on adding metadata in bulk, see here.
+.. warning::
+    Because the data model objects returned via APIs are created at server start-up,
+    at this time, you have to restart the server for the data you ingest to be reflected.
 
-++++++++++++
-Command Line
-++++++++++++
+For instructions on adding metadata in bulk, see ingest_.
 
-------
-ingest
-------
-The ``ingest`` command is the preferred way to import metadata in bulk. It does not come with
-candig-server by default, to use it, you need to install `candig-ingest` by running:
+++++++++++++++++++++++++++++
+Initialize/Remove Dataset
+++++++++++++++++++++++++++++
 
-`pip install candig-ingest`
 
-To import metadata in bulk, you need to have a specially formatted json file. A mock json
-file is available from https://github.com/CanDIG/candig-ingest/blob/master/candig/ingest/mock_data/clinical_metadata_tier1.json
+This section contains commands that initialize the dataset, give you the overview
+of the data repository, as well as deleting the dataset.
 
-To ingest the data, you need to run
-
-.. code-block:: bash
-
-    usage: ingest registryPath datasetName metadataPath
-
-If the dataset does not exist, it will create a new dataset of this name. There is no need
-to run ``init`` command before running ``ingest``.
-
-**Examples:**
-
-.. code-block:: bash
-
-    $ ingest registry.db mock1 mock_data.json
-
+You do not need to use ``init`` to initialize the dataset if you already prepared
+a json file of clinical information. You can run the ``ingest`` command directly and
+it will take care of everything for you.
 
 ----
 init
 ----
+
+.. warning::
+    If you already prepared a json file that conforms to our standard clinical or
+    pipeline metadata, you can run ``ingest`` command directly without running ``init``.
+
+    For detailed instructions, see ingest_.
 
 The ``init`` command initialises a new registry DB at a given
 file path. This is the first command that must be issued
@@ -105,9 +92,7 @@ to another location since it was added to the registry), and the
 ``verify`` command allows an administrator to check that all is
 well in their repository.
 
-.. note:: The ``verify`` command is under development and will
-   be much more sophisticated in the future. In particular, the output
-   of this command should improve considerably in the near future.
+.. note:: The ``verify`` command is currently under review.
 
 .. argparse::
    :module: candig.server.cli.repomanager
@@ -147,6 +132,413 @@ Adds the dataset with the name ``1kg`` and description
 ``'Example dataset using 1000 genomes data'`` to the
 registry database ``registry.db``.
 
+
+--------------
+remove-dataset
+--------------
+
+Removes a dataset from the repository and recursively removes all
+objects (ReadGroupSets, VariantSets, etc) within this dataset.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-dataset
+   :nodefault:
+
+**Examples:**
+
+.. code-block:: bash
+
+    $ candig_repo remove-dataset registry.db dataset1
+
+Deletes the dataset with name ``dataset1`` from the repository
+represented by ``registry.db``
+
+
+
++++++++++++++++++++++++++++++++++++++++
+Add/Remove Clinical & Pipeline Metadata
++++++++++++++++++++++++++++++++++++++++
+
+This section contains commands that let you ingest data into the clinical and pipeline
+metadata tables, as well as the commands that delete them.
+
+The ``ingest`` command is the only way to ingest clinical or pipeline data in bulk.
+It encapsulates all the write operations into a single transaction. To learn about preparing
+the json files for the ``ingest`` command, see :ref:`data`
+
+------
+ingest
+------
+The ``ingest`` command is the preferred way to import metadata in bulk. It does not come with
+candig-server by default, to use it, you need to install `candig-ingest` by running:
+
+`pip install candig-ingest`
+
+To import metadata in bulk, you need to have a specially formatted json file. A mock json
+file is available from https://github.com/CanDIG/candig-ingest/blob/master/candig/ingest/mock_data/clinical_metadata_tier1.json
+
+To ingest the data, you need to run
+
+.. code-block:: bash
+
+    usage: ingest registryPath datasetName metadataPath
+
+If the dataset does not exist, it will create a new dataset of this name. There is no need
+to run ``init`` command before running ``ingest``.
+
+**Examples:**
+
+.. code-block:: bash
+
+    $ ingest registry.db mock1 mock_data.json
+
+--------------
+remove-patient
+--------------
+
+remove a patient.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-patient
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-patient registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+-------------------
+remove-enrollment
+-------------------
+
+remove a enrollment.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-enrollment
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-enrollment registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+-------------------
+remove-treatment
+-------------------
+
+remove a treatment.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-treatment
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-treatment registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+--------------
+remove-sample
+--------------
+
+remove a sample.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-sample
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-sample registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+-------------------
+remove-diagnosis
+-------------------
+
+remove a diagnosis.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-diagnosis
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-diagnosis registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+-------------------
+remove-tumourboard
+-------------------
+
+remove a tumourboard.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-tumourboard
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-tumourboard registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+--------------
+remove-outcome
+--------------
+
+remove a outcome.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-outcome
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-outcome registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+-------------------
+remove-complication
+-------------------
+
+remove a complication.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-complication
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-complication registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+--------------
+remove-consent
+--------------
+
+remove a consent.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-consent
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-consent registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+-------------------
+remove-chemotherapy
+-------------------
+
+remove a chemotherapy.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-chemotherapy
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-chemotherapy registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+------------------------
+remove-immunotherapy
+------------------------
+
+remove a immunotherapy.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-immunotherapy
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-immunotherapy registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+-------------------
+remove-radiotherapy
+-------------------
+
+remove a radiotherapy.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-radiotherapy
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-radiotherapy registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+------------------------
+remove-celltransplant
+------------------------
+
+remove a celltransplant.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-celltransplant
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-celltransplant registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+--------------
+remove-surgery
+--------------
+
+remove a surgery.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-surgery
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-surgery registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+--------------
+remove-study
+--------------
+
+remove a study.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-study
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-study registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+--------------
+remove-slide
+--------------
+
+remove a slide.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-slide
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-slide registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+--------------
+remove-labtest
+--------------
+
+remove a labtest.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-labtest
+   :nodefault:
+
+Examples:
+
+.. code-block:: bash
+
+    $ candig_repo remove-labtest registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+
+
+
+++++++++++++++++++++++++
+Add/Remove Genomics Data
+++++++++++++++++++++++++
+
 ----------------
 add-referenceset
 ----------------
@@ -177,61 +569,6 @@ using command line options.
 
 Adds a reference set used in the 1000 Genomes project using the name
 ``NCBI37``, also setting the ``species`` to 9606 (human).
-
--------------
-add-biosample
--------------
-
-.. warning::
-
-    This command is deprecated, and may be removed soon in future. Use ingest command
-    to add Sample-related information.
-
-Adds a new biosample to the repository. The biosample argument is
-a JSON document according to the GA4GH JSON schema.
-
-.. argparse::
-   :module: candig.server.cli.repomanager
-   :func: getRepoManagerParser
-   :prog: candig_repo
-   :path: add-biosample
-   :nodefault:
-
-**Examples:**
-
-.. code-block:: bash
-
-    $ candig_repo add-biosample registry.db dataset1 HG00096 '{"individualId": "abc"}'
-
-Adds the biosample named HG00096 to the repository with the individual ID
-"abc".
-
---------------
-add-individual
---------------
-
-.. warning::
-
-    This command is deprecated, and may be removed soon in future. Use ingest command
-    to add Patient-related information.
-
-
-Adds a new individual to the repository. The individual argument is
-a JSON document following the GA4GH JSON schema.
-
-.. argparse::
-   :module: candig.server.cli.repomanager
-   :func: getRepoManagerParser
-   :prog: candig_repo
-   :path: add-individual
-   :nodefault:
-
-**Examples:**
-
-.. code-block:: bash
-
-    $ candig_repo add-individual registry.db dataset1 HG00096 '{"description": "A description"}'
-
 
 ------------
 add-ontology
@@ -535,29 +872,6 @@ Examples:
     $ candig_repo add-phenotypeassociationset registry.db dataset1 /monarch/ttl/cgd.ttl -n cgd
 
 
---------------
-remove-dataset
---------------
-
-Removes a dataset from the repository and recursively removes all
-objects (ReadGroupSets, VariantSets, etc) within this dataset.
-
-.. argparse::
-   :module: candig.server.cli.repomanager
-   :func: getRepoManagerParser
-   :prog: candig_repo
-   :path: remove-dataset
-   :nodefault:
-
-**Examples:**
-
-.. code-block:: bash
-
-    $ candig_repo remove-dataset registry.db dataset1
-
-Deletes the dataset with name ``dataset1`` from the repository
-represented by ``registry.db``
-
 -------------------
 remove-referenceset
 -------------------
@@ -581,50 +895,6 @@ repository will result in an error.
 
 Deletes the reference set with name ``NCBI37`` from the repository
 represented by ``registry.db``
-
-----------------
-remove-biosample
-----------------
-
-Removes a biosample from the repository.
-
-.. argparse::
-   :module: candig.server.cli.repomanager
-   :func: getRepoManagerParser
-   :prog: candig_repo
-   :path: remove-biosample
-   :nodefault:
-
-**Examples:**
-
-.. code-block:: bash
-
-    $ candig_repo remove-biosample registry.db dataset1 HG00096
-
-Deletes the biosample with name ``HG00096`` in the dataset
-``dataset1`` from the repository represented by ``registry.db``
-
------------------
-remove-individual
------------------
-
-Removes an individual from the repository.
-
-.. argparse::
-   :module: candig.server.cli.repomanager
-   :func: getRepoManagerParser
-   :prog: candig_repo
-   :path: remove-individual
-   :nodefault:
-
-**Examples:**
-
-.. code-block:: bash
-
-    $ candig_repo remove-individual registry.db dataset1 HG00096
-
-Deletes the individual with name ``HG00096`` in the dataset
-``dataset1`` from the repository represented by ``registry.db``
 
 ---------------
 remove-ontology
@@ -780,23 +1050,104 @@ Examples:
 
     $ candig_repo remove-phenotypeassociationset registry.db dataset1  cgd
 
---------------
-remove-patient
---------------
 
-remove a patient.
+
+-------------
+add-biosample
+-------------
+
+.. warning::
+
+    This command is deprecated, and may be removed soon in future. Use ingest command
+    to add Sample-related information.
+
+Adds a new biosample to the repository. The biosample argument is
+a JSON document according to the GA4GH JSON schema.
 
 .. argparse::
    :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
    :prog: candig_repo
-   :path: remove-patient
+   :path: add-biosample
    :nodefault:
 
-Examples:
+**Examples:**
 
 .. code-block:: bash
 
-    $ candig_repo remove-patient registry.db dataset1 mock1_15322
+    $ candig_repo add-biosample registry.db dataset1 HG00096 '{"individualId": "abc"}'
+
+Adds the biosample named HG00096 to the repository with the individual ID
+"abc".
+
+--------------
+add-individual
+--------------
+
+.. warning::
+
+    This command is deprecated, and may be removed soon in future. Use ingest command
+    to add Patient-related information.
 
 
+Adds a new individual to the repository. The individual argument is
+a JSON document following the GA4GH JSON schema.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: add-individual
+   :nodefault:
+
+**Examples:**
+
+.. code-block:: bash
+
+    $ candig_repo add-individual registry.db dataset1 HG00096 '{"description": "A description"}'
+
+
+
+----------------
+remove-biosample
+----------------
+
+Removes a biosample from the repository.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-biosample
+   :nodefault:
+
+**Examples:**
+
+.. code-block:: bash
+
+    $ candig_repo remove-biosample registry.db dataset1 HG00096
+
+Deletes the biosample with name ``HG00096`` in the dataset
+``dataset1`` from the repository represented by ``registry.db``
+
+-----------------
+remove-individual
+-----------------
+
+Removes an individual from the repository.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-individual
+   :nodefault:
+
+**Examples:**
+
+.. code-block:: bash
+
+    $ candig_repo remove-individual registry.db dataset1 HG00096
+
+Deletes the individual with name ``HG00096`` in the dataset
+``dataset1`` from the repository represented by ``registry.db``

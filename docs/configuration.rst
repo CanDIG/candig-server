@@ -13,7 +13,7 @@ Configuration file
 
 The candig-server is a `Flask application <http://flask.pocoo.org/>`_
 and uses the standard `Flask configuration file mechanisms
-<http://flask.pocoo.org/docs/0.10/config/>`_.
+<https://flask.palletsprojects.com/en/1.1.x/config/>`_.
 Many configuration files will be very simple, and will consist of just
 one directive instructing the server where to find the data repository;
 example, we might have

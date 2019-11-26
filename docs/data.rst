@@ -21,10 +21,11 @@ Clinical and Pipeline Metadata
 File format required for ingestion
 +++++++++++++++++++++++++++++++++++
 
-We strongly recommend using the ``ingest`` command to ingest any clinical and pipeline
+At this time, ``ingest`` command is the only way to ingest any clinical and pipeline
 metadata, detailed instructions for ingestion can be found at :ref:`datarepo`.
 
-However, the ``ingest`` command does expect a specially formatted json file for ingestion.
+However, before you run the ``ingest`` command, you need to prepare for a json file
+that conforms to the  ingest standard format.
 
 For clinical data, it is a json object, with `metadata` as the key. However, for pipeline
 data, its key is `pipeline_metadata`. Make sure you have the correct key specified.
@@ -101,18 +102,18 @@ To tier the data, you need to run
     $ load_tiers pog mock.json
 
 
-++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++
 Mock data for testing
-++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++
 
 We provide some mock data files, should you want to use them to quickly test your server.
 
 They are available from https://github.com/CanDIG/candig-ingest/tree/master/candig/ingest/mock_data
 
 
-++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++
 Migrate data from RedCap Cloud
-++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++
 
 If your clinical meta data is on RedCapCloud, we provide a script that would transform
 the related data into ready-to-ingest format.

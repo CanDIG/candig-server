@@ -10,7 +10,7 @@ info:
     For all metadata and variant services endpoints, you can also refer to [this documentation](https://www.distributedgenomics.ca/static/metadata_variants_services_sample_queries.pdf) for some ready-to-use sample queries.
 
     ---
-    *Warning: developers, while reasonable efforts have been made to validate all the requests and response schemas listed here, at this time, we cannot guarantee that the spec to be fully openAPI compatiable or machine-readable. However, if you encounter do find any issues with the spec here, please let us know.*
+    *Warning: developers, while reasonable efforts have been made to validate all the requests and response schemas listed here, at this time, we cannot guarantee that the spec to be fully openAPI compatiable or machine-readable. However, if you do encounter any issues, please let us know.*
     ---
 
   version: "1.1"
@@ -2231,17 +2231,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         startDate:
@@ -2266,17 +2255,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         courseNumber:
@@ -2323,17 +2301,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         date:
@@ -2358,17 +2325,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         consentId:
@@ -2421,17 +2377,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         diagnosisId:
@@ -2502,17 +2447,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         enrollmentInstitution:
@@ -2599,6 +2533,7 @@ components:
         nextPageToken from the previous response.
     candigNextPageToken:
       type: string
+      example: "1000"
       description: |-
         The continuation token, which is used to page through large
         result sets. Provide this value in a subsequent request to return the next
@@ -2620,17 +2555,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         startDate:
@@ -2657,17 +2581,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         startDate:
@@ -2696,17 +2609,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         physicalExamId:
@@ -2755,17 +2657,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         otherIds:
@@ -2814,17 +2705,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         courseNumber:
@@ -2889,17 +2769,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         sampleId:
@@ -2957,11 +2826,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Celltransplants with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -2997,11 +2863,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Chemotherapies with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3037,11 +2900,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Complications with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3077,11 +2937,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Consents with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3117,11 +2974,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Diagnoses with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3157,11 +3011,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Enrollments with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3197,11 +3048,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Immunotherapies with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3237,11 +3085,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Labtests with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3277,11 +3122,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Outcomes with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3317,11 +3159,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Patients with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3357,11 +3196,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Radiotherapies with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3397,11 +3233,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Samples with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3436,11 +3269,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Slides with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3475,11 +3305,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Studies with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3514,11 +3341,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Surgeries with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3554,11 +3378,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Treatments with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3594,11 +3415,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Tumourboards with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         filters:
           $ref: '#/components/schemas/candigFilters'
         pageSize:
@@ -3641,17 +3459,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         sampleId:
@@ -3698,17 +3505,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         startDate:
@@ -3731,17 +3527,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         startDate:
@@ -3776,17 +3561,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         courseNumber:
@@ -3827,17 +3601,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         patientId:
           type: string
         dateOfMolecularTumorBoard:
@@ -3910,17 +3673,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         sampleId:
           type: string
         inHousePipeline:
@@ -3969,17 +3721,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         sampleId:
           type: string
         readLength:
@@ -4010,17 +3751,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         sampleId:
           type: string
         rnaBlood:
@@ -4047,17 +3777,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         sampleId:
           type: string
         inHousePipeline:
@@ -4085,11 +3804,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Alignments with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         sampleId:
           title: Option to filter for a sample id
           type: string
@@ -4133,11 +3849,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Treatments with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         sampleId:
           title: Option to filter for a sample id
           type: string
@@ -4181,11 +3894,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Extractions with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         pageSize:
           type: integer
           example: 1000
@@ -4229,11 +3939,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns FusionDetection with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         sampleId:
           title: Option to filter for a sample id
           type: string
@@ -4277,11 +3984,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns Sequencing with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         sampleId:
           title: Option to filter for a sample id
           type: string
@@ -4325,11 +4029,8 @@ components:
       properties:
         datasetId:
           type: string
-          description: Optionally specify the dataset to search within.
-        name:
-          type: string
-          description: Returns VariantCalling with the given name found by case-sensitive
-            string matching.
+          example: WyJtb2NrMSJd
+          description: Required. Id of the dataset to search within.
         sampleId:
           title: Option to filter for a sample id
           type: string
@@ -4380,17 +4081,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         sampleId:
           type: string
         dnaLibraryKit:
@@ -4425,17 +4115,6 @@ components:
         name:
           type: string
           description: This is a label or symbolic identifier for this object.
-        description:
-          type: string
-          description: This attribute contains human readable text.
-        created:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was created.
-        updated:
-          type: string
-          description: The :ref:ISO 8601<metadata_date_time> time at which this
-            record was updated.
         sampleId:
           type: string
         inHousePipeline:
