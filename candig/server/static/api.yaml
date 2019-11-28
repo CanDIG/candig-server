@@ -2480,32 +2480,37 @@ components:
         treatingCentreProvince:
           type: string
     candigFilterValue:
-      title: Contains a single statement about any field of any of tables
+      title: Filter when comparing field to a single value.
       type: object
       properties:
         field:
-          title: Name of a field on which the filter should be applied
+          title: field
+          description: field on which the filter applies
           type: string
         operator:
-          title: Relationship between field and value
+          title: operator
+          description: The relationship between the `field` and `value`.
           type: string
           enum: [">","<",">=","<=","=","==","!=","contains"]
         value:
-          title: A level of the field content
+          title: value
           type: string
     candigFilterValues:
-      title: Contains a single statement about any field of any of tables
+      title: Filter when checking multiple values
       type: object
       properties:
         field:
-          title: Name of one of the table field on which the filter should be applied
+          title: field
+          description: field on which the filter applies
           type: string
         operator:
-          title: Relationship between field and value
+          title: operator
+          description: The relationship between the `field` and `values`.
           type: string
           enum: ["in"]
         values:
-          title: List of values to be able to provide multiple possibilities
+          title: values
+          description: Check if the any record of selected field is a member of supplied `values`.
           type: array
           items:
             type: string

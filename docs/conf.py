@@ -276,7 +276,7 @@ latex_logo = "_static/logo.png"
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'candig', 'CanDIG-server Documentation',
+    (master_doc, 'candig', 'CanDIG-Server Documentation',
      [author], 1)
 ]
 
@@ -290,8 +290,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'CanDIG', 'CanDIG-server Documentation',
-   author, 'CanDIG', 'A reference implementation of the CanDIG API.',
+  (master_doc, 'CanDIG', 'CanDIG-Server Documentation',
+   author, 'CanDIG', 'An implementation of the CanDIG API.',
    'Miscellaneous'),
 ]
 

@@ -131,6 +131,11 @@ It is available from here: https://github.com/CanDIG/redcap-cloud
 Data Use Ontology
 ------------------
 
+.. warning::
+
+    This section is highly experimental, and is subject to change without any notices or
+    grace period.
+
 To enable future automated discovery, we have adopted the use of `Data Use Ontology (DUO)`
 Terms to describe our datasets. For the current version of candig-server, you have
 the option to use a json file to define your dataset.

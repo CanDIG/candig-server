@@ -31,6 +31,54 @@ This includes all of the endpoints under Clinical and Pipeline Metadata Services
 
 Even though some of the sample queries below are made to specific endpoint, the same format applies to any pipeline or clinical metadata endpoint. Typically you will need to change the field in your filters, depending on which table you are querying on.
 
+----------------------------
+How to write filter objects
+----------------------------
+As you can see from Sample Queries II to IV, it is possible to submit optional `filters`
+list along with your request.
+
+`filters` is a list of `filter` objects. There are two types of filter objects.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+Type I: Compare the `field`'s value to a string
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+.. code-block:: json
+
+    {
+        "field": "gender",
+        "operator": "=",
+        "value": "female"
+    }
+
+In the filter object above, you specify `gender` as the field, and value to be the `female`,
+`=` as the operator. This filter object asks server to find records whose `gender` is female.
+
+.. note::
+    For Type I filter object, the supported operators are >, <, >=, <=, =, ==, !=, contains.
+    Note that `=` and `==` are equivalent.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+Type II: Check if a record's field belongs to a list
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+.. code-block:: json
+
+    {
+        "field": "provinceOfResidence",
+        "operator": "in",
+        "values": ["British Columbia", "Ontario"]
+    }
+
+In the filter object above, you specify `provinceOfResidence` as the field, and `values`
+to be the `["British Columbia", "Ontario"]`, `in` as the operator.
+
+This filter object asks server to find records whose `provinceOfResidence` is one of
+`British Columbia` or `Ontario`.
+
+.. note::
+    For Type II filter object, `in` is the only supported operator. Also, you specify `values`,
+    instead of `value`.
 
 --------------
 Fetch Datasets
@@ -248,7 +296,15 @@ How to write logic
 Logic is where you specify the relationship between various components.
 The only operators you will need to specify are either AND or OR.
 When writing the logic, the operation becomes the key.
-For example, conditionA and conditionB and condition C would be written as:
+
+
+::::::::::::::::::::::::::::::::::::
+Write Logic for multiple components
+::::::::::::::::::::::::::::::::::::
+
+For example, conditionA and conditionB and condition C would be written as below.
+
+In this example, the records will have to satisfy conditions of all three components.
 
 .. code-block:: json
 
@@ -260,15 +316,23 @@ For example, conditionA and conditionB and condition C would be written as:
                 },
                 {
                     "id": "conditionB"
-                },{
+                },
+                {
                     "id": "conditionC"
                 }
             ]
         }
     }
 
-There is one exception to this rule. When you only have 1 component in your query,
-your logic part of the query will only have an id, which would look like this:
+In the above example, you can replace the `and` key with `or`. In this case, the records
+will only need to fulfill the condition of any single component.
+
+::::::::::::::::::::::::::::::
+Write Logic for 1 component
+::::::::::::::::::::::::::::::
+
+When you only have 1 component in your query, however, you may only specify `id`.
+
 
 .. code-block:: json
 
@@ -278,8 +342,27 @@ your logic part of the query will only have an id, which would look like this:
         }
     }
 
-The logic can get very complicated, with multiple nested operations involved,
-the following example is the equivalent to ``(condition1 AND condition2) AND (condition3 OR condition4)``
+For this case only, that is, when you only have one single `id` in your logic. Optionally, you can specify
+the `negate` flag, which would basically negate the logic of the componenet.
+
+
+.. code-block:: json
+
+    {
+        "logic": {
+            "id": "condition1",
+            "negate" true
+        }
+    }
+
+:::::::::::::::::::::::::::::::::
+Write Logic for nested components
+:::::::::::::::::::::::::::::::::
+
+The logic can get very complicated, with multiple nested operations involved. However, the
+examples explained above should suffice most basic needs.
+
+As an example, the following request is the equivalent to ``(condition1 AND condition2) AND (condition3 OR condition4)``
 
 .. code-block:: json
 
@@ -318,9 +401,14 @@ The ``components`` part is a list, each corresponding to a filter of a specified
 Be careful that the id has to match with the one you specified in the logic part of
 your query. It can be almost any string, but they have to match.
 
-In a component, you specify the tables you want to search on to be the
-key, in this case, it was “patients”. You will also need to specify filters,
-where you specify the field, operator and value.
+In a ``component``, you specify the tables you want to search on to be the
+key.
+
+There are 3 different types of ``components`` objects.
+
+::::::::::::::::::::::::::::::
+Components for Clinical tables
+::::::::::::::::::::::::::::::
 
 
 .. code-block:: json
@@ -343,7 +431,47 @@ where you specify the field, operator and value.
     }
 
 You write the filter objects the same you way you would write for individual endpoints.
+If you need a reminder on that, check
 
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+Component for /variants endpoint
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+.. code-block:: json
+
+    {
+        "components": [
+            {
+                "id": "condition1",
+                "variants": {
+                    "start": "",
+                    "end": "",
+                    "referenceName": "1"
+                }
+            }
+        ]
+    }
+
+Note that you can also specify `variantSetIds` in here, which will limit the scope to
+your list of `variantSetIds`. If you don't specify any, by default, it will try to search
+through all variantSets associated with this dataset.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+Component for /variantsbygenesearch endpoint
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+.. code-block:: json
+
+    {
+        "components": [
+            {
+                "id": "condition1",
+                "variantsByGene": {
+                    "gene": "MUC1"
+                }
+            }
+        ]
+    }
 
 --------------------
 How to write results
@@ -354,18 +482,57 @@ the server to return. For a query made to the /search endpoint, you can
 simply specify the table name.
 
 .. warning::
-    The only endpoints that are accepted here are all clinical and pipeline metadata
+    The only endpoints that are accepted here are all clinical metadata
     endpoints, as well as ``variants``.
+
+::::::::::::::::::::::::::::::::::::
+Results section for Clinical tables
+::::::::::::::::::::::::::::::::::::
 
 
 .. code-block:: json
 
     {
-        "results": [
-            {
-                "table": "patients"
-            }
-        ]
+        "results": {
+            "table": "patients",
+            "fields": ["gender", "ethnicity"]
+        }
+    }
+
+.. warning::
+    `fields` is a list of fields that you want the server to return. It is optional for /search
+    endpoint, but mandatory for `/count` endpoint. If you do not specify this in `/search`
+    endpoint, the server will just return all the fields.
+
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+Results section for /variants endpoint
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+.. code-block:: json
+
+    {
+        "results": {
+            "table": "variants",
+            "start": "",
+            "end": "",
+            "referenceName": "1"
+        }
+    }
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+Results section for /variantsbygenesearch endpoint
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+.. code-block:: json
+
+    {
+        "results": {
+            "table": "variantsByGene",
+            "gene": "MUC1"
+        }
     }
 
 --------------
@@ -374,7 +541,8 @@ Sample Query I
 
 Description: Return a list of patients, whose diseaseResponseOrStatus is “Complete Response”, AND have a courseNumber that is not 100.
 
-Note: The example query below only works for the /search endpoint, as it did not specify a list of fields to aggregate on in the results section. Refer to Part III: Results under Basic Usages to remind yourself how to do it, or refer to Example Query 2.
+.. warning::
+    The example query below only works for the /search endpoint, as it did not specify `fields`.
 
 Query:
 
@@ -456,7 +624,7 @@ from the list of variantsetIds.
                         "yourVariantSetId_6",
                         "yourVariantSetId_7",
                         "yourVariantSetId_8"
-                           ]
+                        ]
                 }
             }
         ],
