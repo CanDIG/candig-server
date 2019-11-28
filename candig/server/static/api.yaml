@@ -2828,6 +2828,7 @@ components:
           type: string
     candigSearchCelltransplantsRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -2865,6 +2866,7 @@ components:
         as JSON.
     candigSearchChemotherapiesRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -2902,6 +2904,7 @@ components:
         as JSON.
     candigSearchComplicationsRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -2939,6 +2942,7 @@ components:
         as JSON.
     candigSearchConsentsRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -2976,6 +2980,7 @@ components:
         JSON.
     candigSearchDiagnosesRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -3013,6 +3018,7 @@ components:
         JSON.
     candigSearchEnrollmentsRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -3050,6 +3056,7 @@ components:
         as JSON.
     candigSearchImmunotherapiesRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -3087,6 +3094,7 @@ components:
         as JSON.
     candigSearchLabtestsRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -3124,6 +3132,7 @@ components:
         JSON.
     candigSearchOutcomesRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -3161,6 +3170,7 @@ components:
         JSON.
     candigSearchPatientsRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -3198,6 +3208,7 @@ components:
         JSON.
     candigSearchRadiotherapiesRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -3235,6 +3246,7 @@ components:
         as JSON.
     candigSearchSamplesRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -3271,6 +3283,7 @@ components:
       description: This is the response from POST /samples/search expressed as JSON.
     candigSearchSlidesRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -3307,6 +3320,7 @@ components:
       description: This is the response from POST /slides/search expressed as JSON.
     candigSearchStudiesRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -3343,6 +3357,7 @@ components:
       description: This is the response from POST /studies/search expressed as JSON.
     candigSearchSurgeriesRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -3380,6 +3395,7 @@ components:
         JSON.
     candigSearchTreatmentsRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
@@ -3417,6 +3433,7 @@ components:
         JSON.
     candigSearchTumourboardsRequest:
       type: object
+      required: [datasetId]
       properties:
         datasetId:
           type: string
