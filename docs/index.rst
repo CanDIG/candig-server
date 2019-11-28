@@ -7,7 +7,7 @@ CanDIG Server
 This the documentation for version |version| of the candig-server.
 
 ********
-Contents
+Setup
 ********
 
 .. toctree::
@@ -18,8 +18,22 @@ Contents
     development
     configuration
     datarepo
+
+********
+Usage
+********
+
+.. toctree::
+    :maxdepth: 2
+
     api
+
+********
+Appendix
+********
+
+.. toctree::
+    :maxdepth: 2
+
     contribution
     status
-
-
