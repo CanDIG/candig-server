@@ -38,8 +38,8 @@ init
     For detailed instructions, see ingest_.
 
 The ``init`` command initialises a new registry DB at a given
-file path. This is the first command that must be issued
-when creating a new GA4GH repository.
+file path. Unless you have a clinical json file ready that can be ingested with ``ingest``,
+you need to run this to initialize your DB.
 
 .. argparse::
     :module: candig.server.cli.repomanager
@@ -701,7 +701,7 @@ reference set automatically set from the BAM header.
 
 .. code-block:: bash
 
-    $ candig_repo add-readgroupset registry.db 1kg ga4gh-example-data/HG00096.bam \
+    $ candig_repo add-readgroupset registry.db 1kg candig-example-data/HG00096.bam \
         -R GRCh37-subset -n HG0096-subset
 
 Adds a new readgroup set based on a subset of the 1000 genomes reads for the
@@ -816,7 +816,7 @@ RNA quantification formats supported are currently kallisto and RSEM.
 .. code-block:: bash
 
     $ candig_repo add-rnaquantification rnaseq.db data.tsv \
-             kallisto ga4gh-example-data/registry.db brca1 \
+             kallisto candig-example-data/registry.db brca1 \
             --biosampleName HG00096 --featureSetNames gencodev19
             --readGroupSetName HG00096rna --transcript
 

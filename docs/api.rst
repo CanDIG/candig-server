@@ -302,6 +302,9 @@ When writing the logic, the operation becomes the key.
 Write Logic for multiple components
 ::::::::::::::::::::::::::::::::::::
 
+This is possibly the most common use-case, where you want to find records that satisfy
+multiple filters you set.
+
 For example, conditionA and conditionB and condition C would be written as below.
 
 In this example, the records will have to satisfy conditions of all three components.
@@ -359,10 +362,12 @@ the `negate` flag, which would basically negate the logic of the componenet.
 Write Logic for nested components
 :::::::::::::::::::::::::::::::::
 
-The logic can get very complicated, with multiple nested operations involved. However, the
+It is possible to write more complex logic, with multiple nested operations involved. However, the
 examples explained above should suffice most basic needs.
 
-As an example, the following request is the equivalent to ``(condition1 AND condition2) AND (condition3 OR condition4)``
+As an example, the following request is the equivalent to ``A∩B∩(C∪D)``,
+which is equivalent to ``(A∩B) ∩ (C∪D)``.
+
 
 .. code-block:: json
 
@@ -370,22 +375,18 @@ As an example, the following request is the equivalent to ``(condition1 AND cond
         "logic": {
             "and": [
                 {
-                    "and": [
-                        {
-                            "id": "condition1"
-                        },
-                        {
-                            "id": "condition2"
-                        }
-                    ]
+                    "id": "A"
+                },
+                {
+                    "id": "B"
                 },
                 {
                     "or": [
                         {
-                            "id": "condition3"
+                            "id": "C"
                         },
                         {
-                            "id": "condition4"
+                            "id": "D"
                         }
                     ]
                 }
@@ -509,14 +510,18 @@ Results section for Clinical tables
 Results section for /variants endpoint
 ::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+.. warning::
+    Please be considerate when you are submitting any `/variants` request, we recommend you
+    to not search more than 1 million bps at a time. If you have a lot of variantSets, you should
+    limit your search size to 100,000.
 
 .. code-block:: json
 
     {
         "results": {
             "table": "variants",
-            "start": "",
-            "end": "",
+            "start": "1232555",
+            "end": "1553222",
             "referenceName": "1"
         }
     }
@@ -524,6 +529,11 @@ Results section for /variants endpoint
 ::::::::::::::::::::::::::::::::::::::::::::::::::::
 Results section for /variantsbygenesearch endpoint
 ::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+.. warning::
+    Please note that while you need to specify the table name to be `variantByGene`, it still
+    returns a list of variants in its response. The table ``here`` means `endpoint`, not the actual
+    table itself.
 
 
 .. code-block:: json

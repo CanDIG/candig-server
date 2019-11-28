@@ -24,11 +24,11 @@ example, we might have
 
 For production deployments, we shouldn't need to add any more configuration
 than this, as the other keys have sensible defaults. However,
-all of Flask's `builtin configuration values <http://flask.pocoo.org/docs/0.10/config/>`_
+all of Flask's builtin configuration values
 are supported, as well as the extra custom configuration values documented
-here. For information on preparing a data source see :ref:`datarepo` .
+here. For information on ingesting data, see :ref:`datarepo` .
 
-When debugging deployment issues, it can be very useful to turn on extra debugging
+When debugging deployment issues, it may be useful to turn on extra debugging
 information as follows:
 
 .. code-block:: python
@@ -50,6 +50,10 @@ DEFAULT_PAGE_SIZE
     to search queries. If a client does not specify a page size in a query,
     this value is used.
 
+    Depending on your audiences or your dataset, you could choose to set a number between 1000 to
+    4000. If you are part of a federated network, it is best to choose a single number and use
+    that within the federated network.
+
 MAX_RESPONSE_LENGTH
     The approximate maximum size of the server buffer used when creating
     responses. This is somewhat smaller than the size of the JSON response
@@ -60,28 +64,38 @@ MAX_RESPONSE_LENGTH
     is >= MAX_RESPONSE_LENGTH; or (c) there are no more results left in the
     query.
 
+    The default is 1024 * 1024, which is equivalent to roughly 1 MB.  You can make this bigger,
+    though we don't recommend setting anything too big, e.g., bigger than 10 MB.
+
 REQUEST_VALIDATION
     Set this to True to strictly validate all incoming requests to ensure that
     they conform to the protocol. This may result in clients with poor standards
     compliance receiving errors rather than the expected results.
 
-INITIAL_PEERS
-    When starting, you can set a list of initial peers to contact using a
-    simple text file. Add a URL per line for peers you would like to add to
-    the registry as initial peers. Each time the server starts, this set of
-    peers will be announced and added to the registry.
-
+    This defaults to `True`. Don't change this unless you have a particularly good reason to.
 
 ------------------
 Docker Deployment
 ------------------
 
+Refer to this page for Docker installation instructions
 
+https://github.com/CanDIG/candig_compose
 
 
 ------------------
 Access List Setup
 ------------------
 
+An example access list file looks like below. It is a tab-separated file. The server
+default name for the file is ``access_list.txt``.
 
+.. code-block:: text
 
+    issuer	username	project1	project2	project3	projectN
+
+    https://candigauth.bcgsc.ca/auth/realms/candig	userA	4	4	4	4
+    https://candigauth.bcgsc.ca/auth/realms/candig	userB	4		0	1
+
+    https://candigauth.uhnresearch.ca/auth/realms/CanDIG	userC	4	3	2	1
+    https://candigauth.uhnresearch.ca/auth/realms/CanDIG	userD			4	4
