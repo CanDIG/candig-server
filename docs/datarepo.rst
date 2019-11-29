@@ -169,6 +169,11 @@ The ``ingest`` command is the only way to ingest clinical or pipeline data in bu
 It encapsulates all the write operations into a single transaction. To learn about preparing
 the json files for the ``ingest`` command, see :ref:`data`
 
+All of the ``remove`` commands for removing clinical tables require you to specify their
+``name``, note that the ``name`` here is actually their unique identifier, typically is composed
+of their patientId, sometimes along with some other ID or timestamp information. This is the same
+``name`` you see in the records of these clinical or pipeline data records.
+
 ------
 ingest
 ------
@@ -212,7 +217,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-patient registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-patient registry.db mock1 PATIENT_81202
 
 -------------------
 remove-enrollment
@@ -231,7 +236,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-enrollment registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-enrollment registry.db mock1 PATIENT_81202_2005-08-23
 
 
 -------------------
@@ -251,7 +256,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-treatment registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-treatment registry.db mock1 PATIENT_81202_2005-08-23
 
 
 --------------
@@ -271,7 +276,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-sample registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-sample registry.db mock1 PATIENT_81202_SAMPLE_33409
 
 
 -------------------
@@ -291,7 +296,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-diagnosis registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-diagnosis registry.db mock1 PATIENT_81202_SAMPLE_33409
 
 
 -------------------
@@ -311,7 +316,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-tumourboard registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-tumourboard registry.db mock1 PATIENT_81202_SAMPLE_33409
 
 
 --------------
@@ -331,7 +336,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-outcome registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-outcome registry.db mock1 PATIENT_81202_2016-10-11
 
 
 -------------------
@@ -351,7 +356,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-complication registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-complication registry.db mock1 PATIENT_81202_2016-10-11
 
 
 --------------
@@ -371,7 +376,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-consent registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-consent registry.db mock1 PATIENT_81202_2016-10-11
 
 
 -------------------
@@ -391,7 +396,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-chemotherapy registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-chemotherapy registry.db mock1 PATIENT_81202_2016-10-11
 
 
 ------------------------
@@ -411,7 +416,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-immunotherapy registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-immunotherapy registry.db mock1 PATIENT_81202_2016-10-11
 
 
 -------------------
@@ -431,7 +436,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-radiotherapy registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-radiotherapy registry.db mock1 PATIENT_81202_2016-10-11
 
 
 ------------------------
@@ -451,7 +456,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-celltransplant registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-celltransplant registry.db mock1 PATIENT_81202_2016-10-11
 
 
 --------------
@@ -471,7 +476,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-surgery registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-surgery registry.db mock1 PATIENT_81202_2016-10-11
 
 
 --------------
@@ -491,7 +496,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-study registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-study registry.db mock1 PATIENT_81202_2016-10-11
 
 
 --------------
@@ -511,7 +516,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-slide registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-slide registry.db mock1 PATIENT_81202_2016-10-11
 
 
 --------------
@@ -531,7 +536,7 @@ Examples:
 
 .. code-block:: bash
 
-    $ candig_repo remove-labtest registry.db mock1 WyJtb2NrMSIsIElFTlRfNzY0OTRfMDEvMTkvMjAwNCJd
+    $ candig_repo remove-labtest registry.db mock1 PATIENT_81202_2016-10-11
 
 
 

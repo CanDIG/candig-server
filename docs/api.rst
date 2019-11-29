@@ -435,7 +435,7 @@ You write the filter objects the same you way you would write for individual end
 If you need a reminder on that, check
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::
-Component for /variants endpoint
+Component for /variants/search endpoint
 ::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 .. code-block:: json
@@ -461,6 +461,10 @@ through all variantSets associated with this dataset.
 Component for /variantsbygenesearch endpoint
 ::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+.. warning::
+    Note that this componenet is deprecated, and may be removed in subsequent releases.
+    Use the componenet listed below for `variants/gene/search`.
+
 .. code-block:: json
 
     {
@@ -468,6 +472,23 @@ Component for /variantsbygenesearch endpoint
             {
                 "id": "condition1",
                 "variantsByGene": {
+                    "gene": "MUC1"
+                }
+            }
+        ]
+    }
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+Component for /variants/gene/search endpoint
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+.. code-block:: json
+
+    {
+        "components": [
+            {
+                "id": "condition1",
+                "variants": {
                     "gene": "MUC1"
                 }
             }
@@ -531,6 +552,9 @@ Results section for /variantsbygenesearch endpoint
 ::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 .. warning::
+    This endpoint is deprecated. Use the section below.
+
+.. warning::
     Please note that while you need to specify the table name to be `variantByGene`, it still
     returns a list of variants in its response. The table ``here`` means `endpoint`, not the actual
     table itself.
@@ -541,6 +565,19 @@ Results section for /variantsbygenesearch endpoint
     {
         "results": {
             "table": "variantsByGene",
+            "gene": "MUC1"
+        }
+    }
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+Results section for /variants/gene/search endpoint
+::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+.. code-block:: json
+
+    {
+        "results": {
+            "table": "variants",
             "gene": "MUC1"
         }
     }

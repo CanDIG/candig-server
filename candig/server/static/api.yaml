@@ -92,7 +92,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchCelltransplantsResponse'
       x-codegen-request-body-name: body
-  /celltransplants/{celltransplantId}:
+  /celltransplants/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -101,7 +101,7 @@ paths:
         Gets Celltransplant by ID.
       operationId: GetCelltransplant
       parameters:
-      - name: celltransplantId
+      - name: id
         in: path
         description: The ID of the celltransplant requested
         required: true
@@ -141,7 +141,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchChemotherapiesResponse'
       x-codegen-request-body-name: body
-  /chemotherapies/{chemotherapyId}:
+  /chemotherapies/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -150,7 +150,7 @@ paths:
         Gets Chemotherapy by ID.
       operationId: GetChemotherapy
       parameters:
-      - name: chemotherapyId
+      - name: id
         in: path
         description: The ID of the chemotherapy requested
         required: true
@@ -190,7 +190,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchComplicationsResponse'
       x-codegen-request-body-name: body
-  /complications/{complicationId}:
+  /complications/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -199,7 +199,7 @@ paths:
         Gets Complication by ID.
       operationId: GetComplication
       parameters:
-      - name: complicationId
+      - name: id
         in: path
         description: The ID of the complication requested
         required: true
@@ -239,7 +239,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchConsentsResponse'
       x-codegen-request-body-name: body
-  /consents/{consentId}:
+  /consents/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -248,7 +248,7 @@ paths:
         Gets Consent by ID.
       operationId: GetConsent
       parameters:
-      - name: consentId
+      - name: id
         in: path
         description: The ID of the consent requested
         required: true
@@ -288,7 +288,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchDiagnosesResponse'
       x-codegen-request-body-name: body
-  /diagnoses/{diagnosisId}:
+  /diagnoses/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -297,7 +297,7 @@ paths:
         Gets Diagnosis by ID.
       operationId: GetDiagnosis
       parameters:
-      - name: diagnosisId
+      - name: id
         in: path
         description: The ID of the diagnosis requested
         required: true
@@ -337,7 +337,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchEnrollmentsResponse'
       x-codegen-request-body-name: body
-  /enrollments/{enrollmentId}:
+  /enrollments/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -346,7 +346,7 @@ paths:
         Gets Enrollment by ID.
       operationId: GetEnrollment
       parameters:
-      - name: enrollmentId
+      - name: id
         in: path
         description: The ID of the enrollment requested
         required: true
@@ -386,7 +386,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchImmunotherapiesResponse'
       x-codegen-request-body-name: body
-  /immunotherapies/{immunotherapyId}:
+  /immunotherapies/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -395,7 +395,7 @@ paths:
         Gets Immunotherapy by ID.
       operationId: GetImmunotherapy
       parameters:
-      - name: immunotherapyId
+      - name: id
         in: path
         description: The ID of the immunotherapy requested
         required: true
@@ -435,7 +435,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchLabtestsResponse'
       x-codegen-request-body-name: body
-  /labtests/{labtestId}:
+  /labtests/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -444,7 +444,7 @@ paths:
         Gets Labtest by ID.
       operationId: GetLabtest
       parameters:
-      - name: labtestId
+      - name: id
         in: path
         description: The ID of the labtest requested
         required: true
@@ -484,7 +484,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchOutcomesResponse'
       x-codegen-request-body-name: body
-  /outcomes/{outcomeId}:
+  /outcomes/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -493,7 +493,7 @@ paths:
         Gets Outcome by ID.
       operationId: GetOutcome
       parameters:
-      - name: outcomeId
+      - name: id
         in: path
         description: The ID of the outcome requested
         required: true
@@ -533,7 +533,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchPatientsResponse'
       x-codegen-request-body-name: body
-  /patients/{patientId}:
+  /patients/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -542,9 +542,10 @@ paths:
         Gets Patient by ID.
       operationId: GetPatient
       parameters:
-      - name: patientId
+      - name: id
         in: path
-        description: The ID of the patient requested
+        description: The unique ID of the patient requested. This is not a patientId.
+        example: WyJncm91cDEiLCJwYXQiLCJQQVRJRU5UXzgxMjAyIl0
         required: true
         schema:
           type: string
@@ -582,7 +583,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchRadiotherapiesResponse'
       x-codegen-request-body-name: body
-  /radiotherapies/{radiotherapyId}:
+  /radiotherapies/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -591,7 +592,7 @@ paths:
         Gets Radiotherapy by ID.
       operationId: GetRadiotherapy
       parameters:
-      - name: radiotherapyId
+      - name: id
         in: path
         description: The ID of the radiotherapy requested
         required: true
@@ -631,7 +632,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchSamplesResponse'
       x-codegen-request-body-name: body
-  /samples/{sampleId}:
+  /samples/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -640,7 +641,7 @@ paths:
         Gets Sample by ID.
       operationId: GetSample
       parameters:
-      - name: sampleId
+      - name: id
         in: path
         description: The ID of the sample requested
         required: true
@@ -680,7 +681,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchSlidesResponse'
       x-codegen-request-body-name: body
-  /slides/{slideId}:
+  /slides/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -689,7 +690,7 @@ paths:
         Gets Slide by ID.
       operationId: GetSlide
       parameters:
-      - name: slideId
+      - name: id
         in: path
         description: The ID of the slide requested
         required: true
@@ -729,7 +730,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchStudiesResponse'
       x-codegen-request-body-name: body
-  /studies/{studyId}:
+  /studies/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -738,7 +739,7 @@ paths:
         Gets Study by ID.
       operationId: GetStudy
       parameters:
-      - name: studyId
+      - name: id
         in: path
         description: The ID of the study requested
         required: true
@@ -778,7 +779,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchSurgeriesResponse'
       x-codegen-request-body-name: body
-  /surgeries/{surgeryId}:
+  /surgeries/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -787,7 +788,7 @@ paths:
         Gets Surgery by ID.
       operationId: GetSurgery
       parameters:
-      - name: surgeryId
+      - name: id
         in: path
         description: The ID of the surgery requested
         required: true
@@ -827,7 +828,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchTreatmentsResponse'
       x-codegen-request-body-name: body
-  /treatments/{treatmentId}:
+  /treatments/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -836,7 +837,7 @@ paths:
         Gets Treatment by ID.
       operationId: GetTreatment
       parameters:
-      - name: treatmentId
+      - name: id
         in: path
         description: The ID of the treatment requested
         required: true
@@ -876,7 +877,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchTumourboardsResponse'
       x-codegen-request-body-name: body
-  /tumourboards/{tumourboardId}:
+  /tumourboards/{id}:
     get:
       tags:
       - Clinical Metadata Service
@@ -885,7 +886,7 @@ paths:
         Gets Tumourboard by ID.
       operationId: GetTumourboard
       parameters:
-      - name: tumourboardId
+      - name: id
         in: path
         description: The ID of the tumourboard requested
         required: true
@@ -923,14 +924,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchAlignmentsResponse'
       x-codegen-request-body-name: body
-  /alignments/{alignmentId}:
+  /alignments/{id}:
     get:
       tags:
       - Pipeline Metadata Service
       summary: Gets Alignment by ID.
       operationId: GetAlignment
       parameters:
-      - name: alignmentId
+      - name: id
         in: path
         description: The ID of the alignment requested
         required: true
@@ -968,14 +969,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchExpressionAnalysisResponse'
       x-codegen-request-body-name: body
-  /expressionanalysis/{expressionAnalysisId}:
+  /expressionanalysis/{id}:
     get:
       tags:
       - Pipeline Metadata Service
       summary: Gets ExpressionAnalysis by ID.
       operationId: GetExpressionAnalysis
       parameters:
-      - name: expressionAnalysisId
+      - name: id
         in: path
         description: The ID of the expressionanalysis requested
         required: true
@@ -1013,14 +1014,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchExtractionsResponse'
       x-codegen-request-body-name: body
-  /extractions/{extractionId}:
+  /extractions/{id}:
     get:
       tags:
       - Pipeline Metadata Service
       summary: Gets Extraction by ID.
       operationId: GetExtraction
       parameters:
-      - name: extractionId
+      - name: id
         in: path
         description: The ID of the patient requested
         required: true
@@ -1058,14 +1059,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchFusionDetectionResponse'
       x-codegen-request-body-name: body
-  /fusiondetection/{fusionDetectionId}:
+  /fusiondetection/{id}:
     get:
       tags:
       - Pipeline Metadata Service
       summary: Gets FusionDetection by ID.
       operationId: GetFusionDetection
       parameters:
-      - name: fusionDetectionId
+      - name: id
         in: path
         description: The ID of the fusion/sv detection requested
         required: true
@@ -1103,14 +1104,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchSequencingResponse'
       x-codegen-request-body-name: body
-  /sequencing/{sequencingId}:
+  /sequencing/{id}:
     get:
       tags:
       - Pipeline Metadata Service
       summary: Gets Sequencing by ID.
       operationId: GetSequencing
       parameters:
-      - name: sequencingId
+      - name: id
         in: path
         description: The ID of the sequencing requested
         required: true
@@ -1148,14 +1149,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchVariantCallingResponse'
       x-codegen-request-body-name: body
-  /variantcalling/{variantcalling_id}:
+  /variantcalling/{id}:
     get:
       tags:
       - Pipeline Metadata Service
       summary: Gets VariantCalling by ID.
       operationId: GetVariantCalling
       parameters:
-      - name: variantcalling_id
+      - name: id
         in: path
         description: The ID of the variant calling requested
         required: true
@@ -1423,7 +1424,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchExpressionLevelsResponse'
       x-codegen-request-body-name: body
-  /expressionlevels/{expression_level_id}:
+  /expressionlevels/{id}:
     get:
       tags:
       - RNA Quantification Service
@@ -1433,7 +1434,7 @@ paths:
         ExpressionLevel.
       operationId: GetExpressionLevel
       parameters:
-      - name: expression_level_id
+      - name: id
         in: path
         description: The ID of the ExpressionLevel.
         required: true
@@ -1527,7 +1528,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchRnaQuantificationSetsResponse'
       x-codegen-request-body-name: body
-  /rnaquantificationsets/{rnaQuantificationSetId}:
+  /rnaquantificationsets/{id}:
     get:
       tags:
       - RNA Quantification Service
@@ -1537,7 +1538,7 @@ paths:
         RnaQuantificationSet.
       operationId: GetRnaQuantificationSet
       parameters:
-      - name: rnaQuantificationSetId
+      - name: id
         in: path
         description: The ID of the RnaQuantificationSet.
         required: true
@@ -1579,7 +1580,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchFeaturesResponse'
       x-codegen-request-body-name: body
-  /features/{feature_id}:
+  /features/{id}:
     get:
       tags:
       - Sequence Annotation Service
@@ -1587,7 +1588,7 @@ paths:
       description: 'GET /features/{id} will return a JSON version of Feature.'
       operationId: GetFeature
       parameters:
-      - name: feature_id
+      - name: id
         in: path
         description: The ID of the Feature to be retrieved.
         required: true
@@ -1629,7 +1630,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchFeatureSetsResponse'
       x-codegen-request-body-name: body
-  /featuresets/{featureSetId}:
+  /featuresets/{id}:
     get:
       tags:
       - Sequence Annotation Service
@@ -1637,7 +1638,7 @@ paths:
       description: 'GET /featuresets/{id} will return a JSON version of FeatureSet.'
       operationId: GetFeatureSet
       parameters:
-      - name: featureSetId
+      - name: id
         in: path
         description: The ID of the FeatureSet to be retrieved.
         required: true
@@ -1703,7 +1704,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchContinuousSetsResponse'
       x-codegen-request-body-name: body
-  /continuoussets/{continuousSetId}:
+  /continuoussets/{id}:
     get:
       tags:
       - Sequence Annotation Service
@@ -1711,7 +1712,7 @@ paths:
       description: 'GET /continuoussets/{id} will return a JSON version of ContinuousSet.'
       operationId: GetContinuousSet
       parameters:
-      - name: continuousSetId
+      - name: id
         in: path
         description: The ID of the ContinuousSet to be retrieved.
         required: true
@@ -1753,7 +1754,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchCallSetsResponse'
       x-codegen-request-body-name: body
-  /callsets/{callSetId}:
+  /callsets/{id}:
     get:
       tags:
       - Variant Service
@@ -1761,7 +1762,7 @@ paths:
       description: 'GET /callsets/{id} will return a JSON version of CallSet.'
       operationId: GetCallSet
       parameters:
-      - name: callSetId
+      - name: id
         in: path
         description: The ID of the CallSet to be retrieved.
         required: true
@@ -1803,7 +1804,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/candigSearchVariantsResponse'
       x-codegen-request-body-name: body
-  /variants/{variantId}:
+  /variants/{id}:
     get:
       tags:
       - Variant Service
@@ -1811,7 +1812,7 @@ paths:
       description: 'GET /variants/{id} will return a JSON version of Variant.'
       operationId: GetVariant
       parameters:
-      - name: variantId
+      - name: id
         in: path
         description: The ID of the Variant to be retrieved.
         required: true
@@ -1833,12 +1834,40 @@ paths:
     post:
       tags:
       - Variant Service
-      summary: Gets a list of Variants matching the search criteria.
+      summary: DEPRECATED. Gets a list of Variants by supplying a gene symbol.
+        Use /variants/gene/search.
       description: |-
+        Warning: Deprecated. Use /variants/gene/search instead.
+        ---
+
         POST /variantsetsByGeneName/search must accept a JSON version of
         SearchVariantsByGeneNameRequest as the post body and will return a JSON version
         of SearchVariantsByGeneNameResponse.
       operationId: SearchVariantsByGeneName
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/candigSearchVariantsByGeneNameRequest'
+        required: true
+      responses:
+        200:
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/candigSearchVariantsByGeneNameResponse'
+      x-codegen-request-body-name: body
+  /variants/gene/search:
+    post:
+      tags:
+      - Variant Service
+      summary: Gets a list of Variants by supplying a gene symbol.
+      description: |-
+        POST /variants/gene/search/search must accept a JSON version of
+        SearchVariantsByGeneNameRequest as the post body and will return a JSON version
+        of SearchVariantsByGeneNameResponse.
+      operationId: SearchVariantsGene
       requestBody:
         content:
           application/json:
@@ -5015,35 +5044,10 @@ components:
           $ref: '#/components/schemas/candigPageSize'
         pageToken:
           $ref: '#/components/schemas/candigPageToken'
-        patient_list:
-          title: List of patient ID's used in advanced searches
-          type: array
-          items:
-            type: string
-        start:
-          title: Start bp. Used in advanced searched if the user is requesting variants
-            endpoint
-          type: string
-          format: int64
-        end:
-          title: End bp. Used in advanced searched if the user is requesting variants
-            endpoint
-          type: string
-          format: int64
-        referenceName:
-          type: string
-          description: Reference genome. Used in advanced searchesif the user is requesting
-            variants endpoint.
-        callSetIds:
-          type: array
-          description: |-
-            Only return variant calls which belong to call sets with these IDs.
-            If unspecified, return all variants and no variant call objects.
-          items:
-            type: string
       description: |-
         ******************  /variants  *********************
-        This request maps to the body of POST /variantsnamebygenesearch as JSON.
+        This request maps to the body of POST /variantsnamebygenesearch as JSON (DEPRECATED).
+        This request maps to the bodo of POST /variants/gene/search as JSON.
     candigSearchVariantsRequest:
       type: object
       properties:
@@ -5136,12 +5140,12 @@ components:
             interval.
             This is typically calculated by start + referenceBases.length.
           format: int64
-        reference_bases:
+        referenceBases:
           type: string
           description: |-
             The reference bases for this variant. They start at the given start
             position.
-        alternate_bases:
+        alternateBases:
           type: array
           description: |-
             The bases that appear instead of the reference bases. Multiple alternate
@@ -5158,7 +5162,7 @@ components:
             array are implicitly associated with this Variant.
           items:
             $ref: '#/components/schemas/candigCall'
-        variant_type:
+        variantType:
           title: |-
             The "variant_type" is used to denote e.g. structural variants.
             Examples:
@@ -5194,19 +5198,19 @@ components:
           items:
             type: integer
             format: int32
-        filters_applied:
+        filtersApplied:
           type: boolean
           description: |-
             True if filters were applied for this variant. VCF column 7 "FILTER"
             any value other than the missing value.
           format: boolean
-        filters_passed:
+        filtersPassed:
           type: boolean
           description: |-
             True if all filters for this variant passed. VCF column 7 "FILTER"
             value PASS.
           format: boolean
-        filters_failed:
+        filtersFailed:
           type: array
           description: |-
             Zero or more filters that failed for this variant. VCF column 7 "FILTER"
@@ -5217,7 +5221,7 @@ components:
           type: string
           description: |-
             PatientId, this field is not populated in the database, but generated on-the-fly
-            when variants are being returned.
+            when variants are being returned via variants/search endpoint.
       description: |-
         A Variant represents a change in DNA sequence relative to some reference.
         For example, a variant could represent a SNP or an insertion.
