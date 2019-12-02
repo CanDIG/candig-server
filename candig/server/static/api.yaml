@@ -1987,13 +1987,13 @@ components:
             # PROFYLE MODIFICATION BEGIN
             ### ===================================================================== ###
             The ID of the dataset this Analysis belongs to.
-        experiment_id:
+        experimentId:
           title: 'Experiment id that is corresponding to the analysis: string'
           type: string
-        other_analysis_descriptor:
+        otherAnalysisDescriptor:
           title: 'other_analysis_descriptor: string'
           type: string
-        other_analysis_completition_date:
+        otherAnalysisCompletitionDate:
           title: 'other_analysis_completition_date: date (YYYY-MM-DD)'
           type: string
       description: |-
@@ -4326,45 +4326,45 @@ components:
             The ID of the read group this read belongs to.
             (Every read must belong to exactly one read group.)
           type: string
-        fragment_name:
+        fragmentName:
           type: string
           description: The fragment name. Equivalent to QNAME (query template name)
             in SAM.
-        improper_placement:
+        improperPlacement:
           type: boolean
           description: |-
             The orientation and the distance between reads from the fragment are
             inconsistent with the sequencing protocol (inverse of SAM flag 0x2).
           format: boolean
-        duplicate_fragment:
+        duplicateFragment:
           type: boolean
           description: The fragment is a PCR or optical duplicate (SAM flag 0x400).
           format: boolean
-        number_reads:
+        numberReads:
           type: integer
           description: The number of reads in the fragment (extension to SAM flag
             0x1).
           format: int32
-        fragment_length:
+        fragmentLength:
           type: integer
           description: The observed length of the fragment, equivalent to TLEN in
             SAM.
           format: int32
-        read_number:
+        readNumber:
           type: integer
           description: |-
             The read ordinal in the fragment, 0-based and less than numberReads. This
             field replaces SAM flag 0x40 and 0x80 and is intended to more cleanly
             represent multiple reads per fragment.
           format: int32
-        failed_vendor_quality_checks:
+        failedVendorQualityChecks:
           type: boolean
           description: The read fails platform or vendor quality checks (SAM flag
             0x200).
           format: boolean
         alignment:
           $ref: '#/components/schemas/candigLinearAlignment'
-        secondary_alignment:
+        secondaryAlignment:
           type: boolean
           description: |-
             Whether this alignment is secondary. Equivalent to SAM flag 0x100.
@@ -4375,7 +4375,7 @@ components:
             By convention, each read has one and only one alignment where both
             secondaryAlignment and supplementaryAlignment are false.
           format: boolean
-        supplementary_alignment:
+        supplementaryAlignment:
           type: boolean
           description: |-
             Whether this alignment is supplementary. Equivalent to SAM flag 0x800.
@@ -4391,7 +4391,7 @@ components:
             clipped. The alignedSequence and alignedQuality fields in the alignment
             message will only represent the bases for its respective linear alignment.
           format: boolean
-        aligned_sequence:
+        alignedSequence:
           type: string
           description: |-
             The bases of the read sequence contained in this alignment record
@@ -4402,7 +4402,7 @@ components:
             chimeric alignment, or if the read was trimmed. When this occurs, the CIGAR
             for this read will begin/end with a hard clip operator that will indicate
             the length of the excised sequence.
-        aligned_quality:
+        alignedQuality:
           type: array
           description: |-
             The quality of the read sequence contained in this alignment message
@@ -4416,7 +4416,7 @@ components:
           items:
             type: integer
             format: int32
-        next_mate_position:
+        nextMatePosition:
           $ref: '#/components/schemas/candigPosition'
       description: |-
         Each read alignment describes an alignment with additional information
@@ -4437,7 +4437,7 @@ components:
         description:
           type: string
           description: The read group description.
-        sample_name:
+        sampleName:
           type: string
           description: |-
             A name for the sample this read group's data were generated from.
@@ -4448,7 +4448,7 @@ components:
           description: The Biosample this read group's data was generated from.
         experiment:
           $ref: '#/components/schemas/candigExperiment'
-        predicted_insert_size:
+        predictedInsertSize:
           type: integer
           description: The predicted insert size of this read group.
           format: int32
@@ -4493,7 +4493,7 @@ components:
           description: The read group set name.
         stats:
           $ref: '#/components/schemas/candigReadStats'
-        read_groups:
+        readGroups:
           type: array
           description: The read groups in this set.
           items:
@@ -4510,15 +4510,15 @@ components:
     candigReadStats:
       type: object
       properties:
-        aligned_read_count:
+        alignedReadCount:
           type: string
           description: The number of aligned reads.
           format: int64
-        unaligned_read_count:
+        unalignedReadCount:
           type: string
           description: The number of unaligned reads.
           format: int64
-        base_count:
+        baseCount:
           type: string
           description: |-
             The total number of bases.
@@ -4708,7 +4708,7 @@ components:
           type: string
           description: The unique name of this reference within the Reference Set
             (e.g. '22').
-        source_uri:
+        sourceUri:
           type: string
           description: |-
             The URI from which the sequence was obtained. Specifies a FASTA format
@@ -4716,7 +4716,7 @@ components:
             call
             the getReferenceBases() method to obtain sequence bases for a Reference
             instead of attempting to retrieve this URI.
-        source_accessions:
+        sourceAccessions:
           type: array
           description: |-
             All known corresponding accession IDs in INSDC (GenBank/ENA/DDBJ) which
@@ -4724,7 +4724,7 @@ components:
             a version number, e.g. GCF_000001405.26.
           items:
             type: string
-        is_derived:
+        isDerived:
           type: boolean
           description: |-
             A sequence X is said to be derived from source sequence Y, if X and Y
@@ -4734,7 +4734,7 @@ components:
             sequence share the same coordinates and annotations, and
             can be replaced with the official sequence for certain use cases.
           format: boolean
-        source_divergence:
+        sourceDivergence:
           type: number
           description: |-
             The sourceDivergence is the fraction of non-indel bases that do not match
@@ -4772,22 +4772,22 @@ components:
         description:
           type: string
           description: Optional free text description of this reference set.
-        assembly_id:
+        assemblyId:
           type: string
           description: |-
             The remaining information is about the source of the sequences
             Public id of this reference set, such as GRCh37.
-        source_uri:
+        sourceUri:
           type: string
           description: Specifies a FASTA format file/string.
-        source_accessions:
+        sourceAccessions:
           type: array
           description: |-
             All known corresponding accession IDs in INSDC (GenBank/ENA/DDBJ) ideally
             with a version number, e.g. NC_000001.11.
           items:
             type: string
-        is_derived:
+        isDerived:
           type: boolean
           description: |-
             A reference set may be derived from a source if it contains
@@ -4812,7 +4812,7 @@ components:
           description: |-
             If unset, return the reference sets for which the accession
             matches this string (case-sensitive, exact match).
-        assembly_id:
+        assemblyId:
           type: string
           description: |-
             If unset, return the reference sets for which the assemblyId
@@ -4832,7 +4832,7 @@ components:
         results:
           type: object
           properties:
-            reference_sets:
+            referenceSets:
               type: array
               description: The list of matching reference sets.
               items:
@@ -4889,7 +4889,7 @@ components:
     candigCall:
       type: object
       properties:
-        call_set_name:
+        callSetName:
           type: string
           description: |-
             The name of the call set this variant call belongs to.
@@ -4914,7 +4914,7 @@ components:
             If this field is populated, this variant call's genotype ordering implies
             the phase of the bases and is consistent with any other variant calls on
             the same contig which have the same phaseset string.
-        genotype_likelihood:
+        genotypeLikelihood:
           type: array
           description: |-
             The genotype likelihoods for this variant call. Each array entry
@@ -5300,7 +5300,7 @@ components:
         rnaQuantificationId:
           title: The associated RnaQuantification
           type: string
-        raw_read_count:
+        rawReadCount:
           type: number
           description: The number of reads mapped to this feature.
           format: float
@@ -5308,7 +5308,7 @@ components:
           type: number
           description: Numerical expression value.
           format: float
-        is_normalized:
+        isNormalized:
           type: boolean
           description: True if the expression value is a normalized value.
           format: boolean
@@ -5318,11 +5318,11 @@ components:
           type: number
           description: Weighted score for the expression value.
           format: float
-        conf_interval_low:
+        confIntervalLow:
           type: number
           description: Lower bound of the confidence interval on the expression value.
           format: float
-        conf_interval_high:
+        confIntervalHigh:
           type: number
           description: Upper bound of the confidence interval on the expression value.
           format: float
@@ -5472,7 +5472,7 @@ components:
         results:
           type: object
           properties:
-            rna_quantification_sets:
+            rnaQuantificationSets:
               type: array
               description: The list of matching quantification sets.
               items:
@@ -5521,7 +5521,7 @@ components:
         results:
           type: object
           properties:
-            rna_quantifications:
+            rnaQuantifications:
               type: array
               description: The list of matching quantifications.
               items:
@@ -5576,7 +5576,7 @@ components:
         name:
           type: string
           description: The display name for this annotation set.
-        source_uri:
+        sourceUri:
           type: string
           description: |-
             The source URI describing the file from which this annotation set was
@@ -5595,7 +5595,7 @@ components:
         name:
           type: string
           description: An optional name to provide for the feature.
-        gene_symbol:
+        geneSymbol:
           type: string
           description: |-
             The gene symbol the feature occurs on. This field may be
@@ -5637,7 +5637,7 @@ components:
           format: int64
         strand:
           $ref: '#/components/schemas/candigStrand'
-        feature_type:
+        featureType:
           $ref: '#/components/schemas/candigOntologyTerm'
       description: |-
         Node in the annotation graph that annotates a contiguous region of a
@@ -5659,7 +5659,7 @@ components:
         name:
           type: string
           description: The display name for this annotation set.
-        source_uri:
+        sourceUri:
           type: string
           description: |-
             The source URI describing the file from which this annotation set was
@@ -5736,7 +5736,7 @@ components:
         results:
           type: object
           properties:
-            continuous_sets:
+            continuousSets:
               type: array
               description: The list of matching feature sets.
               items:
@@ -5767,7 +5767,7 @@ components:
         results:
           type: object
           properties:
-            feature_sets:
+            featureSets:
               type: array
               description: The list of matching feature sets.
               items:
@@ -5790,14 +5790,14 @@ components:
           type: string
           description: Only returns features with this name (case-sensitive, exact
             match).
-        gene_symbol:
+        geneSymbol:
           type: string
           description: |-
             Only return features with matching the provided gene symbol
             (case-sensitive, exact match).
             This field may be replaced with a more generic representation
             in a future version.
-        parent_id:
+        parentId:
           type: string
           description: |-
             Restricts the search to direct children of the given parent feature
@@ -5824,12 +5824,12 @@ components:
             The end of the window (0-based, exclusive) for which overlapping
             features should be returned.
           format: int64
-        feature_types:
+        featureTypes:
           type: array
           description: |-
             TODO: To be replaced with a fully featured ontology search
             once the Metadata definitions are rounded out.
-            If specified, this query matches only annotations whose feature_type
+            If specified, this query matches only annotations whose featureType
             matches one of the provided ontology terms.
           items:
             type: string
@@ -5921,7 +5921,7 @@ components:
         results:
           type: object
           properties:
-            call_sets:
+            callSets:
               type: array
               description: The list of matching call sets.
               items:
