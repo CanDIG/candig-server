@@ -585,6 +585,11 @@ Adds a reference set used in the 1000 Genomes project using the name
 add-ontology
 ------------
 
+.. warning::
+    This command, as well as all ontology-related operations are under review. They might undergo
+    changes in the near future.
+
+
 Adds a new ontology to the repository. The ontology supplied must be a text
 file in `OBO format
 <http://owlcollab.github.io/oboformat/doc/obo-syntax.html>`_. If you wish to
@@ -635,32 +640,31 @@ does not validate either, so please double check to make sure the IDs are correc
 
 .. code-block:: bash
 
-    $ candig_repo add-variantset registry.db 1kg 1kgPhase1/ -R NCBI37
+    $ candig_repo add-variantset registry.db 1kg PATIENT_123 SAMPLE_123 1kgPhase1/ -R NCBI37
 
 Adds a new variant set to the dataset named ``1kg`` in the repository defined
 by the registry database ``registry.db`` using the VCF files contained in the
-directory ``1kgPhase1``. Note that this directory must also contain the
-corresponding indexes for these files. We associate the reference set named
-``NCBI37`` with this new variant set. Because we do not provide a ``--name``
+directory ``1kgPhase1`` that belong to PATIENT_123 and SAMPLE_123. Note that this
+directory must also contain the corresponding indexes for these files. We associate
+the reference set named ``NCBI37`` with this new variant set. Because we do not provide a ``--name``
 argument, a name is automatically generated using the default name generation
 rules.
 
 .. code-block:: bash
 
-    $ candig_repo add-variantset registry.db 1kg \
-        1kgPhase1/chr1.vcf.gz 1kg/chr2.vcf.gz -n phase1-subset -R NCBI37
+    $ candig_repo add-variantset registry.db 1kg PATIENT_123 SAMPLE_123 \
+        1kgPhase1/chr1.vcf.gz -n phase1-subset -R NCBI37
 
-Like the last example, we add a new variant set to the dataset ``1kg``,
-but here we only use the VCFs for chromosomes 1 and 2. We also specify the
+Like the last example, we add a new variant set to the dataset ``1kg``, with one VCF
+and the corresponding patientId and sampleId. We also specify the
 name for this new variant set to be ``phase1-subset``.
 
 .. code-block:: bash
 
-    $ candig_repo add-variantset registry.db 1kg \
+    $ candig_repo add-variantset registry.db 1kg PATIENT_123 SAMPLE_123 \
         --name phase1-subset-remote -R NCBI37 \
         --indexFiles ALL.chr1.phase1_release_v3.20101123.snps_indels_svs.genotypes.vcf.gz.tbi ALL.chr2.phase1_release_v3.20101123.snps_indels_svs.genotypes.vcf.gz.tbi \
         ftp://ftp.ncbi.nlm.nih.gov/1000genomes/ftp/release/20110521/ALL.chr1.phase1_release_v3.20101123.snps_indels_svs.genotypes.vcf.gz \
-        ftp://ftp.ncbi.nlm.nih.gov/1000genomes/ftp/release/20110521/ALL.chr2.phase1_release_v3.20101123.snps_indels_svs.genotypes.vcf.gz
 
 This example performs the same task of creating a subset of the phase1
 VCFs, but this time we use the remote URL directly and do not keep a
@@ -712,7 +716,7 @@ reference set automatically set from the BAM header.
 
 .. code-block:: bash
 
-    $ candig_repo add-readgroupset registry.db 1kg candig-example-data/HG00096.bam \
+    $ candig_repo add-readgroupset registry.db 1kg PATIENT_123 SAMPLE_123 candig-example-data/HG00096.bam \
         -R GRCh37-subset -n HG0096-subset
 
 Adds a new readgroup set based on a subset of the 1000 genomes reads for the
@@ -723,7 +727,7 @@ the name ``HG00096-subset`` for the new readgroup set.
 
 .. code-block:: bash
 
-    $ candig_repo add-readgroupset registry.db 1kg \
+    $ candig_repo add-readgroupset registry.db 1kg PATIENT_123 SAMPLE_123 \
         -n HG00114-remote
         -I /path/to/HG00114.chrom11.ILLUMINA.bwa.GBR.low_coverage.20120522.bam.bai
         ftp://ftp.ncbi.nlm.nih.gov/1000genomes/ftp/phase3/data/HG00114/alignment/HG00114.chrom11.ILLUMINA.bwa.GBR.low_coverage.20120522.bam
@@ -735,6 +739,17 @@ the location of the ``.bai`` index file on the local file system.
 ------------------------
 add-featureset
 ------------------------
+
+.. warning::
+    Before you add the feature set, you should make sure to index some of the columns in your
+    generated DB. Specifically, you should make sure that you both ``gene_name`` and ``type``
+    should be indexed. If you don't, queries to this endpoint, and endpoints that depend on this,
+    e.g., ``variants/gene/search`` will be very very slow.
+
+    To create a composite index on aforementioned fields, open the featureset DB
+    you generated via the sqlite browser,
+    then run ``CREATE INDEX name_type_index ON FEATURE (gene_name, type);``.
+    You should carefully review your use-case and index other fields accordingly.
 
 Adds a feature set to a named dataset in a repository. Feature sets
 must be in a '.db' file. An appropriate '.db' file can

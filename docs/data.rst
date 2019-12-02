@@ -56,7 +56,7 @@ objects, you always need to specify `patientId`.
                 },
                  "Sample": {
                     "sampleId": "Sample_1",
-                    "sampleIdTier": 0
+                    "sampleIdTier": 0,
                     "patientId": "Patient_12345",
                     "patientIdTier": 4
                 }
@@ -64,7 +64,7 @@ objects, you always need to specify `patientId`.
             {
                 "Sample": {
                     "sampleId": "Sample_2",
-                    "sampleIdTier": 0
+                    "sampleIdTier": 0,
                     "patientId": "Patient_12345",
                     "patientIdTier": 4
                 },
