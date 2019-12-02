@@ -6,6 +6,10 @@ CanDIG Server
 
 This the documentation for version |version| of the candig-server.
 
+The candig-server is a CanDIG project, and can be installed via ``pip install candig-server``.
+
+If you need help or want to report a bug, please refer to our :ref:`contribution`
+
 ********
 Setup
 ********

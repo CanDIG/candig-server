@@ -203,14 +203,13 @@ Sample Query I
 --------------
 
 Description: Fetch all of the variantsets associated with a particular dataset.
-Endpoint: variantsets/search
+
+Endpoint: `variantsets/search`
 
 .. note::
     This query is the same as Sample Query I under Metadata services,
     but it is the same across metadata, variantSets, referenceSets, etc.
 
-
-Query:
 
 .. code-block:: json
 
@@ -225,7 +224,7 @@ Sample Query II
 Description: Search for variants within the range between the start and end
 that are on chromesome 22, from the designated variantSets.
 
-Endpoint: variants/search
+Endpoint: `variants/search`
 
 .. code-block:: json
 
@@ -247,7 +246,7 @@ Description: Search for variants within the range between the start and end
 that are on chromesome 22, from all variantsets that are associated with one
 particular dataset.
 
-Endpoint: variants/search
+Endpoint: `variants/search`
 
 .. warning::
     You should never attempt to specify both datasetId and variantSetIds.
@@ -267,7 +266,10 @@ Sample Query IV
 
 Description: Search for variants that are associated with a particular gene.
 
-Endpoint: /variantsbygenesearch
+.. warning::
+    Do not use ``/variantsbygenesearch`` endpoint, it has been deprecated.
+
+Endpoint: `/variantsbygenesearch`  or `/variants/gene/search`
 
 .. code-block:: json
 
@@ -431,11 +433,11 @@ Components for Clinical tables
         ]
     }
 
-You write the filter objects the same you way you would write for individual endpoints.
-If you need a reminder on that, check
+You write the filter objects the same way you would write for individual endpoints.
+If you need a reminder on that, check `How to write filter objects`_.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::
-Component for /variants/search endpoint
+Components for /variants/search endpoint
 ::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 .. code-block:: json
@@ -445,8 +447,8 @@ Component for /variants/search endpoint
             {
                 "id": "condition1",
                 "variants": {
-                    "start": "",
-                    "end": "",
+                    "start": "100000",
+                    "end": "500000",
                     "referenceName": "1"
                 }
             }
@@ -458,12 +460,12 @@ your list of `variantSetIds`. If you don't specify any, by default, it will try 
 through all variantSets associated with this dataset.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::
-Component for /variantsbygenesearch endpoint
+Components for /variantsbygenesearch endpoint
 ::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 .. warning::
-    Note that this componenet is deprecated, and may be removed in subsequent releases.
-    Use the componenet listed below for `variants/gene/search`.
+    Note that this component is deprecated, and may be removed in subsequent releases.
+    Use `Components for /variants/gene/search endpoint`_.
 
 .. code-block:: json
 
@@ -479,7 +481,7 @@ Component for /variantsbygenesearch endpoint
     }
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::
-Component for /variants/gene/search endpoint
+Components for /variants/gene/search endpoint
 ::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 .. code-block:: json
@@ -507,9 +509,9 @@ simply specify the table name.
     The only endpoints that are accepted here are all clinical metadata
     endpoints, as well as ``variants``.
 
-::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::
 Results section for Clinical tables
-::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::
 
 
 .. code-block:: json
@@ -547,17 +549,16 @@ Results section for /variants endpoint
         }
     }
 
-::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::
 Results section for /variantsbygenesearch endpoint
-::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 .. warning::
-    This endpoint is deprecated. Use the section below.
+    This endpoint is deprecated. Use `Results section for /variants/gene/search endpoint`_.
 
 .. warning::
     Please note that while you need to specify the table name to be `variantByGene`, it still
-    returns a list of variants in its response. The table ``here`` means `endpoint`, not the actual
-    table itself.
+    returns a list of variants in its response.
 
 
 .. code-block:: json
@@ -569,9 +570,9 @@ Results section for /variantsbygenesearch endpoint
         }
     }
 
-::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::
 Results section for /variants/gene/search endpoint
-::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 .. code-block:: json
 

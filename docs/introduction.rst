@@ -6,7 +6,7 @@ Introduction
 
 .. warning::
 
-    This documentation is a work in progress.
+    This documentation is a work-in-progress.
 
 
 The candig-server is a CanDIG project, aiming to provide distributed, secure data access

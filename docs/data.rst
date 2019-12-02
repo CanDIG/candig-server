@@ -99,7 +99,7 @@ To tier the data, you need to run
 
 .. code-block:: bash
 
-    $ load_tiers pog mock.json
+    $ load_tiers pog mock.json tier.tsv mock_tier.json
 
 
 +++++++++++++++++++++
@@ -133,8 +133,7 @@ Data Use Ontology
 
 .. warning::
 
-    This section is highly experimental, and is subject to change without any notices or
-    grace period.
+    This section is highly experimental, and is subject to change until further notice.
 
 To enable future automated discovery, we have adopted the use of `Data Use Ontology (DUO)`
 Terms to describe our datasets. For the current version of candig-server, you have

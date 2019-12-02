@@ -1182,9 +1182,7 @@ paths:
       description: |-
         POST /readgroupsets/search must accept a JSON version of
         SearchReadGroupSetsRequest as the post body and will return a JSON
-        version of SearchReadGroupSetsResponse . Only readgroups that
-        match an optionally supplied biosampleId will be included in the
-        response.
+        version of SearchReadGroupSetsResponse.
       operationId: SearchReadGroupSets
       requestBody:
         content:
@@ -2576,7 +2574,7 @@ components:
     candigTotal:
       type: integer
       description: Number of results in the list
-      example: 50
+      example: 1000
     candigImmunotherapy:
       type: object
       properties:
@@ -4538,11 +4536,6 @@ components:
           type: string
           description: Only return read group sets with this name (case-sensitive,
             exact match).
-        biosampleId:
-          type: string
-          description: |-
-            Specifying the id of a Biosample record will return only readgroups
-             with the given biosampleId.
         pageSize:
           $ref: '#/components/schemas/candigPageSize'
         pageToken:

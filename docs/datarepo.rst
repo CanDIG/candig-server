@@ -115,6 +115,12 @@ Creates a new dataset in a repository. A dataset is an arbitrary collection
 of ReadGroupSets, VariantSets, VariantAnnotationSets and FeatureSets. Each
 dataset has a name, which is used to identify it in the repository manager.
 
+.. warning::
+    If you already prepared a json file that conforms to our standard clinical or
+    pipeline metadata, you can run ``ingest`` command directly without running ``add-dataset``.
+
+    For detailed instructions, see ingest_.
+
 .. argparse::
    :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
