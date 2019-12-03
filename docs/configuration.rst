@@ -88,7 +88,11 @@ Access List Setup
 ------------------
 
 An example access list file looks like below. It is a tab-separated file. The server
-default name for the file is ``access_list.txt``.
+default name for the file is ``access_list.txt`` (not .tsv) due to backward compatibility reasons.
+
+You can place your own access_list file anywhere you like, but you will need to specify the location
+at `ACCESS_LIST`. Under production environment, you should define the location of the file
+to be somewhere secure.
 
 .. code-block:: text
 

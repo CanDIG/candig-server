@@ -36,14 +36,6 @@ The script has been tested on CentOS machines, and we expect the install to
 run OK on most unix distributions. You can run it on `MacOS`, but `wget` likely won't
 work and you should either download the files yourself, or use a replacement for `wget`.
 
-Optionally, you can run two servers with federation set up. Assume you have server A running
-at ``0.0.0.0:3000``, you need to run the script again to set up a server B.
-Use `this file <https://raw.githubusercontent.com/CanDIG/candig-ingest/master/candig/ingest/mock_data/clinical_metadata_tier3.json>`_
-as the clinical data for your server B, and run your server B at ``0.0.0.0:3001``.
-
-Since the script already adds a peer at ``0.0.0.0:3001``, you will get federated response
-from both servers A and B. You can certainly choose to run them on different ports, or different
-servers, the script makes these assumptions only for your convenience.
 
 .. warning::
     Please note that by default, the script installs the server on the directory
@@ -78,11 +70,36 @@ servers, the script makes these assumptions only for your convenience.
     ingest candig-example-data/registry.db mock1 clinical_metadata_tier1.json
     ingest candig-example-data/registry.db mock2 clinical_metadata_tier2.json
 
-    candig_repo add-peer candig-example-data/registry.db http://0.0.0.0:3001
-
     echo "test server set up has completed."
 
     candig_server --host 0.0.0.0 --port 3000
+
+
+Optionally, you can run two servers with federation set up. Assume you have server A running
+at ``0.0.0.0:3000``, you need to run the script again to set up a server B.
+Use `this file <https://raw.githubusercontent.com/CanDIG/candig-ingest/master/candig/ingest/mock_data/clinical_metadata_tier3.json>`_
+as the clinical data for your server B, and run your server B at ``0.0.0.0:3001``.
+
+Now that you have both servers installed, you need to add them to be the peer of each other
+
+For server A, you need to run
+
+.. code-block:: bash
+
+    candig_repo add-peer candig-example-data/registry.db http://0.0.0.0:3001
+
+For server B, you need to run
+
+.. code-block:: bash
+
+    candig_repo add-peer candig-example-data/registry.db http://0.0.0.0:3001
+
+You do not need to have anything running on the peer when you execute the `add-peer` command.
+It simply registeres that URL as a peer.
+
+Now, you will get federated response
+from both servers A and B. You can certainly choose to run them on different ports, or different
+servers, the script makes these assumptions only for your convenience.
 
 
 **********************

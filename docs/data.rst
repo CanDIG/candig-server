@@ -1,7 +1,7 @@
 .. _data:
 
 ***************************
-Prepare data for the server
+Prepare Data For Ingestion
 ***************************
 
 .. warning::
@@ -22,7 +22,7 @@ File format required for ingestion
 +++++++++++++++++++++++++++++++++++
 
 At this time, ``ingest`` command is the only way to ingest any clinical and pipeline
-metadata, detailed instructions for ingestion can be found at :ref:`datarepo`.
+metadata, detailed instructions for ingestion can be found under :ref:`datarepo`.
 
 However, before you run the ``ingest`` command, you need to prepare for a json file
 that conforms to the  ingest standard format.

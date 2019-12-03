@@ -356,7 +356,7 @@ the `negate` flag, which would basically negate the logic of the componenet.
     {
         "logic": {
             "id": "condition1",
-            "negate" true
+            "negate": true
         }
     }
 
@@ -695,9 +695,11 @@ Sample Query III
 Description: Return the aggregated stats on patients’ gender and ethnicity,
 who have mutations present between “50158561” and “50158565” on chromosome 22.
 
-Note: Since a list of variantSetIds was not specified, the server will attempt to
-locate all variantSets associated with the dataset. If you have a lot of variantSets
-associated with this particular dataset, the query might take some time.
+.. note::
+
+    Note: Since a list of ``variantSetIds`` was not specified, the server will attempt to
+    locate all variantSets associated with the dataset. If you have a lot of variantSets
+    associated with this particular dataset, the query might take some time.
 
 .. code-block:: json
 
