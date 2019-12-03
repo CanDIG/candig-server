@@ -1,25 +1,43 @@
-.. image:: _static/logo_ga.png
+.. image:: _static/logo.png
 
 ==============================
-GA4GH Reference Implementation
+CanDIG Server
 ==============================
 
-This the documentation for version |version| of the GA4GH reference
-implementation.
+This the documentation for version |version| of the candig-server.
+
+The candig-server is a CanDIG project, and can be installed via ``pip install candig-server``.
+
+If you need help or want to report a bug, please refer to our :ref:`contribution`
 
 ********
-Contents
+Setup
 ********
 
 .. toctree::
     :maxdepth: 2
 
     introduction
-    demo
-    installation
+    data
+    development
     configuration
     datarepo
-    development
+
+********
+Usage
+********
+
+.. toctree::
+    :maxdepth: 2
+
+    api
+
+********
+Appendix
+********
+
+.. toctree::
+    :maxdepth: 2
+
+    contribution
     status
-
-
