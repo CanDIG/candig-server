@@ -140,7 +140,7 @@ class OntologyValidator():
                 modifier = duo.get("modifier")
 
                 # Check if the ID exists, a KeyError will be thrown is it doesn't
-                duo_term = OntologyParser(self.ontology_file_object, duo_id)
+                OntologyParser(self.ontology_file_object, duo_id)
 
                 # Fail is the ID is None
                 if duo_id is None:

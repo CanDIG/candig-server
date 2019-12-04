@@ -1163,13 +1163,13 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Create or update the DUO info of a dataset
         """
-        models.Dataset.update({models.Dataset.info: dataset._info}).where(models.Dataset.id==dataset.getId()).execute()
+        models.Dataset.update({models.Dataset.info: dataset._info}).where(models.Dataset.id == dataset.getId()).execute()
 
     def deleteDatasetDuo(self, dataset):
         """
         Delete the DUO info of a dataset
         """
-        models.Dataset.update({models.Dataset.info: None}).where(models.Dataset.id==dataset.getId()).execute()
+        models.Dataset.update({models.Dataset.info: None}).where(models.Dataset.id == dataset.getId()).execute()
 
     def removeDataset(self, dataset):
         """
