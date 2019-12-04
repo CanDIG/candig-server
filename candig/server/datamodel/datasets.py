@@ -1,7 +1,7 @@
 """
 Dataset objects
 """
-
+import json
 import candig.server.datamodel as datamodel
 import candig.server.datamodel.reads as reads
 import candig.server.datamodel.sequence_annotations as sequence_annotations
@@ -11,6 +11,7 @@ import candig.server.exceptions as exceptions
 import candig.server.datamodel.bio_metadata as biodata
 import candig.server.datamodel.genotype_phenotype as g2p
 import candig.server.datamodel.rna_quantification as rnaQuantification
+from candig.server.ontology import OntologyParser, OntObjectInitiator
 
 import candig.schemas.pb as pb
 import candig.schemas.protocol as protocol
@@ -134,7 +135,7 @@ class Dataset(datamodel.DatamodelObject):
         self._labtestIds = []
         self._labtestIdMap = {}
         self._labtestNameMap = {}
-        
+
         # Extraction
         self._extractionIds = []
         self._extractionIdMap = {}
@@ -173,11 +174,41 @@ class Dataset(datamodel.DatamodelObject):
         self._description = dataset.description
         self.setAttributesJson(dataset.attributes)
 
+    def populateDuoInfo(self, dataset):
+        """
+        Populates DUO info by attaching definition to the DUO term.
+        """
+        if dataset.info is not None:
+            parsed_info = json.loads(dataset.info)
+
+            ont = OntObjectInitiator("https://raw.githubusercontent.com/EBISPOT/DUO/master/src/ontology/duo-basic.owl").get_ont()
+
+            results = []
+
+            for term in parsed_info:
+                term_parser = OntologyParser(ont, term["id"])
+                term["term_id"] = term["id"]
+                term["shorthand"] = term_parser.get_shorthand()
+                term["definition"] = term_parser.get_definition()
+                term["term"] = term_parser.get_name()
+
+                results.append(term)
+
+            self._info = results
+        else:
+            self._info = []
+
     def setDescription(self, description):
         """
         Sets the description for this dataset to the specified value.
         """
         self._description = description
+
+    def setDuoInfo(self, duo_list):
+        """
+        Sets the DUO list of this dataset.
+        """
+        self._info = duo_list
 
     def addVariantSet(self, variantSet):
         """
@@ -457,6 +488,8 @@ class Dataset(datamodel.DatamodelObject):
         dataset.id = self.getId()
         dataset.name = pb.string(self.getLocalId())
         dataset.description = pb.string(self.getDescription())
+        # Populate DUO info by extending the list
+        dataset.terms_of_use.extend([protocol.fromJson(json.dumps(p), protocol.OntologyTerm) for p in self.getInfo()])
         self.serializeAttributes(dataset)
         return dataset
 

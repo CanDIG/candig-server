@@ -1159,6 +1159,18 @@ class SqlDataRepository(AbstractDataRepository):
             raise exceptions.DuplicateNameException(
                 dataset.getLocalId())
 
+    def updateDatasetDuo(self, dataset):
+        """
+        Create or update the DUO info of a dataset
+        """
+        models.Dataset.update({models.Dataset.info: dataset._info}).where(models.Dataset.id==dataset.getId()).execute()
+
+    def deleteDatasetDuo(self, dataset):
+        """
+        Delete the DUO info of a dataset
+        """
+        models.Dataset.update({models.Dataset.info: None}).where(models.Dataset.id==dataset.getId()).execute()
+
     def removeDataset(self, dataset):
         """
         Removes the specified dataset from this repository. This performs
@@ -1197,6 +1209,7 @@ class SqlDataRepository(AbstractDataRepository):
         for datasetRecord in models.Dataset.select():
             dataset = datasets.Dataset(datasetRecord.name)
             dataset.populateFromRow(datasetRecord)
+            dataset.populateDuoInfo(datasetRecord)
             assert dataset.getId() == datasetRecord.id
             # Insert the dataset into the memory-based object model.
             self.addDataset(dataset)

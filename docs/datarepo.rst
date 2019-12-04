@@ -139,6 +139,36 @@ Adds the dataset with the name ``1kg`` and description
 registry database ``registry.db``.
 
 
+----------------------
+add-dataset-duo
+----------------------
+
+Create/update new Data Use Ontology Information for an existing dataset. Note that you have to
+have an existing dataset to be able to use this command. When you need to update the DUO info,
+simply run the command with updated DUO Json file.
+
+Please note that as of now, you need to have an active internet connection to be able to use this,
+as the server attempts to download the latest DUO definition file.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: add-dataset-duo
+   :nodefault:
+
+**Examples:**
+
+.. code-block:: bash
+
+    $ candig_repo add-dataset-duo registry.db mock1 duo.json
+
+Adds the Data Use Ontology info to the  dataset with the name ``mock1``.
+
+To learn about how to prepare a json file that contains DUO info for a dataset,
+see the ``Data Use Ontology`` section under :ref:`data`.
+
+
 --------------
 remove-dataset
 --------------
@@ -162,6 +192,27 @@ objects (ReadGroupSets, VariantSets, etc) within this dataset.
 Deletes the dataset with name ``dataset1`` from the repository
 represented by ``registry.db``
 
+
+----------------------
+remove-dataset-duo
+----------------------
+
+Remove new Data Use Ontology Information for an existing dataset.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-dataset-duo
+   :nodefault:
+
+**Examples:**
+
+.. code-block:: bash
+
+    $ candig_repo remove-dataset-duo registry.db mock1
+
+Removes the Data Use Ontology info to the  dataset with the name ``mock1``.
 
 
 +++++++++++++++++++++++++++++++++++++++

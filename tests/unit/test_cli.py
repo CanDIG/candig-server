@@ -75,6 +75,24 @@ class TestRepoManagerCli(unittest.TestCase):
         self.assertEqual(args.datasetName, self.datasetName)
         self.assertEqual(args.runner, "addDataset")
 
+    def testAddDatasetDuo(self):
+        cliInput = "add-dataset-duo {} {} {}".format(
+            self.registryPath, self.datasetName, self.filePath)
+        args = self.parser.parse_args(cliInput.split())
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.dataUseOntologyFile, self.filePath)
+        self.assertEqual(args.runner, "addDatasetDuo")
+
+    def testRemoveDatasetDuo(self):
+        cliInput = "remove-dataset-duo {} {} -f".format(
+            self.registryPath, self.datasetName)
+        args = self.parser.parse_args(cliInput.split())
+        self.assertEqual(args.registryPath, self.registryPath)
+        self.assertEqual(args.datasetName, self.datasetName)
+        self.assertEqual(args.runner, "removeDatasetDuo")
+        self.assertEqual(args.force, True)
+
     def testRemoveDataset(self):
         cliInput = "remove-dataset {} {} -f".format(
             self.registryPath, self.datasetName)

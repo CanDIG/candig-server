@@ -28,9 +28,6 @@
         background: #fafafa;
       }
 
-      .swagger-ui .topbar {
-        display: none;
-      }
     </style>
   </head>
 
@@ -44,7 +41,7 @@
 
       // Begin Swagger UI call region
       const ui = SwaggerUIBundle({
-        url: "/static/output.swagger.json",
+        urls: [{"url": "/static/api.yaml", "name": "CanDIG Services"}, {"url": "/static/search_count_api.yaml", "name": "CanDIG Search and Count Services"}],
         dom_id: '#swagger-ui',
         deepLinking: true,
         validatorUrl: null,

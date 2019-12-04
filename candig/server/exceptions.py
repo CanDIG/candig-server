@@ -184,6 +184,16 @@ class InvalidLogicException(BadRequestException):
         self.message = "Invalid logic formatting: " + field
 
 
+class NoInternetConnectionException(RuntimeException):
+    def __init__(self):
+        self.message = "The DUO OWL file cannot be retrieved. Please make sure you have an active internet connection."
+
+
+class FailToParseOntologyException(RuntimeException):
+    def __init__(self):
+        self.message = "The ontology file cannot be parsed."
+
+
 class Validator(object):
     """
     Check that a JSON dictionary is a valid representation of a protocol
