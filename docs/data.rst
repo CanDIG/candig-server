@@ -188,7 +188,7 @@ the `id` along with the `modifier`.
 
 When your file is ready, run the `add-dataset-duo` command to populate the DUO information
 of the dataset. Please note that this command will always overwrite the existing DUO
-information stored. Detailed instructions are
+information stored.
 
 
 ------------------------------------

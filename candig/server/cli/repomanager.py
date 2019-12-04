@@ -1324,7 +1324,6 @@ class RepoManager(object):
         subparser.add_argument(
             "dataUseOntologyFile", help="Path to your duo config json file.")
 
-
     @classmethod
     def addDatasetNameArgument(cls, subparser):
         subparser.add_argument(
