@@ -26,6 +26,7 @@ class Dataset(datamodel.DatamodelObject):
     def __init__(self, localId):
         super(Dataset, self).__init__(None, localId)
         self._description = None
+        self._info = []
         self._variantSetIds = []
         self._variantSetIdMap = {}
         self._variantSetNameMap = {}
@@ -1336,6 +1337,7 @@ class SimulatedDataset(Dataset):
             numExpressionLevels=2):
         super(SimulatedDataset, self).__init__(localId)
         self._description = "Simulated dataset {}".format(localId)
+        self._info = [{"id": "DUO:0000042"}]
 
         for i in range(numPhenotypeAssociationSets):
             localId = "simPas{}".format(i)
