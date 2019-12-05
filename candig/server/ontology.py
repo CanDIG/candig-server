@@ -100,11 +100,11 @@ class OntologyValidator():
 
     Example Usage:
 
-	with open("duo.json", 'r') as f:
-		validator = OntologyValidator(f)
+    with open("duo.json", 'r') as f:
+        validator = OntologyValidator(f)
 
-	    if validator.validate_duo():
-	        terms = validator.get_duo_list()
+    if validator.validate_duo():
+        terms = validator.get_duo_list()
 
     """
 
