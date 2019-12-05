@@ -345,7 +345,7 @@ class Backend(object):
                             request["end"] = end
                             request["referenceName"] = referenceName
 
-                            if  variantSetIds is not None:
+                            if variantSetIds is not None:
                                 request["variantSetIds"] = variantSetIds
                                 # variants/search will throw 400 is both datasetId and variantSetIds are specified
                                 request.pop('datasetId', None)

@@ -832,7 +832,6 @@ class TestSearchGenerator(unittest.TestCase):
             ]
         }
 
-
         request = json.dumps(request)
         # assert error for invalid logic
         with self.assertRaises(exceptions.MissingResultVariantKeysException):
