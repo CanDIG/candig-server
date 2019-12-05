@@ -712,6 +712,13 @@ class FileOpenFailedException(DataException):
         self.message = "Failed to open file '{}'".format(filename)
 
 
+class JsonFileOpenException(DataException):
+
+    def __init__(self, message):
+        self.message = "You need to provide a valid JSON file. It failed to " \
+                       "be processed because '{}'.".format(message)
+
+
 class EmptyDirException(DataException):
 
     def __init__(self, dirname, filetype):

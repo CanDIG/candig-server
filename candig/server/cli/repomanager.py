@@ -188,8 +188,11 @@ class RepoManager(object):
         self._validateRepo()
         dataset = datasets.Dataset(self._args.datasetName)
 
-        with open(self._args.dataUseOntologyFile, 'r') as f:
-            duo_info = json.load(f)
+        try:
+            with open(self._args.dataUseOntologyFile, 'r') as f:
+                duo_info  = json.load(f)
+        except (json.decoder.JSONDecodeError, FileNotFoundError) as e:
+            raise exceptions.JsonFileOpenException(e)
 
         ont = OntObjectInitiator("https://raw.githubusercontent.com/EBISPOT/DUO/master/src/ontology/duo-basic.owl").get_ont()
         validator = OntologyValidator(ont, duo_info)
