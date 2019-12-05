@@ -257,7 +257,7 @@ class Backend(object):
                 if logic_negate:
                     id_list_all = self.getAllPatientId(dataset_id, access_map)
                     id_set = set(id_list_all) - id_set
-                
+
                 id_list = list(id_set)
                 return id_list
 
@@ -317,14 +317,40 @@ class Backend(object):
 
             try:
                 if endpoint == "variants":
-                    request["start"] = component[endpoint]["start"]
-                    request["end"] = component[endpoint]["end"]
-                    request["referenceName"] = component[endpoint]["referenceName"]
-                    if "variantSetIds" in component[endpoint]:
-                        request["variantSetIds"] = component[endpoint]["variantSetIds"]
-                        # variants/search will throw 400 is both datasetId and variantSetIds are specified
-                        request.pop('datasetId', None)
 
+                    gene = component[endpoint].get("gene")
+                    start = component[endpoint].get("start")
+                    end = component[endpoint].get("end")
+                    referenceName = component[endpoint].get("referenceName")
+                    variantSetIds = component[endpoint].get("variantSetIds")
+
+                    # Raise exception if gene is specified, but one or more of start, end or referenceName, variantSetIds are also specified
+                    if gene is not None and (start is not None or end is not None
+                                             or referenceName is not None or variantSetIds is not None):
+                        raise exceptions.MissingComponentVariantKeysException
+
+                    if gene is not None:
+                        request["gene"] = gene
+                        # This is a hack to reroute the request to the correct endpointCaller, need revisit
+                        endpoint = "variantsByGene"
+
+                    if gene is None:
+
+                        # Raise exception if any of start, end, refereceName was not specified.
+                        if start is None or end is None or referenceName is None:
+                            raise exceptions.MissingComponentVariantKeysException
+
+                        else:
+                            request["start"] = start
+                            request["end"] = end
+                            request["referenceName"] = referenceName
+
+                            if  variantSetIds is not None:
+                                request["variantSetIds"] = variantSetIds
+                                # variants/search will throw 400 is both datasetId and variantSetIds are specified
+                                request.pop('datasetId', None)
+
+                # With the deprecation of variantsByGene endpoint, this will be removed in subsequent release.
                 elif endpoint == "variantsByGene":
                     request["gene"] = component[endpoint]["gene"]
 
@@ -451,6 +477,11 @@ class Backend(object):
 
             results = self.endpointMapper[table](requestStr, return_mimetype, access_map)
 
+        # Overwrite the variantsByGene endpoint to variants.
+        # With the deprecation of `variantsByGene` endpoint, this will be removed in subsequent release.
+        if table == "variantsByGene":
+            table = "variants"
+
         # perform count based on field aggregation (/count endpoint)
         if count:
             results = self.aggregationHandler(table, results, field)
@@ -539,6 +570,7 @@ class Backend(object):
 
         request = {}
 
+        # With the deprecation of `variantsByGene`, this part will be removed in subsequent release.
         if table == "variantsByGene":
             gene = results[0].get("gene")
 
@@ -553,21 +585,35 @@ class Backend(object):
                 }
 
         elif table == "variants":
+            gene = results[0].get("gene")
             start = results[0].get("start")
             end = results[0].get("end")
             referenceName = results[0].get("referenceName")
 
-            if start is None or end is None or referenceName is None:
-                raise exceptions.MissingVariantKeysException
+            # Raise exception if gene is specified, but one or more of start, end or referenceName are also specified
+            if gene is not None and (start is not None or end is not None or referenceName is not None):
+                raise exceptions.MissingResultVariantKeysException
 
-            else:
+            if gene is not None:
                 request = {
                     "datasetId": dataset_id,
                     "patientList": patient_list,
-                    "start": start,
-                    "end": end,
-                    "referenceName": referenceName
+                    "gene": gene
                 }
+
+            else:
+                # Raise exception if any of start, end, referenceName is None
+                if start is None or end is None or referenceName is None:
+                    raise exceptions.MissingResultVariantKeysException
+
+                else:
+                    request = {
+                        "datasetId": dataset_id,
+                        "patientList": patient_list,
+                        "start": start,
+                        "end": end,
+                        "referenceName": referenceName
+                    }
 
         if page_token:
             request["page_token"] = page_token
@@ -1235,7 +1281,7 @@ class Backend(object):
             dataset = self.getDataRepository().getDataset(request.dataset_id)
             self.getUserAccessTier(dataset, access_map)
             variantSets = dataset.getVariantSets()
-        
+
         iterators = []
 
         for item in variantSets:
