@@ -131,21 +131,45 @@ It is available from here: https://github.com/CanDIG/redcap-cloud
 Data Use Ontology
 ------------------
 
-.. warning::
-
-    This section is highly experimental, and is subject to change until further notice.
-
 To enable future automated discovery, we have adopted the use of `Data Use Ontology (DUO)`
 Terms to describe our datasets. For the current version of candig-server, you have
 the option to use a json file to define your dataset.
 
-You can find a list of DUO Terms `here <https://github.com/EBISPOT/DUO/blob/master/src/ontology/duo.csv>`_.
+You can find a list of DUO Terms through this `csv file <https://github.com/EBISPOT/DUO/blob/master/src/ontology/duo.csv>`_.
+You can also use an ontology parsing tool of your choice to visualize/parse a more complete list
+of DUO's `raw OWL definition <https://github.com/EBISPOT/DUO/blob/master/src/ontology/duo-basic.owl>`_.
 
 .. warning::
-    `DUO:0000025` and `DUO:0000022` are not currently supported. Attempts to ingest them two
-    DUO Terms will be rejected.
+    We only support a limited subset of the DUO terms.
 
-To ingest the DUO Terms, you need to prepare a json file listed like below.
+    Terms whose ID has an underscore, such as `DUO_0000031`, as well as `DUO:0000022` and `DUO:0000025` are not
+    supported, as we expect these terms to be updated in the near future.
+
+    If you think an ID should be supported, but is not. You can let us know by opening an issue
+    on our Github repo.
+
+    The supported IDs are listed below.
+
+.. code-block:: json
+
+    [
+        "DUO:0000001", "DUO:0000002", "DUO:0000003", "DUO:0000004", "DUO:0000005",
+        "DUO:0000006", "DUO:0000007", "DUO:0000011", "DUO:0000012", "DUO:0000014",
+        "DUO:0000015", "DUO:0000016", "DUO:0000017", "DUO:0000018", "DUO:0000019",
+        "DUO:0000020", "DUO:0000021", "DUO:0000024", "DUO:0000026", "DUO:0000027"
+        "DUO:0000028", "DUO:0000029", "DUO:0000042"
+    ]
+
+.. note::
+    We do not currently provide API to look up the definitions via their ID.
+
+    If one of the supported ids listed above is not in the csv file provided above, you may
+    be able to look up their definitions via `EBI's DUO page <https://www.ebi.ac.uk/ols/ontologies/duo>`_.
+
+
+To ingest the DUO Terms, you need to prepare a json file listed like below. You should only
+specify `id` in a single DUO object, unless the `modifier` is also required, then you specify
+the `id` along with the `modifier`.
 
 .. code-block:: json
 

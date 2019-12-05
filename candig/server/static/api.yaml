@@ -3,14 +3,13 @@ info:
   title: CanDIG Services
   description: |-
 
-    Below is a list of APIs that CanDIG currently supports.
-    
-    At this time, this page does not contain any information for /search and /count endpoints. For /search and /count endpoints, refer to [this documentation](https://www.distributedgenomics.ca/static/search_count_services_usage.pdf) for instructions and sample queries.<br/>
-    
-    For all metadata and variant services endpoints, you can also refer to [this documentation](https://www.distributedgenomics.ca/static/metadata_variants_services_sample_queries.pdf) for some ready-to-use sample queries.
-
+    ## Below is a list of APIs that CanDIG currently supports.
     ---
-    *Warning: developers, while reasonable efforts have been made to validate all the requests and response schemas listed here, at this time, we cannot guarantee that the spec to be fully openAPI compatiable or machine-readable. However, if you do encounter any issues, please let us know.*
+    ## You should refer to the API Usage section under our [Read the Docs](https://candig-server.readthedocs.io) for instructions and sample queries for variants, metadata, search and count services.
+
+    ## The API definition for /search and /count endpoints is not here, please select their definition on the top right corner.
+    ---
+    ### Warning: developers, while reasonable efforts have been made to validate all the requests and response schemas listed here, at this time, we cannot guarantee that the spec to be fully machine-readable. However, if you do encounter any issues, please let us know.
     ---
 
   version: "1.1"
@@ -2053,6 +2052,7 @@ components:
             $ref: '#/components/schemas/candigAttributeValueList'
     candigDataset:
       type: object
+      required: [id, name]
       properties:
         id:
           type: string
@@ -2066,6 +2066,12 @@ components:
           type: string
           description: Additional, human-readable information on the dataset.
           example: A mock dataset.
+        termsOfUse:
+          type: array
+          description: Optional. A list of Data Use Ontology terms that describe the terms of use for this dataset.
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/candigOntologyTerm'
       description: |-
         A Dataset is a collection of related data of multiple types.
         Data providers decide how to group data into datasets.
@@ -2185,21 +2191,30 @@ components:
       - NULL_VALUE
     candigOntologyTerm:
       title: |-
-        An ontology term describing an attribute. (e.g. the phenotype attribute
-        'polydactyly' from HPO)
+        Ontology term.
       type: object
       properties:
-        term_id:
+        termId:
           type: string
-          description: |-
-            Ontology term identifier - the CURIE for an ontology term. It
-            differs from the standard candig schema's :ref:id <apidesign_object_ids>
-            in that it is a CURIE pointing to an information resource outside of the
-            scope of the schema or its resource implementation.
+          example: DUO:00000042
+          description: The unique identifier of the term.
         term:
           type: string
+          example: General Research Use
           description: Ontology term - the label of the ontology term the termId is
             pointing to.
+        shorthand:
+          type: string
+          example: GRU
+          description: Shorthand of the term name. Only used in Data Use Ontology. This field may not be returned at all time.
+        definition:
+          type: string
+          example: This code indicates that it is only for general research use.
+          description: A text description of the ontology term.
+        modifier:
+          type: string
+          nullable: true
+          description: An additional comment on the term. Only used in Data Use Ontology. This field may not be returned at all time.
     candigProgram:
       type: object
       properties:

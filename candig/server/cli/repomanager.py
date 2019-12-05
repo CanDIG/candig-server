@@ -27,6 +27,7 @@ import candig.server.datamodel.peers as peers
 import candig.server.datarepo as datarepo
 import candig.server.exceptions as exceptions
 import candig.server.repo.rnaseq2ga as rnaseq2ga
+from candig.server.ontology import OntologyValidator
 
 import candig.common.cli as common_cli
 
@@ -140,7 +141,7 @@ class RepoManager(object):
         """
         self._openRepo()
         self._repo.printAnnouncements()
-        
+
     def clearAnnouncements(self):
         """
         Clears the list of announcements from the repo.
@@ -179,6 +180,29 @@ class RepoManager(object):
         dataset.setDescription(self._args.description)
         dataset.setAttributes(json.loads(self._args.attributes))
         self._updateRepo(self._repo.insertDataset, dataset)
+
+    def addDatasetDuo(self):
+        """
+        Adds DUO info to existing dataset into this repo.
+        """
+        self._validateRepo()
+        dataset = datasets.Dataset(self._args.datasetName)
+
+        try:
+            with open(self._args.dataUseOntologyFile, 'r') as f:
+                duo_info = json.load(f)
+        except (json.decoder.JSONDecodeError, FileNotFoundError) as e:
+            raise exceptions.JsonFileOpenException(e)
+
+        validator = OntologyValidator(duo_info)
+
+        # If the DUO Terms provided are valid.
+        if validator.validate_duo():
+            duo_list = validator.get_duo_list()
+            dataset.setDuoInfo(duo_list)
+            self._updateRepo(self._repo.updateDatasetDuo, dataset)
+        else:
+            print("Aborted.")
 
     def addReferenceSet(self):
         """
@@ -434,6 +458,17 @@ class RepoManager(object):
             self._updateRepo(self._repo.removeDataset, dataset)
         self._confirmDelete("Dataset", dataset.getLocalId(), func)
 
+    def removeDatasetDuo(self):
+        """
+        Removes a dataset's DUO info from the repo.
+        """
+        self._validateRepo()
+        dataset = self._repo.getSqlDatasetByName(self._args.datasetName)
+
+        def func():
+            self._updateRepo(self._repo.deleteDatasetDuo, dataset)
+        self._confirmDelete("the Data Use Ontology Info For Dataset", dataset.getLocalId(), func)
+
     def addFeatureSet(self):
         """
         Adds a new feature set into this repo
@@ -573,7 +608,7 @@ class RepoManager(object):
         def func():
             self._updateRepo(self._repo.removePatient, patient)
         self._confirmDelete("Patient", patient.getLocalId(), func)
-        
+
     def addEnrollment(self):
         """
         Adds a new enrollment into this repo
@@ -596,7 +631,7 @@ class RepoManager(object):
         def func():
             self._updateRepo(self._repo.removeEnrollment, enrollment)
         self._confirmDelete("Enrollment", enrollment.getLocalId(), func)
-        
+
     def addConsent(self):
         """
         Adds a new consent into this repo
@@ -619,7 +654,7 @@ class RepoManager(object):
         def func():
             self._updateRepo(self._repo.removeConsent, consent)
         self._confirmDelete("Consent", consent.getLocalId(), func)
-        
+
     def addDiagnosis(self):
         """
         Adds a new diagnosis into this repo
@@ -642,7 +677,7 @@ class RepoManager(object):
         def func():
             self._updateRepo(self._repo.removeDiagnosis, diagnosis)
         self._confirmDelete("Diagnosis", diagnosis.getLocalId(), func)
-        
+
     def addSample(self):
         """
         Adds a new sample into this repo
@@ -665,7 +700,7 @@ class RepoManager(object):
         def func():
             self._updateRepo(self._repo.removeSample, sample)
         self._confirmDelete("Sample", sample.getLocalId(), func)
-        
+
     def addTreatment(self):
         """
         Adds a new treatment into this repo
@@ -688,7 +723,7 @@ class RepoManager(object):
         def func():
             self._updateRepo(self._repo.removeTreatment, treatment)
         self._confirmDelete("Treatment", treatment.getLocalId(), func)
-        
+
     def addOutcome(self):
         """
         Adds a new outcome into this repo
@@ -711,7 +746,7 @@ class RepoManager(object):
         def func():
             self._updateRepo(self._repo.removeOutcome, outcome)
         self._confirmDelete("Outcome", outcome.getLocalId(), func)
-        
+
     def addComplication(self):
         """
         Adds a new complication into this repo
@@ -734,7 +769,7 @@ class RepoManager(object):
         def func():
             self._updateRepo(self._repo.removeComplication, complication)
         self._confirmDelete("Complication", complication.getLocalId(), func)
-        
+
     def addTumourboard(self):
         """
         Adds a new tumourboard into this repo
@@ -1287,6 +1322,11 @@ class RepoManager(object):
                 objectType))
 
     @classmethod
+    def addDuoArgument(cls, subparser):
+        subparser.add_argument(
+            "dataUseOntologyFile", help="Path to your duo config json file.")
+
+    @classmethod
     def addDatasetNameArgument(cls, subparser):
         subparser.add_argument(
             "datasetName", help="the name of the dataset")
@@ -1814,6 +1854,20 @@ class RepoManager(object):
         cls.addRepoArgument(removeDatasetParser)
         cls.addDatasetNameArgument(removeDatasetParser)
         cls.addForceOption(removeDatasetParser)
+
+        addDatasetDuoParser = common_cli.addSubparser(
+            subparsers, "add-dataset-duo", "Add DUO info to a dataset")
+        addDatasetDuoParser.set_defaults(runner="addDatasetDuo")
+        cls.addRepoArgument(addDatasetDuoParser)
+        cls.addDatasetNameArgument(addDatasetDuoParser)
+        cls.addDuoArgument(addDatasetDuoParser)
+
+        removeDatasetDuoParser = common_cli.addSubparser(
+            subparsers, "remove-dataset-duo", "Remove DUO info from a dataset")
+        removeDatasetDuoParser.set_defaults(runner="removeDatasetDuo")
+        cls.addRepoArgument(removeDatasetDuoParser)
+        cls.addDatasetNameArgument(removeDatasetDuoParser)
+        cls.addForceOption(removeDatasetDuoParser)
 
         addExperimentParser = common_cli.addSubparser(
             subparsers, "add-experiment", "Add an experiment to the data repo")
@@ -2580,6 +2634,7 @@ def getRepoManagerParser():
 def repoExitError(message):
     """
     Exits the repo manager with error status.
+    TODO: Look into how the message is formatted
     """
     wrapper = textwrap.TextWrapper(
         break_on_hyphens=False, break_long_words=False)
@@ -2601,6 +2656,12 @@ def repo_main(args=None):
     except exceptions.DataException as exception:
         # We expect DataExceptions to occur when a file open fails,
         # a URL cannot be reached, etc.
+        repoExitError(str(exception))
+    except exceptions.NoInternetConnectionException as exception:
+        # When there's no internet at the time of ingesting ontology file
+        repoExitError(str(exception))
+    except exceptions.FailToParseOntologyException as exception:
+        # When the Ontology file is corrupted
         repoExitError(str(exception))
     except Exception as exception:
         # Uncaught exception: this is a bug

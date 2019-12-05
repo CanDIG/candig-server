@@ -184,6 +184,16 @@ class InvalidLogicException(BadRequestException):
         self.message = "Invalid logic formatting: " + field
 
 
+class NoInternetConnectionException(RuntimeException):
+    def __init__(self):
+        self.message = "The DUO OWL file cannot be retrieved. Please make sure you have an active internet connection."
+
+
+class FailToParseOntologyException(RuntimeException):
+    def __init__(self):
+        self.message = "The ontology file cannot be parsed."
+
+
 class Validator(object):
     """
     Check that a JSON dictionary is a valid representation of a protocol
@@ -700,6 +710,13 @@ class FileOpenFailedException(DataException):
 
     def __init__(self, filename):
         self.message = "Failed to open file '{}'".format(filename)
+
+
+class JsonFileOpenException(DataException):
+
+    def __init__(self, message):
+        self.message = "You need to provide a valid JSON file. It failed to " \
+                       "be processed because '{}'.".format(message)
 
 
 class EmptyDirException(DataException):

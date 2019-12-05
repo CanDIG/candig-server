@@ -3,10 +3,11 @@ info:
   title: CanDIG Search and Count Services
   description: |-
 
-    Below is the search and count API description.
+    ## Below is the search and count API description. Note that this was primarily prepared for advanced users. You should refer to the API Usage section under our [Read the Docs](https://candig-server.readthedocs.io) for more instructions.
 
+    ## If you wish to view the UI for all other endpoints, please select their definition on the top right corner.
     ---
-    *Warning: developers, This spec is not really machine-readable. Please use with caution.
+    ### Warning: developers, This spec is not really machine-readable. Please use with caution. In particular, we are unable to provide accurate machine-readable definitions for the Response of `/count` endpoint. We are also unable to express the recursive relations of the `logic` component of the complex requests.
     ---
 
   version: "1.1"
