@@ -135,43 +135,35 @@ class OntologyValidator():
             return False
 
         for duo in duo_list:
-            try:
-                duo_id = duo.get("id")
-                modifier = duo.get("modifier")
 
-                # Check if the ID exists, a KeyError will be thrown is it doesn't
-                OntologyParser(self.ontology_file_object, duo_id)
+            duo_id = duo.get("id")
+            modifier = duo.get("modifier")
 
-                # Fail is the ID is None
-                if duo_id is None:
-                    validity = False
-                    print("Please specify 'id' for all DUO terms.")
-
-                # Fail if the ID supplied is unsupported
-                if duo_id not in self.ids_supported:
-                    validity = False
-                    print(duo_id, "is not currently supported.")
-
-                # Fail if the modifier is not supplied with IDs that require it
-                if duo_id in self.ids_need_modifiers_with_def and modifier is None:
-                    validity = False
-                    print(duo_id, self.ids_need_modifiers_with_def[duo_id])
-
-                # Fail if the datetime supplied with the IDs that require it is invalid
-                if duo_id in self.ids_require_datetime_modifier:
-                    if self.validate_date_time(modifier) is False:
-                        validity = False
-                        print(duo_id, "has malformed datetime", modifier, "it should be YYYY-MM-DD")
-
-                # Fail if modifier is supplied with IDs that do not require it
-                if modifier is not None and duo_id not in self.ids_need_modifiers_with_def:
-                    validity = False
-                    print(duo_id, "cannot accept a modifier.")
-
-            except KeyError:
-                # Fail if the ID cannot be found in ontology
+            # Fail is the ID is None
+            if duo_id is None:
                 validity = False
-                print("One or more DUO IDs you provide are not valid.")
+                print("Please specify 'id' for all DUO terms.")
+
+            # Fail if the ID supplied is unsupported
+            if duo_id not in self.ids_supported:
+                validity = False
+                print(duo_id, "is not supported.")
+
+            # Fail if the modifier is not supplied with IDs that require it
+            if duo_id in self.ids_need_modifiers_with_def and modifier is None:
+                validity = False
+                print(duo_id, self.ids_need_modifiers_with_def[duo_id])
+
+            # Fail if the datetime supplied with the IDs that require it is invalid
+            if duo_id in self.ids_require_datetime_modifier:
+                if self.validate_date_time(modifier) is False:
+                    validity = False
+                    print(duo_id, "has malformed datetime", modifier, "it should be YYYY-MM-DD")
+
+            # Fail if modifier is supplied with IDs that do not require it
+            if modifier is not None and duo_id not in self.ids_need_modifiers_with_def:
+                validity = False
+                print(duo_id, "cannot accept a modifier.")
 
         return validity
 
@@ -179,7 +171,7 @@ class OntologyValidator():
         # Return True only if the date is formatted as YYYY-MM-DD
         try:
             datetime.strptime(str(date), "%Y-%m-%d")
-        except ValueError:
+        except (ValueError, TypeError):
             return False
 
         return True

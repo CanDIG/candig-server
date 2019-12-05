@@ -190,7 +190,7 @@ class RepoManager(object):
 
         try:
             with open(self._args.dataUseOntologyFile, 'r') as f:
-                duo_info  = json.load(f)
+                duo_info = json.load(f)
         except (json.decoder.JSONDecodeError, FileNotFoundError) as e:
             raise exceptions.JsonFileOpenException(e)
 
