@@ -27,7 +27,7 @@ import candig.server.datamodel.peers as peers
 import candig.server.datarepo as datarepo
 import candig.server.exceptions as exceptions
 import candig.server.repo.rnaseq2ga as rnaseq2ga
-from candig.server.ontology import OntologyValidator, OntObjectInitiator
+from candig.server.ontology import OntologyValidator
 
 import candig.common.cli as common_cli
 
@@ -194,8 +194,7 @@ class RepoManager(object):
         except (json.decoder.JSONDecodeError, FileNotFoundError) as e:
             raise exceptions.JsonFileOpenException(e)
 
-        ont = OntObjectInitiator("https://raw.githubusercontent.com/EBISPOT/DUO/master/src/ontology/duo-basic.owl").get_ont()
-        validator = OntologyValidator(ont, duo_info)
+        validator = OntologyValidator(duo_info)
 
         # If the DUO Terms provided are valid.
         if validator.validate_duo():

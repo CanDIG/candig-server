@@ -145,6 +145,9 @@ of DUO's `raw OWL definition <https://github.com/EBISPOT/DUO/blob/master/src/ont
     Terms whose ID has an underscore, such as `DUO_0000031`, as well as `DUO:0000022` and `DUO:0000025` are not
     supported, as we expect these terms to be updated in the near future.
 
+    If you think an ID should be supported, but is not. You can let us know by opening an issue
+    on our Github repo.
+
     The supported IDs are listed below.
 
 .. code-block:: json
@@ -153,8 +156,8 @@ of DUO's `raw OWL definition <https://github.com/EBISPOT/DUO/blob/master/src/ont
         "DUO:0000001", "DUO:0000002", "DUO:0000003", "DUO:0000004", "DUO:0000005",
         "DUO:0000006", "DUO:0000007", "DUO:0000011", "DUO:0000012", "DUO:0000014",
         "DUO:0000015", "DUO:0000016", "DUO:0000017", "DUO:0000018", "DUO:0000019",
-        "DUO:0000020", "DUO:0000021", "DUO:0000022", "DUO:0000024", "DUO:0000025",
-        "DUO:0000026", "DUO:0000027", "DUO:0000028", "DUO:0000029", "DUO:0000042"
+        "DUO:0000020", "DUO:0000021", "DUO:0000024", "DUO:0000026", "DUO:0000027"
+        "DUO:0000028", "DUO:0000029", "DUO:0000042"
     ]
 
 .. note::

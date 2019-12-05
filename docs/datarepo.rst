@@ -147,8 +147,6 @@ Create/update new Data Use Ontology Information for an existing dataset. Note th
 have an existing dataset to be able to use this command. When you need to update the DUO info,
 simply run the command with updated DUO Json file.
 
-Please note that as of now, you need to have an active internet connection to be able to use this,
-as the server attempts to download the latest DUO definition file.
 
 .. argparse::
    :module: candig.server.cli.repomanager
@@ -165,8 +163,8 @@ as the server attempts to download the latest DUO definition file.
 
 Adds the Data Use Ontology info to the  dataset with the name ``mock1``.
 
-To learn about how to prepare a json file that contains DUO info for a dataset,
-see the ``Data Use Ontology`` section under :ref:`data`.
+To learn about how to prepare a json file that contains DUO info for a dataset, and a list
+of DUO IDs that are allowed, see the ``Data Use Ontology`` section under :ref:`data`.
 
 
 --------------

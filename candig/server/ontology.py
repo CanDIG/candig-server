@@ -100,17 +100,15 @@ class OntologyValidator():
 
     Example Usage:
 
-    from pronto import Ontology
-    ont = Ontology("https://raw.githubusercontent.com/EBISPOT/DUO/master/src/ontology/duo-basic.owl")
-    validator = OntologyValidator(ont, "duo_input.json")
+	with open("duo.json", 'r') as f:
+		validator = OntologyValidator(f)
 
-    if validator.validate_duo() is True:
-        terms = validator.get_duo_list()
+	    if validator.validate_duo():
+	        terms = validator.get_duo_list()
 
     """
 
-    def __init__(self, ont, input_json):
-        self.ontology_file_object = ont
+    def __init__(self, input_json):
         self.input_json = input_json
         self.ids_require_datetime_modifier = ["DUO:0000024"]
         self.ids_supported = [
@@ -118,9 +116,8 @@ class OntologyValidator():
             "DUO:0000005", "DUO:0000006", "DUO:0000007", "DUO:0000011",
             "DUO:0000012", "DUO:0000014", "DUO:0000015", "DUO:0000016",
             "DUO:0000017", "DUO:0000018", "DUO:0000019", "DUO:0000020",
-            "DUO:0000021", "DUO:0000022", "DUO:0000024", "DUO:0000025",
-            "DUO:0000026", "DUO:0000027", "DUO:0000028", "DUO:0000029",
-            "DUO:0000042"
+            "DUO:0000021", "DUO:0000024", "DUO:0000026", "DUO:0000027",
+            "DUO:0000028", "DUO:0000029", "DUO:0000042"
         ]
         self.ids_need_modifiers_with_def = {
             "DUO:0000024": "This DUO Term requires you specify date as YYYY-MM-DD format in the modifier attribute."
@@ -139,7 +136,7 @@ class OntologyValidator():
             duo_id = duo.get("id")
             modifier = duo.get("modifier")
 
-            # Fail is the ID is None
+            # Fail if the ID is None
             if duo_id is None:
                 validity = False
                 print("Please specify 'id' for all DUO terms.")
