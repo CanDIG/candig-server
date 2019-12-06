@@ -1281,7 +1281,6 @@ class Backend(object):
 
         """
         variantSetIds = MessageToDict(request).get("variantSetIds", None)
-        datasetId = MessageToDict(request).get("datasetId", None)
 
         # When variantSetIds are specified
         if variantSetIds is not None:
