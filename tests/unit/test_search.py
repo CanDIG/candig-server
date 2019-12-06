@@ -407,7 +407,7 @@ class TestSearchGenerator(unittest.TestCase):
         responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
         response = json.loads(responseStr)
 
-        # Since the test variantSets do not link to any patient IDs, none of the variants should return
+        # Since the test variantSets do not link to any real patientId, none of the variants should return
         self.assertEqual(len(response["variants"]), 0)
 
     def testVariantsWithListOfVariantSetIds(self):
@@ -502,7 +502,7 @@ class TestSearchGenerator(unittest.TestCase):
         responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
         response = json.loads(responseStr)
 
-        # Since the test variantSets do not link to any patient IDs, none of the patients should return
+        # Since the test variantSets do not link to any real patientId, none of the patients should return
         self.assertEqual(len(response["patients"]), 0)
 
     def testInvalidComponentVariant1(self):
@@ -1044,7 +1044,7 @@ class TestSearchGenerator(unittest.TestCase):
         responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
         response = json.loads(responseStr)
 
-        # Since the test variantSets do not link to any patient IDs, none of the variants should return
+        # Since the test variantSets do not link to any real patientId, none of the variants should return
         # This, however, is a valid request, and should not trigger an exception.
         self.assertEqual(len(response["variants"]), 0)
 
@@ -1076,7 +1076,7 @@ class TestSearchGenerator(unittest.TestCase):
         responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
         response = json.loads(responseStr)
 
-        # Since the test variantSets do not link to any patient IDs, nothing will return
+        # Since the test variantSets do not link to any real patientId, nothing will return
         # This, however, is a valid request, and should not trigger an exception.
         self.assertEqual(len(response["patients"]), 0)
 
@@ -1116,7 +1116,7 @@ class TestSearchGenerator(unittest.TestCase):
         responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
         response = json.loads(responseStr)
 
-        # Since the test variantSets do not link to any patient IDs, nothing will return
+        # Since the test variantSets do not link to any real patientId, nothing will return
         # This, however, is a valid request, and should not trigger an exception.
         print(len(response["patients"]))
         self.assertEqual(len(response["patients"]), 0)
@@ -1135,8 +1135,8 @@ class TestSearchGenerator(unittest.TestCase):
                 {
                     "id": "A",
                     "variants": {
-                        "start": "10000",
-                        "end": "100000",
+                        "start": "1",
+                        "end": "10000",
                         "referenceName": "1"
                     }
                 }
@@ -1152,6 +1152,43 @@ class TestSearchGenerator(unittest.TestCase):
         responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
         response = json.loads(responseStr)
 
-        # Since the test variantSets do not link to any patient IDs, nothing will return
+        # Since the test variantSets do not link to any real patientId, nothing will return
+        # This, however, is a valid request, and should not trigger an exception.
+        self.assertEqual(len(response["patients"]), 0)
+
+    def testValidComponentVariantSearch4(self):
+        # TODO: This test fails because it triggers the nextPageToken
+        # TODO: which is not yet supported for variants/search query, thus need further investigation
+
+        # This is a valid query.
+        dataset_id = self.dataset.getId()
+
+        request = {
+            "dataset_id": dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "start": "1",
+                        "end": "1000000",
+                        "referenceName": "1"
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": ["gender"]
+                }
+            ]
+        }
+        request = json.dumps(request)
+        responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
+        response = json.loads(responseStr)
+
+        # Since the test variantSets do not link to any real patientId, nothing will return
         # This, however, is a valid request, and should not trigger an exception.
         self.assertEqual(len(response["patients"]), 0)

@@ -1250,10 +1250,9 @@ class Backend(object):
             request, readGroupSet, reference)
         return intervalIterator
 
-    def variantsGenerator(self, request, access_map):
+    def variantsRequestValidator(self, request):
         """
-        Returns a generator over the (variant, nextPageToken) pairs defined
-        by the specified request.
+        Helper function that validates incoming requests to /variants/search
         """
         variantSetIds = MessageToDict(request).get("variantSetIds", None)
         datasetId = MessageToDict(request).get("datasetId", None)
@@ -1265,6 +1264,24 @@ class Backend(object):
         # If both of them were specified
         if (datasetId and variantSetIds) is not None:
             raise exceptions.BadRequestException("You can only specify one of datasetId or variantSetIds.")
+
+    def variantsRequestModifier(self, request):
+        """
+        Helper function that modifies a /variants/search request by removing the pageToken
+        """
+        json_message = MessageToDict(request)
+        json_message["pageToken"] = None
+        modified_request = protocol.fromJson(json.dumps(json_message), protocol.SearchVariantsRequest)
+
+        return modified_request
+
+    def variantsQueryBuilder(self, request, access_map):
+        """
+        Build a list of variantSets based on the query.
+
+        """
+        variantSetIds = MessageToDict(request).get("variantSetIds", None)
+        datasetId = MessageToDict(request).get("datasetId", None)
 
         # When variantSetIds are specified
         if variantSetIds is not None:
@@ -1282,12 +1299,20 @@ class Backend(object):
             self.getUserAccessTier(dataset, access_map)
             variantSets = dataset.getVariantSets()
 
-        iterators = []
+        return variantSets
 
-        for item in variantSets:
-            iterators.append(list(paging.VariantsIntervalIterator(request, item)))
+    def variantsGenerator(self, request, access_map):
+        """
+        Returns a generator over the (variant, nextPageToken) pairs defined
+        by the specified request.
+        """
+        self.variantsRequestValidator(request)
+        modified_request = self.variantsRequestModifier(request)
+        variantSets = self.variantsQueryBuilder(request, access_map)
 
-        return itertools.chain.from_iterable(iterators)
+        iterators = [list(paging.VariantsIntervalIterator(modified_request, item)) for item in variantSets]
+
+        return self._protocolListGenerator(request, [element[0] for element in itertools.chain.from_iterable(iterators)])
 
     def genotypeMatrixGenerator(self, request, access_map):
         """
@@ -2735,47 +2760,62 @@ class Backend(object):
             access_map,
             return_mimetype)
 
-    def runSearchVariantsByGeneNameGenerator(self, request, access_map):
+    def variantsGeneSearchHelper(self, dataset, processedVariantsets, request):
         """
-        Returns a generator over the geneName
-        defined by the specified request.
+        return a list of results
         """
         results = []
-        processedVariantsets = []
-        dataset = self.getDataRepository().getDataset(request.dataset_id)
-        self.getUserAccessTier(dataset, access_map)
+        patientList = MessageToDict(request).get("patientList", None)
+
+        for featureset in dataset.getFeatureSets():
+            for feature in featureset.getFeatures(geneSymbol=request.gene, featureTypes=["gene"]):
+                for variantset in processedVariantsets:
+                    for variant in variantset.getVariants(
+                            referenceName=feature.reference_name.replace('chr', ''),
+                            startPosition=feature.start,
+                            endPosition=feature.end,
+                    ):
+                        if patientList is not None:
+                            setattr(variant, "patientId", variantset.getPatientId())
+                        results.append(variant)
+
+        return results
+
+    def variantsGeneSearchVariantSetsBuilder(self, dataset, request):
         variantsets = dataset.getVariantSets()
         patientList = MessageToDict(request).get("patientList", None)
 
         if patientList is None:
             processedVariantsets = variantsets
         else:
+            processedVariantsets = []
             for variantset in variantsets:
                 if variantset.getPatientId() in patientList:
                     processedVariantsets.append(variantset)
+
+        return processedVariantsets
+
+    def runSearchVariantsByGeneNameGenerator(self, request, access_map):
+        """
+        Returns a generator over the geneName
+        defined by the specified request.
+        """
+        results = []
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
+
+        processedVariantsets = self.variantsGeneSearchVariantSetsBuilder(dataset, request)
 
         if request.gene == "" and (request.start == 0 or request.end == 0 or request.reference_name == ""):
             raise exceptions.BadRequestException("You have to specify a gene.")
 
         if request.gene != "":
-            for featureset in dataset.getFeatureSets():
-                for feature in featureset.getFeatures(geneSymbol=request.gene, featureTypes=["gene"]):
-                    for variantset in processedVariantsets:
-                        for variant in variantset.getVariants(
-                                referenceName=feature.reference_name.replace('chr', ''),
-                                startPosition=feature.start,
-                                endPosition=feature.end,
-                        ):
-                            if patientList is not None:
-                                setattr(variant, "patientId", variantset.getPatientId())
-                            results.append(variant)
+            results = self.variantsGeneSearchHelper(dataset, processedVariantsets, request)
 
         elif request.start != "":
-            iterators = []
-            for item in processedVariantsets:
-                iterators.append(list(paging.VariantsIntervalIterator(request, item)))
-
-            return itertools.chain.from_iterable(iterators)
+            modified_request = self.variantsRequestModifier(request)
+            iterators = [list(paging.VariantsIntervalIterator(modified_request, item)) for item in processedVariantsets]
+            return self._protocolListGenerator(request, [element[0] for element in itertools.chain.from_iterable(iterators)])
 
         return self._protocolListGenerator(request, results)
 
