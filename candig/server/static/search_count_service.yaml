@@ -186,6 +186,8 @@ components:
               - $ref: '#/components/schemas/candigResultForVariants'
               - $ref: '#/components/schemas/candigResultForVariantsGeneSearch'
               - $ref: '#/components/schemas/candigResultForVariantsByGene'
+        pageToken:
+          $ref: '#/components/schemas/candigPageToken'
     candigCountQueryRequest:
       title: Request object for /count
       type: object
@@ -216,6 +218,8 @@ components:
               - $ref: '#/components/schemas/candigResultForCountClin'
               - $ref: '#/components/schemas/candigResultForCountVariants'
               - $ref: '#/components/schemas/candigResultForCountVariantsByGene'
+        pageToken:
+          $ref: '#/components/schemas/candigPageToken'
     candigAnalysis:
       type: object
       properties:

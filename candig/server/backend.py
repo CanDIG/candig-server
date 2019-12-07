@@ -538,6 +538,8 @@ class Backend(object):
         response_obj = {}
         if filtered_results:
             response_obj = {table: filtered_results}
+        if json_results.get("nextPageToken") is not None:
+            response_obj["nextPageToken"] = json_results["nextPageToken"]
         return json.dumps(response_obj)
 
     def aggregationHandler(self, table, results, field):
