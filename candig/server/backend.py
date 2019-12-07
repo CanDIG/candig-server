@@ -416,7 +416,6 @@ class Backend(object):
             nextToken = responseObj.get('nextPageToken')
 
             while nextToken:
-                print(nextToken)
                 request = json.loads(requestStr)
                 request["page_token"] = nextToken
                 requestStr = json.dumps(request)
@@ -426,8 +425,6 @@ class Backend(object):
                 )
 
                 responses[key] += nextPageRequest[idMapper[key]]
-
-                print(len(responses[key]))
                 nextToken = nextPageRequest.get('nextPageToken')
 
         return responses
