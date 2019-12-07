@@ -291,6 +291,11 @@ You always need to specify datasetId in your query.
 You may want to look at the sample queries first before you can look at the `how to`
 instructions below.
 
+.. warning::
+    You may specify ``pageToken`` only when you see a ``nextPageToken`` returned in the
+    previous response. You cannot set ``pageSize`` for requests made to ``/search`` and
+    ``/count`` endpoints.
+
 -------------------
 How to write logic
 -------------------
