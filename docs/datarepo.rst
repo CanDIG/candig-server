@@ -15,6 +15,9 @@ The registry contains links to files, as well as some metadata.
 
 For instructions on adding metadata in bulk, see ingest_.
 
+When you are done ingesting data, you may start up your server instance by running the
+``candig_server`` command, see `Start up candig-server`_ for more information.
+
 ++++++++++++++++++++++++++++
 Initialize/Remove Dataset
 ++++++++++++++++++++++++++++
@@ -1226,3 +1229,31 @@ Removes an individual from the repository.
 
 Deletes the individual with name ``HG00096`` in the dataset
 ``dataset1`` from the repository represented by ``registry.db``
+
+
+++++++++++++++++++++++
+Start up candig-server
+++++++++++++++++++++++
+
+-------------
+candig_server
+-------------
+
+There are a number of optional parameters to start up the server.
+
+When no paramters are set, running ``candig-server`` would start up the server at
+``http://127.0.0.1:8000``.
+
+You may supply your own config file (.py), as indicated below. This ``config.py`` specifies
+the ``DATA_SOURCE`` to be at a custom location, and the ``DEFAULT_PAGE_SIZE`` to be 1500, overridding the default values for both.
+
+.. code-block:: python
+
+    DATA_SOURCE = '/home/user/dev/data.db'
+    DEFAULT_PAGE_SIZE = 1500
+
+.. argparse::
+    :module: candig.server.cli.server
+    :func: getServerParser
+    :prog: candig_server
+    :nodefault:

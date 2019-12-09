@@ -26,7 +26,7 @@ For production deployments, we shouldn't need to add any more configuration
 than this, as the other keys have sensible defaults. However,
 all of Flask's builtin configuration values
 are supported, as well as the extra custom configuration values documented
-here. For information on ingesting data, see :ref:`datarepo` .
+here. For information on ingesting data, see :ref:`datarepo`.
 
 When debugging deployment issues, it may be useful to turn on extra debugging
 information as follows:

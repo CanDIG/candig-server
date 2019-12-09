@@ -36,6 +36,7 @@ The script has been tested on CentOS machines, and we expect the install to
 run OK on most unix distributions. You can run it on `MacOS`, but `wget` likely won't
 work and you should either download the files yourself, or use a replacement for `wget`.
 
+See :ref:`datarepo` for more information regarding ingesting data and starting up server.
 
 .. warning::
     Please note that by default, the script installs the server on the directory
