@@ -1304,7 +1304,9 @@ class Backend(object):
 
     def variantsRequestValidator(self, request):
         """
-        Helper function that validates incoming requests to /variants/search
+        A helper that validates incoming requests to /variants/search.
+        :param request: The user-submitted request.
+        :return: None. Exceptions are raised if query is malformed.
         """
         variantSetIds = MessageToDict(request).get("variantSetIds", None)
         datasetId = MessageToDict(request).get("datasetId", None)
@@ -1319,7 +1321,9 @@ class Backend(object):
 
     def variantsRequestModifier(self, request):
         """
-        Helper function that modifies a /variants/search request by removing the pageToken
+        A work-around that eliminates the pageToken in the request.
+        :param request: A user-submitted request.
+        :return: A request that no longer contains pageToken.
         """
         json_message = MessageToDict(request)
         json_message["pageToken"] = None
@@ -1329,8 +1333,10 @@ class Backend(object):
 
     def variantsQueryBuilder(self, request, access_map):
         """
-        Build a list of variantSets based on the query.
-
+        Find a list of variantsets.
+        :param request: The user-submitted request.
+        :param access_map: The access information.
+        :return: A list of variantsets that users are authorized for access.
         """
         variantSetIds = MessageToDict(request).get("variantSetIds", None)
 
@@ -2813,7 +2819,11 @@ class Backend(object):
 
     def variantsGeneSearchHelper(self, dataset, processedVariantsets, request):
         """
-        return a list of results
+        Find a list of variants.
+        :param dataset: The dataset requested
+        :param processedVariantsets: The variantsets that have been processed.
+        :param request: The user-submitted request.
+        :return: A list of variants.
         """
         results = []
         patientList = MessageToDict(request).get("patientList", None)
@@ -2833,6 +2843,12 @@ class Backend(object):
         return results
 
     def variantsGeneSearchVariantSetsBuilder(self, dataset, request):
+        """
+        Return a list of variantSets corresponding to the given `patientList`; if not set, return all variantSets.
+        :param dataset: The dataset requested.
+        :param request: The user-submitted request.
+        :return: A list of variantsets.
+        """
         variantsets = dataset.getVariantSets()
         patientList = MessageToDict(request).get("patientList", None)
 
