@@ -1257,3 +1257,9 @@ the ``DATA_SOURCE`` to be at a custom location, and the ``DEFAULT_PAGE_SIZE`` to
     :func: getServerParser
     :prog: candig_server
     :nodefault:
+
+**Examples:**
+
+.. code-block:: bash
+
+    $ candig_server --host 0.0.0.0 --port 3000
