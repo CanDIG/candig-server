@@ -308,19 +308,18 @@ class Backend(object):
         variantSetIds = component["variants"].get("variantSetIds")
 
         # Raise exception if gene is specified, but one or more of start, end or referenceName, variantSetIds are also specified
-        if gene is not None and (start is not None or end is not None
-                                 or referenceName is not None or variantSetIds is not None):
-            raise exceptions.MissingComponentVariantKeysException
-
-        if gene is not None:
-            return "variantsByGene"  # Reroute to /variants/gene/search
+        if gene:
+            if start or end or referenceName or variantSetIds:
+                raise exceptions.MissingComponentVariantKeysException
+            else:
+                return "variantsByGene"
 
         else:
             # Raise exception if any of start, end, refereceName was None.
-            if start is None or end is None or referenceName is None:
+            if start and end and referenceName:
+                return "variants"
+            else:
                 raise exceptions.MissingComponentVariantKeysException
-
-            return "variants"  # Reroute to /variants/search
 
     def variantComponentHelper(self, request, component, endpoint):
         """
@@ -343,7 +342,7 @@ class Backend(object):
             request["end"] = component["variants"]["end"]
             request["referenceName"] = component["variants"]["referenceName"]
 
-            if variantSetIds is not None:
+            if variantSetIds:
                 request["variantSetIds"] = variantSetIds
                 # variants/search will throw 400 is both datasetId and variantSetIds are specified
                 request.pop('datasetId', None)
@@ -538,7 +537,7 @@ class Backend(object):
         response_obj = {}
         if filtered_results:
             response_obj = {table: filtered_results}
-        if json_results.get("nextPageToken") is not None:
+        if json_results.get("nextPageToken"):
             response_obj["nextPageToken"] = json_results["nextPageToken"]
         return json.dumps(response_obj)
 
@@ -603,19 +602,20 @@ class Backend(object):
         end = results[0].get("end")
         referenceName = results[0].get("referenceName")
 
-        # Raise exception if gene is specified, but one or more of start, end or referenceName are also specified
-        if gene is not None and (start is not None or end is not None or referenceName is not None):
-            raise exceptions.MissingResultVariantKeysException
-
-        if gene is not None:
-            return "variantsByGene"
+        if gene:
+            # Raise exception if gene is specified, but one or more of start,
+            # end or referenceName are also specified
+            if start or end or referenceName:
+                raise exceptions.MissingResultVariantKeysException
+            else:
+                return "variantsByGene"
 
         else:
             # Raise exception if any of start, end, referenceName is None
-            if start is None or end is None or referenceName is None:
+            if start and end and referenceName:
+                return "variants"
+            else:
                 raise exceptions.MissingResultVariantKeysException
-
-            return "variants"
 
     def variantsResultsRequestBuilder(self, results, dataset_id, patient_list):
         """
@@ -1316,7 +1316,7 @@ class Backend(object):
             raise exceptions.BadRequestException("You need to specify one of datasetId or variantSetIds.")
 
         # If both of them were specified
-        if (datasetId and variantSetIds) is not None:
+        if datasetId and variantSetIds:
             raise exceptions.BadRequestException("You can only specify one of datasetId or variantSetIds.")
 
     def variantsRequestModifier(self, request):
@@ -1341,7 +1341,7 @@ class Backend(object):
         variantSetIds = MessageToDict(request).get("variantSetIds", None)
 
         # When variantSetIds are specified
-        if variantSetIds is not None:
+        if variantSetIds:
             variantSets = []
             for variantsetId in variantSetIds:
                 compoundId = datamodel.VariantSetCompoundId.parse(variantsetId)
@@ -2836,7 +2836,7 @@ class Backend(object):
                             startPosition=feature.start,
                             endPosition=feature.end,
                     ):
-                        if patientList is not None:
+                        if patientList:
                             setattr(variant, "patientId", variantset.getPatientId())
                         results.append(variant)
 
