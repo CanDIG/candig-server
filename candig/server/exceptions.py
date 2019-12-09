@@ -106,6 +106,27 @@ class BadRequestException(RuntimeException):
             self.message += ": " + msg
 
 
+class MissingComponentVariantKeysException(BadRequestException):
+    """
+    Raise exception if the variants component is erroneous
+    """
+    def __init__(self):
+        self.message = ("If you are looking for variants by gene, specify 'gene' only. "
+                        "If you are searching for variants by start, end, referenceName. "
+                        "You need to specify all of these three. Optionally, when you are searching for variants "
+                        "by start, end, referenceName, you may supply a list as variantSetIds.")
+
+
+class MissingResultVariantKeysException(BadRequestException):
+    """
+    Raise exception if the variants specified under results is erroneous
+    """
+    def __init__(self):
+        self.message = ("If you are looking for variants by gene, specify 'gene' only."
+                        "If you are searching for variants by start, end, referenceName."
+                        "You need to specify all of these three.")
+
+
 class BadFilterKeyException(BadRequestException):
     """
     A request that includes one or more invalid filter keys

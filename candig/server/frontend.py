@@ -1091,6 +1091,12 @@ def search_variant_by_gene_name():
         flask.request, app.backend.runSearchVariantsByGeneName)
 
 
+@DisplayedRoute('/variants/gene/search', postMethod=True)
+def search_variant_by_gene():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchVariantsByGeneName)
+
+
 @app.route('/login_oidc', methods=LOGIN_ENDPOINT_METHODS)
 def login_oidc():
     """

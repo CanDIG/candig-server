@@ -87,7 +87,7 @@ var statusCode = 0; // Initial value, table is empty
             'pageSize': '10000'
         }
 
-        makeRequest("/variantsbygenesearch", geneRequestObj).then(function(response) {
+        makeRequest("/variants/gene/search", geneRequestObj).then(function(response) {
             var data = JSON.parse(response)
             var geneDataset = data['results']['variants'];
             tableMaker(geneDataset);
