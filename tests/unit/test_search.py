@@ -1157,8 +1157,6 @@ class TestSearchGenerator(unittest.TestCase):
         self.assertEqual(len(response["patients"]), 0)
 
     def testValidComponentVariantSearch4(self):
-        # TODO: This test fails because it triggers the nextPageToken
-        # TODO: which is not yet supported for variants/search query, thus need further investigation
 
         # This is a valid query.
         dataset_id = self.dataset.getId()
