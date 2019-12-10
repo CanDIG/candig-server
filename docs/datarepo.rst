@@ -1252,7 +1252,7 @@ the ``DATA_SOURCE`` to be at a custom location, and the ``DEFAULT_PAGE_SIZE`` to
     DATA_SOURCE = '/home/user/dev/data.db'
     DEFAULT_PAGE_SIZE = 1500
 
-.. code-block:: python
+.. code-block:: text
 
     usage: candig_server [-h] [--port PORT] [--host HOST] [--config CONFIG]
                          [--config-file CONFIG_FILE] [--tls] [--gunicorn]
