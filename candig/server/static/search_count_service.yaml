@@ -1971,7 +1971,7 @@ components:
         id:
           title: A unique identifier of the current component
           type: string
-        variantsByGene:
+        variants:
           type: object
           required: ["gene"]
           properties:
