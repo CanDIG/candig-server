@@ -1252,14 +1252,18 @@ the ``DATA_SOURCE`` to be at a custom location, and the ``DEFAULT_PAGE_SIZE`` to
     DATA_SOURCE = '/home/user/dev/data.db'
     DEFAULT_PAGE_SIZE = 1500
 
-.. argparse::
-    :module: candig.server.cli.server
-    :func: getServerParser
-    :prog: candig_server
-    :nodefault:
+.. code-block:: python
+
+    usage: candig_server [-h] [--port PORT] [--host HOST] [--config CONFIG]
+                         [--config-file CONFIG_FILE] [--tls] [--gunicorn]
+                         [--certfile CERTFILE] [--keyfile KEYFILE]
+                         [--dont-use-reloader] [--workers WORKERS]
+                         [--timeout TIMEOUT] [--worker_class WORKER_CLASS]
+                         [--epsilon EPSILON] [--version]
+                         [--disable-urllib-warnings]
 
 **Examples:**
 
 .. code-block:: bash
 
-    $ candig_server --host 0.0.0.0 --port 3000
+    $ candig_server --host 0.0.0.0 --port 3000 --config-file config.py
