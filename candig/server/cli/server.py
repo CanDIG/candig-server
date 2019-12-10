@@ -71,7 +71,7 @@ def addServerOptions(parser):
 
 
 def getServerParser():
-    parser = common_cli.createArgumentParser("GA4GH reference server")
+    parser = common_cli.createArgumentParser("CanDIG reference server")
     addServerOptions(parser)
     return parser
 
