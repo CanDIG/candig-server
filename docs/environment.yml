@@ -19,6 +19,8 @@ dependencies:
     - sphinx==1.6.7
     - pysam==0.9.1.4
     - RDFLib==4.2.1
+    - pyjwkest==1.4.0
+    - PyJWT==1.4.2
     - peewee==2.8.5
     - pronto==1.1.2
     - gunicorn==19.9.0
