@@ -109,3 +109,5 @@ Tyk and Keycloak Setup
 
 It is possible to run set up a local test server, with Tyk and Keycloak set up. These two
 components provide authentication capabilities.
+
+For more information, refer to https://github.com/CanDIG/candig_tyk.
