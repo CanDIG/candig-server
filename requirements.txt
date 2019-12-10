@@ -60,7 +60,7 @@ lxml==4.3.4
 pyBigWig==0.3.16
 
 # We need sphinx-argparse to build on readthedocs.
-sphinx-argparse==0.1.15
+sphinx-argparse
 
 # G2P uses a ttl backend
 RDFLib==4.2.1

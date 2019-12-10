@@ -15,7 +15,7 @@ dependencies:
     - protobuf==3.3.0
     - candig-common
     - candig-schemas
-    - sphinx-argparse==0.2.5
+    - sphinx-argparse
     - sphinx==1.6.7
     - pysam==0.9.1.4
     - RDFLib==4.2.1
