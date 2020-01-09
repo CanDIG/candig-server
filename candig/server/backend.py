@@ -257,7 +257,7 @@ class Backend(object):
                 if logic_negate:
                     id_list_all = self.getAllPatientId(dataset_id, access_map)
                     id_set = set(id_list_all) - id_set
-                
+
                 id_list = list(id_set)
                 return id_list
 
@@ -295,6 +295,60 @@ class Backend(object):
         else:
             raise exceptions.BadRequestException
 
+    def variantComponentValidator(self, component):
+        """
+        Raise corresponding exceptions if the request is malformed, or return the endpoint that request should be made to
+        :param component: The component of the user request
+        :return: "variantsByGene" if made to variants/gene/search, "variants" if made to variants/search
+        """
+        gene = component["variants"].get("gene")
+        start = component["variants"].get("start")
+        end = component["variants"].get("end")
+        referenceName = component["variants"].get("referenceName")
+        variantSetIds = component["variants"].get("variantSetIds")
+
+        # Raise exception if gene is specified, but one or more of start, end or referenceName, variantSetIds are also specified
+        if gene:
+            if start or end or referenceName or variantSetIds:
+                raise exceptions.MissingComponentVariantKeysException
+            else:
+                return "variantsByGene"
+
+        else:
+            # Raise exception if any of start, end, refereceName was None.
+            if start and end and referenceName:
+                return "variants"
+            else:
+                raise exceptions.MissingComponentVariantKeysException
+
+    def variantComponentHelper(self, request, component, endpoint):
+        """
+        Construct the internal request based on the user query
+        :param request: User query
+        :param component: Component part of the query
+        :param endpoint: "variantsByGene" if made to variants/gene/search, "variants" if made to variants/search
+        :return: A valid query, as well as the endpoint.
+        """
+        variantSetIds = component[endpoint].get("variantSetIds")
+        endpoint = self.variantComponentValidator(component)
+
+        if endpoint == "variantsByGene":
+            request["gene"] = component["variants"]["gene"]
+
+            return request, endpoint
+
+        else:
+            request["start"] = component["variants"]["start"]
+            request["end"] = component["variants"]["end"]
+            request["referenceName"] = component["variants"]["referenceName"]
+
+            if variantSetIds:
+                request["variantSetIds"] = variantSetIds
+                # variants/search will throw 400 is both datasetId and variantSetIds are specified
+                request.pop('datasetId', None)
+
+            return request, endpoint
+
     def componentsHandler(self, datasetId, components, return_mimetype, access_map):
         """
         Parse the component portion of incoming request
@@ -317,14 +371,9 @@ class Backend(object):
 
             try:
                 if endpoint == "variants":
-                    request["start"] = component[endpoint]["start"]
-                    request["end"] = component[endpoint]["end"]
-                    request["referenceName"] = component[endpoint]["referenceName"]
-                    if "variantSetIds" in component[endpoint]:
-                        request["variantSetIds"] = component[endpoint]["variantSetIds"]
-                        # variants/search will throw 400 is both datasetId and variantSetIds are specified
-                        request.pop('datasetId', None)
+                    request, endpoint = self.variantComponentHelper(request, component, endpoint)
 
+                # With the deprecation of variantsByGene endpoint, this will be removed in subsequent release.
                 elif endpoint == "variantsByGene":
                     request["gene"] = component[endpoint]["gene"]
 
@@ -451,6 +500,11 @@ class Backend(object):
 
             results = self.endpointMapper[table](requestStr, return_mimetype, access_map)
 
+        # Overwrite the variantsByGene endpoint to variants.
+        # With the deprecation of `variantsByGene` endpoint, this will be removed in subsequent release.
+        if table == "variantsByGene":
+            table = "variants"
+
         # perform count based on field aggregation (/count endpoint)
         if count:
             results = self.aggregationHandler(table, results, field)
@@ -483,6 +537,8 @@ class Backend(object):
         response_obj = {}
         if filtered_results:
             response_obj = {table: filtered_results}
+        if json_results.get("nextPageToken"):
+            response_obj["nextPageToken"] = json_results["nextPageToken"]
         return json.dumps(response_obj)
 
     def aggregationHandler(self, table, results, field):
@@ -535,10 +591,66 @@ class Backend(object):
             response_list.append(fv_counts)
         return {table: response_list}
 
+    def variantsResultsValidator(self, results):
+        """
+        Validates the results section
+        :param results: The results section of the request
+        :return: "variantsByGene" if the request contains gene, or "variants" if it contains start, end & referenceName
+        """
+        gene = results[0].get("gene")
+        start = results[0].get("start")
+        end = results[0].get("end")
+        referenceName = results[0].get("referenceName")
+
+        if gene:
+            # Raise exception if gene is specified, but one or more of start,
+            # end or referenceName are also specified
+            if start or end or referenceName:
+                raise exceptions.MissingResultVariantKeysException
+            else:
+                return "variantsByGene"
+
+        else:
+            # Raise exception if any of start, end, referenceName is None
+            if start and end and referenceName:
+                return "variants"
+            else:
+                raise exceptions.MissingResultVariantKeysException
+
+    def variantsResultsRequestBuilder(self, results, dataset_id, patient_list):
+        """
+        Build a request.
+        :param results: The results section of the request
+        :param dataset_id: The dataset_id
+        :param patient_list: The list of patients.
+        :return: A constructed request.
+        """
+
+        endpoint = self.variantsResultsValidator(results)
+
+        if endpoint == "variantsByGene":
+            request = {
+                "datasetId": dataset_id,
+                "patientList": patient_list,
+                "gene": results[0]["gene"]
+            }
+
+        else:
+            request = {
+                "datasetId": dataset_id,
+                "patientList": patient_list,
+                "start": results[0]["start"],
+                "end": results[0]["end"],
+                "referenceName": results[0]["referenceName"]
+            }
+
+        return request
+
     def variantsResultsHandler(self, table, results, patient_list, dataset_id, return_mimetype, access_map, page_token):
 
         request = {}
 
+        # With the deprecation of `variantsByGene`, this part will be removed in subsequent release.
         if table == "variantsByGene":
             gene = results[0].get("gene")
 
@@ -553,21 +665,7 @@ class Backend(object):
                 }
 
         elif table == "variants":
-            start = results[0].get("start")
-            end = results[0].get("end")
-            referenceName = results[0].get("referenceName")
-
-            if start is None or end is None or referenceName is None:
-                raise exceptions.MissingVariantKeysException
-
-            else:
-                request = {
-                    "datasetId": dataset_id,
-                    "patientList": patient_list,
-                    "start": start,
-                    "end": end,
-                    "referenceName": referenceName
-                }
+            request = self.variantsResultsRequestBuilder(results, dataset_id, patient_list)
 
         if page_token:
             request["page_token"] = page_token
@@ -1204,10 +1302,11 @@ class Backend(object):
             request, readGroupSet, reference)
         return intervalIterator
 
-    def variantsGenerator(self, request, access_map):
+    def variantsRequestValidator(self, request):
         """
-        Returns a generator over the (variant, nextPageToken) pairs defined
-        by the specified request.
+        A helper that validates incoming requests to /variants/search.
+        :param request: The user-submitted request.
+        :return: None. Exceptions are raised if query is malformed.
         """
         variantSetIds = MessageToDict(request).get("variantSetIds", None)
         datasetId = MessageToDict(request).get("datasetId", None)
@@ -1217,11 +1316,32 @@ class Backend(object):
             raise exceptions.BadRequestException("You need to specify one of datasetId or variantSetIds.")
 
         # If both of them were specified
-        if (datasetId and variantSetIds) is not None:
+        if datasetId and variantSetIds:
             raise exceptions.BadRequestException("You can only specify one of datasetId or variantSetIds.")
 
+    def variantsRequestModifier(self, request):
+        """
+        A work-around that eliminates the pageToken in the request.
+        :param request: A user-submitted request.
+        :return: A request that no longer contains pageToken.
+        """
+        json_message = MessageToDict(request)
+        json_message["pageToken"] = None
+        modified_request = protocol.fromJson(json.dumps(json_message), protocol.SearchVariantsRequest)
+
+        return modified_request
+
+    def variantsQueryBuilder(self, request, access_map):
+        """
+        Find a list of variantsets.
+        :param request: The user-submitted request.
+        :param access_map: The access information.
+        :return: A list of variantsets that users are authorized for access.
+        """
+        variantSetIds = MessageToDict(request).get("variantSetIds", None)
+
         # When variantSetIds are specified
-        if variantSetIds is not None:
+        if variantSetIds:
             variantSets = []
             for variantsetId in variantSetIds:
                 compoundId = datamodel.VariantSetCompoundId.parse(variantsetId)
@@ -1235,13 +1355,21 @@ class Backend(object):
             dataset = self.getDataRepository().getDataset(request.dataset_id)
             self.getUserAccessTier(dataset, access_map)
             variantSets = dataset.getVariantSets()
-        
-        iterators = []
 
-        for item in variantSets:
-            iterators.append(list(paging.VariantsIntervalIterator(request, item)))
+        return variantSets
 
-        return itertools.chain.from_iterable(iterators)
+    def variantsGenerator(self, request, access_map):
+        """
+        Returns a generator over the (variant, nextPageToken) pairs defined
+        by the specified request.
+        """
+        self.variantsRequestValidator(request)
+        modified_request = self.variantsRequestModifier(request)
+        variantSets = self.variantsQueryBuilder(request, access_map)
+
+        iterators = [list(paging.VariantsIntervalIterator(modified_request, item)) for item in variantSets]
+
+        return self._protocolListGenerator(request, [element[0] for element in itertools.chain.from_iterable(iterators)])
 
     def genotypeMatrixGenerator(self, request, access_map):
         """
@@ -2689,47 +2817,72 @@ class Backend(object):
             access_map,
             return_mimetype)
 
-    def runSearchVariantsByGeneNameGenerator(self, request, access_map):
+    def variantsGeneSearchHelper(self, dataset, processedVariantsets, request):
         """
-        Returns a generator over the geneName
-        defined by the specified request.
+        Find a list of variants.
+        :param dataset: The dataset requested
+        :param processedVariantsets: The variantsets that have been processed.
+        :param request: The user-submitted request.
+        :return: A list of variants.
         """
         results = []
-        processedVariantsets = []
-        dataset = self.getDataRepository().getDataset(request.dataset_id)
-        self.getUserAccessTier(dataset, access_map)
+        patientList = MessageToDict(request).get("patientList", None)
+
+        for featureset in dataset.getFeatureSets():
+            for feature in featureset.getFeatures(geneSymbol=request.gene, featureTypes=["gene"]):
+                for variantset in processedVariantsets:
+                    for variant in variantset.getVariants(
+                            referenceName=feature.reference_name.replace('chr', ''),
+                            startPosition=feature.start,
+                            endPosition=feature.end,
+                    ):
+                        if patientList:
+                            setattr(variant, "patientId", variantset.getPatientId())
+                        results.append(variant)
+
+        return results
+
+    def variantsGeneSearchVariantSetsBuilder(self, dataset, request):
+        """
+        Return a list of variantSets corresponding to the given `patientList`; if not set, return all variantSets.
+        :param dataset: The dataset requested.
+        :param request: The user-submitted request.
+        :return: A list of variantsets.
+        """
         variantsets = dataset.getVariantSets()
         patientList = MessageToDict(request).get("patientList", None)
 
         if patientList is None:
             processedVariantsets = variantsets
         else:
+            processedVariantsets = []
             for variantset in variantsets:
                 if variantset.getPatientId() in patientList:
                     processedVariantsets.append(variantset)
+
+        return processedVariantsets
+
+    def runSearchVariantsByGeneNameGenerator(self, request, access_map):
+        """
+        Returns a generator over the geneName
+        defined by the specified request.
+        """
+        results = []
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
+
+        processedVariantsets = self.variantsGeneSearchVariantSetsBuilder(dataset, request)
 
         if request.gene == "" and (request.start == 0 or request.end == 0 or request.reference_name == ""):
             raise exceptions.BadRequestException("You have to specify a gene.")
 
         if request.gene != "":
-            for featureset in dataset.getFeatureSets():
-                for feature in featureset.getFeatures(geneSymbol=request.gene, featureTypes=["gene"]):
-                    for variantset in processedVariantsets:
-                        for variant in variantset.getVariants(
-                                referenceName=feature.reference_name.replace('chr', ''),
-                                startPosition=feature.start,
-                                endPosition=feature.end,
-                        ):
-                            if patientList is not None:
-                                setattr(variant, "patientId", variantset.getPatientId())
-                            results.append(variant)
+            results = self.variantsGeneSearchHelper(dataset, processedVariantsets, request)
 
         elif request.start != "":
-            iterators = []
-            for item in processedVariantsets:
-                iterators.append(list(paging.VariantsIntervalIterator(request, item)))
-
-            return itertools.chain.from_iterable(iterators)
+            modified_request = self.variantsRequestModifier(request)
+            iterators = [list(paging.VariantsIntervalIterator(modified_request, item)) for item in processedVariantsets]
+            return self._protocolListGenerator(request, [element[0] for element in itertools.chain.from_iterable(iterators)])
 
         return self._protocolListGenerator(request, results)
 

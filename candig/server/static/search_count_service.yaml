@@ -1,0 +1,3273 @@
+openapi: 3.0.1
+info:
+  title: CanDIG Search and Count Services
+  description: |-
+
+    ## Below is the search and count API description. Note that this was primarily prepared for advanced users. You should refer to the API Usage section under our [Read the Docs](https://candig-server.readthedocs.io) for more instructions.
+
+    ## If you wish to view the UI for all other endpoints, please select their definition on the top right corner.
+    ---
+    ### Warning: developers, This spec is not really machine-readable. Please use with caution. In particular, we are unable to provide accurate machine-readable definitions for the Response of `/count` endpoint. We are also unable to express the recursive relations of the `logic` component of the complex requests.
+    ---
+
+  version: "1.1"
+servers:
+- url: /
+paths:
+  /search:
+    post:
+      tags:
+      - SearchService
+      operationId: GetItem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/candigSearchQueryRequest'
+        required: true
+      responses:
+        200:
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/candigSearchPatientsResponse'
+                  - $ref: '#/components/schemas/candigSearchEnrollmentsResponse'
+                  - $ref: '#/components/schemas/candigSearchTreatmentsResponse'
+                  - $ref: '#/components/schemas/candigSearchSamplesResponse'
+                  - $ref: '#/components/schemas/candigSearchDiagnosesResponse'
+                  - $ref: '#/components/schemas/candigSearchTumourboardsResponse'
+                  - $ref: '#/components/schemas/candigSearchOutcomesResponse'
+                  - $ref: '#/components/schemas/candigSearchComplicationsResponse'
+                  - $ref: '#/components/schemas/candigSearchConsentsResponse'
+                  - $ref: '#/components/schemas/candigSearchChemotherapiesResponse'
+                  - $ref: '#/components/schemas/candigSearchImmunotherapiesResponse'
+                  - $ref: '#/components/schemas/candigSearchRadiotherapiesResponse'
+                  - $ref: '#/components/schemas/candigSearchCelltransplantsResponse'
+                  - $ref: '#/components/schemas/candigSearchSurgeriesResponse'
+                  - $ref: '#/components/schemas/candigSearchStudiesResponse'
+                  - $ref: '#/components/schemas/candigSearchSlidesResponse'
+                  - $ref: '#/components/schemas/candigSearchLabtestsResponse'
+                  - $ref: '#/components/schemas/candigSearchVariantsResponse'
+      x-codegen-request-body-name: body
+  /count:
+    post:
+      tags:
+      - SearchService
+      operationId: GetCount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/candigCountQueryRequest'
+        required: true
+      responses:
+        200:
+          description: |-
+          
+            Warning:
+            ---
+            We are unable to provide an accurate machine-readable definition for the response format of count requests. As the /count endpoint returns actual values of the fields you search for as the key, and their aggregated counts as the values, we do not know the keys beforehand. 
+            ---
+            However, the schema has defined the possible fields that may be aggregated on. You should refer to those fields.
+            ---
+            As an example, if you specify this as your `results` section.
+            ---
+                {
+                  "results": [
+                    {
+                      "table": "patients",
+                      "fields": ["gender", "provinceOfResidence"]
+                    }
+                  ]
+                }
+                
+            You would see a response like this
+            ---
+                {
+                  "status": {
+                    "Known peers": 1,
+                    "Queried peers": 1,
+                    "Successful communications": 1,
+                    "Valid response": true
+                  },
+                  "results": {
+                    "patients": [
+                      {
+                        "gender": {
+                          "female": 15,
+                          "male": 15
+                        },
+                        "provinceOfResidence": {
+                          "British Columbia": 21,
+                          "Newfoundland and Labrador": 1,
+                          "Quebec": 1,
+                          "Ontario": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/candigPatientCountResponse'
+                  - $ref: '#/components/schemas/candigEnrollmentCountResponse'
+                  - $ref: '#/components/schemas/candigTreatmentCountResponse'
+                  - $ref: '#/components/schemas/candigSampleCountResponse'
+                  - $ref: '#/components/schemas/candigDiagnosisCountResponse'
+                  - $ref: '#/components/schemas/candigTumourboardCountResponse'
+                  - $ref: '#/components/schemas/candigOutcomeCountResponse'
+                  - $ref: '#/components/schemas/candigComplicationCountResponse'
+                  - $ref: '#/components/schemas/candigConsentCountResponse'
+                  - $ref: '#/components/schemas/candigChemotherapyCountResponse'
+                  - $ref: '#/components/schemas/candigImmunotherapyCountResponse'
+                  - $ref: '#/components/schemas/candigRadiotherapyCountResponse'
+                  - $ref: '#/components/schemas/candigCelltransplantCountResponse'
+                  - $ref: '#/components/schemas/candigSurgeryCountResponse'
+                  - $ref: '#/components/schemas/candigStudyCountResponse'
+                  - $ref: '#/components/schemas/candigSlideCountResponse'
+                  - $ref: '#/components/schemas/candigLabtestCountResponse'
+                  - $ref: '#/components/schemas/candigVariantCountResponse'
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    candigStatus:
+      type: object
+      properties:
+        Known peers:
+          type: integer
+          example: 1
+          description: The number of peers registered
+        Queried peers:
+          type: integer
+          example: 1
+          description: The number of peers that return 200 or 404
+        Successful communciations:
+          type: integer
+          description: The number of peers that return 200
+          example: 1
+        Valid response:
+          type: boolean
+          description: If number of queried peers equal to the successful communciation, this is true.
+          example: true
+    candigSearchQueryRequest:
+      title: Search Query Request
+      type: object
+      required: ["datasetId", "logic", "components", "results"]
+      properties:
+        datasetId:
+          type: string
+        logic:
+          $ref: '#/components/schemas/candigLogic'
+        components:
+          $ref: '#/components/schemas/candigComponent'
+        results:
+          title: candigSearchResultsSchema
+          description: |-
+            There are three different types of `results` objects. 
+            
+            You can only supply one, and one type of `results` object at a time. 
+            
+            Use `candigResultForClin` if you want to retrieve any clinical data.
+            
+            Use the `candigResultForVariants` if you want to retrieve variants by supplying a start, end, and referenceName.
+            
+            Use `candigResultForVariantsGeneSearch` if you want to retrieve variants by supplying a geneName.
+            
+            `candigResultForVariantsByGene` was also used to retrieve variants by supplying a geneName, but it is now deprecated.
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/candigResultForClin'
+              - $ref: '#/components/schemas/candigResultForVariants'
+              - $ref: '#/components/schemas/candigResultForVariantsGeneSearch'
+              - $ref: '#/components/schemas/candigResultForVariantsByGene'
+        pageToken:
+          $ref: '#/components/schemas/candigPageToken'
+    candigCountQueryRequest:
+      title: Request object for /count
+      type: object
+      required: ["datasetId", "logic", "components", "results"]
+      properties:
+        datasetId:
+          type: string
+        logic:
+          $ref: '#/components/schemas/candigLogic'
+        components:
+          $ref: '#/components/schemas/candigComponent'
+        results:
+          title: candigCountResultsSchema
+          description: |-
+            There are three different types of `results` objects. These are similar to the ones you specify for the `search` endpoint. The only difference is for `/count` endpoint,
+            `fields` is a mandatory field.
+            
+            You can only supply one, and one type of `results` object at a time. 
+            
+            Use `candigResultForCountClin` if you want to retrieve counts of any clinical data.
+            
+            Use the `candigResultForCountVariants` if you want to retrieve counts of variants by supplying a start, end, and referenceName.
+            
+            Use the `candigResultForCountVariantsByGene` if you want to retrieve counts of variants by supplying a geneName.
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/candigResultForCountClin'
+              - $ref: '#/components/schemas/candigResultForCountVariants'
+              - $ref: '#/components/schemas/candigResultForCountVariantsByGene'
+        pageToken:
+          $ref: '#/components/schemas/candigPageToken'
+    candigAnalysis:
+      type: object
+      properties:
+        id:
+          type: string
+          description: |-
+            Formats of id | name | description | accessions are described in the
+            documentation on general attributes and formats.
+        name:
+          type: string
+        description:
+          type: string
+        created:
+          type: string
+          description: The time at which this record was created, in ISO 8601 format.
+        updated:
+          type: string
+          description: The time at which this record was last updated, in ISO 8601
+            format.
+        type:
+          type: string
+          description: The type of analysis.
+        software:
+          type: array
+          description: The software run to generate this analysis.
+          items:
+            type: string
+        datasetId:
+          type: string
+          description: |-
+            ### ===================================================================== ###
+            # PROFYLE MODIFICATION BEGIN
+            ### ===================================================================== ###
+            The ID of the dataset this Analysis belongs to.
+        experiment_id:
+          title: 'Experiment id that is corresponding to the analysis: string'
+          type: string
+        other_analysis_descriptor:
+          title: 'other_analysis_descriptor: string'
+          type: string
+        other_analysis_completition_date:
+          title: 'other_analysis_completition_date: date (YYYY-MM-DD)'
+          type: string
+      description: |-
+        An analysis contains an interpretation of one or several experiments. (e.g.
+        SNVs, copy number variations, methylation status) together with information
+        about the methodology used.
+    candigAttributeValue:
+      type: object
+      properties:
+        string_value:
+          type: string
+        int64_value:
+          type: string
+          format: int64
+        int32_value:
+          type: integer
+          format: int32
+        bool_value:
+          type: boolean
+          format: boolean
+        double_value:
+          type: number
+          format: double
+        external_identifier:
+          $ref: '#/components/schemas/candigExternalIdentifier'
+        ontology_term:
+          $ref: '#/components/schemas/candigOntologyTerm'
+        experiment:
+          $ref: '#/components/schemas/candigExperiment'
+        program:
+          $ref: '#/components/schemas/candigProgram'
+        analysis:
+          $ref: '#/components/schemas/candigAnalysis'
+        null_value:
+          $ref: '#/components/schemas/candigNullValue'
+        attribute_list:
+          $ref: '#/components/schemas/candigAttributeValueList'
+      description: |-
+        Type defining a collection of attributes associated with various protocol
+        records. Each attribute is a name that maps to an array of one or more
+        values. Values are chosen from both internal protobuf types and candig.
+         Values should be split into array elements instead of using a separator
+        syntax that needs to parsed.
+    candigAttributeValueList:
+      type: object
+      properties:
+        values:
+          type: array
+          items:
+            $ref: '#/components/schemas/candigAttributeValue'
+    candigAttributes:
+      type: object
+      properties:
+        attr:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/candigAttributeValueList'
+    candigExperiment:
+      type: object
+      properties:
+        id:
+          title: The experiment ID
+          type: string
+        name:
+          type: string
+          description: The name of the experiment.
+        description:
+          type: string
+          description: A description of the experiment.
+        message_create_time:
+          title: |-
+            The time at which this message was created.
+            Format: ISO 8601, YYYY-MM-DDTHH:MM:SS.SSS (e.g. 2015-02-10T00:03:42.123Z)
+          type: string
+        message_update_time:
+          title: |-
+            The time at which this message was last updated.
+            Format: ISO 8601, YYYY-MM-DDTHH:MM:SS.SSS (e.g. 2015-02-10T00:03:42.123Z)
+          type: string
+        run_time:
+          title: |-
+            The time at which this experiment was performed.
+            Granularity here is variable (e.g. date only).
+            Format: ISO 8601, YYYY-MM-DDTHH:MM:SS (e.g. 2015-02-10T00:03:42)
+          type: string
+        molecule:
+          title: The molecule examined in this experiment. (e.g. genomics DNA, total
+            RNA)
+          type: string
+        strategy:
+          title: |-
+            The experiment technique or strategy applied to the sample.
+            (e.g. whole genome sequencing, RNA-seq, RIP-seq)
+          type: string
+        selection:
+          title: |-
+            The method used to enrich the target. (e.g. immunoprecipitation, size
+            fractionation, MNase digestion)
+          type: string
+        library:
+          type: string
+          description: The name of the library used as part of this experiment.
+        library_layout:
+          type: string
+          description: The configuration of sequenced reads. (e.g. Single or Paired).
+        instrument_model:
+          type: string
+          description: |-
+            The instrument model used as part of this experiment.
+            This maps to sequencing technology in BAM.
+        instrument_data_file:
+          title: |-
+            The data file generated by the instrument.
+            TODO: This isn't actually a file is it?
+            Should this be instrumentData instead?
+          type: string
+        sequencing_center:
+          type: string
+          description: The sequencing center used as part of this experiment.
+        platform_unit:
+          type: string
+          description: |-
+            The platform unit used as part of this experiment. This is a
+            flowcell-barcode
+            or slide unique identifier.
+        datasetId:
+          type: string
+          description: |-
+            ### ===================================================================== ###
+            # PROFYLE MODIFICATION BEGIN
+            ### ===================================================================== ###
+            The ID of the dataset this Experiment belongs to.
+        biosampleId:
+          title: 'Biosample id on which the experiment was done: string'
+          type: string
+        dna_library_construction_method:
+          title: 'dna_library_construction_method: string'
+          type: string
+        wgs_sequencing_completion_date:
+          title: 'wgs_sequencing_completion_date: date (YYYY-MM-DD)'
+          type: string
+        rna_library_construction_method:
+          title: RNA Library Construction Method
+          type: string
+        rna_sequencing_completion_date:
+          title: 'wgs_sequencing_completion_date: date (YYYY-MM-DD)'
+          type: string
+        panel_completion_date:
+          title: 'panel_completion_date: date (YYYY-MM-DD)'
+          type: string
+      description: An experimental preparation of a sample.
+    candigExternalIdentifier:
+      title: Identifier from a public database
+      type: object
+      properties:
+        database:
+          type: string
+          description: The source of the identifier, e.g. Ensembl.
+        identifier:
+          type: string
+          description: The ID defined by the external database, e.g. ENST00000000000.
+        version:
+          type: string
+          description: The version of the object or the database, e.g. 78.
+    candigNullValue:
+      type: string
+      description: ' - NULL_VALUE: Null value.'
+      default: NULL_VALUE
+      enum:
+      - NULL_VALUE
+    candigOntologyTerm:
+      title: |-
+        An ontology term describing an attribute. (e.g. the phenotype attribute
+        'polydactyly' from HPO)
+      type: object
+      properties:
+        term_id:
+          type: string
+          description: |-
+            Ontology term identifier - the CURIE for an ontology term. It
+            differs from the standard candig schema's :ref:id <apidesign_object_ids>
+            in that it is a CURIE pointing to an information resource outside of the
+            scope of the schema or its resource implementation.
+        term:
+          type: string
+          description: Ontology term - the label of the ontology term the termId is
+            pointing to.
+    candigProgram:
+      type: object
+      properties:
+        command_line:
+          type: string
+          description: The command line used to run this program.
+        id:
+          type: string
+          description: The user specified ID of the program.
+        name:
+          type: string
+          description: The name of the program.
+        prev_program_id:
+          type: string
+          description: The ID of the program run before this one.
+        version:
+          type: string
+          description: The version of the program run.
+      description: A Program describes software used in data processing or analysis.
+    candigCelltransplant:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        startDate:
+          type: string
+        cellSource:
+          type: string
+        donorType:
+          type: string
+        treatmentPlanId:
+          type: string
+        courseNumber:
+          type: string
+    candigChemotherapy:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        courseNumber:
+          type: string
+        startDate:
+          type: string
+        stopDate:
+          type: string
+        systematicTherapyAgentName:
+          type: string
+        route:
+          type: string
+        dose:
+          type: string
+        doseFrequency:
+          type: string
+        doseUnit:
+          type: string
+        daysPerCycle:
+          type: string
+        numberOfCycle:
+          type: string
+        treatmentIntent:
+          type: string
+        treatingCentreName:
+          type: string
+        type:
+          type: string
+        protocolCode:
+          type: string
+        recordingDate:
+          type: string
+        treatmentPlanId:
+          type: string
+    candigComplication:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        date:
+          type: string
+        lateComplicationOfTherapyDeveloped:
+          type: string
+        lateToxicityDetail:
+          type: string
+        suspectedTreatmentInducedNeoplasmDeveloped:
+          type: string
+        treatmentInducedNeoplasmDetails:
+          type: string
+    candigConsent:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        consentId:
+          type: string
+        consentDate:
+          type: string
+        consentVersion:
+          type: string
+        patientConsentedTo:
+          type: string
+        reasonForRejection:
+          type: string
+        wasAssentObtained:
+          type: string
+        dateOfAssent:
+          type: string
+        assentFormVersion:
+          type: string
+        ifAssentNotObtainedWhyNot:
+          type: string
+        reconsentDate:
+          type: string
+        reconsentVersion:
+          type: string
+        consentingCoordinatorName:
+          type: string
+        previouslyConsented:
+          type: string
+        nameOfOtherBiobank:
+          type: string
+        hasConsentBeenWithdrawn:
+          type: string
+        dateOfConsentWithdrawal:
+          type: string
+        typeOfConsentWithdrawal:
+          type: string
+        reasonForConsentWithdrawal:
+          type: string
+        consentFormComplete:
+          type: string
+    candigDiagnosis:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        diagnosisId:
+          type: string
+        diagnosisDate:
+          type: string
+        ageAtDiagnosis:
+          type: string
+        cancerType:
+          type: string
+        classification:
+          type: string
+        cancerSite:
+          type: string
+        histology:
+          type: string
+        methodOfDefinitiveDiagnosis:
+          type: string
+        sampleType:
+          type: string
+        sampleSite:
+          type: string
+        tumorGrade:
+          type: string
+        gradingSystemUsed:
+          type: string
+        sitesOfMetastases:
+          type: string
+        stagingSystem:
+          type: string
+        versionOrEditionOfTheStagingSystem:
+          type: string
+        specificTumorStageAtDiagnosis:
+          type: string
+        prognosticBiomarkers:
+          type: string
+        biomarkerQuantification:
+          type: string
+        additionalMolecularTesting:
+          type: string
+        additionalTestType:
+          type: string
+        laboratoryName:
+          type: string
+        laboratoryAddress:
+          type: string
+        siteOfMetastases:
+          type: string
+        stagingSystemVersion:
+          type: string
+        specificStage:
+          type: string
+        cancerSpecificBiomarkers:
+          type: string
+        additionalMolecularDiagnosticTestingPerformed:
+          type: string
+        additionalTest:
+          type: string
+    candigEnrollment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        enrollmentInstitution:
+          type: string
+        enrollmentApprovalDate:
+          type: string
+        crossEnrollment:
+          type: string
+        otherPersonalizedMedicineStudyName:
+          type: string
+        otherPersonalizedMedicineStudyId:
+          type: string
+        ageAtEnrollment:
+          type: string
+        eligibilityCategory:
+          type: string
+        statusAtEnrollment:
+          type: string
+        primaryOncologistName:
+          type: string
+        primaryOncologistContact:
+          type: string
+        referringPhysicianName:
+          type: string
+        referringPhysicianContact:
+          type: string
+        summaryOfIdRequest:
+          type: string
+        treatingCentreName:
+          type: string
+        treatingCentreProvince:
+          type: string
+    candigFilterValue:
+      title: Filter when comparing field to a single value.
+      type: object
+      properties:
+        field:
+          title: field
+          description: field on which the filter applies
+          type: string
+        operator:
+          title: operator
+          description: The relationship between the `field` and `value`.
+          type: string
+          enum: [">","<",">=","<=","=","==","!=","contains"]
+        value:
+          title: value
+          type: string
+    candigFilterValues:
+      title: Filter when checking multiple values
+      type: object
+      properties:
+        field:
+          title: field
+          description: field on which the filter applies
+          type: string
+        operator:
+          title: operator
+          description: The relationship between the `field` and `values`.
+          type: string
+          enum: ["in"]
+        values:
+          title: values
+          description: Check if the any record of selected field is a member of supplied `values`.
+          type: array
+          items:
+            type: string
+    candigFilters:
+      title: Filter on any of the fields
+      description: There are two types of `filter` object. The first type has `in` as the operator, and only accepts `values`, which is a list. The second type accept one of `>, <, >=, <=, =, == !=, contains` as the operators, but only accept `value`. Note that `=` and `==` are equivalent. You may write any number of filter objects with `value` or `values`.
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/components/schemas/candigFilterValue'
+          - $ref: '#/components/schemas/candigFilterValues'
+    candigPageSize:
+      type: integer
+      example: 1000
+      description: |-
+        Specifies the maximum number of results to return in a single page.
+        If unspecified, a system default will be used.
+      format: int32
+    candigPageToken:
+      type: string
+      example: "0"
+      description: |-
+        The continuation token, which is used to page through large result sets.
+        To get the next page of results, set this parameter to the value of
+        nextPageToken from the previous response.
+    candigNextPageToken:
+      type: string
+      example: "1000"
+      description: |-
+        The continuation token, which is used to page through large
+        result sets. Provide this value in a subsequent request to return the next
+        page of results. This field will be empty if there aren't any additional
+        results.
+    candigTotal:
+      type: integer
+      description: Number of results in the list
+      example: 50
+    candigImmunotherapy:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        startDate:
+          type: string
+        immunotherapyType:
+          type: string
+        immunotherapyTarget:
+          type: string
+        immunotherapyDetail:
+          type: string
+        treatmentPlanId:
+          type: string
+        courseNumber:
+          type: string
+    candigLabtest:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        startDate:
+          type: string
+        collectionDate:
+          type: string
+        endDate:
+          type: string
+        eventType:
+          type: string
+        testResults:
+          type: string
+        timePoint:
+          type: string
+        recordingDate:
+          type: string
+    candigOutcome:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        physicalExamId:
+          type: string
+        dateOfAssessment:
+          type: string
+        diseaseResponseOrStatus:
+          type: string
+        otherResponseClassification:
+          type: string
+        minimalResidualDiseaseAssessment:
+          type: string
+        methodOfResponseEvaluation:
+          type: string
+        responseCriteriaUsed:
+          type: string
+        summaryStage:
+          type: string
+        sitesOfAnyProgressionOrRecurrence:
+          type: string
+        vitalStatus:
+          type: string
+        height:
+          type: string
+        weight:
+          type: string
+        heightUnits:
+          type: string
+        weightUnits:
+          type: string
+        performanceStatus:
+          type: string
+        overallSurvivalInMonths:
+          type: string
+        diseaseFreeSurvivalInMonths:
+          type: string
+    candigPatient:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        otherIds:
+          type: string
+        dateOfBirth:
+          type: string
+        gender:
+          type: string
+        ethnicity:
+          type: string
+        race:
+          type: string
+        provinceOfResidence:
+          type: string
+        dateOfDeath:
+          type: string
+        causeOfDeath:
+          type: string
+        autopsyTissueForResearch:
+          type: string
+        priorMalignancy:
+          type: string
+        dateOfPriorMalignancy:
+          type: string
+        familyHistoryAndRiskFactors:
+          type: string
+        familyHistoryOfPredispositionSyndrome:
+          type: string
+        detailsOfPredispositionSyndrome:
+          type: string
+        geneticCancerSyndrome:
+          type: string
+        otherGeneticConditionOrSignificantComorbidity:
+          type: string
+        occupationalOrEnvironmentalExposure:
+          type: string
+    candigRadiotherapy:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        courseNumber:
+          type: string
+        startDate:
+          type: string
+        stopDate:
+          type: string
+        therapeuticModality:
+          type: string
+        baseline:
+          type: string
+        testResult:
+          type: string
+        testResultStd:
+          type: string
+        treatingCentreName:
+          type: string
+        startIntervalRad:
+          type: string
+        startIntervalRadRaw:
+          type: string
+        recordingDate:
+          type: string
+        adjacentFields:
+          type: string
+        adjacentFractions:
+          type: string
+        complete:
+          type: string
+        brachytherapyDose:
+          type: string
+        radiotherapyDose:
+          type: string
+        siteNumber:
+          type: string
+        technique:
+          type: string
+        treatedRegion:
+          type: string
+        treatmentPlanId:
+          type: string
+        radiationType:
+          type: string
+        radiationSite:
+          type: string
+        totalDose:
+          type: string
+        boostSite:
+          type: string
+        boostDose:
+          type: string
+    candigSample:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        sampleId:
+          type: string
+        diagnosisId:
+          type: string
+        localBiobankId:
+          type: string
+        collectionDate:
+          type: string
+        collectionHospital:
+          type: string
+        sampleType:
+          type: string
+        tissueDiseaseState:
+          type: string
+        anatomicSiteTheSampleObtainedFrom:
+          type: string
+        cancerType:
+          type: string
+        cancerSubtype:
+          type: string
+        pathologyReportId:
+          type: string
+        morphologicalCode:
+          type: string
+        topologicalCode:
+          type: string
+        shippingDate:
+          type: string
+        receivedDate:
+          type: string
+        qualityControlPerformed:
+          type: string
+        estimatedTumorContent:
+          type: string
+        quantity:
+          type: string
+        units:
+          type: string
+        associatedBiobank:
+          type: string
+        otherBiobank:
+          type: string
+        sopFollowed:
+          type: string
+        ifNotExplainAnyDeviation:
+          type: string
+        recordingDate:
+          type: string
+        startInterval:
+          type: string
+    candigSearchCelltransplantsResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            celltransplants:
+              type: array
+              description: The list of celltransplants.
+              items:
+                $ref: '#/components/schemas/candigCelltransplant'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /celltransplants/search expressed
+        as JSON.
+    candigSearchChemotherapiesResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            chemotherapies:
+              type: array
+              description: The list of chemotherapies.
+              items:
+                $ref: '#/components/schemas/candigChemotherapy'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /chemotherapies/search expressed
+        as JSON.
+    candigSearchComplicationsResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            complications:
+              type: array
+              description: The list of complications.
+              items:
+                $ref: '#/components/schemas/candigComplication'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /complications/search expressed
+        as JSON.
+    candigSearchConsentsResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            consents:
+              type: array
+              description: The list of consents.
+              items:
+                $ref: '#/components/schemas/candigConsent'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /consents/search expressed as
+        JSON.
+    candigSearchDiagnosesResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            diagnoses:
+              type: array
+              description: The list of diagnoses.
+              items:
+                $ref: '#/components/schemas/candigDiagnosis'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /diagnoses/search expressed as
+        JSON.
+    candigSearchEnrollmentsResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            enrollments:
+              type: array
+              description: The list of enrollments.
+              items:
+                $ref: '#/components/schemas/candigEnrollment'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /enrollments/search expressed
+        as JSON.
+    candigSearchImmunotherapiesResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            immunotherapies:
+              type: array
+              description: The list of immunotherapies.
+              items:
+                $ref: '#/components/schemas/candigImmunotherapy'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /immunotherapies/search expressed
+        as JSON.
+    candigSearchLabtestsResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            labtests:
+              type: array
+              description: The list of labtests.
+              items:
+                $ref: '#/components/schemas/candigLabtest'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /labtests/search expressed as
+        JSON.
+    candigSearchOutcomesResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            outcomes:
+              type: array
+              description: The list of outcomes.
+              items:
+                $ref: '#/components/schemas/candigOutcome'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /outcomes/search expressed as
+        JSON.
+    candigSearchPatientsResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            patients:
+              type: array
+              description: The list of patients.
+              items:
+                $ref: '#/components/schemas/candigPatient'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /patients/search expressed as
+        JSON.
+    candigSearchRadiotherapiesResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            radiotherapies:
+              type: array
+              description: The list of radiotherapies.
+              items:
+                $ref: '#/components/schemas/candigRadiotherapy'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /radiotherapies/search expressed
+        as JSON.
+    candigSearchSamplesResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            samples:
+              type: array
+              description: The list of samples.
+              items:
+                $ref: '#/components/schemas/candigSample'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /samples/search expressed as JSON.
+    candigSearchSlidesResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            slides:
+              type: array
+              description: The list of slides.
+              items:
+                $ref: '#/components/schemas/candigSlide'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /slides/search expressed as JSON.
+    candigSearchStudiesResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            studies:
+              type: array
+              description: The list of studies.
+              items:
+                $ref: '#/components/schemas/candigStudy'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /studies/search expressed as JSON.
+    candigSearchSurgeriesResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            surgeries:
+              type: array
+              description: The list of surgeries.
+              items:
+                $ref: '#/components/schemas/candigSurgery'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /surgeries/search expressed as
+        JSON.
+    candigSearchTreatmentsResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            treatments:
+              type: array
+              description: The list of treatments.
+              items:
+                $ref: '#/components/schemas/candigTreatment'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /treatments/search expressed as
+        JSON.
+    candigSearchTumourboardsResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            tumourboards:
+              type: array
+              description: The list of tumourboards.
+              items:
+                $ref: '#/components/schemas/candigTumourboard'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /tumourboards/search expressed
+        as JSON.
+    candigSlide:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        sampleId:
+          type: string
+        slideId:
+          type: string
+        slideOtherId:
+          type: string
+        lymphocyteInfiltrationPercent:
+          type: string
+        tumorNucleiPercent:
+          type: string
+        monocyteInfiltrationPercent:
+          type: string
+        normalCellsPercent:
+          type: string
+        tumorCellsPercent:
+          type: string
+        stromalCellsPercent:
+          type: string
+        eosinophilInfiltrationPercent:
+          type: string
+        neutrophilInfiltrationPercent:
+          type: string
+        granulocyteInfiltrationPercent:
+          type: string
+        necrosisPercent:
+          type: string
+        inflammatoryInfiltrationPercent:
+          type: string
+        proliferatingCellsNumber:
+          type: string
+        sectionLocation:
+          type: string
+    candigStudy:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+        status:
+          type: string
+        recordingDate:
+          type: string
+    candigSurgery:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        startDate:
+          type: string
+        stopDate:
+          type: string
+        sampleId:
+          type: string
+        collectionTimePoint:
+          type: string
+        diagnosisDate:
+          type: string
+        site:
+          type: string
+        type:
+          type: string
+        recordingDate:
+          type: string
+        treatmentPlanId:
+          type: string
+        courseNumber:
+          type: string
+    candigTreatment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        courseNumber:
+          type: string
+        therapeuticModality:
+          type: string
+        treatmentPlanType:
+          type: string
+        treatmentIntent:
+          type: string
+        startDate:
+          type: string
+        stopDate:
+          type: string
+        reasonForEndingTheTreatment:
+          type: string
+        responseToTreatment:
+          type: string
+        responseCriteriaUsed:
+          type: string
+        dateOfRecurrenceOrProgressionAfterThisTreatment:
+          type: string
+        unexpectedOrUnusualToxicityDuringTreatment:
+          type: string
+        diagnosisId:
+          type: string
+        treatmentPlanId:
+          type: string
+    candigTumourboard:
+      type: object
+      properties:
+        id:
+          type: string
+          description: This is unique in the context of the server instance.
+        datasetId:
+          type: string
+          description: The ID of the dataset this object belongs to.
+        name:
+          type: string
+          description: This is a label or symbolic identifier for this object.
+        patientId:
+          type: string
+        dateOfMolecularTumorBoard:
+          type: string
+        typeOfSampleAnalyzed:
+          type: string
+        typeOfTumourSampleAnalyzed:
+          type: string
+        analysesDiscussed:
+          type: string
+        somaticSampleType:
+          type: string
+        normalExpressionComparator:
+          type: string
+        diseaseExpressionComparator:
+          type: string
+        hasAGermlineVariantBeenIdentifiedByProfilingThatMayPredisposeToCancer:
+          type: string
+        actionableTargetFound:
+          type: string
+        molecularTumorBoardRecommendation:
+          type: string
+        germlineDnaSampleId:
+          type: string
+        tumorDnaSampleId:
+          type: string
+        tumorRnaSampleId:
+          type: string
+        germlineSnvDiscussed:
+          type: string
+        somaticSnvDiscussed:
+          type: string
+        cnvsDiscussed:
+          type: string
+        structuralVariantDiscussed:
+          type: string
+        classificationOfVariants:
+          type: string
+        clinicalValidationProgress:
+          type: string
+        typeOfValidation:
+          type: string
+        agentOrDrugClass:
+          type: string
+        levelOfEvidenceForExpressionTargetAgentMatch:
+          type: string
+        didTreatmentPlanChangeBasedOnProfilingResult:
+          type: string
+        howTreatmentHasAlteredBasedOnProfiling:
+          type: string
+        reasonTreatmentPlanDidNotChangeBasedOnProfiling:
+          type: string
+        detailsOfTreatmentPlanImpact:
+          type: string
+        patientOrFamilyInformedOfGermlineVariant:
+          type: string
+        patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling:
+          type: string
+        summaryReport:
+          type: string
+    candigCall:
+      type: object
+      properties:
+        call_set_name:
+          type: string
+          description: |-
+            The name of the call set this variant call belongs to.
+            If this field is not present, the ordering of the call sets from a
+            SearchCallSetsRequest over this VariantSet is guaranteed to match
+            the ordering of the calls on this Variant.
+            The number of results will also be the same.
+        callSetId:
+          type: string
+          description: |-
+            The ID of the call set this variant call belongs to.
+
+            If this field is not present, the ordering of the call sets from a
+            SearchCallSetsRequest over this VariantSet is guaranteed to match
+            the ordering of the calls on this Variant.
+            The number of results will also be the same.
+        genotype:
+          $ref: '#/components/schemas/protobufListValue'
+        phaseset:
+          type: string
+          description: |-
+            If this field is populated, this variant call's genotype ordering implies
+            the phase of the bases and is consistent with any other variant calls on
+            the same contig which have the same phaseset string.
+        genotype_likelihood:
+          type: array
+          description: |-
+            The genotype likelihoods for this variant call. Each array entry
+            represents how likely a specific genotype is for this call as
+            log10(P(data | genotype)), analogous to the GL tag in the VCF spec. The
+            value ordering is defined by the GL tag in the VCF spec.
+          items:
+            type: number
+            format: double
+        attributes:
+          $ref: '#/components/schemas/candigAttributes'
+      description: |-
+        A Call represents the determination of genotype with respect to a
+        particular Variant.
+
+        It may include associated information such as quality
+        and phasing. For example, a call might assign a probability of 0.32 to
+        the occurrence of a SNP named rs1234 in a call set with the name NA12345.
+    candigPatientsComponent:
+      title: candigPatientsComponent
+      type: object
+      required: ["id", "patients"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        patients:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigEnrollmentsComponent:
+      title: candigEnrollmentsComponent
+      type: object
+      required: ["id", "enrollments"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        enrollments:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigTreatmentsComponent:
+      title: candigTreatmentsComponent
+      type: object
+      required: ["id", "treatments"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        treatments:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigSamplesComponent:
+      title: candigSamplesComponent
+      type: object
+      required: ["id", "samples"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        samples:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigDiagnosesComponent:
+      title: candigDiagnosesComponent
+      type: object
+      required: ["id", "diagnoses"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        diagnoses:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigTumourboardsComponent:
+      title: candigTumourboardsComponent
+      type: object
+      required: ["id", "tumourboards"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        tumourboards:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigOutcomesComponent:
+      title: candigOutcomesComponent
+      type: object
+      required: ["id", "outcomes"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        outcomes:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigComplicationsComponent:
+      title: candigComplicationsComponent
+      type: object
+      required: ["id", "complications"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        complications:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigConsentsComponent:
+      title: candigConsentsComponent
+      type: object
+      required: ["id", "consents"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        consents:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigChemotherapiesComponent:
+      title: candigChemotherapiesComponent
+      type: object
+      required: ["id", "chemotherapies"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        chemotherapies:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigImmunotherapiesComponent:
+      title: candigImmunotherapiesComponent
+      type: object
+      required: ["id", "immunotherapies"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        immunotherapies:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigRadiotherapiesComponent:
+      title: candigRadiotherapiesComponent
+      type: object
+      required: ["id", "radiotherapies"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        radiotherapies:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigCelltransplantsComponent:
+      title: candigCelltransplantsComponent
+      type: object
+      required: ["id", "celltransplants"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        celltransplants:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigSurgeriesComponent:
+      title: candigSurgeriesComponent
+      type: object
+      required: ["id", "surgeries"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        surgeries:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigStudiesComponent:
+      title: candigStudiesComponent
+      type: object
+      required: ["id", "studies"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        studies:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigSlidesComponent:
+      title: candigSlidessComponent
+      type: object
+      required: ["id", "slides"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        slides:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigLabtestsComponent:
+      title: candigLabtestsComponent
+      type: object
+      required: ["id", "labtests"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        labtests:
+          type: object
+          properties:
+            filters:
+              type: array
+              items:
+                $ref: '#/components/schemas/candigFilters'
+    candigVariantsComponent:
+      title: candigVariantsComponent
+      type: object
+      required: ["id", "variants"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        variants:
+          type: object
+          required: ["referenceName", "start", "end"]
+          properties:
+            referenceName:
+              type: string
+              description: Required. Only return variants on this reference, which is usually chromosome.
+            start:
+              type: string
+              description: |-
+                Required. The beginning of the window (0-based, inclusive) for
+                which overlapping variants should be returned.
+                Genomic positions are non-negative integers less than reference length.
+                Requests spanning the join of circular genomes are represented as
+                two requests one on each side of the join (position 0).
+              format: int64
+            end:
+              type: string
+              description: |-
+                Required. The end of the window (0-based, exclusive) for which overlapping
+                variants should be returned.
+              format: int64
+            variantSetIds:
+              title: a list of variant sets to search from
+              description: Optional. Use this field only if you want to find variants from specific variantsets. If you do not specify this field, by default, it will search for all variants present on this dataset.
+              type: array
+              items:
+                type: string
+    candigVariantsByGeneComponent:
+      title: candigVariantsByGeneComponent (deprecated)
+      description: This has been deprecated. Use `candigVariantsGeneSearchComponent` instead.
+      type: object
+      required: ["id", "variantsByGene"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        variantsByGene:
+          type: object
+          required: ["gene"]
+          properties:
+            gene:
+              title: The gene symbol to search.
+              example: CFTR
+              type: string
+    candigVariantsGeneSearchComponent:
+      title: candigVariantsGeneSearchComponent
+      type: object
+      required: ["id", "variants"]
+      properties:
+        id:
+          title: A unique identifier of the current component
+          type: string
+        variants:
+          type: object
+          required: ["gene"]
+          properties:
+            gene:
+              title: The gene symbol to search.
+              example: CFTR
+              type: string
+    candigComponent:
+      title: candigComponent
+      description: |-
+        You may specify one or more components here. 
+        
+        Please note that `candigVariantsByGeneComponent` has been deprecated, use `candigVariantsGeneSearchComponent` instead.
+      
+        By specifying a `candigVariantsComponent` component here, you are searching for patients who have variants within the region of indicated start and end.
+        
+        By specifying a `candigVariantsGeneSearchComponent` component here, you are searching for patients who have variants within the indicated gene.
+      type: array
+      items:
+        anyOf:
+        - $ref: '#/components/schemas/candigPatientsComponent'
+        - $ref: '#/components/schemas/candigEnrollmentsComponent'
+        - $ref: '#/components/schemas/candigTreatmentsComponent'
+        - $ref: '#/components/schemas/candigSamplesComponent'
+        - $ref: '#/components/schemas/candigDiagnosesComponent'
+        - $ref: '#/components/schemas/candigTumourboardsComponent'
+        - $ref: '#/components/schemas/candigOutcomesComponent'
+        - $ref: '#/components/schemas/candigComplicationsComponent'
+        - $ref: '#/components/schemas/candigConsentsComponent'
+        - $ref: '#/components/schemas/candigChemotherapiesComponent'
+        - $ref: '#/components/schemas/candigImmunotherapiesComponent'
+        - $ref: '#/components/schemas/candigRadiotherapiesComponent'
+        - $ref: '#/components/schemas/candigCelltransplantsComponent'
+        - $ref: '#/components/schemas/candigSurgeriesComponent'
+        - $ref: '#/components/schemas/candigStudiesComponent'
+        - $ref: '#/components/schemas/candigSlidesComponent'
+        - $ref: '#/components/schemas/candigLabtestsComponent'
+        - $ref: '#/components/schemas/candigVariantsComponent'
+        - $ref: '#/components/schemas/candigVariantsByGeneComponent'
+        - $ref: '#/components/schemas/candigVariantsGeneSearchComponent'
+    candigLogicIdObject:
+      type: object
+      properties:
+        id:
+          type: string
+          example: A
+    candigLogic:
+      type: array
+      description: |-
+        There are three different basic types of logic objects.
+        
+        First one is an `and` logic, where you can find records that satisfy all of the components. 
+        
+        Second one is an `or` logic, where you find records that satisfy any of the components. 
+        
+        Third type is simply an `id`. If you are only a single component, you may only specify `id` in the logic. For the last type only, you can specify an optional `negate`, which simply negates the logic of your only component.
+        
+        These should suffice most of the needs. For more advanced usage, such as recursive relations, check our latest docs hosted on readthedocs. They are too complicated to be expressed here.
+        
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/candigLogicAnd'
+          - $ref: '#/components/schemas/candigLogicOr'
+          - $ref: '#/components/schemas/candigLogicId'
+    candigLogicAnd:
+      type: object
+      required: [and]
+      properties:
+        and:
+          type: array
+          items:
+            anyOf:
+             - $ref: '#/components/schemas/candigLogicIdObject'
+    candigLogicOr:
+      type: object
+      required: [or]
+      properties:
+        or:
+          type: array
+          items:
+            anyOf:
+             - $ref: '#/components/schemas/candigLogicIdObject'
+    candigLogicId:
+      type: object
+      required: [id]
+      properties:
+        id:
+          type: string
+        negate:
+          type: boolean
+          description: Optional. You can use `negate` to effectively negate the logic.
+          format: boolean
+    candigResultForClin:
+      title: candigResultForClin
+      type: object
+      required: ["table"]
+      properties:
+        table:
+          title: Name of a single table from which fields are requested
+          type: string
+          enum: ["patients", "enrollments", "treatments", "samples", "diagnoses", "tumourboards", "outcomes", "complications", "consents", "chemotherapies", "immunotherapies", "radiotherapies", "celltransplants", "surgeries", "studies"]
+        fields:
+          title: List of fields of the requested table
+          description: Optional for /search endpoint, required for /count endpoint. When you supply a list of fields under /search endpoint, the response will only contain the specified fields.
+          type: array
+          items:
+            type: string
+    candigResultForVariants:
+      title: candigResultForVariants
+      type: object
+      required: ["table", "start", "end", "referenceName"]
+      properties:
+        table:
+          title: Name of a single table from which fields are requested
+          type: string
+          enum: ["variants"]
+        fields:
+          title: List of fields of the requested table
+          description: Optional for /search endpoint, required for /count endpoint. When you supply a list of fields under /search endpoint, the response will only contain the specified fields.
+          type: array
+          items:
+            type: string
+        start:
+          title: Start bp. Used if the user is requesting variants endpoint
+          type: string
+        end:
+          title: End bp. Used if the user is requesting variants endpoint
+          type: string
+        referenceName:
+          type: string
+          description: Reference genome. Used if the user is requesting variants endpoint.
+    candigResultForVariantsByGene:
+      title: candigResultForVariantsByGene (Deprecated)
+      description: Deprecated. Use candigResultForVariantsGeneSearch.
+      type: object
+      required: ["table", "gene"]
+      properties:
+        table:
+          title: Name of a single table from which fields are requested
+          type: string
+          enum: ["variantsByGene"]
+        fields:
+          title: List of fields of the requested table
+          description: Optional for /search endpoint, required for /count endpoint. When you supply a list of fields under /search endpoint, the response will only contain the specified fields.
+          type: array
+          items:
+            type: string
+        gene:
+          type: string
+          example: "CFTR"
+          description: Gene name. Used if the user is requesting variantsByGene endpoint.
+    candigResultForVariantsGeneSearch:
+      title: candigResultForVariantsGeneSearch
+      type: object
+      required: ["table", "gene"]
+      properties:
+        table:
+          title: Name of a single table from which fields are requested
+          type: string
+          enum: ["variants"]
+        fields:
+          title: List of fields of the requested table
+          description: Optional for /search endpoint, required for /count endpoint. When you supply a list of fields under /search endpoint, the response will only contain the specified fields.
+          type: array
+          items:
+            type: string
+        gene:
+          type: string
+          example: "CFTR"
+          description: Gene name. Used if the user is requesting variantsByGene endpoint.
+    candigResultForCountClin:
+      title: candigResultForCountClin
+      type: object
+      required: ["table", "fields"]
+      properties:
+        table:
+          title: Name of a single table from which fields are requested
+          type: string
+          enum: ["patients", "enrollments", "treatments", "samples", "diagnoses", "tumourboards", "outcomes", "complications", "consents", "chemotherapies", "immunotherapies", "radiotherapies", "celltransplants", "surgeries", "studies"]
+        fields:
+          title: List of fields of the requested table
+          description: Optional for /search endpoint, required for /count endpoint. When you supply a list of fields under /search endpoint, the response will only contain the specified fields.
+          type: array
+          items:
+            type: string
+    candigResultForCountVariants:
+      title: candigResultForCountVariants
+      type: object
+      required: ["table", "fields", "start", "end", "referenceName"]
+      properties:
+        table:
+          title: Name of a single table from which fields are requested
+          type: string
+          enum: ["variants"]
+        fields:
+          title: List of fields of the requested table
+          description: Optional for /search endpoint, required for /count endpoint. When you supply a list of fields under /search endpoint, the response will only contain the specified fields.
+          type: array
+          items:
+            type: string
+            enum: ["variantSetId", "names", "referenceName", "start", "end", "referenceBases", "alternateBases", "variantType", "svlen", "cipos", "ciend", "filtersApplied", "filtersPassed", "filtersFailed"]
+        start:
+          title: Start bp. Used if the user is requesting variants endpoint
+          type: string
+        end:
+          title: End bp. Used if the user is requesting variants endpoint
+          type: string
+        referenceName:
+          type: string
+          description: Reference genome. Used if the user is requesting variants endpoint.
+    candigResultForCountVariantsByGene:
+      title: candigResultForCountVariantsByGene
+      type: object
+      required: ["table", "fields", "gene"]
+      properties:
+        table:
+          title: Name of a single table from which fields are requested
+          type: string
+          enum: ["variantsByGene"]
+        fields:
+          title: List of fields of the requested table
+          description: Optional for /search endpoint, required for /count endpoint. When you supply a list of fields under /search endpoint, the response will only contain the specified fields.
+          type: array
+          items:
+            type: string
+            enum: ["gene"]
+        gene:
+          type: string
+          example: "CFTR"
+          description: Gene name. Used if the user is requesting variantsByGene endpoint.
+    candigVariant:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The variant ID.
+        variantSetId:
+          type: string
+          description: |-
+            The ID of the VariantSet this variant belongs to. This transitively
+            defines
+            the ReferenceSet against which the Variant is to be interpreted.
+        names:
+          type: array
+          description: Names for the variant, for example a RefSNP ID.
+          items:
+            type: string
+        created:
+          type: string
+          description: The date this variant was created in milliseconds from the
+            epoch.
+          format: int64
+        updated:
+          type: string
+          description: |-
+            The time at which this variant was last updated in
+            milliseconds from the epoch.
+          format: int64
+        referenceName:
+          title: |-
+            The reference on which this variant occurs.
+            (e.g. chr20 or X)
+          type: string
+        start:
+          type: string
+          description: |-
+            The start position at which this variant occurs (0-based).
+            This corresponds to the first base of the string of reference bases.
+            Genomic positions are non-negative integers less than reference length.
+            Variants spanning the join of circular genomes are represented as
+            two variants one on each side of the join (position 0).
+          format: int64
+        end:
+          type: string
+          description: |-
+            The end position (exclusive), resulting in [start, end) closed-open
+            interval.
+            This is typically calculated by start + referenceBases.length.
+          format: int64
+        referenceBases:
+          type: string
+          description: |-
+            The reference bases for this variant. They start at the given start
+            position.
+        alternateBases:
+          type: array
+          description: |-
+            The bases that appear instead of the reference bases. Multiple alternate
+            alleles are possible.
+          items:
+            type: string
+        attributes:
+          $ref: '#/components/schemas/candigAttributes'
+        calls:
+          type: array
+          description: |-
+            The variant calls for this particular variant. Each one represents the
+            determination of genotype with respect to this variant. Calls in this
+            array are implicitly associated with this Variant.
+          items:
+            $ref: '#/components/schemas/candigCall'
+        variant_type:
+          title: |-
+            The "variant_type" is used to denote e.g. structural variants.
+            Examples:
+              DUP  : duplication of sequence following "start"; not necessarily in situ
+              DEL  : deletion of sequence following "start"
+          type: string
+        svlen:
+          title: |-
+            Length of the - if labeled as such in variant_type - structural variation.
+            Based on the use in VCFv4.2
+          type: string
+          format: int64
+        cipos:
+          title: |-
+            In the case of structural variants, start and end of the variant may not
+            be known with an exact base position. "cipos" provides an interval with
+            high confidence for the start position. The interval is provided by 0 or
+            2 signed integers which are added to the start position.
+            Based on the use in VCFv4.2
+            Example:
+              [ -12000, 1000 ]
+          type: array
+          items:
+            type: integer
+            format: int32
+        ciend:
+          title: |-
+            Similar to "cipos", but for the variant's end position (which is derived
+            from start + svlen).
+            Example:
+              [ -1000, 0 ]
+          type: array
+          items:
+            type: integer
+            format: int32
+        filters_applied:
+          type: boolean
+          description: |-
+            True if filters were applied for this variant. VCF column 7 "FILTER"
+            any value other than the missing value.
+          format: boolean
+        filters_passed:
+          type: boolean
+          description: |-
+            True if all filters for this variant passed. VCF column 7 "FILTER"
+            value PASS.
+          format: boolean
+        filters_failed:
+          type: array
+          description: |-
+            Zero or more filters that failed for this variant. VCF column 7 "FILTER"
+            shared across all alleles in the same VCF record.
+          items:
+            type: string
+        patientId:
+          type: string
+          description: |-
+            PatientId, this field is not populated in the database, but generated on-the-fly
+            when variants are being returned.
+      description: |-
+        A Variant represents a change in DNA sequence relative to some reference.
+        For example, a variant could represent a SNP or an insertion.
+        Variants belong to a VariantSet.
+        This is equivalent to a row in VCF.
+    googleprotobufNullValue:
+      type: string
+      description: |-
+        NullValue is a singleton enumeration to represent the null value for the
+        Value type union.
+
+         The JSON representation for NullValue is JSON null.
+
+         - NULL_VALUE: Null value.
+      default: NULL_VALUE
+      enum:
+      - NULL_VALUE
+    protobufListValue:
+      type: object
+      properties:
+        values:
+          type: array
+          description: Repeated field of dynamically typed values.
+          items:
+            $ref: '#/components/schemas/protobufValue'
+      description: |-
+        ListValue is a wrapper around a repeated field of values.
+
+        The JSON representation for ListValue is JSON array.
+    protobufStruct:
+      type: object
+      properties:
+        fields:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/protobufValue'
+          description: Unordered map of dynamically typed values.
+      description: |-
+        Struct represents a structured data value, consisting of fields
+        which map to dynamically typed values. In some languages, Struct
+        might be supported by a native representation. For example, in
+        scripting languages like JS a struct is represented as an
+        object. The details of that representation are described together
+        with the proto support for the language.
+
+        The JSON representation for Struct is JSON object.
+    protobufValue:
+      type: object
+      properties:
+        null_value:
+          $ref: '#/components/schemas/googleprotobufNullValue'
+        number_value:
+          type: number
+          description: Represents a double value.
+          format: double
+        string_value:
+          type: string
+          description: Represents a string value.
+        bool_value:
+          type: boolean
+          description: Represents a boolean value.
+          format: boolean
+        struct_value:
+          $ref: '#/components/schemas/protobufStruct'
+        list_value:
+          $ref: '#/components/schemas/protobufListValue'
+      description: |-
+        Value represents a dynamically typed value which can be either
+        null, a number, a string, a boolean, a recursive struct value, or a
+        list of values. A producer of value is expected to set one of that
+        variants, absence of any variant indicates an error.
+
+        The JSON representation for Value is JSON value.
+    candigSearchVariantsResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            variants:
+              type: array
+              description: |-
+                The list of matching variants.
+                If the callSetId field on the returned calls is not present,
+                the ordering of the call sets from a SearchCallSetsRequest
+                over the parent VariantSet is guaranteed to match the ordering
+                of the calls on each Variant. The number of results will also be
+                the same.
+              items:
+                $ref: '#/components/schemas/candigVariant'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /variants/search expressed as
+        JSON.
+    candigVariantSet:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The variant set ID.
+        name:
+          type: string
+          description: The variant set name.
+        datasetId:
+          type: string
+          description: The ID of the dataset this variant set belongs to.
+        referenceSetId:
+          type: string
+          description: |-
+            The ID of the reference set that describes the sequences used by the
+            variants in this set.
+        patientId:
+          title: For variant data identification and search join purposes
+          type: string
+        sampleId:
+          title: For variant data identification and search join purposes
+          type: string
+        metadata:
+          type: array
+          description: |-
+            Optional metadata associated with this variant set.
+            This array can be used to store information about the variant set, such as
+            information found in VCF header fields, that isn't already available in
+            first class fields such as "name".
+          items:
+            $ref: '#/components/schemas/candigVariantSetMetadata'
+      description: |-
+        A VariantSet is a collection of variants and variant calls intended to be
+        analyzed together.
+    candigVariantSetMetadata:
+      type: object
+      properties:
+        key:
+          type: string
+          description: The top-level key.
+        value:
+          type: string
+          description: The value field for simple metadata.
+        id:
+          title: |-
+            User-provided ID field, not enforced by this API.
+            Two or more pieces of structured metadata with identical
+            id and key fields are considered equivalent.
+            FIXME: If it's not enforced, then why can't it be null?
+          type: string
+        type:
+          type: string
+          description: The type of data.
+        number:
+          type: string
+          description: |-
+            The number of values that can be included in a field described by this
+            metadata.
+        description:
+          type: string
+          description: A textual description of this metadata.
+        attributes:
+          $ref: '#/components/schemas/candigAttributes'
+      description: This metadata represents VCF header information.
+    candigImmunotherapyCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            immunotherapies:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                startDate:
+                  type: object
+                immunotherapyType:
+                  type: object
+                immunotherapyTarget:
+                  type: object
+                immunotherapyDetail:
+                  type: object
+                treatmentPlanId:
+                  type: object
+                courseNumber:
+                  type: object
+    candigLabtestCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            outcomes:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                startDate:
+                  type: object
+                collectionDate:
+                  type: object
+                endDate:
+                  type: object
+                eventType:
+                  type: object
+                testResults:
+                  type: object
+                timePoint:
+                  type: object
+                recordingDate:
+                  type: object
+    candigOutcomeCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            outcomes:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                physicalExamId:
+                  type: object
+                dateOfAssessment:
+                  type: object
+                diseaseResponseOrStatus:
+                  type: object
+                otherResponseClassification:
+                  type: object
+                minimalResidualDiseaseAssessment:
+                  type: object
+                methodOfResponseEvaluation:
+                  type: object
+                responseCriteriaUsed:
+                  type: object
+                summaryStage:
+                  type: object
+                sitesOfAnyProgressionOrRecurrence:
+                  type: object
+                vitalStatus:
+                  type: object
+                height:
+                  type: object
+                weight:
+                  type: object
+                heightUnits:
+                  type: object
+                weightUnits:
+                  type: object
+                performanceStatus:
+                  type: object
+                overallSurvivalInMonths:
+                  type: object
+                diseaseFreeSurvivalInMonths:
+                  type: object
+    candigPatientCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            patients:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                otherIds:
+                  type: object
+                dateOfBirth:
+                  type: object
+                gender:
+                  type: object
+                ethnicity:
+                  type: object
+                race:
+                  type: object
+                provinceOfResidence:
+                  type: object
+                dateOfDeath:
+                  type: object
+                causeOfDeath:
+                  type: object
+                autopsyTissueForResearch:
+                  type: object
+                priorMalignancy:
+                  type: object
+                dateOfPriorMalignancy:
+                  type: object
+                familyHistoryAndRiskFactors:
+                  type: object
+                familyHistoryOfPredispositionSyndrome:
+                  type: object
+                detailsOfPredispositionSyndrome:
+                  type: object
+                geneticCancerSyndrome:
+                  type: object
+                otherGeneticConditionOrSignificantComorbidity:
+                  type: object
+                occupationalOrEnvironmentalExposure:
+                  type: object
+    candigRadiotherapyCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            radiotherapies:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                courseNumber:
+                  type: object
+                startDate:
+                  type: object
+                stopDate:
+                  type: object
+                therapeuticModality:
+                  type: object
+                baseline:
+                  type: object
+                testResult:
+                  type: object
+                testResultStd:
+                  type: object
+                treatingCentreName:
+                  type: object
+                startIntervalRad:
+                  type: object
+                startIntervalRadRaw:
+                  type: object
+                recordingDate:
+                  type: object
+                adjacentFields:
+                  type: object
+                adjacentFractions:
+                  type: object
+                complete:
+                  type: object
+                brachytherapyDose:
+                  type: object
+                radiotherapyDose:
+                  type: object
+                siteNumber:
+                  type: object
+                technique:
+                  type: object
+                treatedRegion:
+                  type: object
+                treatmentPlanId:
+                  type: object
+                radiationType:
+                  type: object
+                radiationSite:
+                  type: object
+                totalDose:
+                  type: object
+                boostSite:
+                  type: object
+                boostDose:
+                  type: object
+    candigSampleCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            samples:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                sampleId:
+                  type: object
+                diagnosisId:
+                  type: object
+                localBiobankId:
+                  type: object
+                collectionDate:
+                  type: object
+                collectionHospital:
+                  type: object
+                sampleType:
+                  type: object
+                tissueDiseaseState:
+                  type: object
+                anatomicSiteTheSampleObtainedFrom:
+                  type: object
+                cancerType:
+                  type: object
+                cancerSubtype:
+                  type: object
+                pathologyReportId:
+                  type: object
+                morphologicalCode:
+                  type: object
+                topologicalCode:
+                  type: object
+                shippingDate:
+                  type: object
+                receivedDate:
+                  type: object
+                qualityControlPerformed:
+                  type: object
+                estimatedTumorContent:
+                  type: object
+                quantity:
+                  type: object
+                units:
+                  type: object
+                associatedBiobank:
+                  type: object
+                otherBiobank:
+                  type: object
+                sopFollowed:
+                  type: object
+                ifNotExplainAnyDeviation:
+                  type: object
+                recordingDate:
+                  type: object
+                startInterval:
+                  type: object
+    candigCelltransplantCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            celltransplants:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                startDate:
+                  type: object
+                cellSource:
+                  type: object
+                donorType:
+                  type: object
+                treatmentPlanId:
+                  type: object
+                courseNumber:
+                  type: object
+    candigChemotherapyCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            chemotherapies:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                courseNumber:
+                  type: object
+                startDate:
+                  type: object
+                stopDate:
+                  type: object
+                systematicTherapyAgentName:
+                  type: object
+                route:
+                  type: object
+                dose:
+                  type: object
+                doseFrequency:
+                  type: object
+                doseUnit:
+                  type: object
+                daysPerCycle:
+                  type: object
+                numberOfCycle:
+                  type: object
+                treatmentIntent:
+                  type: object
+                treatingCentreName:
+                  type: object
+                type:
+                  type: object
+                protocolCode:
+                  type: object
+                recordingDate:
+                  type: object
+                treatmentPlanId:
+                  type: object
+    candigComplicationCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            complications:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                date:
+                  type: object
+                lateComplicationOfTherapyDeveloped:
+                  type: object
+                lateToxicityDetail:
+                  type: object
+                suspectedTreatmentInducedNeoplasmDeveloped:
+                  type: object
+                treatmentInducedNeoplasmDetails:
+                  type: object
+    candigConsentCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            consents:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                consentId:
+                  type: object
+                consentDate:
+                  type: object
+                consentVersion:
+                  type: object
+                patientConsentedTo:
+                  type: object
+                reasonForRejection:
+                  type: object
+                wasAssentObtained:
+                  type: object
+                dateOfAssent:
+                  type: object
+                assentFormVersion:
+                  type: object
+                ifAssentNotObtainedWhyNot:
+                  type: object
+                reconsentDate:
+                  type: object
+                reconsentVersion:
+                  type: object
+                consentingCoordinatorName:
+                  type: object
+                previouslyConsented:
+                  type: object
+                nameOfOtherBiobank:
+                  type: object
+                hasConsentBeenWithdrawn:
+                  type: object
+                dateOfConsentWithdrawal:
+                  type: object
+                typeOfConsentWithdrawal:
+                  type: object
+                reasonForConsentWithdrawal:
+                  type: object
+                consentFormComplete:
+                  type: object
+    candigDiagnosisCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            diagnoses:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                diagnosisId:
+                  type: object
+                diagnosisDate:
+                  type: object
+                ageAtDiagnosis:
+                  type: object
+                cancerType:
+                  type: object
+                classification:
+                  type: object
+                cancerSite:
+                  type: object
+                histology:
+                  type: object
+                methodOfDefinitiveDiagnosis:
+                  type: object
+                sampleType:
+                  type: object
+                sampleSite:
+                  type: object
+                tumorGrade:
+                  type: object
+                gradingSystemUsed:
+                  type: object
+                sitesOfMetastases:
+                  type: object
+                stagingSystem:
+                  type: object
+                versionOrEditionOfTheStagingSystem:
+                  type: object
+                specificTumorStageAtDiagnosis:
+                  type: object
+                prognosticBiomarkers:
+                  type: object
+                biomarkerQuantification:
+                  type: object
+                additionalMolecularTesting:
+                  type: object
+                additionalTestType:
+                  type: object
+                laboratoryName:
+                  type: object
+                laboratoryAddress:
+                  type: object
+                siteOfMetastases:
+                  type: object
+                stagingSystemVersion:
+                  type: object
+                specificStage:
+                  type: object
+                cancerSpecificBiomarkers:
+                  type: object
+                additionalMolecularDiagnosticTestingPerformed:
+                  type: object
+                additionalTest:
+                  type: object
+    candigEnrollmentCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            enrollments:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                enrollmentInstitution:
+                  type: object
+                enrollmentApprovalDate:
+                  type: object
+                crossEnrollment:
+                  type: object
+                otherPersonalizedMedicineStudyName:
+                  type: object
+                otherPersonalizedMedicineStudyId:
+                  type: object
+                ageAtEnrollment:
+                  type: object
+                eligibilityCategory:
+                  type: object
+                statusAtEnrollment:
+                  type: object
+                primaryOncologistName:
+                  type: object
+                primaryOncologistContact:
+                  type: object
+                referringPhysicianName:
+                  type: object
+                referringPhysicianContact:
+                  type: object
+                summaryOfIdRequest:
+                  type: object
+                treatingCentreName:
+                  type: object
+                treatingCentreProvince:
+                  type: object
+    candigSlideCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            slides:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                sampleId:
+                  type: object
+                slideId:
+                  type: object
+                slideOtherId:
+                  type: object
+                lymphocyteInfiltrationPercent:
+                  type: object
+                tumorNucleiPercent:
+                  type: object
+                monocyteInfiltrationPercent:
+                  type: object
+                normalCellsPercent:
+                  type: object
+                tumorCellsPercent:
+                  type: object
+                stromalCellsPercent:
+                  type: object
+                eosinophilInfiltrationPercent:
+                  type: object
+                neutrophilInfiltrationPercent:
+                  type: object
+                granulocyteInfiltrationPercent:
+                  type: object
+                necrosisPercent:
+                  type: object
+                inflammatoryInfiltrationPercent:
+                  type: object
+                proliferatingCellsNumber:
+                  type: object
+                sectionLocation:
+                  type: object
+    candigStudyCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            studies:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                startDate:
+                  type: object
+                endDate:
+                  type: object
+                status:
+                  type: object
+                recordingDate:
+                  type: object
+    candigSurgeryCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            surgeries:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                startDate:
+                  type: object
+                stopDate:
+                  type: object
+                sampleId:
+                  type: object
+                collectionTimePoint:
+                  type: object
+                diagnosisDate:
+                  type: object
+                site:
+                  type: object
+                type:
+                  type: object
+                recordingDate:
+                  type: object
+                treatmentPlanId:
+                  type: object
+                courseNumber:
+                  type: object
+    candigTreatmentCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            treatments:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                courseNumber:
+                  type: object
+                therapeuticModality:
+                  type: object
+                treatmentPlanType:
+                  type: object
+                treatmentIntent:
+                  type: object
+                startDate:
+                  type: object
+                stopDate:
+                  type: object
+                reasonForEndingTheTreatment:
+                  type: object
+                responseToTreatment:
+                  type: object
+                responseCriteriaUsed:
+                  type: object
+                dateOfRecurrenceOrProgressionAfterThisTreatment:
+                  type: object
+                unexpectedOrUnusualToxicityDuringTreatment:
+                  type: object
+                diagnosisId:
+                  type: object
+                treatmentPlanId:
+                  type: object
+    candigTumourboardCountResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            tumourboards:
+              type: object
+              properties:
+                patientId:
+                  type: object
+                dateOfMolecularTumorBoard:
+                  type: object
+                typeOfSampleAnalyzed:
+                  type: object
+                typeOfTumourSampleAnalyzed:
+                  type: object
+                analysesDiscussed:
+                  type: object
+                somaticSampleType:
+                  type: object
+                normalExpressionComparator:
+                  type: object
+                diseaseExpressionComparator:
+                  type: object
+                hasAGermlineVariantBeenIdentifiedByProfilingThatMayPredisposeToCancer:
+                  type: object
+                actionableTargetFound:
+                  type: object
+                molecularTumorBoardRecommendation:
+                  type: object
+                germlineDnaSampleId:
+                  type: object
+                tumorDnaSampleId:
+                  type: object
+                tumorRnaSampleId:
+                  type: object
+                germlineSnvDiscussed:
+                  type: object
+                somaticSnvDiscussed:
+                  type: object
+                cnvsDiscussed:
+                  type: object
+                structuralVariantDiscussed:
+                  type: object
+                classificationOfVariants:
+                  type: object
+                clinicalValidationProgress:
+                  type: object
+                typeOfValidation:
+                  type: object
+                agentOrDrugClass:
+                  type: object
+                levelOfEvidenceForExpressionTargetAgentMatch:
+                  type: object
+                didTreatmentPlanChangeBasedOnProfilingResult:
+                  type: object
+                howTreatmentHasAlteredBasedOnProfiling:
+                  type: object
+                reasonTreatmentPlanDidNotChangeBasedOnProfiling:
+                  type: object
+                detailsOfTreatmentPlanImpact:
+                  type: object
+                patientOrFamilyInformedOfGermlineVariant:
+                  type: object
+                patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling:
+                  type: object
+                summaryReport:
+                  type: object
+    candigVariantCountResponse:
+      type: object
+      description: The response structure when you specify `variants` or `variantsByGene` in your results section
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            id:
+              type: object
+            variantSetId:
+              type: object
+            names:
+              type: object
+            referenceName:
+              type: object
+            start:
+              type: object
+            end:
+              type: object
+            referenceBases:
+              type: object
+            alternateBases:
+              type: object
+            variantType:
+              type: object
+            svlen:
+              type: object
+            cipos:
+              type: object
+            ciend:
+              type: object
+            filtersApplied:
+              type: object
+            filtersPassed:
+              type: object
+            filtersFailed:
+              type: object
+

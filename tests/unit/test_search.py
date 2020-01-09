@@ -407,7 +407,7 @@ class TestSearchGenerator(unittest.TestCase):
         responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
         response = json.loads(responseStr)
 
-        # Since the test variantSets do not link to any patient IDs, none of the variants should return
+        # Since the test variantSets do not link to any real patientId, none of the variants should return
         self.assertEqual(len(response["variants"]), 0)
 
     def testVariantsWithListOfVariantSetIds(self):
@@ -464,7 +464,7 @@ class TestSearchGenerator(unittest.TestCase):
             ]
         }
         request = json.dumps(request)
-        # assert error for empty access map
+        # assert error for invalid logic
         with self.assertRaises(exceptions.InvalidLogicException):
             self.backend.runSearchQuery(request, "application/json", self.access_map)
 
@@ -502,5 +502,691 @@ class TestSearchGenerator(unittest.TestCase):
         responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
         response = json.loads(responseStr)
 
-        # Since the test variantSets do not link to any patient IDs, none of the patients should return
+        # Since the test variantSets do not link to any real patientId, none of the patients should return
+        self.assertEqual(len(response["patients"]), 0)
+
+    def testInvalidComponentVariant1(self):
+
+        # Supplied both gene and referenceName
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "gene": "CFTR",
+                        "referenceName": "1"
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": [
+                        "gender",
+                        "ethnicity"
+                    ]
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingComponentVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidComponentVariant2(self):
+
+        # Supplied gene, start, and referenceName
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "gene": "CFTR",
+                        "start": "111",
+                        "referenceName": "1"
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": [
+                        "gender",
+                        "ethnicity"
+                    ]
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingComponentVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidComponentVariant3(self):
+
+        # Supplied gene, end and referenceName
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "gene": "CFTR",
+                        "end": "111",
+                        "referenceName": "1"
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": [
+                        "gender",
+                        "ethnicity"
+                    ]
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingComponentVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidComponentVariant4(self):
+
+        # Supplied gene, end and start
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "gene": "CFTR",
+                        "end": "111",
+                        "start": "1"
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": [
+                        "gender",
+                        "ethnicity"
+                    ]
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingComponentVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidComponentVariant5(self):
+
+        # Supplied gene, end and referenceName and start
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "gene": "CFTR",
+                        "end": "111",
+                        "start": "1",
+                        "referenceName": "122"
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": [
+                        "gender",
+                        "ethnicity"
+                    ]
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingComponentVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidComponentVariant6(self):
+
+        # Supplied gene and variantSetIds
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "gene": "CFTR",
+                        "variantSetIds": ["variantSetId1", "variantSetId2"]
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": [
+                        "gender",
+                        "ethnicity"
+                    ]
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingComponentVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidComponentVariant7(self):
+
+        # Supplied end only
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "end": "1111",
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": [
+                        "gender",
+                        "ethnicity"
+                    ]
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingComponentVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidComponentVariant8(self):
+
+        # Supplied referenceName only
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "referenceName": "1111",
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": [
+                        "gender",
+                        "ethnicity"
+                    ]
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingComponentVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidComponentVariant9(self):
+
+        # Supplied start only
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "start": "1111",
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": [
+                        "gender",
+                        "ethnicity"
+                    ]
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingComponentVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidResultVariant1(self):
+
+        # Supplied start only
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "patients": {
+                        "filters": [{
+                            "field": "gender",
+                            "operator": "!=",
+                            "value": "A"
+                        }]
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "variants",
+                    "start": "1"
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingResultVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidResultVariant2(self):
+
+        # Supplied start and end
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "patients": {
+                        "filters": [{
+                            "field": "gender",
+                            "operator": "!=",
+                            "value": "A"
+                        }]
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "variants",
+                    "start": "1",
+                    "end": "22"
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingResultVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidResultVariant3(self):
+
+        # Supplied start, end and gene
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "patients": {
+                        "filters": [{
+                            "field": "gender",
+                            "operator": "!=",
+                            "value": "A"
+                        }]
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "variants",
+                    "start": "1",
+                    "end": "22",
+                    "gene": "MUC1"
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingResultVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidResultVariant4(self):
+
+        # Supplied start, end, referenceName, and gene
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "patients": {
+                        "filters": [{
+                            "field": "gender",
+                            "operator": "!=",
+                            "value": "A"
+                        }]
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "variants",
+                    "start": "1",
+                    "end": "22",
+                    "referenceName": "1",
+                    "gene": "MUC1"
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingResultVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidResultVariant5(self):
+
+        # Supplied start and gene
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "patients": {
+                        "filters": [{
+                            "field": "gender",
+                            "operator": "!=",
+                            "value": "A"
+                        }]
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "variants",
+                    "start": "1",
+                    "gene": "MUC1"
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingResultVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testInvalidResultVariant6(self):
+
+        # Supplied end and gene
+        request = {
+            "datasetId": self.dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "patients": {
+                        "filters": [{
+                            "field": "gender",
+                            "operator": "!=",
+                            "value": "A"
+                        }]
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "variants",
+                    "end": "1",
+                    "gene": "MUC1"
+                }
+            ]
+        }
+
+        request = json.dumps(request)
+        # assert error for invalid logic
+        with self.assertRaises(exceptions.MissingResultVariantKeysException):
+            self.backend.runSearchQuery(request, "application/json", self.access_map)
+
+    def testValidResultVariantSearch(self):
+
+        # This is a valid query.
+        dataset_id = self.dataset.getId()
+        request = {
+            "dataset_id": dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "consents": {
+                        "filters": [
+                            {
+                                "field": "previouslyConsented",
+                                "operator": "==",
+                                "value": "Yes"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "variants",
+                    "gene": "CFTR"
+                }
+            ]
+        }
+        request = json.dumps(request)
+        responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
+        response = json.loads(responseStr)
+
+        # Since the test variantSets do not link to any real patientId, none of the variants should return
+        # This, however, is a valid request, and should not trigger an exception.
+        self.assertEqual(len(response["variants"]), 0)
+
+    def testValidComponentVariantSearch1(self):
+
+        # This is a valid query.
+        dataset_id = self.dataset.getId()
+        request = {
+            "dataset_id": dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "gene": "CFTR"
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": ["gender"]
+                }
+            ]
+        }
+        request = json.dumps(request)
+        responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
+        response = json.loads(responseStr)
+
+        # Since the test variantSets do not link to any real patientId, nothing will return
+        # This, however, is a valid request, and should not trigger an exception.
+        self.assertEqual(len(response["patients"]), 0)
+
+    def testValidComponentVariantSearch2(self):
+
+        # Only need 1 variantSetId to test
+        variantSetId = self.dataset.getVariantSets()[0].getId()
+        listOfIds = []
+        listOfIds.append(variantSetId)
+
+        # This is a valid query.
+        dataset_id = self.dataset.getId()
+        request = {
+            "dataset_id": dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "start": "10000",
+                        "end": "100000",
+                        "referenceName": "1",
+                        "variantSetIds": listOfIds
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": ["gender"]
+                }
+            ]
+        }
+        request = json.dumps(request)
+        responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
+        response = json.loads(responseStr)
+
+        # Since the test variantSets do not link to any real patientId, nothing will return
+        # This, however, is a valid request, and should not trigger an exception.
+        print(len(response["patients"]))
+        self.assertEqual(len(response["patients"]), 0)
+
+    def testValidComponentVariantSearch3(self):
+
+        # This is a valid query.
+        dataset_id = self.dataset.getId()
+
+        request = {
+            "dataset_id": dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "start": "1",
+                        "end": "10000",
+                        "referenceName": "1"
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": ["gender"]
+                }
+            ]
+        }
+        request = json.dumps(request)
+        responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
+        response = json.loads(responseStr)
+
+        # Since the test variantSets do not link to any real patientId, nothing will return
+        # This, however, is a valid request, and should not trigger an exception.
+        self.assertEqual(len(response["patients"]), 0)
+
+    def testValidComponentVariantSearch4(self):
+
+        # This is a valid query.
+        dataset_id = self.dataset.getId()
+
+        request = {
+            "dataset_id": dataset_id,
+            "logic": {
+                "id": "A"
+            },
+            "components": [
+                {
+                    "id": "A",
+                    "variants": {
+                        "start": "1",
+                        "end": "1000000",
+                        "referenceName": "1"
+                    }
+                }
+            ],
+            "results": [
+                {
+                    "table": "patients",
+                    "fields": ["gender"]
+                }
+            ]
+        }
+        request = json.dumps(request)
+        responseStr = self.backend.runSearchQuery(request, "application/json", self.access_map)
+        response = json.loads(responseStr)
+
+        # Since the test variantSets do not link to any real patientId, nothing will return
+        # This, however, is a valid request, and should not trigger an exception.
         self.assertEqual(len(response["patients"]), 0)

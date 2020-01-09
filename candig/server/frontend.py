@@ -1020,6 +1020,12 @@ def search_variant_by_gene_name():
         flask.request, app.backend.runSearchVariantsByGeneName)
 
 
+@DisplayedRoute('/variants/gene/search', postMethod=True)
+def search_variant_by_gene():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchVariantsByGeneName)
+
+
 @app.route('/favicon.ico')
 @app.route('/robots.txt')
 def robots():

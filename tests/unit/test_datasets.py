@@ -15,6 +15,7 @@ class TestDatasets(unittest.TestCase):
         datasetId = 'ds1'
         dataset = datasets.SimulatedDataset(datasetId, 1, 2, 3, 4, 5)
         dataset.setAttributes({"test": "test"})
+        dataset.setDuoInfo([{"id": "DUO:0000042"}])
         gaDataset = dataset.toProtocolElement()
         self.assertIsNotNone(gaDataset.attributes.attr)
         self.assertEqual(
