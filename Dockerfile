@@ -17,6 +17,7 @@ RUN pip install git+https://github.com/CanDIG/candig-ingest.git@${INGEST_V}#egg=
   gevent
 
 COPY . /tmp/server
+ENV SETUPTOOLS_SCM_PRETEND_VERSION=build
 RUN cd /tmp/server/ && pip install .
 
 RUN mkdir /data
