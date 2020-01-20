@@ -3,4 +3,3 @@ Dockerfile
 ./build
 *.swp
 ga4gh-env
-.git
