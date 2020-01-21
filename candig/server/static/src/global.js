@@ -95,19 +95,6 @@ function makeRequest(path, body) {
     })
 };
 
-
-function logout() {
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", prepend_path + "/logout_oidc", true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
-    xhr.send('{}');
-    xhr.onload = function() {
-        window.location.href = logout_url;
-    }
-}
-
 $('.alert').on('close.bs.alert', function(e) {
     // prevent the alert from being removed from DOM
     e.preventDefault();

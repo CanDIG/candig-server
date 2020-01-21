@@ -6,7 +6,6 @@ TODO Document properly.
 
 import os
 import datetime
-import time
 import socket
 import urllib.parse
 import functools
@@ -44,7 +43,6 @@ from requests_futures.sessions import FuturesSession
 
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
-LOGIN_ENDPOINT_METHODS = ['GET', 'POST']
 
 app = flask.Flask(__name__)
 assert not hasattr(app, 'urls')
@@ -295,18 +293,28 @@ def load_access_map():
 
 def render_candig_template(template_path, **kwargs):
     """
-    wrapper for flask render template to apply preset environment variables
+    Wrapper for flask render template to customize dashboard using ID tokens
 
     :param template_path: template file to render
     :param kwargs: additional variables
     :return: call to flask.render_template
     """
+
+    session_id = ''
+    session_user = 'n/a'
+
+    if app.config.get('TYK_ENABLED'):
+        try:
+            session_id = flask.request.headers["Authorization"][7:]
+            session_user = _parseTokenPayload(session_id)["preferred_username"]
+        except KeyError:
+            raise exceptions.NotAuthenticatedException()
+
     return flask.render_template(
         template_path,
-        session_id=flask.session.get('id_token', ''),
+        session_id=session_id,
         prepend_path=app.config.get('TYK_LISTEN_PATH', ''),
-        logout_url=_generate_logout_url(),
-        username=flask.session.get('username', 'N/A'),
+        username=session_user,
         **kwargs
     )
 
@@ -864,63 +872,8 @@ def handleException(exception):
                                 mimetype=return_mimetype)
 
 
-def requires_session(f):
-    """
-    Decorator for browser session routes. Inspects tokens and ensures client sessions + server
-    sessions are aligned.
-    """
-
-    @functools.wraps(f)
-    def decorated(*args, **kargs):
-        if app.config.get("TYK_ENABLED"):
-
-            # TODO: CSRF check / checksum
-            if not flask.request.cookies.get("session_id"):
-                flask.session.clear()
-                return flask.redirect(_generate_login_url())
-
-        return f(*args, **kargs)
-    return decorated
-
-
-def startLogin():
-    """
-    If we are not logged in, this generates the redirect URL to the OIDC
-    provider and returns the redirect response
-    :return: A redirect response to the OIDC provider
-    """
-    flask.session["state"] = oic.rndstr(SECRET_KEY_LENGTH)
-    flask.session["nonce"] = oic.rndstr(SECRET_KEY_LENGTH)
-    args = {
-        "client_id": app.oidcClient.client_id,
-        "response_type": "code",
-        "scope": ["openid", "profile"],
-        "nonce": flask.session["nonce"],
-        "redirect_uri": app.oidcClient.redirect_uris[0],
-        "state": flask.session["state"]
-    }
-
-    result = app.oidcClient.do_authorization_request(
-        request_args=args, state=flask.session["state"])
-    return flask.redirect(result.url)
-
-
 @app.before_request
-def checkAuthentication():
-    """
-    The request will have a parameter 'key' if it came from the command line
-    client, or have a session key of 'key' if it's the browser.
-    If the token is not found, start the login process.
-
-    If there is no oidcClient, we are running naked and we don't check.
-    If we're being redirected to the oidcCallback we don't check.
-
-    :returns None if all is ok (and the request handler continues as usual).
-    Otherwise if the key was in the session (therefore we're in a browser)
-    then startLogin() will redirect to the OIDC provider. If the key was in
-    the request arguments, we're using the command line and just raise an
-    exception.
-    """
+def checkAuthorization():
     if app.config.get("TYK_ENABLED"):
         if app.access_map.getListUpdated() != os.path.getmtime(app.access_map.getFilePath()):
             if app.logger:
@@ -929,16 +882,6 @@ def checkAuthentication():
                 )
             load_access_map()
         return
-    if app.oidcClient is None:
-        return
-    if flask.request.endpoint == 'oidcCallback':
-        return
-    key = flask.session.get('key') or flask.request.args.get('key')
-    if key is None or not app.cache.get(key):
-        if 'key' in flask.request.args:
-            raise exceptions.NotAuthenticatedException()
-        else:
-            return startLogin()
 
 
 @app.after_request
@@ -1015,59 +958,45 @@ class DisplayedRoute(object):
 
 
 @app.route('/')
-@requires_session
+@requires_auth
 def index():
     return render_candig_template('dashboard.html')
 
 
 @app.route('/gene_search')
-@requires_session
+@requires_auth
 def gene_search():
     return render_candig_template('gene_search.html')
 
 
 @app.route('/patients_overview')
-@requires_session
+@requires_auth
 def patients_overview():
     return render_candig_template('patients_overview.html')
 
 
 @app.route('/sample_analysis')
-@requires_session
+@requires_auth
 def sample_analysis():
     return render_candig_template('sample_analysis.html')
 
 
 @app.route('/custom_visualization')
-@requires_session
+@requires_auth
 def custom_visualization():
     return render_candig_template('custom_visualization.html')
 
 
 @app.route('/api_info')
-@requires_session
+@requires_auth
 def swagger():
     return render_candig_template('swagger.html')
 
 
 @app.route('/serverinfo')
-@requires_session
+@requires_auth
 def server_info():
-    response = flask.render_template('index.html',
-                                     info=app.serverStatus)
-    if app.config.get('AUTH0_ENABLED'):
-        key = (flask.request.args.get('key'))
-        try:
-            print(key)
-            profile = app.cache.get(key)
-        except:
-            raise exceptions.NotAuthorizedException()
-        if (profile):
-            return response
-        else:
-            exceptions.NotAuthenticatedException()
-    else:
-        return response
+    return flask.render_template('index.html', info=app.serverStatus)
 
 
 # SEARCH
@@ -1095,189 +1024,6 @@ def search_variant_by_gene_name():
 def search_variant_by_gene():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchVariantsByGeneName)
-
-
-@app.route('/login_oidc', methods=LOGIN_ENDPOINT_METHODS)
-def login_oidc():
-    """
-    *** GETs to this endpoint should be set to 'ignore' in Tyk Endpoint settings ***
-
-    All GET requests without an Authorization header should be proxied through
-    this endpoint by gateway middleware (except for API token request).
-
-    Identity Provider should treat this route as the callback url for handling oauth2 protocol
-    using the form_post method
-    """
-
-    base_url = _generate_base_url()
-
-    # GET request: check if already authenticated, check for a return url to save
-    if flask.request.method == "GET":
-
-        return_path = flask.request.args.get('returnUri', '', type=str).replace(base_url, '')
-        if return_path != "/login_oidc":
-            flask.session["return_url"] = base_url + return_path
-
-        # check for valid flask session
-        if flask.request.cookies.get("session_id"):
-            return flask.redirect(base_url)
-
-        # not logged in, redirect to keycloak (browser) or raise error (API)
-        else:
-            get_endpoints = [x[1].replace('<id>', '') for x in app.serverStatus.getUrls() if x[0] == 'GET']
-
-            if return_path.startswith(tuple(get_endpoints)):
-                return getFlaskResponse(json.dumps({'error': 'Key not authorised'}), 403)
-
-            return flask.redirect(_generate_login_url(base_url + return_path))
-
-    # POST request: successful keycloak authentication or gateway blocks request
-    elif flask.request.method == "POST":
-
-        if flask.request.headers.get('KC-Access'):
-
-            # save tokens in server session
-            flask.session["access_token"] = flask.request.headers["KC-Access"]
-            # flask.session["refresh_token"] = flask.request.headers["KC-Refresh"]
-            flask.session["id_token"] = flask.request.headers["Authorization"][7:]
-
-            # extract token data used in session
-            parsed_payload = _parseTokenPayload(flask.session["id_token"])
-            flask.session["username"] = parsed_payload["preferred_username"]
-            max_cookie_age = parsed_payload["exp"] - parsed_payload["iat"]
-
-            # redirect user to the page they requested or the default landing page
-            redirect_url = flask.session.pop('return_url') if 'return_url' in flask.session else base_url
-
-            # load response
-            response = flask.redirect(redirect_url)
-            response.set_cookie('session_id', flask.session["id_token"], max_age=max_cookie_age,
-                                path=app.config.get('TYK_LISTEN_PATH', '/'), httponly=True)
-
-            return response
-
-        # refresh/back POST
-        elif flask.session.get("access_token"):
-            return flask.redirect(base_url)
-
-        # keycloak error
-        else:
-            raise exceptions.NotAuthenticatedException()
-
-    # Invalid method
-    else:
-        raise exceptions.MethodNotAllowedException()
-
-
-@app.route('/logout_oidc', methods=["POST"])
-def gateway_logout():
-    """
-    End flask login sessions. Tyk will handle remote keycloak session
-    :return: redirect to the keycloak login
-    """
-
-    if not flask.request.cookies.get("session_id"):
-        raise exceptions.NotAuthenticatedException
-
-    response = flask.Response({})
-
-    # delete browser cookie
-    response.set_cookie('session_id', '', expires=0, path=app.config.get('TYK_LISTEN_PATH', '/'), httponly=True)
-
-    # delete server/client sessions
-    flask.session.clear()
-
-    return response
-
-
-def _generate_login_url(return_url=''):
-    """
-    :param: return_url: URL to return to after successful login
-    :return: formatted url for keycloak login
-    """
-    login_url = '{0}{1}'.format(app.config.get('KC_SERVER'), app.config.get('KC_LOGIN_REDIRECT'))
-    if return_url:
-        login_url += '&return_url=' + return_url
-    return login_url
-
-
-def _generate_base_url():
-    """
-    :return: formatted url for TYK proxied dashboard homepage
-    """
-    return '{0}{1}'.format(app.config.get('TYK_SERVER'), app.config.get('TYK_LISTEN_PATH'))
-
-
-def _generate_logout_url():
-    """
-    :return: formatted url for keycloak logout
-    """
-    return '{0}/auth/realms/{1}/protocol/openid-connect/logout?redirect_uri={2}'.format(
-        app.config.get('KC_SERVER'), app.config.get('KC_REALM'), app.config.get('KC_REDIRECT'))
-
-
-@DisplayedRoute('/token', postMethod=True)
-def token():
-    """
-        :return: an oidc id token to attach to subsequent request headers in the following format:
-
-            Authorization: Bearer <token>
-
-        As of now, the tyk 'pre-auth' js middleware handles the token
-        grant API calls and unless there was an authentication error,
-        the token should already be in the request header
-
-        Allows token retrieval without having to use a flask session (ie. for REST API calls)
-    """
-
-    response = {}
-    mimetype = "application/json"
-
-    try:
-        token = flask.request.headers["Authorization"][7:]
-        parsed_payload = _parseTokenPayload(token)
-        token_expires = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(parsed_payload["exp"]))
-
-        response["token"] = token
-        response["expires"] = token_expires
-        status = 200
-
-    except:
-        # get error details from the request
-        response["error"] = flask.request.data
-        status = 401
-
-    return flask.Response(json.dumps(response), status=status, mimetype=mimetype)
-
-
-# New configuration added by Kevin Chan
-@app.route("/login")
-def login():
-    if app.config.get('AUTH0_ENABLED'):
-        if (flask.request.args.get('code')):
-            return auth.render_key(app, key=flask.request.args.get('code'))
-        else:
-            return auth.render_login(
-                app=app,
-                scopes=app.config.get('AUTH0_SCOPES'),
-                redirect_uri=app.config.get('AUTH0_CALLBACK_URL'),
-                domain=app.config.get('AUTH0_HOST'),
-                client_id=app.config.get('AUTH0_CLIENT_ID'))
-    else:
-        raise exceptions.NotFoundException()
-
-
-@app.route('/callback')
-def callback_handling():
-    if app.config.get('AUTH0_ENABLED'):
-        return auth.callback_maker(
-            cache=app.cache,
-            domain=app.config.get('AUTH0_HOST'),
-            client_id=app.config.get('AUTH0_CLIENT_ID'),
-            client_secret=app.config.get('AUTH0_CLIENT_SECRET'),
-            redirect_uri=app.config.get('AUTH0_CALLBACK_URL'))()
-    else:
-        raise exceptions.NotFoundException()
 
 
 @app.route('/favicon.ico')
