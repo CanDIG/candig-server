@@ -199,7 +199,7 @@ class TykConfig(KeycloakOidConfig):
     ACCESS_LIST = "access_list.txt"
 
     TYK_ENABLED = True
-    TYK_SERVER = 'http://ga4ghdev01.bcgsc.ca:8008'
+    TYK_SERVER = 'http://localhost:8008'
     TYK_LISTEN_PATH = ''
 
 
