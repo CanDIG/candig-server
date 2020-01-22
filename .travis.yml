@@ -3,7 +3,6 @@ sudo: false
 matrix:
   include:
   - python: "3.6"
-    if: branch != merge_integration_testing
     language: python
     cache:
       directories:
@@ -64,7 +63,7 @@ matrix:
       - DOCKER_COMPOSE_VERSION=1.24.1
       - COMPOSE_DIR=/tmp/compose
       - IMAGE_NAME=c3genomics/candig_server
-      - CANDIG_COMPOSE_VERSION=v1.0.3
+      - CANDIG_COMPOSE_VERSION=v1.1.1
     before_install:
       - sudo rm /usr/local/bin/docker-compose
       - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose

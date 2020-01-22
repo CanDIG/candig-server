@@ -1267,3 +1267,48 @@ the ``DATA_SOURCE`` to be at a custom location, and the ``DEFAULT_PAGE_SIZE`` to
 .. code-block:: bash
 
     $ candig_server --host 0.0.0.0 --port 3000 --config-file config.py
+
+
+-----------
+add-peer
+-----------
+
+Adds a new peer server.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: add-peer
+   :nodefault:
+
+**Examples:**
+
+.. code-block:: bash
+
+    $ candig_repo add-peer registry.db https://candig.test.ca
+
+
+-----------
+remove-peer
+-----------
+
+Removes a peer server.
+
+.. warning::
+    If you did not add a trailing path when you add the peer URL, a trailing path is added automatically,
+    therefore, as the examples show, if you add ``https://candig.test.ca``, when you delete
+    it, you will need to run ``https://candig.test.ca/``.
+
+.. argparse::
+   :module: candig.server.cli.repomanager
+   :func: getRepoManagerParser
+   :prog: candig_repo
+   :path: remove-peer
+   :nodefault:
+
+**Examples:**
+
+.. code-block:: bash
+
+    $ candig_repo remove-peer registry.db https://candig.test.ca/
