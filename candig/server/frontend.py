@@ -312,7 +312,6 @@ def render_candig_template(template_path, **kwargs):
 
     return flask.render_template(
         template_path,
-        session_id=session_id,
         prepend_path=app.config.get('TYK_LISTEN_PATH', ''),
         username=session_user,
         **kwargs

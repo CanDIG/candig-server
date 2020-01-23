@@ -40,7 +40,6 @@ function makeRequest(path, body) {
             xhr.open('POST', prepend_path + path, true);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Accept', 'application/json');
-            xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
             xhr.onload = function() {
                 if (xhr.status == 200) {
 
