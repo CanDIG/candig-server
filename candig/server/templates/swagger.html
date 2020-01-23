@@ -53,12 +53,7 @@
         plugins: [
           SwaggerUIBundle.plugins.DownloadUrl
         ],
-        layout: "StandaloneLayout",
-
-        requestInterceptor: (req) => {
-          req.headers.Authorization = "Bearer " + "{{ session_id }}"
-          return req
-        }
+        layout: "StandaloneLayout"
       })
       window.ui = ui
     }

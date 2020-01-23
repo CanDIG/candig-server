@@ -12,6 +12,11 @@ Release Notes
 +++++++++++++
 
 *****
+1.2.0
+*****
+https://github.com/CanDIG/candig-server/releases/tag/v1.2.0
+
+*****
 1.1.0
 *****
 https://github.com/CanDIG/candig-server/releases/tag/v1.1.0
