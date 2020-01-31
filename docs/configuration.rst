@@ -94,12 +94,18 @@ You can place your own access_list file anywhere you like, but you will need to 
 at `ACCESS_LIST`. Under production environment, you should define the location of the file
 to be somewhere secure.
 
+.. warning::
+
+    As of candig-server==1.2.1, using empty space to indicate that the user has no access to
+    a dataset has been deprecated, please use letter X instead.
+
+
 .. code-block:: text
 
     issuer	username	project1	project2	project3	projectN
 
     https://candigauth.bcgsc.ca/auth/realms/candig	userA	4	4	4	4
-    https://candigauth.bcgsc.ca/auth/realms/candig	userB	4		0	1
+    https://candigauth.bcgsc.ca/auth/realms/candig	userB	4	X	0	1
 
     https://candigauth.uhnresearch.ca/auth/realms/CanDIG	userC	4	3	2	1
-    https://candigauth.uhnresearch.ca/auth/realms/CanDIG	userD			4	4
+    https://candigauth.uhnresearch.ca/auth/realms/CanDIG	userD	X	X	4	4
