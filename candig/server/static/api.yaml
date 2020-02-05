@@ -12,7 +12,7 @@ info:
     ### Warning: developers, while reasonable efforts have been made to validate all the requests and response schemas listed here, at this time, we cannot guarantee that the spec to be fully machine-readable. However, if you do encounter any issues, please let us know.
     ---
 
-  version: "1.1"
+  version: "1.2"
 servers:
 - url: /
 paths:

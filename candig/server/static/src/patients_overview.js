@@ -285,7 +285,6 @@ function patientInfoFetcher(patientId) {
     xhr.open("POST", prepend_path + "/samples/search", true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('Accept', 'application/json');
-    xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
     xhr.send(JSON.stringify({
         'datasetId': datasetId,
         'filters': [{
@@ -302,7 +301,6 @@ function patientInfoFetcher(patientId) {
         xhr.open("POST", prepend_path + "treatments/search", true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader('Accept', 'application/json');
-        xhr.setRequestHeader('Authorization', 'Bearer ' + session_id);
         xhr.send(JSON.stringify({
             'datasetId': datasetId,
             'filters': [{
