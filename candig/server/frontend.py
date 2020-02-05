@@ -264,10 +264,27 @@ class UserAccessMap(object):
         # Remove non set values
         self.user_access_map = {
             user: {project: level
-                   for project, level in value.items() if 0 <= level <= 4
+                   for project, level in value.items() if self.validateAccessLevel(level)
                    }
             for user, value in self.user_access_map.items()
         }
+
+    def validateAccessLevel(self, level):
+        """
+        Returns True if the level is one of 0, 1, 2, 3, 4, this indicates the user has some access to the dataset.
+        Returns False if the level is one of empty string or X, this indicates the user has no access to the dataset.
+        Raise an exception otherwise, this indicates that there's illegal characters specified as 'level'.
+
+        The support for empty string will be deprecated and removed in future releases.
+        """
+        try:
+            if 0 <= int(level) <= 4:
+                return True
+        except ValueError:
+            if level == "X" or level == "":
+                return False
+
+        raise exceptions.InvalidAccessListException(level)
 
     def getUserAccessMap(self, issuer, username):
         try:

@@ -253,7 +253,8 @@ class Backend(object):
             try:
                 for response in responses[logic[logic_key]]:
                     patient_id = self.getResponsePatientId(response, dataset_id)
-                    id_set.add(patient_id)
+                    if patient_id != "":
+                        id_set.add(patient_id)
                 if logic_negate:
                     id_list_all = self.getAllPatientId(dataset_id, access_map)
                     id_set = set(id_list_all) - id_set
@@ -281,7 +282,7 @@ class Backend(object):
 
     def getResponsePatientId(self, response, dataset_id):
         """
-        Gets the patientId from the response for object joins, otherwise throw error
+        Gets the patientId from the response for object joins, otherwise returns an empty string
         :param response:
         :param dataset_id:
         :return: patient id string
@@ -293,7 +294,7 @@ class Backend(object):
             variantSet = dataset.getVariantSet(response['variantSetId'])
             return variantSet.getPatientId()
         else:
-            raise exceptions.BadRequestException
+            return ""
 
     def variantComponentValidator(self, component):
         """
