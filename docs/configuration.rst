@@ -96,8 +96,8 @@ to be somewhere secure.
 
 .. warning::
 
-    As of candig-server==1.2.1, using empty space to indicate that the user has no access to
-    a dataset has been deprecated, please use letter X instead.
+    As of candig-server==1.2.1, it is recommended that you use letter X to indicate that the
+    user has no access to a dataset, instead of an empty space.
 
 
 .. code-block:: text
