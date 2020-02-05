@@ -112,7 +112,7 @@ class OntologyValidator():
         self.input_json = input_json
         self.ids_require_datetime_modifier = ["DUO:0000024"]
         self.ids_supported = [
-            "DUO:0000001", "DUO:0000002", "DUO:0000003", "DUO:0000004",
+            "DUO:0000001", "DUO:0000004",
             "DUO:0000005", "DUO:0000006", "DUO:0000007", "DUO:0000011",
             "DUO:0000012", "DUO:0000014", "DUO:0000015", "DUO:0000016",
             "DUO:0000017", "DUO:0000018", "DUO:0000019", "DUO:0000020",
