@@ -24,7 +24,7 @@ and run
 .. code-block:: bash
 
     pip clone https://github.com/CanDIG/candig-server.git
-    pip install dev-requirements.txt
+    pip install -r dev-requirements.txt
 
 The default DB location for development server is `candig-example-data/registry.db`.
 
