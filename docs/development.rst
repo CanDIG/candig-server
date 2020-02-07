@@ -93,7 +93,7 @@ For server B, you need to run
 
 .. code-block:: bash
 
-    candig_repo add-peer candig-example-data/registry.db http://0.0.0.0:3001
+    candig_repo add-peer candig-example-data/registry.db http://0.0.0.0:3000
 
 You do not need to have anything running on the peer when you execute the `add-peer` command.
 It simply registeres that URL as a peer.
