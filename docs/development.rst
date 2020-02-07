@@ -96,7 +96,7 @@ For server B, you need to run
     candig_repo add-peer candig-example-data/registry.db http://0.0.0.0:3000
 
 You do not need to have anything running on the peer when you execute the `add-peer` command.
-It simply registeres that URL as a peer.
+It simply registers that URL as a peer.
 
 Now, you will get federated response
 from both servers A and B. You can certainly choose to run them on different ports, or different

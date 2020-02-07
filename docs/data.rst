@@ -32,7 +32,7 @@ data, its key is `pipeline_metadata`. Make sure you have the correct key specifi
 
 The value of the key is a list of objects. Each object should have the table name as the
 key, and the object as its value. Therefore, it is possible to specify multiple tables in
-one single object. However, each table can only specified once, due to the uniqueness of
+one single object. However, each table can only be specified once, due to the uniqueness of
 the key in the object.
 
 If you need to specify, for example, two samples for one patient. You should specify the
