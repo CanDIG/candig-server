@@ -10,6 +10,7 @@ import socket
 import urllib.parse
 import functools
 import json
+import math
 
 import flask
 from flask_cors import CORS
@@ -280,8 +281,10 @@ class UserAccessMap(object):
         try:
             if 0 <= int(level) <= 4:
                 return True
-        except ValueError:
-            if level == "X" or level == "":
+        except (ValueError, TypeError):
+            if level == "X" or level == " ":
+                return False
+            elif math.isnan(level):
                 return False
 
         raise exceptions.InvalidAccessListException(level)
