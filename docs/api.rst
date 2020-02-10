@@ -6,7 +6,7 @@ API Usage & Sample Queries
 
 .. warning::
 
-    This guide is a work in progress, and is incomplete.
+    This guide is a work in progress, and it is incomplete.
 
 
 This section will provide instructions on API usages. Upon logging in, you will see a

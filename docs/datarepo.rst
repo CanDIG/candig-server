@@ -1091,7 +1091,7 @@ named ``1KG`` from the repository represented by ``registry.db``.
 remove-rnaquantificationset
 ---------------------------
 
-Removes a rna quantification set from the repository.
+Removes a RNA quantification set from the repository.
 
 .. argparse::
    :module: candig.server.cli.repomanager

@@ -14,6 +14,35 @@ Upgrade Guidelines
 This section is mainly prepared for system administrators.
 
 *****
+1.2.2
+*****
+
+Release note available from https://github.com/CanDIG/candig-server/releases/tag/v1.2.2
+
+----
+
+As indicated in the release note, the previous v1.2.1 release did not correctly preserve backware
+compatibilities for access_list that uses null (not specifying anything) to indicate no access. It also
+did not correctly process the information when an empty space is used.
+
+This release fixed the issue.
+
+----
+
+If you are already using ``X`` to indicate no access when you upgraded to v1.2.1, no further action is required. You may
+update to this version of candig-server without performing any additional changes.
+
+----
+
+If you are still using empty space, or null to indicate no access, please do not use ``v1.2.1``
+release of the candig-server, use this one instead. It is still recommended to use ``X`` over
+empty space or null to indicate no access.
+
+- Step 1: Update the candig-server in your virtual environment to v1.2.2.
+- Step 2: Replace all empty space with X.
+
+
+*****
 1.2.1
 *****
 
