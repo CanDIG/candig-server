@@ -205,3 +205,14 @@ class TestOntologyInvalidInput(unittest.TestCase):
         parser = OntologyValidator(sample)
 
         self.assertFalse(parser.validate_duo())
+
+    def testInvalidOntologyInput16(self):
+        """
+        This is an invalid input, as 'modifier' is supplied with 
+        Duo Term that does not require it
+        """
+        sample = {"duo": [{"id": "DUO:0000018", "modifier": "2022-01-01"}]}
+
+        parser = OntologyValidator(sample)
+
+        self.assertFalse(parser.validate_duo())
