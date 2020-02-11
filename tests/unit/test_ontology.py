@@ -7,6 +7,9 @@ from candig.server.ontology import (
     OntologyValidator, 
     OntObjectInitiator, 
     OntologyParser)
+from candig.server.exceptions import (
+    FailToParseOntologyException,
+    NoInternetConnectionException)
 
 
 class TestOntologyValidInput(unittest.TestCase):
@@ -302,3 +305,24 @@ class TestOntologyParserInvalidInput(unittest.TestCase):
         duo_term = "DUO:0000090"
         with self.assertRaises(KeyError):
             OntologyParser(self.ontology, duo_term)
+
+
+class TestOntObjectInitiatorInvalidInput(unittest.TestCase):
+    """
+    This class tests the OntObjectInitiator class for invalid
+    ontology files
+    """
+    def testOntObjectInitiatorInvalidUrl1(self):
+        """
+        This input is invalid as "no_file.owl" does not exist
+        """
+        with self.assertRaises(NoInternetConnectionException):
+            OntObjectInitiator("https://raw.githubusercontent.com/EBISPOT/DUO/master/src/ontology/no_file.owl").get_ont()
+
+    def testOntObjectInitiatorInvalidUrl2(self):
+        """
+        This input is invalid as "test.html" has an invalid
+        format for this class
+        """
+        with self.assertRaises(FailToParseOntologyException):
+            OntObjectInitiator("/tests/data/test.html").get_ont()
