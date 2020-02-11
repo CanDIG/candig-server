@@ -3,7 +3,10 @@ Ontology Parser Unit Test
 """
 
 import unittest
-from candig.server.ontology import OntologyValidator
+from candig.server.ontology import (
+    OntologyValidator, 
+    OntObjectInitiator, 
+    OntologyParser)
 
 
 class TestOntologyValidInput(unittest.TestCase):
@@ -216,3 +219,86 @@ class TestOntologyInvalidInput(unittest.TestCase):
         parser = OntologyValidator(sample)
 
         self.assertFalse(parser.validate_duo())
+
+
+class TestOntologyParserValidInput(unittest.TestCase):
+    """
+    This class tests the OntologyParser object for valid Duo terms
+    """
+
+    def setUp(self):
+        """
+        This method creates an ontology term object that will be used 
+        on every unit test before the run of unit tests
+        """
+        self.ontology = OntObjectInitiator("https://raw.githubusercontent.com/EBISPOT/DUO/master/src/ontology/duo-basic.owl").get_ont()
+
+    def testOntologyTerm1(self):
+        """
+        This test verifies if the method "get_term_id"
+        returns the expected Duo Term for given Duo Code
+        """
+        duo_term = "DUO:0000018"
+
+        ontology_term = OntologyParser(self.ontology, duo_term)
+
+        term_id = ontology_term.get_term_id()
+
+        self.assertEqual(term_id, duo_term)
+
+    def testOntologyTerm2(self):
+        """
+        This test verifies if the method "get_shorthand"
+        returns the expected shorthand code for given Duo Code
+        """
+        ontology_term = OntologyParser(self.ontology, "DUO:0000018")
+
+        shorthand = ontology_term.get_shorthand()
+
+        self.assertEqual(shorthand, "NPU")
+
+    def testOntologyTerm3(self):
+        """
+        This test verifies if the method "get_term_id"
+        returns the expected Duo Term for given Duo Code
+        """
+        duo_term = "DUO:0000024"
+
+        ontology_term = OntologyParser(self.ontology, duo_term)
+
+        term_id = ontology_term.get_term_id()
+
+        self.assertEqual(term_id, duo_term)
+
+    def testOntologyTerm4(self):
+        """
+        This test verifies if the method "get_shorthand"
+        returns the expected shorthand code for given Duo Code
+        """
+        ontology_term = OntologyParser(self.ontology, "DUO:0000024")
+
+        shorthand = ontology_term.get_shorthand()
+
+        self.assertEqual(shorthand, "MOR")
+
+
+class TestOntologyParserInvalidInput(unittest.TestCase):
+    """
+    This class tests the OntologyParser object for invalid Duo terms
+    """
+
+    def setUp(self):
+        """
+        This method creates an ontology term object that will be used 
+        on every unit test before the run of unit tests
+        """
+        self.ontology = OntObjectInitiator("https://raw.githubusercontent.com/EBISPOT/DUO/master/src/ontology/duo-basic.owl").get_ont()
+
+    def testInvalidOntologyTerm1(self):
+        """
+        This input is invalid, as the given Duo Term is not present in 
+        the ontology file
+        """
+        duo_term = "DUO:0000090"
+        with self.assertRaises(KeyError):
+            OntologyParser(self.ontology, duo_term)
