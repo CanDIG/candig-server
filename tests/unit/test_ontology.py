@@ -252,7 +252,6 @@ class TestOntologyParserValidInput(unittest.TestCase):
         self.assertEqual(term_id, duo_term)
         self.assertEqual(shorthand, "NPU")
 
-
     def testOntologyTerm2(self):
         """
         This test verifies if the methods "get_term_id" and "get_shorthand"
