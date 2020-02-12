@@ -1083,3 +1083,108 @@ class TestInvalidReadGroupSetIndexFile(AbstractRepoManagerTest):
     def testWrongIndexFile(self):
         indexPath = paths.bamIndexPath2  # incorrect index
         self._testWithIndexPath(indexPath)
+
+
+class TestValidAddDataSetDuo(AbstractRepoManagerTest):
+    """
+    This class tests valid inputs for method "addDatasetDuo"
+    on class "RepoManager"
+    """
+
+    def _addDatasetDuo(self, file_path):
+        """
+        This is a helper method that executes "add-dataset-duo"
+        command and returns the updated dataset
+        """
+        self.runCommand(
+            "add-dataset-duo {} {} {}".format(
+                self._repoPath,
+                self._datasetName,
+                file_path))
+        repo = self.readRepo()
+        return repo.getDatasetByName(self._datasetName)
+
+    def _removeDatasetDuo(self):
+        """
+        This is a helper method that executes "remove-dataset-duo"
+        command and returns the updated dataset
+        """
+        self.runCommand(
+            "remove-dataset-duo -f {} {}".format(
+                self._repoPath,
+                self._datasetName))
+        repo = self.readRepo()
+        return repo.getDatasetByName(self._datasetName)
+
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestValidAddDataSetDuo, self).setUp()
+        self.init()
+        self.addDataset()
+
+    def testValidDuoDataset(self):
+        """
+        This is a valid input, as the "paths.testValidDuoJson" file
+        contains valid json format and DUO info
+        """
+        dataset = self._addDatasetDuo(paths.testValidDuoJson)
+        self.assertEqual(dataset._info[0]['id'], "DUO:0000018")
+        self.assertEqual(dataset._info[1]['id'], "DUO:0000024")
+        self.assertEqual(dataset._info[1]['modifier'], "2022-01-01")
+        dataset = self._removeDatasetDuo()
+        self.assertEqual(len(dataset._info), 0)
+
+
+class TestInvalidAddDataSetDuo(AbstractRepoManagerTest):
+    """
+    This class tests invalid inputs for method "addDatasetDuo"
+    on class "RepoManager"
+    """
+
+    def _addDatasetDuo(self, file_path):
+        """
+        This is a helper method that executes "add-dataset-duo"
+        command and returns the updated dataset
+        """
+        self.runCommand(
+            "add-dataset-duo {} {} {}".format(
+                self._repoPath,
+                self._datasetName,
+                file_path))
+        repo = self.readRepo()
+        return repo.getDatasetByName(self._datasetName)
+
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestInvalidAddDataSetDuo, self).setUp()
+        self.init()
+        self.addDataset()
+
+    def testInvalidDuoDataset(self):
+        """
+        This is an invalid input, as "paths.testInvalidDuoJson" file
+        contains invalid DUO information
+        """
+        dataset = self._addDatasetDuo(paths.testInvalidDuoJson)
+        with self.assertRaises(IndexError):
+            dataset._info[0]['id']
+
+    def testInvalidFileType(self):
+        """
+        This is an invalid input, as "paths.landingMessageHtml" file
+        is not a valid json file
+        """
+        with self.assertRaises(exceptions.JsonFileOpenException):
+            self._addDatasetDuo(paths.landingMessageHtml)
+
+    def testDuoFileNotFound(self):
+        """
+        This is an invalid input, as "no_file.txt" file
+        does not exist
+        """
+        with self.assertRaises(exceptions.JsonFileOpenException):
+            self._addDatasetDuo("no_file.txt")
