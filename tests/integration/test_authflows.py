@@ -53,6 +53,23 @@ class TestIntegrationApi(unittest.TestCase):
 
             driver.find_element_by_id("kc-login").click()
             time.sleep(1.0)
+
+            driver.find_element_by_link_text("Gene Search").click()
+            time.sleep(1.5)
+
+            driver.find_element_by_link_text("Patient Overview").click()
+            time.sleep(1.5)
+
+            driver.find_element_by_link_text("Sample Analysis").click()
+            time.sleep(1.5)
+            
+            driver.find_element_by_link_text("Custom Visualization").click()
+            time.sleep(1.5)
+            driver.find_element_by_id("adv1_confirm").click()
+            time.sleep(1.5)
+            driver.find_element_by_id("adv2_confirm").click()
+            time.sleep(1.5)
+            
             driver.find_element_by_id("user-dropdown-top").click()
             time.sleep(1.0)
             driver.find_element_by_link_text("Logout").click()
