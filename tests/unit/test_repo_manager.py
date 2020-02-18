@@ -1188,3 +1188,139 @@ class TestInvalidAddDataSetDuo(AbstractRepoManagerTest):
         """
         with self.assertRaises(exceptions.JsonFileOpenException):
             self._addDatasetDuo("no_file.txt")
+
+
+class TestValidAddRemovePeer(AbstractRepoManagerTest):
+    """
+    This class tests valid inputs for method "addPeer"
+    on class "RepoManager"
+    """
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestValidAddRemovePeer, self).setUp()
+        self.init()
+        self.addDataset()
+
+    def _addPeer(self, peer_url):
+        """
+        This is a helper method that executes "add-peer"
+        command and returns a list of peers
+        """
+        self.runCommand("add-peer {} {}".format(
+            self._repoPath,
+            peer_url
+            ))
+        repo = self.readRepo()
+        return [x.getUrl() for x in repo.getPeers()]
+
+    def _removePeer(self, peer_url):
+        """
+        This is a helper method that executes "add-peer"
+        command and returns a list of peers
+        """
+        self.runCommand("remove-peer -f {} {}".format(
+            self._repoPath,
+            peer_url
+            ))
+        repo = self.readRepo()
+        return [x.getUrl() for x in repo.getPeers()]
+
+    def testAddPeer1(self):
+        """
+        This is valid input, as "peerUrl" is a valid
+        peer
+        """
+        peers = self._addPeer(paths.peerUrl)
+        self.assertIn(paths.peerUrl, peers)
+        peers = self._removePeer(paths.peerUrl)
+        self.assertNotIn(paths.peerUrl, peers)
+
+    def testAddPeer2(self):
+        """
+        This is valid input, as "peerUrlNoTraillingPath" is a valid
+        peer
+        """
+        peers = self._addPeer(paths.peerUrlNoTraillingPath)
+        self.assertIn(paths.peerUrlNoTraillingPath+"/", peers)
+        peers = self._removePeer(paths.peerUrl)
+        self.assertNotIn(paths.peerUrlNoTraillingPath+"/", peers)
+
+
+class TestInvalidAddRemovePeer(AbstractRepoManagerTest):
+    """
+    This class tests invalid inputs for method "addPeer"
+    on class "RepoManager"
+    """
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestInvalidAddRemovePeer, self).setUp()
+        self.init()
+        self.addDataset()
+
+    def _addPeer(self, peer_url):
+        """
+        This is a helper method that executes "add-peer"
+        command and returns a list of peers
+        """
+        self.runCommand("add-peer {} {}".format(
+            self._repoPath,
+            peer_url
+            ))
+        repo = self.readRepo()
+        return [x.getUrl() for x in repo.getPeers()]
+
+    def _removePeer(self, peer_url):
+        """
+        This is a helper method that executes "add-peer"
+        command and returns a list of peers
+        """
+        self.runCommand("remove-peer -f {} {}".format(
+            self._repoPath,
+            peer_url
+            ))
+        repo = self.readRepo()
+        return [x.getUrl() for x in repo.getPeers()]
+
+    def testAddInvalidPeer1(self):
+        """
+        This is an invalid input, as "invalidPeerUrl" is not 
+        a valid URL
+        """
+        with self.assertRaises(exceptions.RepoManagerException):
+            self._addPeer(paths.invalidPeerUrl)
+
+    def testAddInvalidPeer2(self):
+        """
+        This is an invalid input, as "emptyPeerUlr" is empty
+        """
+        with self.assertRaises(SystemExit) as cm:
+            self._addPeer(paths.emptyPeerUlr)
+
+    def testAddValidPeerTwice(self):
+        """
+        This input is invalid, as the same peer is added twice
+        """
+        with self.assertRaises(exceptions.RepoManagerException):
+            self._addPeer(paths.peerUrl)
+            self._addPeer(paths.peerUrl)
+
+    def testRemoveInvalidPeer(self):
+        """
+        This input is invalid, as it is removing an invalid
+        peer
+        """
+        self._addPeer(paths.peerUrl)
+        with self.assertRaises(exceptions.PeerNotFoundException):
+            self._removePeer(paths.invalidPeerUrl)
+
+    def testRemoveEmptyPeer(self):
+        """
+        This input is invalid, as it is using an empty
+        peer
+        """
+        with self.assertRaises(SystemExit):
+            self._removePeer(paths.emptyPeerUlr)
