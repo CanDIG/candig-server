@@ -1211,7 +1211,7 @@ class TestValidAddRemovePeer(AbstractRepoManagerTest):
         self.runCommand("add-peer {} {}".format(
             self._repoPath,
             peer_url
-            ))
+        ))
         repo = self.readRepo()
         return [x.getUrl() for x in repo.getPeers()]
 
@@ -1223,7 +1223,7 @@ class TestValidAddRemovePeer(AbstractRepoManagerTest):
         self.runCommand("remove-peer -f {} {}".format(
             self._repoPath,
             peer_url
-            ))
+        ))
         repo = self.readRepo()
         return [x.getUrl() for x in repo.getPeers()]
 
@@ -1243,9 +1243,9 @@ class TestValidAddRemovePeer(AbstractRepoManagerTest):
         peer
         """
         peers = self._addPeer(paths.peerUrlNoTraillingPath)
-        self.assertIn(paths.peerUrlNoTraillingPath+"/", peers)
+        self.assertIn(paths.peerUrlNoTraillingPath + "/", peers)
         peers = self._removePeer(paths.peerUrl)
-        self.assertNotIn(paths.peerUrlNoTraillingPath+"/", peers)
+        self.assertNotIn(paths.peerUrlNoTraillingPath + "/", peers)
 
 
 class TestInvalidAddRemovePeer(AbstractRepoManagerTest):
@@ -1269,7 +1269,7 @@ class TestInvalidAddRemovePeer(AbstractRepoManagerTest):
         self.runCommand("add-peer {} {}".format(
             self._repoPath,
             peer_url
-            ))
+        ))
         repo = self.readRepo()
         return [x.getUrl() for x in repo.getPeers()]
 
@@ -1281,7 +1281,7 @@ class TestInvalidAddRemovePeer(AbstractRepoManagerTest):
         self.runCommand("remove-peer -f {} {}".format(
             self._repoPath,
             peer_url
-            ))
+        ))
         repo = self.readRepo()
         return [x.getUrl() for x in repo.getPeers()]
 
@@ -1297,7 +1297,7 @@ class TestInvalidAddRemovePeer(AbstractRepoManagerTest):
         """
         This is an invalid input, as "emptyPeerUlr" is empty
         """
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(SystemExit):
             self._addPeer(paths.emptyPeerUlr)
 
     def testAddValidPeerTwice(self):
