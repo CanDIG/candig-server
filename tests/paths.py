@@ -26,6 +26,12 @@ testAccessList = os.path.join(testDataDir, 'acl.tsv')
 testValidDuoJson = os.path.join(testDataDir, 'valid_duo.json')
 testInvalidDuoJson = os.path.join(testDataDir, 'invalid_duo.json')
 
+# Random peer value for addPeer method
+peerUrl = "http://localhost:5000/"
+peerUrlNoTraillingPath = "http://localhost:5000"
+invalidPeerUrl = "http:/localhost:5000/"
+emptyPeerUlr = ""
+
 # datasets
 datasetName = "dataset1"
 datasetsDir = os.path.join(testDataDir, "datasets")

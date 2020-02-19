@@ -3406,9 +3406,10 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Remove peers by URL.
         """
-        q = models.Peer.delete().where(
-            models.Peer.url == url)
-        q.execute()
+        if self.getPeer(url):
+            q = models.Peer.delete().where(
+                models.Peer.url == url)
+            q.execute()
 
     def removePeers(self):
         """

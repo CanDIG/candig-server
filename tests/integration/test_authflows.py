@@ -110,7 +110,6 @@ class TestIntegrationApi(unittest.TestCase):
         """
         login_response = self.api_login(TEST_USER, TEST_PW)
         self.assertEqual(login_response["code"], 200)
-        # token = login_response["body"].get("id_token")
         token = login_response["body"].get("id_token")
         logger.info('got token {}'.format(token))
         logger.debug('got token {}'.format(login_response))
