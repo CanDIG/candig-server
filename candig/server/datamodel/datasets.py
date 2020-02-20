@@ -741,10 +741,10 @@ class Dataset(datamodel.DatamodelObject):
     def getConsentByName(self, name):
         """
         Returns an consent with the specified name, or raises a
-        ConsentNameNotFoundException if it does not exist.
+        ConsentNotFoundException if it does not exist.
         """
         if name not in self._consentNameMap:
-            raise exceptions.ConsentNameNotFoundException(name)
+            raise exceptions.ConsentNotFoundException(name)
         return self._consentNameMap[name]
 
     def getConsent(self, id_):
@@ -765,10 +765,10 @@ class Dataset(datamodel.DatamodelObject):
     def getDiagnosisByName(self, name):
         """
         Returns an diagnosis with the specified name, or raises a
-        DiagnosisNameNotFoundException if it does not exist.
+        DiagnosisNotFoundException if it does not exist.
         """
         if name not in self._diagnosisNameMap:
-            raise exceptions.DiagnosisNameNotFoundException(name)
+            raise exceptions.DiagnosisNotFoundException(name)
         return self._diagnosisNameMap[name]
 
     def getDiagnosis(self, id_):
@@ -789,10 +789,10 @@ class Dataset(datamodel.DatamodelObject):
     def getSampleByName(self, name):
         """
         Returns an sample with the specified name, or raises a
-        SampleNameNotFoundException if it does not exist.
-        """
+        SampleNotFoundException if it does not exist.
+        """        
         if name not in self._sampleNameMap:
-            raise exceptions.SampleNameNotFoundException(name)
+            raise exceptions.SampleNotFoundException(name)
         return self._sampleNameMap[name]
 
     def getSample(self, id_):
@@ -813,10 +813,10 @@ class Dataset(datamodel.DatamodelObject):
     def getTreatmentByName(self, name):
         """
         Returns an treatment with the specified name, or raises a
-        TreatmentNameNotFoundException if it does not exist.
+        TreatmentNotFoundException if it does not exist.
         """
         if name not in self._treatmentNameMap:
-            raise exceptions.TreatmentNameNotFoundException(name)
+            raise exceptions.TreatmentNotFoundException(name)
         return self._treatmentNameMap[name]
 
     def getTreatment(self, id_):
@@ -837,10 +837,10 @@ class Dataset(datamodel.DatamodelObject):
     def getOutcomeByName(self, name):
         """
         Returns an outcome with the specified name, or raises a
-        OutcomeNameNotFoundException if it does not exist.
+        OutcomeNotFoundException if it does not exist.
         """
         if name not in self._outcomeNameMap:
-            raise exceptions.OutcomeNameNotFoundException(name)
+            raise exceptions.OutcomeNotFoundException(name)
         return self._outcomeNameMap[name]
 
     def getOutcome(self, id_):
@@ -861,10 +861,10 @@ class Dataset(datamodel.DatamodelObject):
     def getComplicationByName(self, name):
         """
         Returns an complication with the specified name, or raises a
-        ComplicationNameNotFoundException if it does not exist.
+        ComplicationNotFoundException if it does not exist.
         """
         if name not in self._complicationNameMap:
-            raise exceptions.ComplicationNameNotFoundException(name)
+            raise exceptions.ComplicationNotFoundException(name)
         return self._complicationNameMap[name]
 
     def getComplication(self, id_):
@@ -885,10 +885,10 @@ class Dataset(datamodel.DatamodelObject):
     def getTumourboardByName(self, name):
         """
         Returns an tumourboard with the specified name, or raises a
-        TumourboardNameNotFoundException if it does not exist.
+        TumourboardNotFoundException if it does not exist.
         """
         if name not in self._tumourboardNameMap:
-            raise exceptions.TumourboardNameNotFoundException(name)
+            raise exceptions.TumourboardNotFoundException(name)
         return self._tumourboardNameMap[name]
 
     def getTumourboard(self, id_):
@@ -909,10 +909,10 @@ class Dataset(datamodel.DatamodelObject):
     def getChemotherapyByName(self, name):
         """
         Returns an chemotherapy with the specified name, or raises a
-        ChemotherapyNameNotFoundException if it does not exist.
+        ChemotherapyNotFoundException if it does not exist.
         """
         if name not in self._chemotherapyNameMap:
-            raise exceptions.ChemotherapyNameNotFoundException(name)
+            raise exceptions.ChemotherapyNotFoundException(name)
         return self._chemotherapyNameMap[name]
 
     def getChemotherapy(self, id_):
@@ -936,7 +936,7 @@ class Dataset(datamodel.DatamodelObject):
         RadiotherapyNameNotFoundException if it does not exist.
         """
         if name not in self._radiotherapyNameMap:
-            raise exceptions.RadiotherapyNameNotFoundException(name)
+            raise exceptions.RadiotherapyNotFoundException(name)
         return self._radiotherapyNameMap[name]
 
     def getRadiotherapy(self, id_):
@@ -957,10 +957,10 @@ class Dataset(datamodel.DatamodelObject):
     def getSurgeryByName(self, name):
         """
         Returns an surgery with the specified name, or raises a
-        SurgeryNameNotFoundException if it does not exist.
+        SurgeryNotFoundException if it does not exist.
         """
         if name not in self._surgeryNameMap:
-            raise exceptions.SurgeryNameNotFoundException(name)
+            raise exceptions.SurgeryNotFoundException(name)
         return self._surgeryNameMap[name]
 
     def getSurgery(self, id_):
@@ -981,10 +981,10 @@ class Dataset(datamodel.DatamodelObject):
     def getImmunotherapyByName(self, name):
         """
         Returns an immunotherapy with the specified name, or raises a
-        ImmunotherapyNameNotFoundException if it does not exist.
+        ImmunotherapyNotFoundException if it does not exist.
         """
         if name not in self._immunotherapyNameMap:
-            raise exceptions.ImmunotherapyNameNotFoundException(name)
+            raise exceptions.ImmunotherapyNotFoundException(name)
         return self._immunotherapyNameMap[name]
 
     def getImmunotherapy(self, id_):
@@ -1005,10 +1005,10 @@ class Dataset(datamodel.DatamodelObject):
     def getCelltransplantByName(self, name):
         """
         Returns an celltransplant with the specified name, or raises a
-        CelltransplantNameNotFoundException if it does not exist.
+        CelltransplantNotFoundException if it does not exist.
         """
         if name not in self._celltransplantNameMap:
-            raise exceptions.CelltransplantNameNotFoundException(name)
+            raise exceptions.CelltransplantNotFoundException(name)
         return self._celltransplantNameMap[name]
 
     def getCelltransplant(self, id_):
@@ -1029,10 +1029,10 @@ class Dataset(datamodel.DatamodelObject):
     def getSlideByName(self, name):
         """
         Returns an slide with the specified name, or raises a
-        SlideNameNotFoundException if it does not exist.
+        SlideNotFoundException if it does not exist.
         """
         if name not in self._slideNameMap:
-            raise exceptions.SlideNameNotFoundException(name)
+            raise exceptions.SlideNotFoundException(name)
         return self._slideNameMap[name]
 
     def getSlide(self, id_):
@@ -1053,10 +1053,10 @@ class Dataset(datamodel.DatamodelObject):
     def getStudyByName(self, name):
         """
         Returns an study with the specified name, or raises a
-        StudyNameNotFoundException if it does not exist.
+        StudyNotFoundException if it does not exist.
         """
         if name not in self._studyNameMap:
-            raise exceptions.StudyNameNotFoundException(name)
+            raise exceptions.StudyNotFoundException(name)
         return self._studyNameMap[name]
 
     def getStudy(self, id_):
