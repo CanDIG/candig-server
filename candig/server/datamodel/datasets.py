@@ -692,10 +692,10 @@ class Dataset(datamodel.DatamodelObject):
     def getPatientByName(self, name):
         """
         Returns an patient with the specified name, or raises a
-        PatientNameNotFoundException if it does not exist.
+        ClinicalLocalIdNotFoundException if it does not exist.
         """
         if name not in self._patientNameMap:
-            raise exceptions.PatientNameNotFoundException(name)
+            raise exceptions.ClinicalLocalIdNotFoundException("patient", name)
         return self._patientNameMap[name]
 
     def getPatient(self, id_):
@@ -716,10 +716,11 @@ class Dataset(datamodel.DatamodelObject):
     def getEnrollmentByName(self, name):
         """
         Returns an enrollment with the specified name, or raises a
-        EnrollmentNameNotFoundException if it does not exist.
+        ClinicalLocalIdNotFoundException if it does not exist.
         """
         if name not in self._enrollmentNameMap:
-            raise exceptions.EnrollmentNameNotFoundException(name)
+            raise exceptions.ClinicalLocalIdNotFoundException(
+                "enrollment", name)
         return self._enrollmentNameMap[name]
 
     def getEnrollment(self, id_):
