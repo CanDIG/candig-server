@@ -1077,10 +1077,10 @@ class Dataset(datamodel.DatamodelObject):
     def getLabtestByName(self, name):
         """
         Returns an labtest with the specified name, or raises a
-        LabtestNameNotFoundException if it does not exist.
+        LabtestNotFoundException if it does not exist.
         """
         if name not in self._labtestNameMap:
-            raise exceptions.LabtestNameNotFoundException(name)
+            raise exceptions.LabtestNotFoundException(name)
         return self._labtestNameMap[name]
 
     def getLabtest(self, id_):
