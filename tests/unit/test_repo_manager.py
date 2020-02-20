@@ -6,6 +6,7 @@ import os
 import glob
 import shutil
 import tempfile
+import subprocess
 import unittest
 
 import candig.server.exceptions as exceptions
@@ -1324,3 +1325,232 @@ class TestInvalidAddRemovePeer(AbstractRepoManagerTest):
         """
         with self.assertRaises(SystemExit):
             self._removePeer(paths.emptyPeerUlr)
+
+
+class TestValidRemovePatient(AbstractRepoManagerTest):
+    """
+    This class tests valid inputs for methods from class "Repomanager".
+    The following methods are being tested here:
+     - removePatient
+     - removeEnrolment
+     - removeSample
+    """
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestValidRemovePatient, self).setUp()
+        self.init()
+        self.addDataset()
+        self.patient_name = "PATIENT_49845"
+        self.sampleId = "{}_{}"\
+            .format(self.patient_name, "SAMPLE_58628")
+        self.enrollmentId = "{}_{}"\
+            .format(self.patient_name, "02/01/2005")
+
+        FNULL = open(os.devnull, 'w')
+        subprocess.call(['ingest', self._repoPath, 'dataset1', 
+                        paths.sampleClinMetadata], stdout=FNULL, 
+                        stderr=subprocess.STDOUT)
+
+    def _getDataset(self):
+        """
+        This is a helper method that returns the updated dataset
+        """
+        return self.readRepo().getDatasetByName("dataset1")
+
+    def _removePatient(self, patient_id):
+        """
+        This is a helper method that removes a patient and
+        returns the updated dataset
+        """
+        self.runCommand("remove-patient -f {} dataset1 {}".format(
+            self._repoPath,
+            patient_id
+        ))
+        return self._getDataset()
+
+    def _removeEnrolment(self, enrollmentId):
+        """
+        This is a helper method that removes an enrollment and
+        returns the updated dataset
+        """
+        self.runCommand("remove-enrollment -f {} dataset1 {}".format(
+            self._repoPath,
+            enrollmentId
+        ))
+        return self._getDataset()
+
+    def _removeSample(self, sample_name):
+        """
+        This is a helper method that removes a sample and
+        returns the updated dataset
+        """
+        self.runCommand("remove-sample -f {} dataset1 {}".format(
+            self._repoPath,
+            sample_name
+        ))
+        return self._getDataset()
+
+    def testRemovePatient1(self):
+        """
+        Verifies if given patient is being removed. This test will pass 
+        only if given patient is present in dataset before
+        "remove-patient" is called.
+        """
+        try:
+            self._getDataset().getPatientByName(self.patient_name)
+        except exceptions.ClinicalLocalIdNotFoundException:
+            self.fail("Patient {} should be present in dataset. "
+                      "Aborting test!".format(self.patient_name))
+
+        dataset = self._removePatient(self.patient_name)
+        with self.assertRaises(exceptions.ClinicalLocalIdNotFoundException):
+            dataset.getPatientByName(self.patient_name)
+
+    def testRemoveEnrollment1(self):
+        """
+        Verifies if given enrollment is being removed. This test will pass 
+        only if given enrollment is present in dataset before
+        "remove-enrollment" is called.
+        """       
+        try:
+            self._getDataset().getEnrollmentByName(self.enrollmentId)
+        except exceptions.ClinicalLocalIdNotFoundException:
+            self.fail("Enrollment {} should be present in dataset. "
+                      "Aborting test!".format(self.patient_name))        
+
+        dataset = self._removeEnrolment(self.enrollmentId)
+        with self.assertRaises(exceptions.ClinicalLocalIdNotFoundException):
+            dataset.getEnrollmentByName(self.enrollmentId)
+
+    def testRemoveSample1(self):
+        """
+        Verifies if given sample is being removed. This test will pass 
+        only if given sample is present in dataset before
+        "remove-sample" is called.
+        """
+        try:
+            self._getDataset().getSampleByName(self.sampleId)
+        except exceptions.SampleNameNotFoundException:
+            self.fail("Sample {} should be present in dataset. "
+                      "Aborting test!".format(self.sampleId))
+
+        dataset = self._removeSample(self.sampleId)
+        with self.assertRaises(exceptions.SampleNameNotFoundException):
+            dataset.getSampleByName(self.sampleId)
+
+
+class TestInvalidRemovePatient(AbstractRepoManagerTest):
+    """
+    This class tests invalid inputs for methods from class "Repomanager".
+    The following methods are being tested here:
+     - removePatient
+     - removeEnrolment
+     - removeSample
+    """
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestInvalidRemovePatient, self).setUp()
+        self.init()
+        self.addDataset()
+
+        FNULL = open(os.devnull, 'w')
+        subprocess.call(['ingest', self._repoPath, 'dataset1', 
+                        paths.sampleClinMetadata], 
+                        stdout=FNULL, stderr=subprocess.STDOUT)
+
+    def _getDataset(self):
+        """
+        This is a helper method that returns the updated dataset
+        """
+        return self.readRepo().getDatasetByName("dataset1")
+
+    def _removePatient(self, patient_id, dataset_name="dataset1"):
+        """
+        This is a helper method that removes a patient and
+        returns the updated dataset
+        """
+        self.runCommand("remove-patient -f {} {} {}".format(            
+            self._repoPath,
+            dataset_name,
+            patient_id
+        ))
+        return self._getDataset()
+
+    def _removeEnrolment(self, enrollmentId):
+        """
+        This is a helper method that removes an enrollment and
+        returns the updated dataset
+        """
+        self.runCommand("remove-enrollment -f {} dataset1 {}".format(
+            self._repoPath,
+            enrollmentId
+        ))
+        return self._getDataset()
+
+    def _removeSample(self, sample_name):
+        """
+        This is a helper method that removes a sample and
+        returns the updated dataset
+        """
+        self.runCommand("remove-sample -f {} dataset1 {}".format(
+            self._repoPath,
+            sample_name
+        ))
+        return self._getDataset()
+
+    def testRemoveInvalidPatient1(self):
+        """
+        This input is invalid as "Patient 16351" does not 
+        exist on dataset
+        """
+        with self.assertRaises(exceptions.ClinicalLocalIdNotFoundException):
+            self._removePatient("PATIENT_16351")
+
+    def testRemoveInvalidPatient2(self):
+        """
+        This input is invalid as it is missing patient name
+        """
+        with self.assertRaises(SystemExit):
+            self._removePatient("")
+
+    def testRemoveValidPatientInvalidDataSet(self):
+        """
+        This input is invalid as "Patient 16351" does not 
+        exist on dataset
+        """
+        with self.assertRaises(exceptions.DatasetNameNotFoundException):
+            self._removePatient("PATIENT_49845", "dataset123")
+
+    def testRemoveInvalidEnrollment1(self):
+        """
+        This input is invalid as enrollment "ENROLLMENT_12312" does not exist
+        on dataset
+        """       
+        with self.assertRaises(exceptions.ClinicalLocalIdNotFoundException):
+            self._removeEnrolment("ENROLLMENT_12312")
+
+    def testRemoveInvalidEnrollment2(self):
+        """
+        This input is invalid as it is missing enrollment name
+        """
+        with self.assertRaises(SystemExit):
+            self._removeEnrolment("")
+
+    def testRemoveInvalidSample1(self):
+        """
+        This input is invalid as sample "SAMPLE_123141" does not exist
+        on dataset        
+        """
+        with self.assertRaises(exceptions.SampleNameNotFoundException):
+            self._removeSample("SAMPLE_123141")
+
+    def testRemoveInvalidSample2(self):
+        """
+        This input is invalid as it is missing sample name
+        """
+        with self.assertRaises(SystemExit):
+            self._removeSample("")
