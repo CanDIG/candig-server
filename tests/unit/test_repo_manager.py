@@ -1331,18 +1331,23 @@ class TestValidRemoveFromDataset(AbstractRepoManagerTest):
     """
     This class tests valid inputs for methods from class "Repomanager".
     The following methods are being tested here:
-     - removePatient
-     - removeEnrolment
-     - removeSample
-     - removeChemotherapy
-     - removeImmunotherapy
-     - removeTreatment
-     - removeDiagnosis
-     - removeTumourboard
-     - removeOutcome
+    - removePatient
+    - removeEnrolment
+    - removeSample
+    - removeChemotherapy
+    - removeImmunotherapy
+    - removeTreatment
+    - removeDiagnosis
+    - removeTumourboard
+    - removeOutcome
+    - removeComplication
+    - removeConsent
+    - removeCellTransplant
+    - removeSurgery
+    - removeStudy
+    - removeSlide
+    - removeLabtest
     """
-
-
     def setUp(self):
         """
         Sets up the class
@@ -1355,8 +1360,8 @@ class TestValidRemoveFromDataset(AbstractRepoManagerTest):
                         paths.sampleClinMetadata], stdout=FNULL, 
                         stderr=subprocess.STDOUT)
 
-        # When adding to this dictinary, please follow bellow schema:
-        # {table_name: (id, exception class is expected to raise)}
+        # When adding to this dictionary, please follow bellow schema:
+        # {table_name: (id, exception class that is expected)}
         self.dataDict = {
             "patient": (
                 "PATIENT_49845",
@@ -1403,6 +1408,9 @@ class TestValidRemoveFromDataset(AbstractRepoManagerTest):
             "slide": (
                 "PATIENT_49845_48236",
                 exceptions.SlideNotFoundException),
+            "labtest": (
+                "PATIENT_49845_2016-07-20",
+                exceptions.LabtestNotFoundException),
         }
 
     def _getDataset(self):
@@ -1435,15 +1443,15 @@ class TestValidRemoveFromDataset(AbstractRepoManagerTest):
         capital_table = table.title()
         
         try:
-            eval("self._getDataset().get{}ByName".format(capital_table))(value)
+            getattr(self._getDataset(), 
+                    "get{}ByName".format(capital_table))(value)
         except exception_:
             self.fail("{} name {} should be present in dataset. "
-                      "Aborting test!".format(capital_table, value))
-
-        dataset = self._removeDataFromDataset(table, value)
-        with self.assertRaises(exception_):
-            eval("dataset.get{}ByName"\
-                .format(capital_table))(value)
+                      "Aborting test!".format(capital_table, value))        
+        with self.assertRaises(exception_):            
+            getattr(self._removeDataFromDataset(table, value), 
+                    "get{}ByName".format(capital_table))(value)
+            
 
     def testRemoveMethods(self):
         """
@@ -1453,22 +1461,35 @@ class TestValidRemoveFromDataset(AbstractRepoManagerTest):
         must be added to "dataDict" dictionary
         """
         for table, tuple_ in self.dataDict.items():
-            dataset = self._removeDataUsingEval(table, *tuple_)
+            self._removeDataUsingEval(table, *tuple_)
            
 
-class TestInvalidRemovePatient(AbstractRepoManagerTest):
+class TestInvalidRemoveFromDataset(AbstractRepoManagerTest):
     """
     This class tests invalid inputs for methods from class "Repomanager".
     The following methods are being tested here:
-     - removePatient
-     - removeEnrolment
-     - removeSample
+    - removePatient
+    - removeEnrolment
+    - removeSample
+    - removeChemotherapy
+    - removeImmunotherapy
+    - removeTreatment
+    - removeDiagnosis
+    - removeTumourboard
+    - removeOutcome
+    - removeComplication
+    - removeConsent
+    - removeCellTransplant
+    - removeSurgery
+    - removeStudy
+    - removeSlide
+    - removeLabtest
     """
     def setUp(self):
         """
         Sets up the class
         """
-        super(TestInvalidRemovePatient, self).setUp()
+        super(TestInvalidRemoveFromDataset, self).setUp()
         self.init()
         self.addDataset()
 
@@ -1476,6 +1497,58 @@ class TestInvalidRemovePatient(AbstractRepoManagerTest):
         subprocess.call(['ingest', self._repoPath, 'dataset1', 
                         paths.sampleClinMetadata], 
                         stdout=FNULL, stderr=subprocess.STDOUT)
+        # When adding to this dictionary, please follow bellow schema:
+        # {table_name: ([invalid values], exception class that is expected)}
+        self.invalidDataDict = {
+            "patient": (
+                ["INVALID_PATIENT", ""], 
+                exceptions.ClinicalLocalIdNotFoundException),
+            "enrollment": (
+                ["INVALID_ENROLLMENT", ""],
+                exceptions.ClinicalLocalIdNotFoundException),
+            "sample": (
+                ["INVALID_SAMPLE", ""],
+                exceptions.SampleNotFoundException),
+            "chemotherapy": (
+                ["INVALID_CHEMO", ""],
+                exceptions.ChemotherapyNotFoundException),
+            "immunotherapy": (
+                ["INVALID_IMMUN", ""],
+                exceptions.ImmunotherapyNotFoundException),
+            "treatment": (
+                ["INVALID_TREATMENT", ""],
+                exceptions.TreatmentNotFoundException),
+            "diagnosis": (
+                ["INVALID_DIAGNOSIS", ""],
+                exceptions.DiagnosisNotFoundException),
+            "tumourboard": (
+                ["INVALID_TUMOURBOARD", ""],
+                exceptions.TumourboardNotFoundException),
+            "outcome": (
+                ["INVALID_OUTCOME", ""],
+                exceptions.OutcomeNotFoundException),
+            "complication": (
+                ["INVALID_COMPLICATION", ""],
+                exceptions.ComplicationNotFoundException),
+            "consent": (
+                ["INVALID_CONSENT", ""],
+                exceptions.ConsentNotFoundException),
+            "celltransplant": (
+                ["INVALID_CELLTRANSPLANT", ""],
+                exceptions.CelltransplantNotFoundException),
+            "surgery": (
+                ["INVALID_SURGERY", ""],
+                exceptions.SurgeryNotFoundException),
+            "study": (
+                ["INVALID_STUDY", ""],
+                exceptions.StudyNotFoundException),
+            "slide": (
+                ["INVALID_SLIDE", ""],
+                exceptions.SlideNotFoundException),
+            "labtest": (
+                ["INVALID_LABTEST", ""],
+                exceptions.LabtestNotFoundException),
+        }
 
     def _getDataset(self):
         """
@@ -1483,89 +1556,31 @@ class TestInvalidRemovePatient(AbstractRepoManagerTest):
         """
         return self.readRepo().getDatasetByName("dataset1")
 
-    def _removePatient(self, patient_id, dataset_name="dataset1"):
+    def _removeDataFromDataset(self, table, value):
         """
-        This is a helper method that removes a patient and
-        returns the updated dataset
+        This is a helper method that executes a "remove" command and 
+        return updated dataset.
+        Args:
+            table: Table you want to run "remove" command
+            value: Value you want to delete from table
         """
-        self.runCommand("remove-patient -f {} {} {}".format(            
+        self.runCommand("remove-{} -f {} dataset1 {}".format(
+            table, 
             self._repoPath,
-            dataset_name,
-            patient_id
+            value
         ))
         return self._getDataset()
 
-    def _removeEnrolment(self, enrollmentId):
+    def testRemoveInvalidData(self):
         """
-        This is a helper method that removes an enrollment and
-        returns the updated dataset
+        This method loops throught "invalidDataDict" dict and test 
+        each of them.
+        When there is a new "remove" method to be tested and there 
+        is a method that follows the format "get{}ByName", the data
+        must be added to "invalidDataDict" dictionary following the format
         """
-        self.runCommand("remove-enrollment -f {} dataset1 {}".format(
-            self._repoPath,
-            enrollmentId
-        ))
-        return self._getDataset()
-
-    def _removeSample(self, sample_name):
-        """
-        This is a helper method that removes a sample and
-        returns the updated dataset
-        """
-        self.runCommand("remove-sample -f {} dataset1 {}".format(
-            self._repoPath,
-            sample_name
-        ))
-        return self._getDataset()
-
-    def testRemoveInvalidPatient1(self):
-        """
-        This input is invalid as "Patient 16351" does not 
-        exist on dataset
-        """
-        with self.assertRaises(exceptions.ClinicalLocalIdNotFoundException):
-            self._removePatient("PATIENT_16351")
-
-    def testRemoveInvalidPatient2(self):
-        """
-        This input is invalid as it is missing patient name
-        """
-        with self.assertRaises(SystemExit):
-            self._removePatient("")
-
-    def testRemoveValidPatientInvalidDataSet(self):
-        """
-        This input is invalid as "Patient 16351" does not 
-        exist on dataset
-        """
-        with self.assertRaises(exceptions.DatasetNameNotFoundException):
-            self._removePatient("PATIENT_49845", "dataset123")
-
-    def testRemoveInvalidEnrollment1(self):
-        """
-        This input is invalid as enrollment "ENROLLMENT_12312" does not exist
-        on dataset
-        """       
-        with self.assertRaises(exceptions.ClinicalLocalIdNotFoundException):
-            self._removeEnrolment("ENROLLMENT_12312")
-
-    def testRemoveInvalidEnrollment2(self):
-        """
-        This input is invalid as it is missing enrollment name
-        """
-        with self.assertRaises(SystemExit):
-            self._removeEnrolment("")
-
-    def testRemoveInvalidSample1(self):
-        """
-        This input is invalid as sample "SAMPLE_123141" does not exist
-        on dataset        
-        """
-        with self.assertRaises(exceptions.SampleNameNotFoundException):
-            self._removeSample("SAMPLE_123141")
-
-    def testRemoveInvalidSample2(self):
-        """
-        This input is invalid as it is missing sample name
-        """
-        with self.assertRaises(SystemExit):
-            self._removeSample("")
+        for table, data in self.invalidDataDict.items():
+            invalid_data, exception_ = data
+            for value in invalid_data:
+                with self.assertRaises((SystemExit, exception_)):
+                    self._removeDataFromDataset(table, value)
