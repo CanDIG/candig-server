@@ -1327,31 +1327,83 @@ class TestInvalidAddRemovePeer(AbstractRepoManagerTest):
             self._removePeer(paths.emptyPeerUlr)
 
 
-class TestValidRemovePatient(AbstractRepoManagerTest):
+class TestValidRemoveFromDataset(AbstractRepoManagerTest):
     """
     This class tests valid inputs for methods from class "Repomanager".
     The following methods are being tested here:
      - removePatient
      - removeEnrolment
      - removeSample
+     - removeChemotherapy
+     - removeImmunotherapy
+     - removeTreatment
+     - removeDiagnosis
+     - removeTumourboard
+     - removeOutcome
     """
+
+
     def setUp(self):
         """
         Sets up the class
         """
-        super(TestValidRemovePatient, self).setUp()
+        super(TestValidRemoveFromDataset, self).setUp()
         self.init()
-        self.addDataset()
-        self.patient_name = "PATIENT_49845"
-        self.sampleId = "{}_{}"\
-            .format(self.patient_name, "SAMPLE_58628")
-        self.enrollmentId = "{}_{}"\
-            .format(self.patient_name, "02/01/2005")
-
+        self.addDataset()        
         FNULL = open(os.devnull, 'w')
         subprocess.call(['ingest', self._repoPath, 'dataset1', 
                         paths.sampleClinMetadata], stdout=FNULL, 
                         stderr=subprocess.STDOUT)
+
+        # When adding to this dictinary, please follow bellow schema:
+        # {table_name: (id, exception class is expected to raise)}
+        self.dataDict = {
+            "patient": (
+                "PATIENT_49845",
+                exceptions.ClinicalLocalIdNotFoundException),
+            "enrollment": (
+                "PATIENT_49845_02/01/2005",
+                exceptions.ClinicalLocalIdNotFoundException),
+            "sample": (
+                "PATIENT_49845_SAMPLE_58628", 
+                exceptions.SampleNotFoundException),
+            "chemotherapy": (
+                "PATIENT_49845_PATIENT_49845_44159_LEUCOVORIN",
+                exceptions.ChemotherapyNotFoundException),
+            "immunotherapy": (
+                "PATIENT_49845_PATIENT_49845_44159_2014-09-22",
+                exceptions.ImmunotherapyNotFoundException),
+            "treatment": (
+                "PATIENT_49845_06/25/2004",
+                exceptions.TreatmentNotFoundException),
+            "diagnosis": (
+                "PATIENT_49845_11/08/2008",
+                exceptions.DiagnosisNotFoundException),
+            "tumourboard": (
+                "PATIENT_49845_07/09/2014",
+                exceptions.TumourboardNotFoundException),
+            "outcome": (
+                "PATIENT_49845_08/22/2012",
+                exceptions.OutcomeNotFoundException),
+            "complication": (
+                "PATIENT_49845_10/18/2006",
+                exceptions.ComplicationNotFoundException),
+            "consent": (
+                "PATIENT_49845_03/06/2007", 
+                exceptions.ConsentNotFoundException),
+            "celltransplant": (
+                "PATIENT_49845_PATIENT_49845_44159_2016-01-02",
+                exceptions.CelltransplantNotFoundException),
+            "surgery": (
+                "PATIENT_49845_PATIENT_49845_44159_2016-06-15_SAMPLE_58628",
+                exceptions.SurgeryNotFoundException),
+            "study": (
+                "PATIENT_49845_2014-04-17",
+                exceptions.StudyNotFoundException),
+            "slide": (
+                "PATIENT_49845_48236",
+                exceptions.SlideNotFoundException),
+        }
 
     def _getDataset(self):
         """
@@ -1359,87 +1411,50 @@ class TestValidRemovePatient(AbstractRepoManagerTest):
         """
         return self.readRepo().getDatasetByName("dataset1")
 
-    def _removePatient(self, patient_id):
+    def _removeDataFromDataset(self, table, value):
         """
-        This is a helper method that removes a patient and
-        returns the updated dataset
+        This is a helper method that executes a "remove" command and 
+        return updated dataset.
+        Args:
+            table: Table you want to run "remove" command
+            value: Value you want to delete from table
         """
-        self.runCommand("remove-patient -f {} dataset1 {}".format(
+        self.runCommand("remove-{} -f {} dataset1 {}".format(
+            table, 
             self._repoPath,
-            patient_id
+            value
         ))
         return self._getDataset()
 
-    def _removeEnrolment(self, enrollmentId):
+    def _removeDataUsingEval(self, table, value, exception_):
         """
-        This is a helper method that removes an enrollment and
-        returns the updated dataset
+        This helper method verifies if "value" is being removed
+        from "table". Please note, This method will fail if "value"
+        is not present in "table" before running "remove" comand.
         """
-        self.runCommand("remove-enrollment -f {} dataset1 {}".format(
-            self._repoPath,
-            enrollmentId
-        ))
-        return self._getDataset()
-
-    def _removeSample(self, sample_name):
-        """
-        This is a helper method that removes a sample and
-        returns the updated dataset
-        """
-        self.runCommand("remove-sample -f {} dataset1 {}".format(
-            self._repoPath,
-            sample_name
-        ))
-        return self._getDataset()
-
-    def testRemovePatient1(self):
-        """
-        Verifies if given patient is being removed. This test will pass 
-        only if given patient is present in dataset before
-        "remove-patient" is called.
-        """
+        capital_table = table.title()
+        
         try:
-            self._getDataset().getPatientByName(self.patient_name)
-        except exceptions.ClinicalLocalIdNotFoundException:
-            self.fail("Patient {} should be present in dataset. "
-                      "Aborting test!".format(self.patient_name))
+            eval("self._getDataset().get{}ByName".format(capital_table))(value)
+        except exception_:
+            self.fail("{} name {} should be present in dataset. "
+                      "Aborting test!".format(capital_table, value))
 
-        dataset = self._removePatient(self.patient_name)
-        with self.assertRaises(exceptions.ClinicalLocalIdNotFoundException):
-            dataset.getPatientByName(self.patient_name)
+        dataset = self._removeDataFromDataset(table, value)
+        with self.assertRaises(exception_):
+            eval("dataset.get{}ByName"\
+                .format(capital_table))(value)
 
-    def testRemoveEnrollment1(self):
+    def testRemoveMethods(self):
         """
-        Verifies if given enrollment is being removed. This test will pass 
-        only if given enrollment is present in dataset before
-        "remove-enrollment" is called.
-        """       
-        try:
-            self._getDataset().getEnrollmentByName(self.enrollmentId)
-        except exceptions.ClinicalLocalIdNotFoundException:
-            self.fail("Enrollment {} should be present in dataset. "
-                      "Aborting test!".format(self.patient_name))        
-
-        dataset = self._removeEnrolment(self.enrollmentId)
-        with self.assertRaises(exceptions.ClinicalLocalIdNotFoundException):
-            dataset.getEnrollmentByName(self.enrollmentId)
-
-    def testRemoveSample1(self):
+        This method loops throught "dataDict" dict and test each of them.
+        When there is a new "remove" method to be tested and there 
+        is a method that follows the format "get{}ByName", the data
+        must be added to "dataDict" dictionary
         """
-        Verifies if given sample is being removed. This test will pass 
-        only if given sample is present in dataset before
-        "remove-sample" is called.
-        """
-        try:
-            self._getDataset().getSampleByName(self.sampleId)
-        except exceptions.SampleNameNotFoundException:
-            self.fail("Sample {} should be present in dataset. "
-                      "Aborting test!".format(self.sampleId))
-
-        dataset = self._removeSample(self.sampleId)
-        with self.assertRaises(exceptions.SampleNameNotFoundException):
-            dataset.getSampleByName(self.sampleId)
-
+        for table, tuple_ in self.dataDict.items():
+            dataset = self._removeDataUsingEval(table, *tuple_)
+           
 
 class TestInvalidRemovePatient(AbstractRepoManagerTest):
     """
