@@ -366,12 +366,6 @@ class SampleNotFoundException(NotFoundException):
             sampleId)
 
 
-class SampleNameNotFoundException(NotFoundException):
-    def __init__(self, sampleName):
-        self.message = "The requested Sample '{}' was not found".format(
-            sampleName)
-
-
 class TreatmentNotFoundException(NotFoundException):
     def __init__(self, treatmentId):
         self.message = "The requested Treatment '{}' was not found".format(
