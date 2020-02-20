@@ -1451,7 +1451,6 @@ class TestValidRemoveFromDataset(AbstractRepoManagerTest):
         with self.assertRaises(exception_):            
             getattr(self._removeDataFromDataset(table, value), 
                     "get{}ByName".format(capital_table))(value)
-            
 
     def testRemoveMethods(self):
         """
