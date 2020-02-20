@@ -1419,7 +1419,7 @@ class TestValidRemoveFromDataset(AbstractRepoManagerTest):
         """
         return self.readRepo().getDatasetByName("dataset1")
 
-    def _removeDataFromDataset(self, table, value):
+    def _executeRemoveCommand(self, table, value):
         """
         This is a helper method that executes a "remove" command and 
         return updated dataset.
@@ -1434,7 +1434,7 @@ class TestValidRemoveFromDataset(AbstractRepoManagerTest):
         ))
         return self._getDataset()
 
-    def _removeDataUsingEval(self, table, value, exception_):
+    def _removeDataFromTable(self, table, value, exception_):
         """
         This helper method verifies if "value" is being removed
         from "table". Please note, This method will fail if "value"
@@ -1449,7 +1449,7 @@ class TestValidRemoveFromDataset(AbstractRepoManagerTest):
             self.fail("{} name {} should be present in dataset. "
                       "Aborting test!".format(capital_table, value))        
         with self.assertRaises(exception_):            
-            getattr(self._removeDataFromDataset(table, value), 
+            getattr(self._executeRemoveCommand(table, value), 
                     "get{}ByName".format(capital_table))(value)
 
     def testRemoveMethods(self):
@@ -1460,7 +1460,7 @@ class TestValidRemoveFromDataset(AbstractRepoManagerTest):
         must be added to "dataDict" dictionary
         """
         for table, tuple_ in self.dataDict.items():
-            self._removeDataUsingEval(table, *tuple_)
+            self._removeDataFromTable(table, *tuple_)
            
 
 class TestInvalidRemoveFromDataset(AbstractRepoManagerTest):
@@ -1555,7 +1555,7 @@ class TestInvalidRemoveFromDataset(AbstractRepoManagerTest):
         """
         return self.readRepo().getDatasetByName("dataset1")
 
-    def _removeDataFromDataset(self, table, value):
+    def _executeRemoveCommand(self, table, value):
         """
         This is a helper method that executes a "remove" command and 
         return updated dataset.
@@ -1582,4 +1582,4 @@ class TestInvalidRemoveFromDataset(AbstractRepoManagerTest):
             invalid_data, exception_ = data
             for value in invalid_data:
                 with self.assertRaises((SystemExit, exception_)):
-                    self._removeDataFromDataset(table, value)
+                    self._executeRemoveCommand(table, value)
