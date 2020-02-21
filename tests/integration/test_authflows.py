@@ -12,6 +12,7 @@ import time
 import logging
 
 from selenium import webdriver
+from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.firefox.options import Options as FireFoxOptions
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
@@ -26,6 +27,37 @@ with open('tests/integration/config.json', 'r') as test_config:
 
 
 class TestIntegrationApi(unittest.TestCase):
+
+    def openLeftSidebarMenu(self, driver, classname):
+        """
+        This method receives the driver itself and a HTML class name as args.
+        The purpose of this method is to open the side bar menu
+        when the page is on its "mobile" version.
+        """
+        try:
+            # If "classname" is "clickable" it will expand side bar menu
+            driver.find_elements_by_class_name(classname)[0].click()
+            time.sleep(1.0)  # it needs time to expand the sidebar
+        except ElementNotInteractableException:
+            # Otherwise the excepetion is captured here and the method
+            # does not do anything
+            pass
+
+    def openRightSideMenu(self, driver, target):
+        """
+        This method receives the driver itself and a data target tag value
+        (such as data-target="#navigation") as args.
+        The purpose of this method is to open the side bar menu
+        when the page is on its "mobile" version.
+        """
+        try:
+            # If "target" is "clickable" it will expand side bar menu
+            driver.find_elements_by_xpath(target)[0].click()
+            time.sleep(1.0)  # it needs time to expand the sidebar
+        except ElementNotInteractableException:
+            # Otherwise the excepetion is captured here and the method
+            # does not do anything
+            pass
 
     def api_login(self, username, password):
         # auth requests must be sent through gateway server
@@ -52,23 +84,37 @@ class TestIntegrationApi(unittest.TestCase):
             password_dom.send_keys(TEST_PW)
 
             driver.find_element_by_id("kc-login").click()
-            time.sleep(1.0)
+            time.sleep(2.0)
 
-            driver.find_element_by_link_text("Gene Search").click()
+            self.openLeftSidebarMenu(driver, "navbar-toggler")
+
+            driver.find_element_by_link_text("GENE SEARCH").click()
             time.sleep(1.5)
 
-            driver.find_element_by_link_text("Patient Overview").click()
+            # Everytime the code perform a "click" on a menu item
+            # the menu "shrink" so we need to expand it again
+            self.openLeftSidebarMenu(driver, "navbar-toggler")
+
+            driver.find_element_by_link_text("PATIENT OVERVIEW").click()
             time.sleep(1.5)
 
-            driver.find_element_by_link_text("Sample Analysis").click()
+            self.openLeftSidebarMenu(driver, "navbar-toggler")
+
+            driver.find_element_by_link_text("SAMPLE ANALYSIS").click()
             time.sleep(1.5)
+            driver.find_element_by_id("sampleSearch").click()
+            time.sleep(1.5)
+
+            self.openLeftSidebarMenu(driver, "navbar-toggler")
             
-            driver.find_element_by_link_text("Custom Visualization").click()
+            driver.find_element_by_link_text("CUSTOM VISUALIZATION").click()
             time.sleep(1.5)
             driver.find_element_by_id("adv1_confirm").click()
             time.sleep(1.5)
             driver.find_element_by_id("adv2_confirm").click()
             time.sleep(1.5)
+
+            self.openRightSideMenu(driver, "//*[@data-target='#navigation']")            
             
             driver.find_element_by_id("user-dropdown-top").click()
             time.sleep(1.0)
