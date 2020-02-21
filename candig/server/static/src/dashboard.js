@@ -2,6 +2,8 @@
 
 $(window).on('load', function() {
 
+    changeClass("nav_1");
+
     makeRequest("datasets/search", {}).then(function(response) {
 
         const data = JSON.parse(response);

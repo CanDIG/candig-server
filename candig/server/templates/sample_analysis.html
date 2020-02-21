@@ -14,13 +14,13 @@
    {% endblock %}
 
    {% block content %}
-      <div id="sample_analysis">
+      <div class="main-panel container-fluid" id="sample_analysis" style="padding-top: 80px; background: white">
         <h2 style="text-align: center; margin-bottom: 100px;" class="title" id="sample_analysis_title">Sample Analysis</h2>
-         <div class="wrapper" style="margin-top: 50px">
+         <div class="old_wrapper" style="margin-top: 50px">
                <select class="form-control" id="sampleSelect"></select>
                <button id="sampleSearch" class="btn btn-primary" name="submit">Submit</button>
          </div>
-         <div class="container-fluid row" style="margin-top: 50px;">
+         <div class="row" style="margin-top: 50px;">
                <div class="col-sm-2 ag-theme-balham" id="extractions"></div>
                <div class="col-sm-2 ag-theme-balham" id="alignments"></div>
                <div class="col-sm-2 ag-theme-balham" id="sequencing"></div>

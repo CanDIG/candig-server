@@ -4,6 +4,8 @@ let sample_analysis_instance;
 
 $(window).on('load', function() {
 
+    changeClass("nav_4");
+
     makeRequest("datasets/search", {}).then(function (response) {
 
         const data = JSON.parse(response);
