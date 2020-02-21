@@ -12,9 +12,12 @@ import time
 import logging
 
 from selenium import webdriver
-from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.firefox.options import Options as FireFoxOptions
-from selenium.common.exceptions import NoSuchElementException, WebDriverException
+from selenium.common.exceptions import (
+    ElementNotInteractableException,
+    NoSuchElementException,
+    WebDriverException,
+)
 
 
 logger = logging.getLogger(__file__)
