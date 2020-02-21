@@ -6,6 +6,7 @@ import os
 import glob
 import shutil
 import tempfile
+import subprocess
 import unittest
 
 import candig.server.exceptions as exceptions
@@ -1324,3 +1325,261 @@ class TestInvalidAddRemovePeer(AbstractRepoManagerTest):
         """
         with self.assertRaises(SystemExit):
             self._removePeer(paths.emptyPeerUlr)
+
+
+class TestValidRemoveFromDataset(AbstractRepoManagerTest):
+    """
+    This class tests valid inputs for methods from class "Repomanager".
+    The following methods are being tested here:
+    - removePatient
+    - removeEnrolment
+    - removeSample
+    - removeChemotherapy
+    - removeImmunotherapy
+    - removeTreatment
+    - removeDiagnosis
+    - removeTumourboard
+    - removeOutcome
+    - removeComplication
+    - removeConsent
+    - removeCellTransplant
+    - removeSurgery
+    - removeStudy
+    - removeSlide
+    - removeLabtest
+    """
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestValidRemoveFromDataset, self).setUp()
+        self.init()
+        self.addDataset()        
+        FNULL = open(os.devnull, 'w')
+        subprocess.call(['ingest', self._repoPath, 'dataset1', 
+                        paths.sampleClinMetadata], stdout=FNULL, 
+                        stderr=subprocess.STDOUT)
+
+        # When adding to this dictionary, please follow below schema:
+        # {table_name: (id, exception class that is expected)}
+        self.dataDict = {
+            "patient": (
+                "PATIENT_49845",
+                exceptions.ClinicalLocalIdNotFoundException),
+            "enrollment": (
+                "PATIENT_49845_02/01/2005",
+                exceptions.ClinicalLocalIdNotFoundException),
+            "sample": (
+                "PATIENT_49845_SAMPLE_58628", 
+                exceptions.SampleNotFoundException),
+            "chemotherapy": (
+                "PATIENT_49845_PATIENT_49845_44159_LEUCOVORIN",
+                exceptions.ChemotherapyNotFoundException),
+            "immunotherapy": (
+                "PATIENT_49845_PATIENT_49845_44159_2014-09-22",
+                exceptions.ImmunotherapyNotFoundException),
+            "treatment": (
+                "PATIENT_49845_06/25/2004",
+                exceptions.TreatmentNotFoundException),
+            "diagnosis": (
+                "PATIENT_49845_11/08/2008",
+                exceptions.DiagnosisNotFoundException),
+            "tumourboard": (
+                "PATIENT_49845_07/09/2014",
+                exceptions.TumourboardNotFoundException),
+            "outcome": (
+                "PATIENT_49845_08/22/2012",
+                exceptions.OutcomeNotFoundException),
+            "complication": (
+                "PATIENT_49845_10/18/2006",
+                exceptions.ComplicationNotFoundException),
+            "consent": (
+                "PATIENT_49845_03/06/2007", 
+                exceptions.ConsentNotFoundException),
+            "celltransplant": (
+                "PATIENT_49845_PATIENT_49845_44159_2016-01-02",
+                exceptions.CelltransplantNotFoundException),
+            "surgery": (
+                "PATIENT_49845_PATIENT_49845_44159_2016-06-15_SAMPLE_58628",
+                exceptions.SurgeryNotFoundException),
+            "study": (
+                "PATIENT_49845_2014-04-17",
+                exceptions.StudyNotFoundException),
+            "slide": (
+                "PATIENT_49845_48236",
+                exceptions.SlideNotFoundException),
+            "labtest": (
+                "PATIENT_49845_2016-07-20",
+                exceptions.LabtestNotFoundException),
+        }
+
+    def _getDataset(self):
+        """
+        This is a helper method that returns the updated dataset
+        """
+        return self.readRepo().getDatasetByName("dataset1")
+
+    def _executeRemoveCommand(self, table, value):
+        """
+        This is a helper method that executes a "remove" command and 
+        returns updated dataset.
+        Args:
+            table: Table you want to run "remove" command
+            value: Value you want to delete from table
+        """
+        self.runCommand("remove-{} -f {} dataset1 {}".format(
+            table, 
+            self._repoPath,
+            value
+        ))
+        return self._getDataset()
+
+    def _removeDataFromTable(self, table, value, exception_):
+        """
+        This helper method verifies if "value" is being removed
+        from "table". Please note, This method will fail if "value"
+        is not present in "table" before running "remove" comand.
+        """
+        capital_table = table.title()
+        
+        try:
+            getattr(self._getDataset(), 
+                    "get{}ByName".format(capital_table))(value)
+        except exception_:
+            self.fail("{} name {} should be present in dataset. "
+                      "Aborting test!".format(capital_table, value))        
+        with self.assertRaises(exception_):            
+            getattr(self._executeRemoveCommand(table, value), 
+                    "get{}ByName".format(capital_table))(value)
+
+    def testRemoveMethods(self):
+        """
+        This method loops throught "dataDict" dict and test each of them.
+        When there is a new "remove" method to be tested and there 
+        is a method that follows the format "get{}ByName", the data
+        must be added to "dataDict" dictionary
+        """
+        for table, tuple_ in self.dataDict.items():
+            self._removeDataFromTable(table, *tuple_)
+           
+
+class TestInvalidRemoveFromDataset(AbstractRepoManagerTest):
+    """
+    This class tests invalid inputs for methods from class "Repomanager".
+    The following methods are being tested here:
+    - removePatient
+    - removeEnrolment
+    - removeSample
+    - removeChemotherapy
+    - removeImmunotherapy
+    - removeTreatment
+    - removeDiagnosis
+    - removeTumourboard
+    - removeOutcome
+    - removeComplication
+    - removeConsent
+    - removeCellTransplant
+    - removeSurgery
+    - removeStudy
+    - removeSlide
+    - removeLabtest
+    """
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestInvalidRemoveFromDataset, self).setUp()
+        self.init()
+        self.addDataset()
+
+        FNULL = open(os.devnull, 'w')
+        subprocess.call(['ingest', self._repoPath, 'dataset1', 
+                        paths.sampleClinMetadata], 
+                        stdout=FNULL, stderr=subprocess.STDOUT)
+        # When adding to this dictionary, please follow below schema:
+        # {table_name: ([invalid values], exception class that is expected)}
+        self.invalidDataDict = {
+            "patient": (
+                ["INVALID_PATIENT", ""], 
+                exceptions.ClinicalLocalIdNotFoundException),
+            "enrollment": (
+                ["INVALID_ENROLLMENT", ""],
+                exceptions.ClinicalLocalIdNotFoundException),
+            "sample": (
+                ["INVALID_SAMPLE", ""],
+                exceptions.SampleNotFoundException),
+            "chemotherapy": (
+                ["INVALID_CHEMO", ""],
+                exceptions.ChemotherapyNotFoundException),
+            "immunotherapy": (
+                ["INVALID_IMMUN", ""],
+                exceptions.ImmunotherapyNotFoundException),
+            "treatment": (
+                ["INVALID_TREATMENT", ""],
+                exceptions.TreatmentNotFoundException),
+            "diagnosis": (
+                ["INVALID_DIAGNOSIS", ""],
+                exceptions.DiagnosisNotFoundException),
+            "tumourboard": (
+                ["INVALID_TUMOURBOARD", ""],
+                exceptions.TumourboardNotFoundException),
+            "outcome": (
+                ["INVALID_OUTCOME", ""],
+                exceptions.OutcomeNotFoundException),
+            "complication": (
+                ["INVALID_COMPLICATION", ""],
+                exceptions.ComplicationNotFoundException),
+            "consent": (
+                ["INVALID_CONSENT", ""],
+                exceptions.ConsentNotFoundException),
+            "celltransplant": (
+                ["INVALID_CELLTRANSPLANT", ""],
+                exceptions.CelltransplantNotFoundException),
+            "surgery": (
+                ["INVALID_SURGERY", ""],
+                exceptions.SurgeryNotFoundException),
+            "study": (
+                ["INVALID_STUDY", ""],
+                exceptions.StudyNotFoundException),
+            "slide": (
+                ["INVALID_SLIDE", ""],
+                exceptions.SlideNotFoundException),
+            "labtest": (
+                ["INVALID_LABTEST", ""],
+                exceptions.LabtestNotFoundException),
+        }
+
+    def _getDataset(self):
+        """
+        This is a helper method that returns the updated dataset
+        """
+        return self.readRepo().getDatasetByName("dataset1")
+
+    def _executeRemoveCommand(self, table, value):
+        """
+        This is a helper method that executes a "remove" command and 
+        return updated dataset.
+        Args:
+            table: Table you want to run "remove" command
+            value: Value you want to delete from table
+        """
+        self.runCommand("remove-{} -f {} dataset1 {}".format(
+            table, 
+            self._repoPath,
+            value
+        ))
+        return self._getDataset()
+
+    def testRemoveInvalidData(self):
+        """
+        This method loops through "invalidDataDict" dict and test 
+        each of them.
+        When there is a new "remove" method to be tested and there 
+        is a method that follows the format "get{}ByName", the data
+        must be added to "invalidDataDict" dictionary following the format
+        """
+        for table, data in self.invalidDataDict.items():
+            invalid_data, exception_ = data
+            for value in invalid_data:
+                with self.assertRaises((SystemExit, exception_)):
+                    self._executeRemoveCommand(table, value)

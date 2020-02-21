@@ -336,10 +336,22 @@ class EnrollmentNotFoundException(NotFoundException):
             enrollmentId)
 
 
+class ClinicalLocalIdNotFoundException(NotFoundException):
+    def __init__(self, table, name):
+        self.message = "The requested {} '{}' was not found".format(
+            table, name)        
+
+
 class ConsentNotFoundException(NotFoundException):
     def __init__(self, consentId):
         self.message = "The requested Consent '{}' was not found".format(
             consentId)
+
+
+class ConsentNameNotFoundException(NotFoundException):
+    def __init__(self, consentName):
+        self.message = "The requested Consent name '{}' was not found".format(
+            consentName)
 
 
 class DiagnosisNotFoundException(NotFoundException):

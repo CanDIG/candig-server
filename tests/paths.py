@@ -22,6 +22,9 @@ testDataDir = os.path.join(testDir, 'data')
 testDataRepo = os.path.join(testDataDir, 'registry.db')
 testAccessList = os.path.join(testDataDir, 'acl.tsv')
 
+# Sample clinical Metadata
+sampleClinMetadata = os.path.join(testDataDir, 'sample_clin_metadata.json')
+
 # Valid and invalid Duo Json files
 testValidDuoJson = os.path.join(testDataDir, 'valid_duo.json')
 testInvalidDuoJson = os.path.join(testDataDir, 'invalid_duo.json')
