@@ -1360,7 +1360,7 @@ class TestValidRemoveFromDataset(AbstractRepoManagerTest):
                         paths.sampleClinMetadata], stdout=FNULL, 
                         stderr=subprocess.STDOUT)
 
-        # When adding to this dictionary, please follow bellow schema:
+        # When adding to this dictionary, please follow below schema:
         # {table_name: (id, exception class that is expected)}
         self.dataDict = {
             "patient": (
@@ -1422,7 +1422,7 @@ class TestValidRemoveFromDataset(AbstractRepoManagerTest):
     def _executeRemoveCommand(self, table, value):
         """
         This is a helper method that executes a "remove" command and 
-        return updated dataset.
+        returns updated dataset.
         Args:
             table: Table you want to run "remove" command
             value: Value you want to delete from table
@@ -1496,7 +1496,7 @@ class TestInvalidRemoveFromDataset(AbstractRepoManagerTest):
         subprocess.call(['ingest', self._repoPath, 'dataset1', 
                         paths.sampleClinMetadata], 
                         stdout=FNULL, stderr=subprocess.STDOUT)
-        # When adding to this dictionary, please follow bellow schema:
+        # When adding to this dictionary, please follow below schema:
         # {table_name: ([invalid values], exception class that is expected)}
         self.invalidDataDict = {
             "patient": (
@@ -1572,7 +1572,7 @@ class TestInvalidRemoveFromDataset(AbstractRepoManagerTest):
 
     def testRemoveInvalidData(self):
         """
-        This method loops throught "invalidDataDict" dict and test 
+        This method loops through "invalidDataDict" dict and test 
         each of them.
         When there is a new "remove" method to be tested and there 
         is a method that follows the format "get{}ByName", the data
