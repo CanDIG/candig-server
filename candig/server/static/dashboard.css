@@ -28,12 +28,7 @@
      margin-bottom: 3px;
      text-align: center;
 }
- .single {
-     background-color: olive;
-}
- .double {
-     background-color: aqua;
-}
+
  #backButton {
      border-radius: 4px;
      padding: 8px;
@@ -66,7 +61,7 @@
      width: 40%;
      margin-right: 20px;
 }
- #searchBtn {
+/* #searchBtn {
      width: 10%;
      padding: 10px;
      color: white;
@@ -74,7 +69,7 @@
      border: 1px solid grey;
      border-left: none;
      cursor: pointer;
-}
+}*/
  #geneTable {
      text-align: center;
 }
@@ -114,10 +109,11 @@
     }
 }
  .container-fluid {
-     height: 100% !important;
+/*     height: 100% !important;
      padding-right: 50px;
      padding-left: 50px;
-     margin-right: auto;
+     margin-right: auto;*/
+     padding-left: 20px;
 }
  #backButton {
      border-radius: 4px;
@@ -163,7 +159,7 @@
     display: none
 }
 
-.wrapper {
+.old_wrapper {
     display: flex;
     justify-content: center;
 }
@@ -210,6 +206,10 @@
     padding: .3rem 1rem;
 }
 
-body {
+/*body {
     font-family: 'Roboto', sans-serif;
+}*/
+
+.alert .close {
+    margin-top: 13px;
 }
