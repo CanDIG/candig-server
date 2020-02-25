@@ -1,120 +1,213 @@
-/*The following are stylesheets applied site-wide*/
- .centerize {
-     display: flex;
-     justify-content: center;
+/* The following are stylesheets applied site-wide*/
+
+.panel-height {
+  height: 100%;
 }
- .loader {
-     border: 8px solid #f3f3f3;
-     border-radius: 50%;
-     border-top: 8px solid #3498db;
-     width: 60px;
-     height: 60px;
-     -webkit-animation: spin 2s linear infinite;
+
+.centerize {
+  display: flex;
+  justify-content: center;
+}
+
+.loader {
+  border: 8px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 8px solid #3498db;
+  width: 60px;
+  height: 60px;
+  -webkit-animation: spin 2s linear infinite;
     /* Safari */
-     animation: spin 2s linear infinite;
-     margin-top: 100px;
+  animation: spin 2s linear infinite;
+  margin-top: 100px;
 }
 /* Safari */
- @-webkit-keyframes spin {
-     0% {
-         -webkit-transform: rotate(0deg);
-    }
-     100% {
-         -webkit-transform: rotate(360deg);
-    }
-}
- @keyframes spin {
-     0% {
-         transform: rotate(0deg);
-    }
-     100% {
-         transform: rotate(360deg);
-    }
-}
- .container-fluid {
-     padding-left: 20px;
-}
- .title {
-     margin-top: 100px;
-     text-align: center
-}
- .card {
-     padding-top: 0.5rem !important;
-     padding-left: 0.25rem !important;
-     border-radius: 4px;
-     border-width: 0px !important;
-     height: 15rem;
-     margin-bottom: 3px;
-     text-align: center;
-}
- .alert {
-     margin-bottom: 0 !important;
-}
- .noPermission {
-     position: absolute;
-     top: 50%;
-     left: 0;
-     right: 0;
-}
- .navbar {
-     padding: .3rem 1rem;
-}
- .alert .close {
-     margin-top: 13px;
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }
 
-/*The following applies to homepage*/
- #candig {
-     background: #f8f9fa !important;
-}
- #drugScatter .highcharts-legend {
-     display: none 
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-/*The following applies to gene_search page*/
- #gene_search_parent input[type=text] {
-     padding: 10px;
-     font-size: 17px;
-     border: 1px solid grey;
-     width: 40%;
-     margin-right: 20px;
-}
- #confirmRG {
-     margin-left: 15px;
-}
- #geneTable {
-     text-align: center;
-}
- #geneTable_wrap {
-     margin-top: 50px;
-}
- #readGroupSelector select {
-     margin-right: 20px;
-     margin-left: 10px;
+.container-fluid {
+  padding-left: 15px;
 }
 
-/*The following applies to patients_overview page*/
- #mergedTreatmentsDiagnosesTable_wrapper{
-     margin-top: 10px;
-}
- #mergedTreatmentsDiagnosesTable_length{
-     display: none;
-}
- #mergedTreatmentsDiagnosesTable_filter {
-     display: none;
-}
- #mergedTreatmentsDiagnosesTable_info {
-     display: none;
-}
- #mergedTreatmentsDiagnosesTable_paginate {
-     display: none;
-}
- #patients_table {
-     cursor: pointer;
+.title {
+  margin-top: 100px;
+  text-align: center;
 }
 
-/*The following applies to sample_analysis page*/
- #sampleSelect {
-     width: 250px;
-     margin-right: 20px 
+.card {
+  padding-top: 0.5rem !important;
+  padding-left: 0.25rem !important;
+  border-radius: 4px;
+  border-width: 0px !important;
+  height: 15rem;
+  margin-bottom: 3px;
+  text-align: center;
+}
+
+.alert {
+  margin-bottom: 0 !important;
+}
+
+.noPermission {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+}
+
+.navbar {
+  padding: .3rem 1rem;
+}
+
+.alert .close {
+  margin-top: 13px;
+}
+
+/* The following applies to homepage*/
+#candig {
+  background: #f8f9fa !important;
+}
+
+#drugScatter .highcharts-legend {
+  display: none;
+}
+
+/* The following applies to gene_search page*/
+#gene_search_parent input[type=text] {
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid grey;
+  width: 40%;
+  margin-right: 20px;
+}
+
+#confirmRG {
+  margin-left: 15px;
+}
+
+#geneTable {
+  text-align: center;
+}
+
+#geneTable_wrap {
+  margin-top: 50px;
+}
+
+#readGroupSelector select {
+  margin-right: 20px;
+  margin-left: 10px;
+}
+
+/* The following applies to patients_overview page*/
+.po_graph {
+  max-width: 100%;
+  height: 250px;
+}
+
+#mergedTreatmentsDiagnosesTable_wrapper {
+  margin-top: 10px;
+}
+
+#mergedTreatmentsDiagnosesTable_length {
+  display: none;
+}
+
+#mergedTreatmentsDiagnosesTable_filter {
+  display: none;
+}
+
+#mergedTreatmentsDiagnosesTable_info {
+  display: none;
+}
+
+#mergedTreatmentsDiagnosesTable_paginate {
+  display: none;
+}
+
+#patients_table {
+  cursor: pointer;
+}
+
+/* The following applies to sample_analysis page*/
+#sampleSelect {
+  width: 250px;
+  margin-right: 20px;
+}
+
+/* The following applies to custom_visualization page*/
+
+.cv_form_table, .cv_form_field, .cv_form_type {
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+#adv1_confirm, #adv2_confirm {
+  margin-top: 10px;
+}
+
+.cv_form_table {
+  width: 120px;
+}
+
+.cv_form_field {
+  width: 200px;
+}
+
+.cv_form_type {
+  width: 100px;
+}
+
+.cv_chart {
+  margin-top: 20px;
+  min-height: 400px;
+}
+
+/* The following applies to mobile devices*/
+
+@media only screen and (max-width: 600px) {
+
+   /* The following applies site-wide*/
+  .title {
+    margin-top: 50px;
+  }
+
+  .panel-height {
+    height: auto;
+  }
+
+   /* The following applies to gene_search*/
+  #readGroupSelector {
+    margin-left: 20px;
+  }
+
+  #confirmRG {
+    margin-left: 60px;
+    margin-top: 10px;
+  }
+
+   /* The following applies to patients_overview*/
+  #gene_search_parent input[type=text] {
+    width: 200px;
+  }
+
+   /* The following applies to custom visualization*/
+  .cv_chart {
+    min-height: 200px;
+  }
 }
