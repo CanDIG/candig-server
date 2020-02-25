@@ -206,6 +206,11 @@
     width: 200px;
   }
 
+   /* The following applies to sample_analysis */
+  .ag-theme-balham {
+    margin-top: 10px;
+  }
+
    /* The following applies to custom visualization*/
   .cv_chart {
     min-height: 200px;
