@@ -51,7 +51,7 @@ Flask-Cors==3.0.6
 Flask==1.0.2
 protobuf==3.3.0
 humanize==0.5.1
-pysam==0.13
+pysam==0.14
 requests==2.20.0
 requests-futures==0.9.8
 oic==0.15.1
