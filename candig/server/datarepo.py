@@ -1027,7 +1027,7 @@ class SqlDataRepository(AbstractDataRepository):
                 #        print out number of tuples in graph
 
     def _createSystemTable(self):
-        self.database.create_table(models.System)
+        self.database.create_tables([models.System])
         models.System.create(
             key=self.systemKeySchemaVersion, value=self.version)
         models.System.create(
@@ -1048,7 +1048,7 @@ class SqlDataRepository(AbstractDataRepository):
                 schemaVersion, self.version)
 
     def _createOntologyTable(self):
-        self.database.create_table(models.Ontology)
+        self.database.create_tables([models.Ontology])
 
     def insertOntology(self, ontology):
         """
@@ -1076,11 +1076,11 @@ class SqlDataRepository(AbstractDataRepository):
         """
         Removes the specified ontology term map from this repository.
         """
-        q = models.Ontology.delete().where(id == ontology.getId())
+        q = models.Ontology.delete().where(models.Ontology.id == ontology.getId())
         q.execute()
 
     def _createReferenceTable(self):
-        self.database.create_table(models.Reference)
+        self.database.create_tables([models.Reference])
 
     def insertReference(self, reference):
         """
@@ -1108,7 +1108,7 @@ class SqlDataRepository(AbstractDataRepository):
             referenceSet.addReference(reference)
 
     def _createReferenceSetTable(self):
-        self.database.create_table(models.Referenceset)
+        self.database.create_tables([models.Referenceset])
 
     def insertReferenceSet(self, referenceSet):
         """
@@ -1143,7 +1143,7 @@ class SqlDataRepository(AbstractDataRepository):
             self.addReferenceSet(referenceSet)
 
     def _createDatasetTable(self):
-        self.database.create_table(models.Dataset)
+        self.database.create_tables([models.Dataset])
 
     def insertDataset(self, dataset):
         """
@@ -1215,7 +1215,7 @@ class SqlDataRepository(AbstractDataRepository):
             self.addDataset(dataset)
 
     def _createReadGroupTable(self):
-        self.database.create_table(models.Readgroup)
+        self.database.create_tables([models.Readgroup])
 
     def insertReadGroup(self, readGroup):
         """
@@ -1486,7 +1486,7 @@ class SqlDataRepository(AbstractDataRepository):
             readGroupSet.addReadGroup(readGroup)
 
     def _createReadGroupSetTable(self):
-        self.database.create_table(models.Readgroupset)
+        self.database.create_tables([models.Readgroupset])
 
     def insertReadGroupSet(self, readGroupSet):
         """
@@ -1551,7 +1551,7 @@ class SqlDataRepository(AbstractDataRepository):
             dataset.addReadGroupSet(readGroupSet)
 
     def _createVariantAnnotationSetTable(self):
-        self.database.create_table(models.Variantannotationset)
+        self.database.create_tables([models.Variantannotationset])
 
     def insertVariantAnnotationSet(self, variantAnnotationSet):
         """
@@ -1587,7 +1587,7 @@ class SqlDataRepository(AbstractDataRepository):
             variantSet.addVariantAnnotationSet(variantAnnotationSet)
 
     def _createCallSetTable(self):
-        self.database.create_table(models.Callset)
+        self.database.create_tables([models.Callset])
 
     def insertCallSet(self, callSet):
         """
@@ -1613,7 +1613,7 @@ class SqlDataRepository(AbstractDataRepository):
             variantSet.addCallSet(callSet)
 
     def _createVariantSetTable(self):
-        self.database.create_table(models.Variantset)
+        self.database.create_tables([models.Variantset])
 
     def insertVariantSet(self, variantSet):
         """
@@ -1659,7 +1659,7 @@ class SqlDataRepository(AbstractDataRepository):
             dataset.addVariantSet(variantSet)
 
     def _createFeatureSetTable(self):
-        self.database.create_table(models.Featureset)
+        self.database.create_tables([models.Featureset])
 
     def insertFeatureSet(self, featureSet):
         """
@@ -1701,7 +1701,7 @@ class SqlDataRepository(AbstractDataRepository):
             dataset.addFeatureSet(featureSet)
 
     def _createContinuousSetTable(self):
-        self.database.create_table(models.ContinuousSet)
+        self.database.create_tables([models.ContinuousSet])
 
     def insertContinuousSet(self, continuousSet):
         """
@@ -1732,10 +1732,10 @@ class SqlDataRepository(AbstractDataRepository):
             dataset.addContinuousSet(continuousSet)
 
     def _createBiosampleTable(self):
-        self.database.create_table(models.Biosample)
+        self.database.create_tables([models.Biosample])
 
     def _createExperimentTable(self):
-        self.database.create_table(models.Experiment)
+        self.database.create_tables([models.Experiment])
 
     def insertBiosample(self, biosample):
         """
@@ -1818,7 +1818,7 @@ class SqlDataRepository(AbstractDataRepository):
             self.addExperiment(experiment)
 
     def _createAnalysisTable(self):
-        self.database.create_table(models.Analysis)
+        self.database.create_tables([models.Analysis])
 
     def insertAnalysis(self, analysis):
         """
@@ -1852,7 +1852,7 @@ class SqlDataRepository(AbstractDataRepository):
             self.addAnalysis(analysis)
 
     def _createPatientTable(self):
-        self.database.create_table(models.Patient)
+        self.database.create_tables([models.Patient])
 
     def insertPatient(self, patient):
         """
@@ -1929,7 +1929,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Patient, clinical_metadata.Patient, dataset.addPatient)
 
     def _createEnrollmentTable(self):
-        self.database.create_table(models.Enrollment)
+        self.database.create_tables([models.Enrollment])
 
     def insertEnrollment(self, enrollment):
         """
@@ -1993,7 +1993,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Enrollment, clinical_metadata.Enrollment, dataset.addEnrollment)
 
     def _createConsentTable(self):
-        self.database.create_table(models.Consent)
+        self.database.create_tables([models.Consent])
 
     def insertConsent(self, consent):
         """
@@ -2065,7 +2065,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Consent, clinical_metadata.Consent, dataset.addConsent)
 
     def _createDiagnosisTable(self):
-        self.database.create_table(models.Diagnosis)
+        self.database.create_tables([models.Diagnosis])
 
     def insertDiagnosis(self, diagnosis):
         """
@@ -2155,7 +2155,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Diagnosis, clinical_metadata.Diagnosis, dataset.addDiagnosis)
 
     def _createSampleTable(self):
-        self.database.create_table(models.Sample)
+        self.database.create_tables([models.Sample])
 
     def insertSample(self, sample):
         """
@@ -2235,7 +2235,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Sample, clinical_metadata.Sample, dataset.addSample)
 
     def _createTreatmentTable(self):
-        self.database.create_table(models.Treatment)
+        self.database.create_tables([models.Treatment])
 
     def insertTreatment(self, treatment):
         """
@@ -2291,7 +2291,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Treatment, clinical_metadata.Treatment, dataset.addTreatment)
 
     def _createOutcomeTable(self):
-        self.database.create_table(models.Outcome)
+        self.database.create_tables([models.Outcome])
 
     def insertOutcome(self, outcome):
         """
@@ -2355,7 +2355,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Outcome, clinical_metadata.Outcome, dataset.addOutcome)
 
     def _createComplicationTable(self):
-        self.database.create_table(models.Complication)
+        self.database.create_tables([models.Complication])
 
     def insertComplication(self, complication):
         """
@@ -2399,7 +2399,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Complication, clinical_metadata.Complication, dataset.addComplication)
 
     def _createTumourboardTable(self):
-        self.database.create_table(models.Tumourboard)
+        self.database.create_tables([models.Tumourboard])
 
     def insertTumourboard(self, tumourboard):
         """
@@ -2491,7 +2491,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Tumourboard, clinical_metadata.Tumourboard, dataset.addTumourboard)
 
     def _createChemotherapyTable(self):
-        self.database.create_table(models.Chemotherapy)
+        self.database.create_tables([models.Chemotherapy])
 
     def insertChemotherapy(self, chemotherapy):
         """
@@ -2557,7 +2557,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Chemotherapy, clinical_metadata.Chemotherapy, dataset.addChemotherapy)
 
     def _createRadiotherapyTable(self):
-        self.database.create_table(models.Radiotherapy)
+        self.database.create_tables([models.Radiotherapy])
 
     def insertRadiotherapy(self, radiotherapy):
         """
@@ -2642,7 +2642,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Radiotherapy, clinical_metadata.Radiotherapy, dataset.addRadiotherapy)
 
     def _createSurgeryTable(self):
-        self.database.create_table(models.Surgery)
+        self.database.create_tables([models.Surgery])
 
     def insertSurgery(self, surgery):
         """
@@ -2697,7 +2697,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Surgery, clinical_metadata.Surgery, dataset.addSurgery)
 
     def _createImmunotherapyTable(self):
-        self.database.create_table(models.Immunotherapy)
+        self.database.create_tables([models.Immunotherapy])
 
     def insertImmunotherapy(self, immunotherapy):
         """
@@ -2744,7 +2744,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Immunotherapy, clinical_metadata.Immunotherapy, dataset.addImmunotherapy)
 
     def _createCelltransplantTable(self):
-        self.database.create_table(models.Celltransplant)
+        self.database.create_tables([models.Celltransplant])
 
     def insertCelltransplant(self, celltransplant):
         """
@@ -2789,7 +2789,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Celltransplant, clinical_metadata.Celltransplant, dataset.addCelltransplant)
 
     def _createSlideTable(self):
-        self.database.create_table(models.Slide)
+        self.database.create_tables([models.Slide])
 
     def insertSlide(self, slide):
         """
@@ -2856,7 +2856,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Slide, clinical_metadata.Slide, dataset.addSlide)
 
     def _createStudyTable(self):
-        self.database.create_table(models.Study)
+        self.database.create_tables([models.Study])
 
     def insertStudy(self, study):
         """
@@ -2899,7 +2899,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Study, clinical_metadata.Study, dataset.addStudy)
 
     def _createLabtestTable(self):
-        self.database.create_table(models.Labtest)
+        self.database.create_tables([models.Labtest])
 
     def insertLabtest(self, labtest):
         """
@@ -2948,7 +2948,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Labtest, clinical_metadata.Labtest, dataset.addLabtest)
 
     def _createExtractionTable(self):
-        self.database.create_table(models.Extraction)
+        self.database.create_tables([models.Extraction])
 
     def insertExtraction(self, extraction):
         """
@@ -2993,7 +2993,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Extraction, pipeline_metadata.Extraction, dataset.addExtraction)
 
     def _createSequencingTable(self):
-        self.database.create_table(models.Sequencing)
+        self.database.create_tables([models.Sequencing])
 
     def insertSequencing(self, sequencing):
         """
@@ -3046,7 +3046,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Sequencing, pipeline_metadata.Sequencing, dataset.addSequencing)
 
     def _createAlignmentTable(self):
-        self.database.create_table(models.Alignment)
+        self.database.create_tables([models.Alignment])
 
     def insertAlignment(self, alignment):
         """
@@ -3113,7 +3113,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.Alignment, pipeline_metadata.Alignment, dataset.addAlignment)
 
     def _createVariantCallingTable(self):
-        self.database.create_table(models.VariantCalling)
+        self.database.create_tables([models.VariantCalling])
 
     def insertVariantCalling(self, variantCalling):
         """
@@ -3175,7 +3175,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.VariantCalling, pipeline_metadata.VariantCalling, dataset.addVariantCalling)
 
     def _createFusionDetectionTable(self):
-        self.database.create_table(models.FusionDetection)
+        self.database.create_tables([models.FusionDetection])
 
     def insertFusionDetection(self, fusionDetection):
         """
@@ -3228,7 +3228,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.FusionDetection, pipeline_metadata.FusionDetection, dataset.addFusionDetection)
 
     def _createExpressionAnalysisTable(self):
-        self.database.create_table(models.ExpressionAnalysis)
+        self.database.create_tables([models.ExpressionAnalysis])
 
     def insertExpressionAnalysis(self, expressionAnalysis):
         """
@@ -3277,7 +3277,7 @@ class SqlDataRepository(AbstractDataRepository):
             self._readClinPipeTable(dataset, models.ExpressionAnalysis, pipeline_metadata.ExpressionAnalysis, dataset.addExpressionAnalysis)
 
     def _createIndividualTable(self):
-        self.database.create_table(models.Individual)
+        self.database.create_tables([models.Individual])
 
     def insertIndividual(self, individual):
         """
@@ -3319,10 +3319,10 @@ class SqlDataRepository(AbstractDataRepository):
             dataset.addIndividual(individual)
 
     def _createPhenotypeAssociationSetTable(self):
-        self.database.create_table(models.Phenotypeassociationset)
+        self.database.create_tables([models.Phenotypeassociationset])
 
     def _createRnaQuantificationSetTable(self):
-        self.database.create_table(models.Rnaquantificationset)
+        self.database.create_tables([models.Rnaquantificationset])
 
     def insertPhenotypeAssociationSet(self, phenotypeAssociationSet):
         """
@@ -3423,8 +3423,7 @@ class SqlDataRepository(AbstractDataRepository):
 
     def _createNetworkTables(self):
         """"""
-        self.database.create_table(models.Peer)
-        self.database.create_table(models.Announcement)
+        self.database.create_tables([models.Peer, models.Announcement])
 
     def initialise(self):
         """
