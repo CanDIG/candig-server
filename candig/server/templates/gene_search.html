@@ -15,18 +15,17 @@
      {{ super() }}
    {% endblock %}
    {% block content %}
-      <div id="gene_search">
-         <div class="container-fluid">
-            <h2 style="text-align: center; margin-bottom: 100px" class="title" id="title">Gene Search</h2>
+      <div id="gene_search" class="main-panel container-fluid" style="padding-top: 100px; background: white">
+            <h2 style="margin-bottom: 100px" class="title" id="title">Gene Search</h2>
 
-            <form class="wrapper" id="gene_search_parent" action="javascript:submit()">
+            <form class="centerize" id="gene_search_parent" action="javascript:submit()">
             <input type="text" id="request" name="search" placeholder="Search.."/>
             <button id="searchBtn" class="btn btn-primary" name="submit">Submit</button>
             </form>
             <div class="loader mx-auto" id="loader" style="display: none"></div>
              <div id="geneTable_wrap" style="overflow: scroll; display: none"><table id="geneTable" class="table table-striped table-bordered nowrap"></table></div>
 
-            <div class="container wrapper">
+            <div class="container centerize">
                <div id="readGroupSelector" class="form-inline" style="display: none; margin-top: 50px; margin-bottom: 50px">
                    <div class="form-group">
                     <label for="rgSelect">Select up to three read group sets: </label>
@@ -37,7 +36,6 @@
                </div>
             </div>
             <div id="igvSample" ></div>
-         </div>
       </div>
 </body>
    {% endblock %}
