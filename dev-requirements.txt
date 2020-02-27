@@ -18,7 +18,7 @@ PyYAML==5.1
 
 nose
 pep8
-flake8==3.2.0
+flake8==3.7.9
 coverage
 selenium==3.141.0
 
