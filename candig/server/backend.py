@@ -744,8 +744,8 @@ class Backend(object):
                             qualified = False
                             break
                 elif not self.ops[filter["operator"].lower()](obj.mapper(filter["field"]), filter["value"]):
-                        qualified = False
-                        break
+                    qualified = False
+                    break
         except TypeError:
             raise exceptions.BadInputTypeException
         except (KeyError, AttributeError):
