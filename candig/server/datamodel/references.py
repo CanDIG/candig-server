@@ -376,7 +376,7 @@ class AbstractReference(datamodel.DatamodelObject):
         Returns the string representing the bases of this reference from
         start (inclusive) to end (exclusive).
         """
-        raise NotImplemented()
+        raise NotImplementedError()
 
 ##################################################################
 #
@@ -401,8 +401,8 @@ class SimulatedReferenceSet(AbstractReferenceSet):
             '{"term": "Homo sapiens", "termId": "9606"}')
         self._sourceAccessions = []
         for i in range(random.randint(1, 3)):
-                self._sourceAccessions.append("sim_accession_{}".format(
-                    random.randint(1, 2**32)))
+            self._sourceAccessions.append("sim_accession_{}".format(
+                random.randint(1, 2**32)))
         self._sourceUri = "http://example.com/reference.fa"
         for i in range(numReferences):
             referenceSeed = self._randomGenerator.getrandbits(32)
@@ -434,8 +434,8 @@ class SimulatedReference(AbstractReference):
             '{"term": "Homo sapiens", "termId": "9606"}')
         self._sourceAccessions = []
         for i in range(random.randint(1, 3)):
-                self._sourceAccessions.append("sim_accession_{}".format(
-                    random.randint(1, 2**32)))
+            self._sourceAccessions.append("sim_accession_{}".format(
+                random.randint(1, 2**32)))
         self._sourceUri = "http://example.com/reference.fa"
 
     def getBases(self, start, end):

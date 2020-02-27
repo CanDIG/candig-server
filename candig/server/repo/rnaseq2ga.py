@@ -219,7 +219,7 @@ class RsemWriter(AbstractWriter):
         self._confColLow = "TPM_ci_lower_bound"
         self._confColHi = "TPM_ci_upper_bound"
         self._countCol = "expected_count"
-        if self._featureType is "transcript":
+        if self._featureType == "transcript":
             self._idCol = "transcript_id"
         else:
             self._idCol = "gene_id"

@@ -399,11 +399,11 @@ class AbstractDataRepository(object):
                     "\t", rna_quantification_set.getLocalId(),
                     rna_quantification_set.getId(), sep="\t")
                 for quant in rna_quantification_set.getRnaQuantifications():
-                        print(
-                            "\t\t", quant.getLocalId(),
-                            quant._description,
-                            ",".join(quant._readGroupIds),
-                            ",".join(quant._featureSetIds), sep="\t")
+                    print(
+                        "\t\t", quant.getLocalId(),
+                        quant._description,
+                        ",".join(quant._readGroupIds),
+                        ",".join(quant._featureSetIds), sep="\t")
         print("Experiments:")
         for experiment in self.getExperiments():
             print(
@@ -1178,7 +1178,7 @@ class SqlDataRepository(AbstractDataRepository):
         """
         for datasetRecord in models.Dataset.select().where(
                 models.Dataset.id == dataset.getId()):
-                    datasetRecord.delete_instance(recursive=True)
+            datasetRecord.delete_instance(recursive=True)
 
     def removePhenotypeAssociationSet(self, phenotypeAssociationSet):
         """
@@ -1246,7 +1246,7 @@ class SqlDataRepository(AbstractDataRepository):
         """
         for readGroupSetRecord in models.Readgroupset.select().where(
                 models.Readgroupset.id == readGroupSet.getId()):
-                    readGroupSetRecord.delete_instance(recursive=True)
+            readGroupSetRecord.delete_instance(recursive=True)
 
     def removeVariantSet(self, variantSet):
         """
@@ -1255,7 +1255,7 @@ class SqlDataRepository(AbstractDataRepository):
         """
         for variantSetRecord in models.Variantset.select().where(
                 models.Variantset.id == variantSet.getId()):
-                    variantSetRecord.delete_instance(recursive=True)
+            variantSetRecord.delete_instance(recursive=True)
 
     def removeBiosample(self, biosample):
         """
@@ -1511,7 +1511,7 @@ class SqlDataRepository(AbstractDataRepository):
                 attributes=json.dumps(readGroupSet.getAttributes()))
             for readGroup in readGroupSet.getReadGroups():
                 self.insertReadGroup(readGroup)
-        except peewee.IntegrityError as e:
+        except peewee.IntegrityError:
             raise exceptions.DuplicateNameException(readGroupSet.getLocalId(),
                                                     readGroupSet.getParentContainer().getLocalId())
 
@@ -1639,7 +1639,7 @@ class SqlDataRepository(AbstractDataRepository):
                 patientId = variantSet.getPatientId(),
                 sampleId = variantSet.getSampleId(),
                 attributes=json.dumps(variantSet.getAttributes()))
-        except peewee.IntegrityError as e:
+        except peewee.IntegrityError:
             raise exceptions.DuplicateNameException(variantSet.getLocalId(),
                                                     variantSet.getParentContainer().getLocalId())
         for callSet in variantSet.getCallSets():
@@ -1675,7 +1675,7 @@ class SqlDataRepository(AbstractDataRepository):
                 name=featureSet.getLocalId(),
                 dataurl=featureSet.getDataUrl(),
                 attributes=json.dumps(featureSet.getAttributes()))
-        except peewee.IntegrityError as e:
+        except peewee.IntegrityError:
             raise exceptions.DuplicateNameException(featureSet.getLocalId(),
                                                     featureSet.getParentContainer().getLocalId())
 
