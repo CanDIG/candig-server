@@ -16,7 +16,6 @@ PyYAML==5.1
 # do not import them in any code that can be reached via 
 # an executable that we ship
 
-mock
 nose
 pep8
 flake8==3.2.0
