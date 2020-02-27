@@ -32,7 +32,6 @@ sphinx_rtd_theme
 # Requirements for OIDC provider
 pyaml==15.03.1
 cherrypy==3.2.4
-yubico-client==1.9.1
 
 # For client-related test suite
 git+git://github.com/CanDIG/candig-client.git@2to3#egg=candig_client
