@@ -18,7 +18,7 @@ import shlex
 
 # this next section is a hack to get the build to work on RTD; see:
 # http://docs.readthedocs.io/en/latest/faq.html#i-get-import-errors-on-libraries-that-depend-on-c-modules
-from mock import MagicMock
+from unittest.mock import MagicMock
 
 class Mock(MagicMock):
     @classmethod

@@ -2,7 +2,7 @@
 Tests related to exceptions
 """
 
-import mock
+from unittest import mock
 import unittest
 import inspect
 
