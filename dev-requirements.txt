@@ -30,7 +30,7 @@ Sphinx==1.4.6
 sphinx_rtd_theme
 
 # Requirements for OIDC provider
-pyaml==15.03.1
+pyaml==19.12.0
 cherrypy==3.2.4
 yubico-client==1.9.1
 
