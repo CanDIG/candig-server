@@ -799,15 +799,19 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
         Returns an iterator over the pysam VCF records corresponding to the
         specified query.
         """
-        if referenceName in self._chromFileMap:
-            varFileName = self._chromFileMap[referenceName]
-            referenceName, startPosition, endPosition = \
-                self.sanitizeVariantFileFetch(
+        try:
+            if referenceName in self._chromFileMap:
+                varFileName = self._chromFileMap[referenceName]
+                referenceName, startPosition, endPosition = \
+                    self.sanitizeVariantFileFetch(
+                        referenceName, startPosition, endPosition)
+                cursor = self.getFileHandle(varFileName).fetch(
                     referenceName, startPosition, endPosition)
-            cursor = self.getFileHandle(varFileName).fetch(
-                referenceName, startPosition, endPosition)
-            for record in cursor:
-                yield record
+
+                for record in cursor:
+                    yield record
+        except ValueError:
+            yield None
 
     def getCyvcf2Variants(self, referenceName, startPosition, endPosition):
         """
@@ -1286,7 +1290,8 @@ class HtslibVariantAnnotationSet(AbstractVariantAnnotationSet):
         variantIter = self._variantSet.getPysamVariants(
             referenceName, startPosition, endPosition)
         for record in variantIter:
-            yield self.convertVariantAnnotation(record)
+            if record:
+                yield self.convertVariantAnnotation(record)
 
     def convertLocation(self, pos):
         """
@@ -1444,13 +1449,21 @@ class HtslibVariantAnnotationSet(AbstractVariantAnnotationSet):
         variant = self._variantSet.convertVariant(record, [])
         annotation = self._createGaVariantAnnotation()
         annotation.variant_id = variant.id
-        gDots = record.info.get('HGVS.g')
+        try:
+            gDots = record.info.get('HGVS.g')
+        except ValueError:
+            gDots = None
         # Convert annotations from INFO field into TranscriptEffect
         transcriptEffects = []
-        annotations = record.info.get('ANN') or record.info.get('CSQ')
+        try:
+            annotations = record.info.get('ANN') or record.info.get('CSQ')
+        except ValueError:
+            annotations = ()
+
         for i, ann in enumerate(annotations):
             hgvsG = gDots[i % len(variant.alternate_bases)] if gDots else None
             transcriptEffects.append(self.convertTranscriptEffect(ann, hgvsG))
         annotation.transcript_effects.extend(transcriptEffects)
         annotation.id = self.getVariantAnnotationId(variant, annotation)
         return variant, annotation
+
