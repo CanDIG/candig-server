@@ -843,7 +843,8 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
                         callSetId, self.getId())
         for record in self.getPysamVariants(
                 referenceName, startPosition, endPosition):
-            yield self.convertVariant(record, callSetIds)
+            if record:
+                yield self.convertVariant(record, callSetIds)
 
     def getGenotypeMatrix(self, referenceName, startPosition, endPosition,
                           callSetIds=[]):
@@ -863,7 +864,8 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
                         for callId in callSetIds]
         for record in self.getPysamVariants(
                 referenceName, startPosition, endPosition):
-            yield self.convertGenotype(record, callSetIds, callSetNames)
+            if record:
+                yield self.convertGenotype(record, callSetIds, callSetNames)
 
     def getMetadataId(self, metadata):
         """
@@ -1466,4 +1468,3 @@ class HtslibVariantAnnotationSet(AbstractVariantAnnotationSet):
         annotation.transcript_effects.extend(transcriptEffects)
         annotation.id = self.getVariantAnnotationId(variant, annotation)
         return variant, annotation
-
