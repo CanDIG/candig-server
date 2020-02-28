@@ -29,9 +29,6 @@ freezegun==0.3.6
 Sphinx==1.4.6
 sphinx_rtd_theme
 
-# Requirements for OIDC provider
-cherrypy==3.2.4
-
 # For client-related test suite
 git+git://github.com/CanDIG/candig-client.git@2to3#egg=candig_client
 
