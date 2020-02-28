@@ -18,7 +18,7 @@ candig-schemas==1.0.1
 Werkzeug==0.15.5
 MarkupSafe==0.23
 itsdangerous==0.24
-six==1.10.0
+six==1.14.0
 pycryptodome==3.6.6
 Mako==1.0.4
 Beaker==1.8.0
