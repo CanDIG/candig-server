@@ -19,7 +19,7 @@ Werkzeug==0.15.5
 MarkupSafe==1.1.1
 itsdangerous==0.24
 six==1.10.0
-pycryptodome==3.6.6
+pycryptodome==3.9.7
 Mako==1.1.1
 Beaker==1.11.0
 funcsigs==1.0.2
