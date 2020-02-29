@@ -16,18 +16,18 @@ candig-common==1.0.0
 candig-schemas==1.0.1
 
 Werkzeug==0.15.5
-MarkupSafe==0.23
+MarkupSafe==1.1.1
 itsdangerous==0.24
 six==1.10.0
 pycryptodome==3.6.6
 Mako==1.0.4
 Beaker==1.11.0
-funcsigs==0.4
-alabaster==0.7.7
-cryptography==2.3.1
-idna==2.7
-pyasn1==0.1.9
-pyasn1-modules==0.0.8
+funcsigs==1.0.2
+alabaster==0.7.12
+cryptography==2.8
+idna==2.9
+pyasn1==0.4.8
+pyasn1-modules==0.2.8
 # enum34==1.1.2
 ipaddress==1.0.16
 cffi==1.11.5
