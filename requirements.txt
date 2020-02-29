@@ -23,7 +23,7 @@ pycryptodome==3.6.6
 Mako==1.0.4
 Beaker==1.8.0
 funcsigs==0.4
-alabaster==0.7.7
+alabaster==0.7.12
 cryptography==2.3.1
 idna==2.7
 pyasn1==0.4.8
