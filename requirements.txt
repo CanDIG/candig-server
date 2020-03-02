@@ -29,7 +29,7 @@ idna==2.7
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 # enum34==1.1.2
-ipaddress==1.0.16
+ipaddress==1.0.23
 cffi==1.11.5
 pycparser==2.14
 Jinja2==2.10.1
