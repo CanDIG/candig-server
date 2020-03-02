@@ -35,7 +35,7 @@ pycparser==2.14
 Jinja2==2.10.1
 future==0.15.2
 pyjwkest==1.4.2
-PyJWT==1.4.2
+PyJWT==1.7.1
 peewee==3.13.1
 gunicorn==19.9.0
 pandas==0.24.2
