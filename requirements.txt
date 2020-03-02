@@ -37,7 +37,7 @@ pyjwkest==1.4.2
 PyJWT==1.7.1
 peewee==3.13.1
 gunicorn==19.9.0
-pandas==0.24.2
+pandas==1.0.1
 pronto==1.1.2
 
 ### This section is for the actual libraries ###
