@@ -33,7 +33,6 @@ ipaddress==1.0.16
 cffi==1.11.5
 pycparser==2.14
 Jinja2==2.10.1
-future==0.15.2
 pyjwkest==1.4.0
 PyJWT==1.4.2
 peewee==3.13.1
