@@ -47,17 +47,17 @@ pronto==1.1.2
 
 # Flask must come after all other requirements that have "flask" as a
 # prefix due to a setuptools bug.
-Flask-Cors==3.0.6
-Flask==1.0.2
+Flask-Cors==3.0.8
+Flask==1.1.1
 protobuf==3.3.0
 humanize==0.5.1
 pysam==0.9.1.4
-requests==2.20.0
-requests-futures==0.9.8
+requests==2.23.0
+requests-futures==1.0.0
 oic==0.15.1
 pyOpenSSL==18.0.0
-lxml==4.3.4
-pyBigWig==0.3.16
+lxml==4.5.0
+pyBigWig==0.3.17
 
 # We need sphinx-argparse to build on readthedocs.
 sphinx-argparse
