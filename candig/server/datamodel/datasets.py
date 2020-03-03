@@ -491,7 +491,7 @@ class Dataset(datamodel.DatamodelObject):
         dataset.id = self.getId()
         dataset.name = pb.string(self.getLocalId())
         dataset.description = pb.string(self.getDescription())
-        dataset.lastUpdated = pb.string(self.getLastUpdated())
+        dataset.last_updated = pb.string(self.getLastUpdated())
         # Populate DUO info by extending the list
         dataset.terms_of_use.extend([protocol.fromJson(json.dumps(p), protocol.OntologyTerm) for p in self.getInfo()])
         self.serializeAttributes(dataset)
