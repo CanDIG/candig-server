@@ -26,6 +26,7 @@ class Dataset(datamodel.DatamodelObject):
     def __init__(self, localId):
         super(Dataset, self).__init__(None, localId)
         self._description = None
+        self._lastUpdated = None
         self._info = []
         self._variantSetIds = []
         self._variantSetIdMap = {}
@@ -173,6 +174,7 @@ class Dataset(datamodel.DatamodelObject):
         specified database row.
         """
         self._description = dataset.description
+        self._lastUpdated = dataset.lastUpdated
         self.setAttributesJson(dataset.attributes)
 
     def populateDuoInfo(self, dataset):
@@ -489,6 +491,7 @@ class Dataset(datamodel.DatamodelObject):
         dataset.id = self.getId()
         dataset.name = pb.string(self.getLocalId())
         dataset.description = pb.string(self.getDescription())
+        dataset.lastUpdated = pb.string(self.getLastUpdated())
         # Populate DUO info by extending the list
         dataset.terms_of_use.extend([protocol.fromJson(json.dumps(p), protocol.OntologyTerm) for p in self.getInfo()])
         self.serializeAttributes(dataset)
@@ -1283,6 +1286,12 @@ class Dataset(datamodel.DatamodelObject):
         Returns the free text description of this dataset.
         """
         return self._description
+
+    def getLastUpdated(self):
+        """
+        Returns the lastUpdated info of this dataset.
+        """
+        return self._lastUpdated
 
     def getNumRnaQuantificationSets(self):
         """

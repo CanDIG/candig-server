@@ -59,6 +59,7 @@ class Dataset(BaseModel):
     id = pw.TextField(primary_key=True)
     info = pw.TextField(null=True)
     name = pw.TextField(unique=True)
+    lastUpdated = pw.TextField(null=True)
 
 
 class Biosample(BaseModel):
