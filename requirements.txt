@@ -63,7 +63,7 @@ pyBigWig==0.3.17
 sphinx-argparse
 
 # G2P uses a ttl backend
-RDFLib==4.2.1
+RDFLib==4.2.2
 
 # Differential privacy lib requires numpy
 numpy
