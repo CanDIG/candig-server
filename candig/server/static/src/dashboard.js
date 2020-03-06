@@ -4,7 +4,7 @@ $(window).on('load', function() {
 
     changeClass("nav_1");
 
-    makeRequest("datasets/search", {}).then(function(response) {
+    makeRequest("/datasets/search", {}).then(function(response) {
 
         const data = JSON.parse(response);
         const listOfDatasetId = data['results']['datasets'];
@@ -97,7 +97,7 @@ function dashboard() {
     }
 
     function enrollmentsFetcher() {
-        makeRequest("enrollments/search", {
+        makeRequest("/enrollments/search", {
             "datasetId": datasetId
         }).then(function(response) {
             var data = JSON.parse(response);
