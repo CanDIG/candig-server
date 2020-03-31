@@ -168,7 +168,11 @@ class TestIntegrationApi(unittest.TestCase):
         test_endpoint = '{}/datasets/search'.format(TYK_HOST)
 
         r = requests.post(test_endpoint, data=json.dumps({}))
+        logger.info('below is first test response')
+        logger.debug(r.text)
         self.assertIn(r.status_code, [401, 403])
 
         r = requests.post(test_endpoint, data=json.dumps({}), headers=headers)
+        logger.info('below is second test response')
+        logger.debug(r.text)
         self.assertEqual(r.status_code, 200)
