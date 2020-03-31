@@ -92,7 +92,7 @@ matrix:
       - cd ${COMPOSE_DIR}
       - ./create_compose.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config"
       - docker-compose up -d
-      - while !  docker-compose -f yml/volumes.yml -f yml/containers_network.yml logs | grep "candigauth_1.*started in.*Started.*services" ; do sleep 1 ; done
+      - while !  docker logs candigauth | grep "Admin console listening on http://127.0.0.1:9990" && (("$i" < 25 )) ;do sleep 1 ; i=$((i+1))  ; done
       - ./candig_setup.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config" -k localhost:8081 -t localhost
       - sleep 45
     script:
