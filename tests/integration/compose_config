@@ -1,6 +1,8 @@
 export INPUT_TEMPLATE_DIR=${COMPOSE_DIR}/template
 export OUPTUT_CONFIGURATION_DIR=/tmp/volume_mount
 
+export DATA_DIR=$HOME/data
+
 export CANDIG_PUBLIC_URL=http://candig
 
 export CANDIG_PUBLIC_PORT=8080
@@ -43,6 +45,9 @@ export CANDIG_TYK_PASSWORD=my.only.bonne.idee.pour.un.good.pasword
 export TYK_DASH_FROM_EMAIL=support@calculcanada.ca
 export TYK_DASH_FROM_NAME="Pierre-Olivier Quirion"
 
+# Docker-compose naming
+export CONTAINER_NAME_CANDIG_GATEWAY=candig
+export CONTAINER_NAME_CANDIG_AUTH=candigauth
 
 export LOCAL_CANDIG_SERVER="http://candig_server:80"
 
@@ -54,8 +59,18 @@ export LOCAL_CANDIG_SERVER="http://candig_server:80"
 export KC_REALM='Candig'
 export KC_SERVER="${KC_PUBLIC_URL}:${KC_PUBLIC_PORT}"
 export KC_CLIENT_ID='test_candig'
+export KC_CLIENT_ID_64=$(echo -n ${KC_CLIENT_ID} | base64)
 export KC_LOGIN_REDIRECT_PATH='/auth/login'
 
 export API_NAME="Candig Api"
 
-export TYK_POLICY_NAME="Candig policy"
+export AUTH_API_NAME="Authentication"
+export AUTH_API_ID="candig_auth"
+export AUTH_API_SLUG="authentication"
+
+export CANDIG_API_NAME="Candig Api"
+export CANDIG_API_ID="Candig_api"
+export CANDIG_API_SLUG="candig"
+
+# do not change
+export TYK_DASHB_LOCAL_PORT=3000

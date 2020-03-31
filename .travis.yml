@@ -63,7 +63,7 @@ matrix:
       - DOCKER_COMPOSE_VERSION=1.24.1
       - COMPOSE_DIR=/tmp/compose
       - IMAGE_NAME=c3genomics/candig_server
-      - CANDIG_COMPOSE_VERSION=v1.1.1
+      - CANDIG_COMPOSE_VERSION=v2.0.0
     before_install:
       - sudo rm /usr/local/bin/docker-compose
       - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
@@ -90,7 +90,7 @@ matrix:
     before_script:
       - cd ${COMPOSE_DIR}
       - ./create_compose.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config"
-      - docker-compose -f yml/containers_network.yml -f yml/volumes.yml up -d
+      - docker-compose up -d
       - while !  docker-compose -f yml/volumes.yml -f yml/containers_network.yml logs | grep "candigauth_1.*started in.*Started.*services" ; do sleep 1 ; done
       - ./candig_setup.sh -o "${TRAVIS_BUILD_DIR}/tests/integration/compose_config" -k localhost:8081 -t localhost
       - sleep 45
