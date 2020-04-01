@@ -9,7 +9,6 @@ dependencies:
 - sqlite=3.20.1
 - wheel=0.29.0
 - sphinx<1.7
-- tk=8.5.18
 - pip:
     - protobuf==3.3.0
     - candig-common
@@ -17,7 +16,7 @@ dependencies:
     - sphinx-argparse
     - sphinx==1.6.7
     - pysam==0.9.1.4
-    - RDFLib==4.2.1
-    - peewee==2.8.5
+    - RDFLib==4.2.2
+    - peewee==3.13.1
     - pronto==1.1.2
     - readline==6.2.2
