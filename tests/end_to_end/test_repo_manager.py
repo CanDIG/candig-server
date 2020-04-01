@@ -2,7 +2,7 @@
 End to end test that invokes the repo manager
 """
 
-import mock
+from unittest import mock
 import os
 import tempfile
 import unittest

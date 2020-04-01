@@ -11,26 +11,26 @@
      {{ super() }}
    {% endblock %}
    {% block content %}
-       <div id="custom_visualization">
-           <h2 style="text-align: center; margin-bottom: 50px; margin-top: 50px">Custom Visualization</h2>
-         <div class="row" style="margin: 50px">
+       <div class="main-panel container-fluid panel-height" style="padding-top: 50px;">
+            <h2 class="title">Custom Visualization</h2>
+         <div class="row">
             <div class="col-sm-6">
-               <div class="row wrapper">
-                  <select class="form-control" id="table1" style="width: 20%; margin-right: 10px"></select>
-                  <select class="form-control" id="key1" style="width: 35%; margin-right: 10px"></select>
-                  <select class="form-control" id="type1" style="width: 15%; margin-right: 10px"></select>
+               <div class="row centerize">
+                  <select class="form-control cv_form_table" id="table1"></select>
+                  <select class="form-control cv_form_field" id="key1"></select>
+                  <select class="form-control cv_form_type" id="type1"></select>
                   <button id="adv1_confirm" class="btn btn-secondary">Confirm</button>
                </div>
-               <div id="adv1" style="margin-top: 20px; min-height: 400px; text-align: center"></div>
+                <div id="adv1" class="card cv_chart"></div>
             </div>
                <div class="col-sm-6">
-                  <div class="row wrapper">
-                  <select class="form-control" id="table2" style="width: 20%; margin-right: 10px"></select>
-                  <select class="form-control" id="key2" style="width: 35%; margin-right: 10px"></select>
-                  <select class="form-control" id="type2" style="width: 15%; margin-right: 10px"></select>
+                  <div class="row centerize">
+                  <select class="form-control cv_form_table" id="table2"></select>
+                  <select class="form-control cv_form_field" id="key2"></select>
+                  <select class="form-control cv_form_type" id="type2"></select>
                   <button id="adv2_confirm" class="btn btn-secondary">Confirm</button>
                </div>
-                  <div id="adv2" style="margin-top: 20px; min-height: 400px; text-align: center"></div>
+                  <div id="adv2" class="card cv_chart"></div>
                </div>
          </div>
       </div>

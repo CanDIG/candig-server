@@ -315,3 +315,7 @@ function highChartSeriesObjectMaker(nameArray, dataArray) {
     }
     return seriesObjList;
 }
+
+function changeClass(elementId) {
+    document.getElementById(elementId).className = "active";
+}

@@ -133,7 +133,8 @@ class G2PUtility(object):
         """
         myDict = {}
         for key, val in bindings.items():
-            myDict[key.toPython().replace('?', '')] = val.toPython()
+            if val:
+                myDict[key.toPython().replace('?', '')] = val.toPython()
         return myDict
 
     def _addDataFile(self, filename):
@@ -550,7 +551,6 @@ class RdfPhenotypeAssociationSet(G2PUtility, AbstractPhenotypeAssociationSet):
                     try:
                         compoundId = datamodel.FeatureCompoundId.parse(featureId)
                         # we have a compoundId, so use it to lookup
-                        # import ipdb; ipdb.set_trace()
                         if compoundId.feature_set == self.getLocalId():
                             featureFilters.append(
                                 self._formatId(

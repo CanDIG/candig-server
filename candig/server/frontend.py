@@ -790,7 +790,7 @@ class FederationResponse(object):
             ]
         elif request_type == "POST":
             responses = [
-                async_session.post(uri, json=json.loads(self.request), headers=header)
+                async_session.post(uri, json=json.loads(self.request), headers=header, timeout=10)
                 for uri in uri_list
             ]
         else:

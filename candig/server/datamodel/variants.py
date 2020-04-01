@@ -1350,7 +1350,7 @@ class HtslibVariantAnnotationSet(AbstractVariantAnnotationSet):
             if allele_location:
                 effect.cds_location.CopyFrom(self.convertLocationHgvsC(hgvsC))
         if allele_location is None and self.convertLocation(cdnaPos):
-                effect.cds_location.CopyFrom(self.convertLocation(cdnaPos))
+            effect.cds_location.CopyFrom(self.convertLocation(cdnaPos))
         else:
             # These are not stored in the VCF
             effect.cds_location.alternate_sequence = ""

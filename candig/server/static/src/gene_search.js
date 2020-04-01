@@ -2,6 +2,8 @@
 
 $(window).on('load', function() {
 
+    changeClass("nav_2");
+
     makeRequest("datasets/search", {}).then(function(response) {
 
         const data = JSON.parse(response);
@@ -39,7 +41,7 @@ function refreshDataset(datasetIndex) {
     datasetId = finalDatasetId[datasetIndex];
     document.getElementById("warningMsg").style.display = "none";
     setCookie("datasetId", datasetId);
-    $('#dropdownMenuLink').html('<i class="fas fa-database"></i> ' + finalDatasetName[finalDatasetId.indexOf(getCookie("datasetId"))]);
+    location.reload();
 }
 
 

@@ -8,32 +8,26 @@
 # that are dependencies of libraries listed in the next section
 # and are not already listed in requirements.txt
 
-python-dateutil==2.5.1
-PyYAML==5.1
+python-dateutil==2.8.1
+PyYAML==5.3
 
 ### This section is for the actual libraries ###
 # we import these libraries somewhere in the codebase but
 # do not import them in any code that can be reached via 
 # an executable that we ship
 
-mock
 nose
 pep8
-flake8==3.2.0
+flake8==3.7.9
 coverage
 selenium==3.141.0
 
 PyVCF==0.6.8
-freezegun==0.3.6
+freezegun==0.3.15
 # guppy==0.1.10
 # snakefood==1.4
 Sphinx==1.4.6
 sphinx_rtd_theme
-
-# Requirements for OIDC provider
-pyaml==15.03.1
-cherrypy==3.2.4
-yubico-client==1.9.1
 
 # For client-related test suite
 git+git://github.com/CanDIG/candig-client.git@2to3#egg=candig_client

@@ -64,7 +64,7 @@ class Dataset(BaseModel):
 class Biosample(BaseModel):
     created = pw.TextField(null=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     description = pw.TextField(null=True)
     disease = pw.TextField(null=True)
     id = pw.TextField(primary_key=True)
@@ -103,7 +103,7 @@ class Experiment(BaseModel):
     sequencingCenter = pw.TextField(null=True)
     platformUnit = pw.TextField(null=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     biosample_id = pw.TextField(db_column='biosampleId', null=True)
     dna_library_construction_method = pw.TextField(null=True)
     wgs_sequencing_completion_date = pw.TextField(null=True)
@@ -113,7 +113,7 @@ class Experiment(BaseModel):
 
     class Meta:
         indexes = (
-            (('name'), True),
+            (('name',), True),
         )
 
 
@@ -126,14 +126,14 @@ class Analysis(BaseModel):
     analysistype = pw.TextField(null=True)
     software = pw.TextField(null=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     experiment_id = pw.TextField(db_column='experimentId', null=True)
     other_analysis_descriptor = pw.TextField(null=True)
     other_analysis_completition_date = pw.TextField(null=True)
 
     class Meta:
         indexes = (
-            (('name'), True),
+            (('name',), True),
         )
 
 
@@ -154,12 +154,12 @@ class Variantset(BaseModel):
     created = pw.TextField(null=True)
     dataurlindexmap = pw.TextField(db_column='dataUrlIndexMap')
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     id = pw.TextField(primary_key=True)
     metadata = pw.TextField(null=True)
     name = pw.TextField()
     referencesetid = pw.ForeignKeyField(
-        db_column='referenceSetId', rel_model=Referenceset, to_field='id')
+        db_column='referenceSetId', model=Referenceset, field='id')
     updated = pw.TextField(null=True)
     patientId = pw.TextField(db_column='patientId', null=False)
     sampleId = pw.TextField(db_column='sampleId', null=False)
@@ -175,7 +175,7 @@ class Callset(BaseModel):
     id = pw.TextField(primary_key=True)
     name = pw.TextField()
     variantsetid = pw.ForeignKeyField(
-        db_column='variantSetId', rel_model=Variantset, to_field='id')
+        db_column='variantSetId', model=Variantset, field='id')
 
     class Meta:
         indexes = (
@@ -193,14 +193,14 @@ class Ontology(BaseModel):
 class Featureset(BaseModel):
     dataurl = pw.TextField(db_column='dataUrl')
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     id = pw.TextField(primary_key=True)
     info = pw.TextField(null=True)
     name = pw.TextField()
     ontologyid = pw.ForeignKeyField(
-        db_column='ontologyId', rel_model=Ontology, to_field='id')
+        db_column='ontologyId', model=Ontology, field='id')
     referencesetid = pw.ForeignKeyField(
-        db_column='referenceSetId', rel_model=Referenceset, to_field='id')
+        db_column='referenceSetId', model=Referenceset, field='id')
     sourceuri = pw.TextField(
         db_column='sourceUri', null=True)
 
@@ -213,12 +213,12 @@ class Featureset(BaseModel):
 class ContinuousSet(BaseModel):
     dataurl = pw.TextField(db_column='dataUrl')
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     id = pw.TextField(primary_key=True)
     info = pw.TextField(null=True)
     name = pw.TextField()
     referencesetid = pw.ForeignKeyField(
-        db_column='referenceSetId', rel_model=Referenceset, to_field='id')
+        db_column='referenceSetId', model=Referenceset, field='id')
     sourceuri = pw.TextField(
         db_column='sourceUri', null=True)
 
@@ -232,7 +232,7 @@ class Patient(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -285,7 +285,7 @@ class Enrollment(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -334,7 +334,7 @@ class Consent(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -391,7 +391,7 @@ class Diagnosis(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -466,7 +466,7 @@ class Sample(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -535,7 +535,7 @@ class Treatment(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -584,7 +584,7 @@ class Outcome(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -637,7 +637,7 @@ class Complication(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -666,7 +666,7 @@ class Tumourboard(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -743,7 +743,7 @@ class Extraction(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -774,7 +774,7 @@ class Sequencing(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -813,7 +813,7 @@ class Alignment(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -866,7 +866,7 @@ class VariantCalling(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -913,7 +913,7 @@ class FusionDetection(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -952,7 +952,7 @@ class ExpressionAnalysis(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -987,7 +987,7 @@ class Chemotherapy(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -1038,7 +1038,7 @@ class Radiotherapy(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -1107,7 +1107,7 @@ class Surgery(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -1146,7 +1146,7 @@ class Immunotherapy(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -1177,7 +1177,7 @@ class Celltransplant(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -1206,7 +1206,7 @@ class Slide(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -1257,7 +1257,7 @@ class Study(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -1284,7 +1284,7 @@ class Labtest(BaseModel):
     # Common fields
     id = pw.TextField(primary_key=True)
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     created = pw.TextField()
     updated = pw.TextField(null=True)
     name = pw.TextField(null=True)
@@ -1316,7 +1316,7 @@ class Labtest(BaseModel):
 class Individual(BaseModel):
     created = pw.TextField()
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     description = pw.TextField(null=True)
     id = pw.TextField(primary_key=True)
     info = pw.TextField(null=True)
@@ -1343,7 +1343,7 @@ class Individual(BaseModel):
 class Phenotypeassociationset(BaseModel):
     dataurl = pw.TextField(db_column='dataUrl')
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     id = pw.TextField(primary_key=True)
     name = pw.TextField(null=True)
 
@@ -1356,13 +1356,13 @@ class Phenotypeassociationset(BaseModel):
 class Readgroupset(BaseModel):
     dataurl = pw.TextField(db_column='dataUrl')
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     id = pw.TextField(primary_key=True)
     indexfile = pw.TextField(db_column='indexFile')
     name = pw.TextField()
     programs = pw.TextField(null=True)
     referencesetid = pw.ForeignKeyField(
-        db_column='referenceSetId', rel_model=Referenceset, to_field='id')
+        db_column='referenceSetId', model=Referenceset, field='id')
     stats = pw.TextField()
     patientId = pw.TextField(db_column='patientId', null=False)
     sampleId = pw.TextField(db_column='sampleId', null=False)
@@ -1383,7 +1383,7 @@ class Readgroup(BaseModel):
     predictedinsertsize = pw.IntegerField(
         db_column='predictedInsertSize', null=True)
     readgroupsetid = pw.ForeignKeyField(
-        db_column='readGroupSetId', rel_model=Readgroupset, to_field='id')
+        db_column='readGroupSetId', model=Readgroupset, field='id')
     samplename = pw.TextField(db_column='sampleName', null=True)
     stats = pw.TextField()
     updated = pw.TextField(null=True)
@@ -1402,7 +1402,7 @@ class Reference(BaseModel):
     name = pw.TextField()
     species = pw.TextField(db_column='species', null=True)
     referencesetid = pw.ForeignKeyField(
-        db_column='referenceSetId', rel_model=Referenceset, to_field='id')
+        db_column='referenceSetId', model=Referenceset, field='id')
     sourceaccessions = pw.TextField(db_column='sourceAccessions', null=True)
     sourcedivergence = pw.FloatField(db_column='sourceDivergence', null=True)
     sourceuri = pw.TextField(db_column='sourceUri', null=True)
@@ -1416,12 +1416,12 @@ class Reference(BaseModel):
 class Rnaquantificationset(BaseModel):
     dataurl = pw.TextField(db_column='dataUrl')
     datasetid = pw.ForeignKeyField(
-        db_column='datasetId', rel_model=Dataset, to_field='id')
+        db_column='datasetId', model=Dataset, field='id')
     id = pw.TextField(primary_key=True)
     info = pw.TextField(null=True)
     name = pw.TextField()
     referencesetid = pw.ForeignKeyField(
-        db_column='referenceSetId', rel_model=Referenceset, to_field='id')
+        db_column='referenceSetId', model=Referenceset, field='id')
 
     class Meta:
         indexes = (
@@ -1441,10 +1441,10 @@ class Variantannotationset(BaseModel):
     id = pw.TextField(primary_key=True)
     name = pw.TextField()
     ontologyid = pw.ForeignKeyField(
-        db_column='ontologyId', rel_model=Ontology, to_field='id')
+        db_column='ontologyId', model=Ontology, field='id')
     updated = pw.TextField(null=True)
     variantsetid = pw.ForeignKeyField(
-        db_column='variantSetId', rel_model=Variantset, to_field='id')
+        db_column='variantSetId', model=Variantset, field='id')
 
     class Meta:
         indexes = (

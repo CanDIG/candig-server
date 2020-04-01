@@ -534,13 +534,13 @@ class TestClientJson(TestClientOutput):
                 for rnaQuantification in \
                         self._client.search_rna_quantifications(
                             rnaQuantificationSet.id):
-                            for expressionLevel in \
-                                    self._client.search_expression_levels(
-                                        rnaQuantification.id):
-                                self.verifyParsedOutputsEqual(
-                                    [expressionLevel],
-                                    "expressionlevels-get",
-                                    expressionLevel.id)
+                    for expressionLevel in \
+                            self._client.search_expression_levels(
+                                rnaQuantification.id):
+                        self.verifyParsedOutputsEqual(
+                            [expressionLevel],
+                            "expressionlevels-get",
+                            expressionLevel.id)
 
     def testGetRnaQuantification(self):
         for dataset in self._client.search_datasets():

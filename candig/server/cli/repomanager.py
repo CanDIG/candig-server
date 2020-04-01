@@ -2663,7 +2663,7 @@ def repo_main(args=None):
     except exceptions.FailToParseOntologyException as exception:
         # When the Ontology file is corrupted
         repoExitError(str(exception))
-    except Exception as exception:
+    except Exception:
         # Uncaught exception: this is a bug
         message = """
 An internal error has occurred.  Please file a bug report at

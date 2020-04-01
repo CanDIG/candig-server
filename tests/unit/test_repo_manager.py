@@ -6,6 +6,7 @@ import os
 import glob
 import shutil
 import tempfile
+import subprocess
 import unittest
 
 import candig.server.exceptions as exceptions
@@ -1083,3 +1084,502 @@ class TestInvalidReadGroupSetIndexFile(AbstractRepoManagerTest):
     def testWrongIndexFile(self):
         indexPath = paths.bamIndexPath2  # incorrect index
         self._testWithIndexPath(indexPath)
+
+
+class TestValidAddDataSetDuo(AbstractRepoManagerTest):
+    """
+    This class tests valid inputs for method "addDatasetDuo"
+    on class "RepoManager"
+    """
+
+    def _addDatasetDuo(self, file_path):
+        """
+        This is a helper method that executes "add-dataset-duo"
+        command and returns the updated dataset
+        """
+        self.runCommand(
+            "add-dataset-duo {} {} {}".format(
+                self._repoPath,
+                self._datasetName,
+                file_path))
+        repo = self.readRepo()
+        return repo.getDatasetByName(self._datasetName)
+
+    def _removeDatasetDuo(self):
+        """
+        This is a helper method that executes "remove-dataset-duo"
+        command and returns the updated dataset
+        """
+        self.runCommand(
+            "remove-dataset-duo -f {} {}".format(
+                self._repoPath,
+                self._datasetName))
+        repo = self.readRepo()
+        return repo.getDatasetByName(self._datasetName)
+
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestValidAddDataSetDuo, self).setUp()
+        self.init()
+        self.addDataset()
+
+    def testValidDuoDataset(self):
+        """
+        This is a valid input, as the "paths.testValidDuoJson" file
+        contains valid json format and DUO info
+        """
+        dataset = self._addDatasetDuo(paths.testValidDuoJson)
+        self.assertEqual(dataset._info[0]['id'], "DUO:0000018")
+        self.assertEqual(dataset._info[1]['id'], "DUO:0000024")
+        self.assertEqual(dataset._info[1]['modifier'], "2022-01-01")
+        dataset = self._removeDatasetDuo()
+        self.assertEqual(len(dataset._info), 0)
+
+
+class TestInvalidAddDataSetDuo(AbstractRepoManagerTest):
+    """
+    This class tests invalid inputs for method "addDatasetDuo"
+    on class "RepoManager"
+    """
+
+    def _addDatasetDuo(self, file_path):
+        """
+        This is a helper method that executes "add-dataset-duo"
+        command and returns the updated dataset
+        """
+        self.runCommand(
+            "add-dataset-duo {} {} {}".format(
+                self._repoPath,
+                self._datasetName,
+                file_path))
+        repo = self.readRepo()
+        return repo.getDatasetByName(self._datasetName)
+
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestInvalidAddDataSetDuo, self).setUp()
+        self.init()
+        self.addDataset()
+
+    def testInvalidDuoDataset(self):
+        """
+        This is an invalid input, as "paths.testInvalidDuoJson" file
+        contains invalid DUO information
+        """
+        dataset = self._addDatasetDuo(paths.testInvalidDuoJson)
+        with self.assertRaises(IndexError):
+            dataset._info[0]['id']
+
+    def testInvalidFileType(self):
+        """
+        This is an invalid input, as "paths.landingMessageHtml" file
+        is not a valid json file
+        """
+        with self.assertRaises(exceptions.JsonFileOpenException):
+            self._addDatasetDuo(paths.landingMessageHtml)
+
+    def testDuoFileNotFound(self):
+        """
+        This is an invalid input, as "no_file.txt" file
+        does not exist
+        """
+        with self.assertRaises(exceptions.JsonFileOpenException):
+            self._addDatasetDuo("no_file.txt")
+
+
+class TestValidAddRemovePeer(AbstractRepoManagerTest):
+    """
+    This class tests valid inputs for method "addPeer"
+    on class "RepoManager"
+    """
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestValidAddRemovePeer, self).setUp()
+        self.init()
+        self.addDataset()
+
+    def _addPeer(self, peer_url):
+        """
+        This is a helper method that executes "add-peer"
+        command and returns a list of peers
+        """
+        self.runCommand("add-peer {} {}".format(
+            self._repoPath,
+            peer_url
+        ))
+        repo = self.readRepo()
+        return [x.getUrl() for x in repo.getPeers()]
+
+    def _removePeer(self, peer_url):
+        """
+        This is a helper method that executes "add-peer"
+        command and returns a list of peers
+        """
+        self.runCommand("remove-peer -f {} {}".format(
+            self._repoPath,
+            peer_url
+        ))
+        repo = self.readRepo()
+        return [x.getUrl() for x in repo.getPeers()]
+
+    def testAddPeer1(self):
+        """
+        This is valid input, as "peerUrl" is a valid
+        peer
+        """
+        peers = self._addPeer(paths.peerUrl)
+        self.assertIn(paths.peerUrl, peers)
+        peers = self._removePeer(paths.peerUrl)
+        self.assertNotIn(paths.peerUrl, peers)
+
+    def testAddPeer2(self):
+        """
+        This is valid input, as "peerUrlNoTraillingPath" is a valid
+        peer
+        """
+        peers = self._addPeer(paths.peerUrlNoTraillingPath)
+        self.assertIn(paths.peerUrlNoTraillingPath + "/", peers)
+        peers = self._removePeer(paths.peerUrl)
+        self.assertNotIn(paths.peerUrlNoTraillingPath + "/", peers)
+
+
+class TestInvalidAddRemovePeer(AbstractRepoManagerTest):
+    """
+    This class tests invalid inputs for method "addPeer"
+    on class "RepoManager"
+    """
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestInvalidAddRemovePeer, self).setUp()
+        self.init()
+        self.addDataset()
+
+    def _addPeer(self, peer_url):
+        """
+        This is a helper method that executes "add-peer"
+        command and returns a list of peers
+        """
+        self.runCommand("add-peer {} {}".format(
+            self._repoPath,
+            peer_url
+        ))
+        repo = self.readRepo()
+        return [x.getUrl() for x in repo.getPeers()]
+
+    def _removePeer(self, peer_url):
+        """
+        This is a helper method that executes "add-peer"
+        command and returns a list of peers
+        """
+        self.runCommand("remove-peer -f {} {}".format(
+            self._repoPath,
+            peer_url
+        ))
+        repo = self.readRepo()
+        return [x.getUrl() for x in repo.getPeers()]
+
+    def testAddInvalidPeer1(self):
+        """
+        This is an invalid input, as "invalidPeerUrl" is not 
+        a valid URL
+        """
+        with self.assertRaises(exceptions.RepoManagerException):
+            self._addPeer(paths.invalidPeerUrl)
+
+    def testAddInvalidPeer2(self):
+        """
+        This is an invalid input, as "emptyPeerUlr" is empty
+        """
+        with self.assertRaises(SystemExit):
+            self._addPeer(paths.emptyPeerUlr)
+
+    def testAddValidPeerTwice(self):
+        """
+        This input is invalid, as the same peer is added twice
+        """
+        with self.assertRaises(exceptions.RepoManagerException):
+            self._addPeer(paths.peerUrl)
+            self._addPeer(paths.peerUrl)
+
+    def testRemoveInvalidPeer(self):
+        """
+        This input is invalid, as it is removing an invalid
+        peer
+        """
+        self._addPeer(paths.peerUrl)
+        with self.assertRaises(exceptions.PeerNotFoundException):
+            self._removePeer(paths.invalidPeerUrl)
+
+    def testRemoveEmptyPeer(self):
+        """
+        This input is invalid, as it is using an empty
+        peer
+        """
+        with self.assertRaises(SystemExit):
+            self._removePeer(paths.emptyPeerUlr)
+
+
+class TestValidRemoveFromDataset(AbstractRepoManagerTest):
+    """
+    This class tests valid inputs for methods from class "Repomanager".
+    The following methods are being tested here:
+    - removePatient
+    - removeEnrolment
+    - removeSample
+    - removeChemotherapy
+    - removeImmunotherapy
+    - removeTreatment
+    - removeDiagnosis
+    - removeTumourboard
+    - removeOutcome
+    - removeComplication
+    - removeConsent
+    - removeCellTransplant
+    - removeSurgery
+    - removeStudy
+    - removeSlide
+    - removeLabtest
+    """
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestValidRemoveFromDataset, self).setUp()
+        self.init()
+        self.addDataset()        
+        FNULL = open(os.devnull, 'w')
+        subprocess.call(['ingest', self._repoPath, 'dataset1', 
+                        paths.sampleClinMetadata], stdout=FNULL, 
+                        stderr=subprocess.STDOUT)
+
+        # When adding to this dictionary, please follow below schema:
+        # {table_name: (id, exception class that is expected)}
+        self.dataDict = {
+            "patient": (
+                "PATIENT_49845",
+                exceptions.ClinicalLocalIdNotFoundException),
+            "enrollment": (
+                "PATIENT_49845_02/01/2005",
+                exceptions.ClinicalLocalIdNotFoundException),
+            "sample": (
+                "PATIENT_49845_SAMPLE_58628", 
+                exceptions.SampleNotFoundException),
+            "chemotherapy": (
+                "PATIENT_49845_PATIENT_49845_44159_LEUCOVORIN",
+                exceptions.ChemotherapyNotFoundException),
+            "immunotherapy": (
+                "PATIENT_49845_PATIENT_49845_44159_2014-09-22",
+                exceptions.ImmunotherapyNotFoundException),
+            "treatment": (
+                "PATIENT_49845_06/25/2004",
+                exceptions.TreatmentNotFoundException),
+            "diagnosis": (
+                "PATIENT_49845_11/08/2008",
+                exceptions.DiagnosisNotFoundException),
+            "tumourboard": (
+                "PATIENT_49845_07/09/2014",
+                exceptions.TumourboardNotFoundException),
+            "outcome": (
+                "PATIENT_49845_08/22/2012",
+                exceptions.OutcomeNotFoundException),
+            "complication": (
+                "PATIENT_49845_10/18/2006",
+                exceptions.ComplicationNotFoundException),
+            "consent": (
+                "PATIENT_49845_03/06/2007", 
+                exceptions.ConsentNotFoundException),
+            "celltransplant": (
+                "PATIENT_49845_PATIENT_49845_44159_2016-01-02",
+                exceptions.CelltransplantNotFoundException),
+            "surgery": (
+                "PATIENT_49845_PATIENT_49845_44159_2016-06-15_SAMPLE_58628",
+                exceptions.SurgeryNotFoundException),
+            "study": (
+                "PATIENT_49845_2014-04-17",
+                exceptions.StudyNotFoundException),
+            "slide": (
+                "PATIENT_49845_48236",
+                exceptions.SlideNotFoundException),
+            "labtest": (
+                "PATIENT_49845_2016-07-20",
+                exceptions.LabtestNotFoundException),
+        }
+
+    def _getDataset(self):
+        """
+        This is a helper method that returns the updated dataset
+        """
+        return self.readRepo().getDatasetByName("dataset1")
+
+    def _executeRemoveCommand(self, table, value):
+        """
+        This is a helper method that executes a "remove" command and 
+        returns updated dataset.
+        Args:
+            table: Table you want to run "remove" command
+            value: Value you want to delete from table
+        """
+        self.runCommand("remove-{} -f {} dataset1 {}".format(
+            table, 
+            self._repoPath,
+            value
+        ))
+        return self._getDataset()
+
+    def _removeDataFromTable(self, table, value, exception_):
+        """
+        This helper method verifies if "value" is being removed
+        from "table". Please note, This method will fail if "value"
+        is not present in "table" before running "remove" comand.
+        """
+        capital_table = table.title()
+        
+        try:
+            getattr(self._getDataset(), 
+                    "get{}ByName".format(capital_table))(value)
+        except exception_:
+            self.fail("{} name {} should be present in dataset. "
+                      "Aborting test!".format(capital_table, value))        
+        with self.assertRaises(exception_):            
+            getattr(self._executeRemoveCommand(table, value), 
+                    "get{}ByName".format(capital_table))(value)
+
+    def testRemoveMethods(self):
+        """
+        This method loops throught "dataDict" dict and test each of them.
+        When there is a new "remove" method to be tested and there 
+        is a method that follows the format "get{}ByName", the data
+        must be added to "dataDict" dictionary
+        """
+        for table, tuple_ in self.dataDict.items():
+            self._removeDataFromTable(table, *tuple_)
+           
+
+class TestInvalidRemoveFromDataset(AbstractRepoManagerTest):
+    """
+    This class tests invalid inputs for methods from class "Repomanager".
+    The following methods are being tested here:
+    - removePatient
+    - removeEnrolment
+    - removeSample
+    - removeChemotherapy
+    - removeImmunotherapy
+    - removeTreatment
+    - removeDiagnosis
+    - removeTumourboard
+    - removeOutcome
+    - removeComplication
+    - removeConsent
+    - removeCellTransplant
+    - removeSurgery
+    - removeStudy
+    - removeSlide
+    - removeLabtest
+    """
+    def setUp(self):
+        """
+        Sets up the class
+        """
+        super(TestInvalidRemoveFromDataset, self).setUp()
+        self.init()
+        self.addDataset()
+
+        FNULL = open(os.devnull, 'w')
+        subprocess.call(['ingest', self._repoPath, 'dataset1', 
+                        paths.sampleClinMetadata], 
+                        stdout=FNULL, stderr=subprocess.STDOUT)
+        # When adding to this dictionary, please follow below schema:
+        # {table_name: ([invalid values], exception class that is expected)}
+        self.invalidDataDict = {
+            "patient": (
+                ["INVALID_PATIENT", ""], 
+                exceptions.ClinicalLocalIdNotFoundException),
+            "enrollment": (
+                ["INVALID_ENROLLMENT", ""],
+                exceptions.ClinicalLocalIdNotFoundException),
+            "sample": (
+                ["INVALID_SAMPLE", ""],
+                exceptions.SampleNotFoundException),
+            "chemotherapy": (
+                ["INVALID_CHEMO", ""],
+                exceptions.ChemotherapyNotFoundException),
+            "immunotherapy": (
+                ["INVALID_IMMUN", ""],
+                exceptions.ImmunotherapyNotFoundException),
+            "treatment": (
+                ["INVALID_TREATMENT", ""],
+                exceptions.TreatmentNotFoundException),
+            "diagnosis": (
+                ["INVALID_DIAGNOSIS", ""],
+                exceptions.DiagnosisNotFoundException),
+            "tumourboard": (
+                ["INVALID_TUMOURBOARD", ""],
+                exceptions.TumourboardNotFoundException),
+            "outcome": (
+                ["INVALID_OUTCOME", ""],
+                exceptions.OutcomeNotFoundException),
+            "complication": (
+                ["INVALID_COMPLICATION", ""],
+                exceptions.ComplicationNotFoundException),
+            "consent": (
+                ["INVALID_CONSENT", ""],
+                exceptions.ConsentNotFoundException),
+            "celltransplant": (
+                ["INVALID_CELLTRANSPLANT", ""],
+                exceptions.CelltransplantNotFoundException),
+            "surgery": (
+                ["INVALID_SURGERY", ""],
+                exceptions.SurgeryNotFoundException),
+            "study": (
+                ["INVALID_STUDY", ""],
+                exceptions.StudyNotFoundException),
+            "slide": (
+                ["INVALID_SLIDE", ""],
+                exceptions.SlideNotFoundException),
+            "labtest": (
+                ["INVALID_LABTEST", ""],
+                exceptions.LabtestNotFoundException),
+        }
+
+    def _getDataset(self):
+        """
+        This is a helper method that returns the updated dataset
+        """
+        return self.readRepo().getDatasetByName("dataset1")
+
+    def _executeRemoveCommand(self, table, value):
+        """
+        This is a helper method that executes a "remove" command and 
+        return updated dataset.
+        Args:
+            table: Table you want to run "remove" command
+            value: Value you want to delete from table
+        """
+        self.runCommand("remove-{} -f {} dataset1 {}".format(
+            table, 
+            self._repoPath,
+            value
+        ))
+        return self._getDataset()
+
+    def testRemoveInvalidData(self):
+        """
+        This method loops through "invalidDataDict" dict and test 
+        each of them.
+        When there is a new "remove" method to be tested and there 
+        is a method that follows the format "get{}ByName", the data
+        must be added to "invalidDataDict" dictionary following the format
+        """
+        for table, data in self.invalidDataDict.items():
+            invalid_data, exception_ = data
+            for value in invalid_data:
+                with self.assertRaises((SystemExit, exception_)):
+                    self._executeRemoveCommand(table, value)
