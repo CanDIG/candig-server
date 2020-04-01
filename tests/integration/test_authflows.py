@@ -82,9 +82,9 @@ class TestIntegrationApi(unittest.TestCase):
         try:
             username_dom = driver.find_element_by_id("username")
             password_dom = driver.find_element_by_id("password")
-
-            username_dom.send_keys(TEST_USER)
-            password_dom.send_keys(TEST_PW)
+            
+            username_dom.send_keys([TEST_USER])
+            password_dom.send_keys([TEST_PW])
 
             driver.find_element_by_id("kc-login").click()
             time.sleep(2.0)
