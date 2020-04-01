@@ -28,7 +28,6 @@ with open('tests/integration/config.json', 'r') as test_config:
     TEST_PW = parsed_config['password']
     TYK_HOST = parsed_config['tyk']
 
-
 class TestIntegrationApi(unittest.TestCase):
 
     def openLeftSidebarMenu(self, driver, classname):
@@ -44,6 +43,8 @@ class TestIntegrationApi(unittest.TestCase):
         except ElementNotInteractableException:
             # Otherwise the excepetion is captured here and the method
             # does not do anything
+            pass
+        except IndexError:
             pass
 
     def openRightSideMenu(self, driver, target):
@@ -87,11 +88,6 @@ class TestIntegrationApi(unittest.TestCase):
             password_dom.send_keys([TEST_PW])
 
             driver.find_element_by_id("kc-login").click()
-            time.sleep(2.0)
-
-            html = driver.page_source
-            logger.info(html)
-
             time.sleep(2.0)
 
             self.openLeftSidebarMenu(driver, "navbar-toggler")

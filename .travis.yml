@@ -3,7 +3,6 @@ sudo: false
 matrix:
   include:
   - python: "3.6"
-    if: branch != poq/fix_integration
     language: python
     cache:
       directories:
