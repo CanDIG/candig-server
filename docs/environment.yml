@@ -2,13 +2,11 @@ name: server-conda-env
 channels:
 - ioos
 dependencies:
-- openssl=1.0.2h=1
+- openssl=1.0.2
 - pip=19.3.1
 - python=3.6
-- readline=6.2=2
 - setuptools=41.6.0
-- sqlite=3.13.0
-- tk=8.5.18
+- sqlite=3.20.1
 - wheel=0.29.0
 - sphinx<1.7
 - pip:
@@ -18,6 +16,7 @@ dependencies:
     - sphinx-argparse
     - sphinx==1.6.7
     - pysam==0.9.1.4
-    - RDFLib==4.2.1
-    - peewee==2.8.5
+    - RDFLib==4.2.2
+    - peewee==3.13.1
     - pronto==1.1.2
+    - readline==6.2.2
