@@ -28,6 +28,7 @@ with open('tests/integration/config.json', 'r') as test_config:
     TEST_PW = parsed_config['password']
     TYK_HOST = parsed_config['tyk']
 
+
 class TestIntegrationApi(unittest.TestCase):
 
     def openLeftSidebarMenu(self, driver, classname):
