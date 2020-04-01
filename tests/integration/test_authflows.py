@@ -89,6 +89,11 @@ class TestIntegrationApi(unittest.TestCase):
             driver.find_element_by_id("kc-login").click()
             time.sleep(2.0)
 
+            html = driver.page_source
+            logger.info(html)
+
+            time.sleep(2.0)
+
             self.openLeftSidebarMenu(driver, "navbar-toggler")
 
             driver.find_element_by_link_text("GENE SEARCH").click()
