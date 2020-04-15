@@ -1931,6 +1931,108 @@ paths:
                     $ref: '#/components/schemas/candigStatus'
                   results:
                     $ref: '#/components/schemas/candigVariantSet'
+  /cnvsets/search:
+    post:
+      tags:
+      - Variant Service
+      summary: Search for cnv sets
+      description: |-
+        POST /variantsets/search must accept a JSON version of
+        SearchCNVSetsRequest as the post body and will return a JSON version
+        of SearchCNVSetsResponse.
+      operationId: SearchCNVSet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/candigSearchCNVSetsRequest'
+        required: true
+      responses:
+        200:
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/candigSearchCNVSetsResponse'
+  /cnvsets/{CNVSetId}:
+    get:
+      tags:
+      - Variant Service
+      summary: Gets a CNVSet by ID.
+      description: |-
+        GET /variantsets/{variantSetId} will return a JSON version of
+        VariantSet.
+      operationId: GetCNVSet
+      parameters:
+      - name: CNVSetId
+        in: path
+        description: The ID of the CNVSet to be retrieved.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigCNVSet'
+  /cnv/search:
+    post:
+      tags:
+      - Variant Service
+      summary: Search for cnv data
+      description: |-
+        POST /cnv/search must accept a JSON version of
+        SearchCNVSetsRequest as the post body and will return a JSON version
+        of SearchCNVSetsResponse.
+      operationId: SearchCNV
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/candigSearchCNVRequest'
+        required: true
+      responses:
+        200:
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/candigSearchCNVResponse'
+  /cnv/{cnvId}:
+    get:
+      tags:
+      - Variant Service
+      summary: Gets a CNV Record by ID.
+      description: |-
+        GET /variantsets/{variantSetId} will return a JSON version of
+        VariantSet.
+      operationId: GetCNV
+      parameters:
+      - name: cnvId
+        in: path
+        description: The ID of the CNVSet to be retrieved.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/candigStatus'
+                  results:
+                    $ref: '#/components/schemas/candigCNV'
 components:
   schemas:
     candigStatus:
@@ -6099,3 +6201,126 @@ components:
         attributes:
           $ref: '#/components/schemas/candigAttributes'
       description: This metadata represents VCF header information.
+    candigSearchCNVSetsRequest:
+      type: object
+      properties:
+        datasetId:
+          type: string
+          description: The Dataset to search.
+        pageSize:
+          $ref: '#/components/schemas/candigPageSize'
+        pageToken:
+          type: string
+          example: "0"
+          description: |-
+            The continuation token, which is used to page through large result sets. To
+            get the next page of results, set this parameter to the value of
+            nextPageToken from the previous response.
+      description: |-
+        ******************  /variantsets  *********************
+        This request maps to the body of POST /variantsets/search as JSON.
+    candigSearchCNVSetsResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            cnvSets:
+              type: array
+              description: The list of matching CNV sets.
+              items:
+                $ref: '#/components/schemas/candigCNVSet'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /variantsets/search expressed
+        as JSON.
+    candigSearchCNVRequest:
+      type: object
+      properties:
+        cnvSetId:
+          type: string
+          description: The CNV Set to search.
+        pageSize:
+          $ref: '#/components/schemas/candigPageSize'
+        pageToken:
+          type: string
+          example: "0"
+          description: |-
+            The continuation token, which is used to page through large result sets. To
+            get the next page of results, set this parameter to the value of
+            nextPageToken from the previous response.
+      description: |-
+        ******************  /variantsets  *********************
+        This request maps to the body of POST /variantsets/search as JSON.
+    candigSearchCNVResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            cnv:
+              type: array
+              description: |-
+                The list of matching CNV Records
+              items:
+                $ref: '#/components/schemas/candigCNV'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /variants/search expressed as
+        JSON.
+    candigCNVSet:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The CNV set ID.
+        name:
+          type: string
+          description: The CNV set name.
+        datasetId:
+          type: string
+          description: The ID of the dataset this CNV set belongs to.
+        patientId:
+          title: For variant data identification and search join purposes
+          type: string
+        sampleId:
+          title: For variant data identification and search join purposes
+          type: string
+      description: |-
+        A CNV is a collection of CNV Records intended to be
+        analyzed together.
+    candigCNV:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The CNV Record ID
+        sampleId:
+          type: string
+          description: The CNV sample id.
+        startPosition:
+          type: string
+          description: The CNV start position.
+        endPosition:
+          title: The CNV end position.
+          type: string
+        copy_number:
+          title: The CNV copy number.
+          type: string
+        copy_number_ploidy_corrected:
+          title: The CNV ploidy corrected
+          type: integer
+        chromosome:
+          title: The CNV chromosome
+          type: string
+      description: |-
+        A CNV is a collection of CNV Records intended to be
+        analyzed together.
