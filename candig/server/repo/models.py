@@ -170,6 +170,23 @@ class Variantset(BaseModel):
         )
 
 
+class cnvset(BaseModel):
+    created = pw.TextField(null=True)
+    dataurlindexmap = pw.TextField(db_column='dataUrlIndexMap')
+    datasetid = pw.ForeignKeyField(
+        db_column='datasetId', model=Dataset, field='id')
+    id = pw.TextField(primary_key=True)
+    name = pw.TextField()
+    updated = pw.TextField(null=True)
+    patientId = pw.TextField(db_column='patientId', null=False)
+    sampleId = pw.TextField(db_column='sampleId', null=False)
+
+    class Meta:
+        indexes = (
+            (('datasetid', 'name'), True),
+        )
+
+
 class Callset(BaseModel):
     biosampleid = pw.TextField(db_column='biosampleId', null=True)
     id = pw.TextField(primary_key=True)
