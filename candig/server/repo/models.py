@@ -186,6 +186,22 @@ class cnvset(BaseModel):
             (('datasetid', 'name'), True),
         )
 
+class cnv(BaseModel):
+    created = pw.TextField(null=True)
+    description = pw.TextField(null=True)
+    experiment = pw.TextField(null=True)
+    id = pw.TextField(primary_key=True)
+    cnv_id = pw.TextField()
+    start = pw.TextField()
+    end = pw.TextField()
+    chromosome = pw.TextField()
+    updated = pw.TextField(null=True)
+
+    class Meta:
+        indexes = (
+            (('cnvsetid', 'name'), True),
+        )
+
 
 class Callset(BaseModel):
     biosampleid = pw.TextField(db_column='biosampleId', null=True)
