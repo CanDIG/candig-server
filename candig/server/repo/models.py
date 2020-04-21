@@ -195,6 +195,8 @@ class cnv(BaseModel):
     start = pw.TextField()
     end = pw.TextField()
     chromosome = pw.TextField()
+    copy_number = pw.FloatField()
+    copy_number_ploidy_corrected = pw.IntegerField()
     updated = pw.TextField(null=True)
 
     class Meta:
