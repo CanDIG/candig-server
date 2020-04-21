@@ -1120,6 +1120,18 @@ def searchVariants():
         flask.request, app.backend.runSearchVariants)
 
 
+@DisplayedRoute('/cnvsets/search', postMethod=True)
+def searchCNVSets():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchCNVSets)
+
+
+@DisplayedRoute('/cnv/search', postMethod=True)
+def searchCNV():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchCNV)
+
+
 @DisplayedRoute('/genotypes/search', postMethod=True)
 def searchGenotypes():
     return handleFlaskPostRequest(

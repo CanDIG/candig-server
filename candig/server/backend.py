@@ -1238,6 +1238,22 @@ class Backend(object):
             request, dataset.getNumVariantSets(),
             dataset.getVariantSetByIndex)
 
+    def CNVSetsGenerator(self, request, access_map):
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
+
+        # TODO: Return CNV Sets
+
+        return null
+
+    def CNVGenerator(self, request, access_map):
+        dataset = self.getDataRepository().getDataset(request.dataset_id)
+        self.getUserAccessTier(dataset, access_map)
+
+        # TODO: Return CNV data
+
+        return null
+
     def variantAnnotationSetsGenerator(self, request, access_map):
         """
         Returns a generator over the (variantAnnotationSet, nextPageToken)
@@ -2628,6 +2644,28 @@ class Backend(object):
             request, protocol.SearchVariantsRequest,
             protocol.SearchVariantsResponse,
             self.variantsGenerator,
+            access_map,
+            return_mimetype)
+
+    def runSearchCNVSets(self, request, return_mimetype, access_map):
+        """
+        Runs the specified SearchCNVSetsRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchCNVSetsRequest,
+            protocol.SearchCNVSetsResponse,
+            self.CNVSetsGenerator,
+            access_map,
+            return_mimetype)
+
+    def runSearchCNV(self, request, return_mimetype, access_map):
+        """
+        Runs the specified SearchCNVRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchCNVRequest,
+            protocol.SearchCNVResponse,
+            self.CNVGenerator,
             access_map,
             return_mimetype)
 
