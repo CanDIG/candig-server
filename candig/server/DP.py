@@ -21,7 +21,8 @@ class DP(object):
     def _add_noise(self, vec, server, sensitivity=1.):
 
         if server not in self._epsilon:
-            # print("Warning! Server has no registered privacy settings. Returning original results")
+            # print("Warning! Server has no registered privacy settings. "
+            #       "Returning original results")
             return vec
 
         if self._epsilon[server] == np.inf:
