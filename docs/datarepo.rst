@@ -793,6 +793,18 @@ add-featureset
 ------------------------
 
 .. warning::
+
+    You may retrieve the latest version of gencode from here: https://www.gencodegenes.org/human/, you can usually
+    download the GFF3 file from the first row: Comprehensive gene annotation.
+
+    Once you retrieve the GFF3 file, unzip it, then use a conversion script to convert the GFF3 file to a SQLite-compatible DB.
+    The script is available from https://github.com/CanDIG/candig-server/blob/develop/scripts/generate_gff3_db.py.
+    
+    The script, by default, will create composite indexes on (start, end, referenceName) and (geneName, type). This should suffice
+    most of the use-cases.
+
+    If you are using this script mentioned above, ignore the following two paragraphs. 
+
     Before you add the feature set, you should make sure to index some of the columns in your
     generated DB. Specifically, you should make sure that you both ``gene_name`` and ``type``
     should be indexed. If you don't, queries to this endpoint, and endpoints that depend on this,
