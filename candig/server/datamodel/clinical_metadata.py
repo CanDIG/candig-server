@@ -2489,6 +2489,18 @@ class Outcome(datamodel.DatamodelObject):
         self._overallSurvivalInMonthsTier = None
         self._diseaseFreeSurvivalInMonths = None
         self._diseaseFreeSurvivalInMonthsTier = None
+        self._siteOfRelapseOrProgression = None
+        self._siteOfRelapseOrProgressionTier = None
+        self._intervalProgressionOrRecurrence = None
+        self._intervalProgressionOrRecurrenceTier = None
+        self._intervalRegressionOrDecreaseInDisease = None
+        self._intervalRegressionOrDecreaseInDiseaseTier = None
+        self._levelOfMalignancy = None
+        self._levelOfMalignancyTier = None
+        self._treatmentInducedNeoplasmSite = None
+        self._treatmentInducedNeoplasmSiteTier = None
+        self._dateOfDiagnosisOfTreatmentInducedNeoplasm = None
+        self._dateOfDiagnosisOfTreatmentInducedNeoplasmTier = None
 
         self._objectAttr = {
             "patientId": self.getPatientId,
@@ -2508,7 +2520,13 @@ class Outcome(datamodel.DatamodelObject):
             "weightUnits": self.getWeightUnits,
             "performanceStatus": self.getPerformanceStatus,
             "overallSurvivalInMonths": self.getOverallSurvivalInMonths,
-            "diseaseFreeSurvivalInMonths": self.getDiseaseFreeSurvivalInMonths
+            "diseaseFreeSurvivalInMonths": self.getDiseaseFreeSurvivalInMonths,
+            "siteOfRelapseOrProgression": self.getSiteOfRelapseOrProgression,
+            "intervalProgressionOrRecurrence": self.getIntervalProgressionOrRecurrence,
+            "intervalRegressionOrDecreaseInDisease": self.getIntervalRegressionOrDecreaseInDisease,
+            "levelOfMalignancy": self.getLevelOfMalignancy,
+            "treatmentInducedNeoplasmSite": self.getTreatmentInducedNeoplasmSite,
+            "dateOfDiagnosisOfTreatmentInducedNeoplasm": self.getDateOfDiagnosisOfTreatmentInducedNeoplasm
         }
 
     def toProtocolElement(self, tier=0):
@@ -2561,6 +2579,18 @@ class Outcome(datamodel.DatamodelObject):
                 record['overallSurvivalInMonths'] = self.getOverallSurvivalInMonths()
             if tier >= self.getDiseaseFreeSurvivalInMonthsTier():
                 record['diseaseFreeSurvivalInMonths'] = self.getDiseaseFreeSurvivalInMonths()
+			if tier >= self.getSiteOfRelapseOrProgressionTier():
+				record['siteOfRelapseOrProgression'] = self.getSiteOfRelapseOrProgression()
+			if tier >= self.getIntervalProgressionOrRecurrenceTier():
+				record['intervalProgressionOrRecurrence'] = self.getIntervalProgressionOrRecurrence()
+			if tier >= self.getIntervalRegressionOrDecreaseInDiseaseTier():
+				record['intervalRegressionOrDecreaseInDisease'] = self.getIntervalRegressionOrDecreaseInDisease()
+			if tier >= self.getLevelOfMalignancyTier():
+				record['levelOfMalignancy'] = self.getLevelOfMalignancy()
+			if tier >= self.getTreatmentInducedNeoplasmSiteTier():
+				record['treatmentInducedNeoplasmSite'] = self.getTreatmentInducedNeoplasmSite()
+			if tier >= self.getDateOfDiagnosisOfTreatmentInducedNeoplasmTier():
+				record['dateOfDiagnosisOfTreatmentInducedNeoplasm'] = self.getDateOfDiagnosisOfTreatmentInducedNeoplasm()
         except TypeError:
             pass
 
@@ -2615,6 +2645,18 @@ class Outcome(datamodel.DatamodelObject):
         self._overallSurvivalInMonthsTier = OutcomeRecord.overallSurvivalInMonthsTier
         self._diseaseFreeSurvivalInMonths = OutcomeRecord.diseaseFreeSurvivalInMonths
         self._diseaseFreeSurvivalInMonthsTier = OutcomeRecord.diseaseFreeSurvivalInMonthsTier
+        self._siteOfRelapseOrProgression = OutcomeRecord.siteOfRelapseOrProgression
+        self._siteOfRelapseOrProgressionTier = OutcomeRecord.siteOfRelapseOrProgressionTier
+        self._intervalProgressionOrRecurrence = OutcomeRecord.intervalProgressionOrRecurrence
+        self._intervalProgressionOrRecurrenceTier = OutcomeRecord.intervalProgressionOrRecurrenceTier
+        self._intervalRegressionOrDecreaseInDisease = OutcomeRecord.intervalRegressionOrDecreaseInDisease
+        self._intervalRegressionOrDecreaseInDiseaseTier = OutcomeRecord.intervalRegressionOrDecreaseInDiseaseTier
+        self._levelOfMalignancy = OutcomeRecord.levelOfMalignancy
+        self._levelOfMalignancyTier = OutcomeRecord.levelOfMalignancyTier
+        self._treatmentInducedNeoplasmSite = OutcomeRecord.treatmentInducedNeoplasmSite
+        self._treatmentInducedNeoplasmSiteTier = OutcomeRecord.treatmentInducedNeoplasmSiteTier
+        self._dateOfDiagnosisOfTreatmentInducedNeoplasm = OutcomeRecord.dateOfDiagnosisOfTreatmentInducedNeoplasm
+        self._dateOfDiagnosisOfTreatmentInducedNeoplasmTier = OutcomeRecord.dateOfDiagnosisOfTreatmentInducedNeoplasmTier
 
         return self
 
@@ -2671,6 +2713,18 @@ class Outcome(datamodel.DatamodelObject):
         self._overallSurvivalInMonthsTier = parsed.overallSurvivalInMonthsTier
         self._diseaseFreeSurvivalInMonths = parsed.diseaseFreeSurvivalInMonths
         self._diseaseFreeSurvivalInMonthsTier = parsed.diseaseFreeSurvivalInMonthsTier
+        self._siteOfRelapseOrProgression = parsed.siteOfRelapseOrProgression
+        self._siteOfRelapseOrProgressionTier = parsed.siteOfRelapseOrProgressionTier
+        self._intervalProgressionOrRecurrence = parsed.intervalProgressionOrRecurrence
+        self._intervalProgressionOrRecurrenceTier = parsed.intervalProgressionOrRecurrenceTier
+        self._intervalRegressionOrDecreaseInDisease = parsed.intervalRegressionOrDecreaseInDisease
+        self._intervalRegressionOrDecreaseInDiseaseTier = parsed.intervalRegressionOrDecreaseInDiseaseTier
+        self._levelOfMalignancy = parsed.levelOfMalignancy
+        self._levelOfMalignancyTier = parsed.levelOfMalignancyTier
+        self._treatmentInducedNeoplasmSite = parsed.treatmentInducedNeoplasmSite
+        self._treatmentInducedNeoplasmSiteTier = parsed.treatmentInducedNeoplasmSiteTier
+        self._dateOfDiagnosisOfTreatmentInducedNeoplasm = parsed.dateOfDiagnosisOfTreatmentInducedNeoplasm
+        self._dateOfDiagnosisOfTreatmentInducedNeoplasmTier = parsed.dateOfDiagnosisOfTreatmentInducedNeoplasmTier
 
         return self
 
@@ -2798,6 +2852,42 @@ class Outcome(datamodel.DatamodelObject):
 
     def getDiseaseFreeSurvivalInMonthsTier(self):
         return self._diseaseFreeSurvivalInMonthsTier
+
+    def getSiteOfRelapseOrProgression(self):
+        return self._siteOfRelapseOrProgression
+
+    def getSiteOfRelapseOrProgressionTier(self):
+        return self._siteOfRelapseOrProgressionTier
+
+    def getIntervalProgressionOrRecurrence(self):
+        return self._intervalProgressionOrRecurrence
+
+    def getIntervalProgressionOrRecurrenceTier(self):
+        return self._intervalProgressionOrRecurrenceTier
+
+    def getIntervalRegressionOrDecreaseInDisease(self):
+        return self._intervalRegressionOrDecreaseInDisease
+
+    def getIntervalRegressionOrDecreaseInDiseaseTier(self):
+        return self._intervalRegressionOrDecreaseInDiseaseTier
+
+    def getLevelOfMalignancy(self):
+        return self._levelOfMalignancy
+
+    def getLevelOfMalignancyTier(self):
+        return self._levelOfMalignancyTier
+
+    def getTreatmentInducedNeoplasmSite(self):
+        return self._treatmentInducedNeoplasmSite
+
+    def getTreatmentInducedNeoplasmSiteTier(self):
+        return self._treatmentInducedNeoplasmSiteTier
+
+    def getDateOfDiagnosisOfTreatmentInducedNeoplasm(self):
+        return self._dateOfDiagnosisOfTreatmentInducedNeoplasm
+
+    def getDateOfDiagnosisOfTreatmentInducedNeoplasmTier(self):
+        return self._dateOfDiagnosisOfTreatmentInducedNeoplasmTier
 
 
 class Complication(datamodel.DatamodelObject):
@@ -3065,6 +3155,56 @@ class Tumourboard(datamodel.DatamodelObject):
         self._patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfilingTier = None
         self._summaryReport = None
         self._summaryReportTier = None
+        self._actionableExpressionOutlier = None
+        self._actionableExpressionOutlierTier = None
+        self._actionableGermlineVariant = None
+        self._actionableGermlineVariantTier = None
+        self._germlineVariantsDrug = None
+        self._germlineVariantsDrugTier = None
+        self._germlineVariantsDrugClass = None
+        self._germlineVariantsDrugClassTier = None
+        self._germlineVariantsDiscussed = None
+        self._germlineVariantsDiscussedTier = None
+        self._actionableSomaticVariants = None
+        self._actionableSomaticVariantsTier = None
+        self._somaticVariantsDrug = None
+        self._somaticVariantsDrugTier = None
+        self._somaticVariantsDrugClass = None
+        self._somaticVariantsDrugClassTier = None
+        self._somaticVariantsDiscussed = None
+        self._somaticVariantsDiscussedTier = None
+        self._anyActionableExpressionOutlier = None
+        self._anyActionableExpressionOutlierTier = None
+        self._expressionDrug = None
+        self._expressionDrugTier = None
+        self._expressionDrugClass = None
+        self._expressionDrugClassTier = None
+        self._expressionTypeOfAnalysisUsed = None
+        self._expressionTypeOfAnalysisUsedTier = None
+        self._expressionTypeOfInformationUtility = None
+        self._expressionTypeOfInformationUtilityTier = None
+        self._expressionAlteredGene = None
+        self._expressionAlteredGeneTier = None
+        self._expressionNonActionableGene = None
+        self._expressionNonActionableGeneTier = None
+        self._expressionTypeOfAlteration = None
+        self._expressionTypeOfAlterationTier = None
+        self._anyActionableGermlineVariants = None
+        self._anyActionableGermlineVariantsTier = None
+        self._germlineVariantsTypeOfAnalysisUsed = None
+        self._germlineVariantsTypeOfAnalysisUsedTier = None
+        self._germlineVariantsClassificationOfVariants = None
+        self._germlineVariantsClassificationOfVariantsTier = None
+        self._germlineVariantsTypeOfInformationUtility = None
+        self._germlineVariantsTypeOfInformationUtilityTier = None
+        self._anyActionableSomaticVariants = None
+        self._anyActionableSomaticVariantsTier = None
+        self._somaticVariantsTypeOfAnalysisUsed = None
+        self._somaticVariantsTypeOfAnalysisUsedTier = None
+        self._somaticVariantsTypeOfInformationUtility = None
+        self._somaticVariantsTypeOfInformationUtilityTier = None
+        self._somaticVariantsNonActionable = None
+        self._somaticVariantsNonActionableTier = None
 
         self._objectAttr = {
             "patientId": self.getPatientId,
@@ -3096,7 +3236,32 @@ class Tumourboard(datamodel.DatamodelObject):
             "detailsOfTreatmentPlanImpact": self.getDetailsOfTreatmentPlanImpact,
             "patientOrFamilyInformedOfGermlineVariant": self.getPatientOrFamilyInformedOfGermlineVariant,
             "patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling": self.getPatientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling,
-            "summaryReport": self.getSummaryReport
+            "summaryReport": self.getSummaryReport,
+            "actionableExpressionOutlier": self.getActionableExpressionOutlier,
+            "actionableGermlineVariant": self.getActionableGermlineVariant,
+            "germlineVariantsDrug": self.getGermlineVariantsDrug,
+            "germlineVariantsDrugClass": self.getGermlineVariantsDrugClass,
+            "germlineVariantsDiscussed": self.getGermlineVariantsDiscussed,
+            "actionableSomaticVariants": self.getActionableSomaticVariants,
+            "somaticVariantsDrug": self.getSomaticVariantsDrug,
+            "somaticVariantsDrugClass": self.getSomaticVariantsDrugClass,
+            "somaticVariantsDiscussed": self.getSomaticVariantsDiscussed,
+            "anyActionableExpressionOutlier": self.getAnyActionableExpressionOutlier,
+            "expressionDrug": self.getExpressionDrug,
+            "expressionDrugClass": self.getExpressionDrugClass,
+            "expressionTypeOfAnalysisUsed": self.getExpressionTypeOfAnalysisUsed,
+            "expressionTypeOfInformationUtility": self.getExpressionTypeOfInformationUtility,
+            "expressionAlteredGene": self.getExpressionAlteredGene,
+            "expressionNonActionableGene": self.getExpressionNonActionableGene,
+            "expressionTypeOfAlteration": self.getExpressionTypeOfAlteration,
+            "anyActionableGermlineVariants": self.getAnyActionableGermlineVariants,
+            "germlineVariantsTypeOfAnalysisUsed": self.getGermlineVariantsTypeOfAnalysisUsed,
+            "germlineVariantsClassificationOfVariants": self.getGermlineVariantsClassificationOfVariants,
+            "germlineVariantsTypeOfInformationUtility": self.getGermlineVariantsTypeOfInformationUtility,
+            "anyActionableSomaticVariants": self.getAnyActionableSomaticVariants,
+            "somaticVariantsTypeOfAnalysisUsed": self.getSomaticVariantsTypeOfAnalysisUsed,
+            "somaticVariantsTypeOfInformationUtility": self.getSomaticVariantsTypeOfInformationUtility,
+            "somaticVariantsNonActionable": self.getSomaticVariantsNonActionable
         }
 
     def toProtocolElement(self, tier=0):
@@ -3173,6 +3338,57 @@ class Tumourboard(datamodel.DatamodelObject):
                 record['patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling'] = self.getPatientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling()
             if tier >= self.getSummaryReportTier():
                 record['summaryReport'] = self.getSummaryReport()
+			if tier >= self.getActionableExpressionOutlierTier():
+				record['actionableExpressionOutlier'] = self.getActionableExpressionOutlier()
+			if tier >= self.getActionableGermlineVariantTier():
+				record['actionableGermlineVariant'] = self.getActionableGermlineVariant()
+			if tier >= self.getGermlineVariantsDrugTier():
+				record['germlineVariantsDrug'] = self.getGermlineVariantsDrug()
+			if tier >= self.getGermlineVariantsDrugClassTier():
+				record['germlineVariantsDrugClass'] = self.getGermlineVariantsDrugClass()
+			if tier >= self.getGermlineVariantsDiscussedTier():
+				record['germlineVariantsDiscussed'] = self.getGermlineVariantsDiscussed()
+			if tier >= self.getActionableSomaticVariantsTier():
+				record['actionableSomaticVariants'] = self.getActionableSomaticVariants()
+			if tier >= self.getSomaticVariantsDrugTier():
+				record['somaticVariantsDrug'] = self.getSomaticVariantsDrug()
+			if tier >= self.getSomaticVariantsDrugClassTier():
+				record['somaticVariantsDrugClass'] = self.getSomaticVariantsDrugClass()
+			if tier >= self.getSomaticVariantsDiscussedTier():
+				record['somaticVariantsDiscussed'] = self.getSomaticVariantsDiscussed()
+			if tier >= self.getAnyActionableExpressionOutlierTier():
+				record['anyActionableExpressionOutlier'] = self.getAnyActionableExpressionOutlier()
+			if tier >= self.getExpressionDrugTier():
+				record['expressionDrug'] = self.getExpressionDrug()
+			if tier >= self.getExpressionDrugClassTier():
+				record['expressionDrugClass'] = self.getExpressionDrugClass()
+			if tier >= self.getExpressionTypeOfAnalysisUsedTier():
+				record['expressionTypeOfAnalysisUsed'] = self.getExpressionTypeOfAnalysisUsed()
+			if tier >= self.getExpressionTypeOfInformationUtilityTier():
+				record['expressionTypeOfInformationUtility'] = self.getExpressionTypeOfInformationUtility()
+			if tier >= self.getExpressionAlteredGeneTier():
+				record['expressionAlteredGene'] = self.getExpressionAlteredGene()
+			if tier >= self.getExpressionNonActionableGeneTier():
+				record['expressionNonActionableGene'] = self.getExpressionNonActionableGene()
+			if tier >= self.getExpressionTypeOfAlterationTier():
+				record['expressionTypeOfAlteration'] = self.getExpressionTypeOfAlteration()
+			if tier >= self.getAnyActionableGermlineVariantsTier():
+				record['anyActionableGermlineVariants'] = self.getAnyActionableGermlineVariants()
+			if tier >= self.getGermlineVariantsTypeOfAnalysisUsedTier():
+				record['germlineVariantsTypeOfAnalysisUsed'] = self.getGermlineVariantsTypeOfAnalysisUsed()
+			if tier >= self.getGermlineVariantsClassificationOfVariantsTier():
+				record['germlineVariantsClassificationOfVariants'] = self.getGermlineVariantsClassificationOfVariants()
+			if tier >= self.getGermlineVariantsTypeOfInformationUtilityTier():
+				record['germlineVariantsTypeOfInformationUtility'] = self.getGermlineVariantsTypeOfInformationUtility()
+			if tier >= self.getAnyActionableSomaticVariantsTier():
+				record['anyActionableSomaticVariants'] = self.getAnyActionableSomaticVariants()
+			if tier >= self.getSomaticVariantsTypeOfAnalysisUsedTier():
+				record['somaticVariantsTypeOfAnalysisUsed'] = self.getSomaticVariantsTypeOfAnalysisUsed()
+			if tier >= self.getSomaticVariantsTypeOfInformationUtilityTier():
+				record['somaticVariantsTypeOfInformationUtility'] = self.getSomaticVariantsTypeOfInformationUtility()
+			if tier >= self.getSomaticVariantsNonActionableTier():
+				record['somaticVariantsNonActionable'] = self.getSomaticVariantsNonActionable()
+
         except TypeError:
             pass
 
@@ -3251,6 +3467,56 @@ class Tumourboard(datamodel.DatamodelObject):
         self._patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfilingTier = TumourboardRecord.patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfilingTier
         self._summaryReport = TumourboardRecord.summaryReport
         self._summaryReportTier = TumourboardRecord.summaryReportTier
+        self._actionableExpressionOutlier = TumourboardRecord.actionableExpressionOutlier
+        self._actionableExpressionOutlierTier = TumourboardRecord.actionableExpressionOutlierTier
+        self._actionableGermlineVariant = TumourboardRecord.actionableGermlineVariant
+        self._actionableGermlineVariantTier = TumourboardRecord.actionableGermlineVariantTier
+        self._germlineVariantsDrug = TumourboardRecord.germlineVariantsDrug
+        self._germlineVariantsDrugTier = TumourboardRecord.germlineVariantsDrugTier
+        self._germlineVariantsDrugClass = TumourboardRecord.germlineVariantsDrugClass
+        self._germlineVariantsDrugClassTier = TumourboardRecord.germlineVariantsDrugClassTier
+        self._germlineVariantsDiscussed = TumourboardRecord.germlineVariantsDiscussed
+        self._germlineVariantsDiscussedTier = TumourboardRecord.germlineVariantsDiscussedTier
+        self._actionableSomaticVariants = TumourboardRecord.actionableSomaticVariants
+        self._actionableSomaticVariantsTier = TumourboardRecord.actionableSomaticVariantsTier
+        self._somaticVariantsDrug = TumourboardRecord.somaticVariantsDrug
+        self._somaticVariantsDrugTier = TumourboardRecord.somaticVariantsDrugTier
+        self._somaticVariantsDrugClass = TumourboardRecord.somaticVariantsDrugClass
+        self._somaticVariantsDrugClassTier = TumourboardRecord.somaticVariantsDrugClassTier
+        self._somaticVariantsDiscussed = TumourboardRecord.somaticVariantsDiscussed
+        self._somaticVariantsDiscussedTier = TumourboardRecord.somaticVariantsDiscussedTier
+        self._anyActionableExpressionOutlier = TumourboardRecord.anyActionableExpressionOutlier
+        self._anyActionableExpressionOutlierTier = TumourboardRecord.anyActionableExpressionOutlierTier
+        self._expressionDrug = TumourboardRecord.expressionDrug
+        self._expressionDrugTier = TumourboardRecord.expressionDrugTier
+        self._expressionDrugClass = TumourboardRecord.expressionDrugClass
+        self._expressionDrugClassTier = TumourboardRecord.expressionDrugClassTier
+        self._expressionTypeOfAnalysisUsed = TumourboardRecord.expressionTypeOfAnalysisUsed
+        self._expressionTypeOfAnalysisUsedTier = TumourboardRecord.expressionTypeOfAnalysisUsedTier
+        self._expressionTypeOfInformationUtility = TumourboardRecord.expressionTypeOfInformationUtility
+        self._expressionTypeOfInformationUtilityTier = TumourboardRecord.expressionTypeOfInformationUtilityTier
+        self._expressionAlteredGene = TumourboardRecord.expressionAlteredGene
+        self._expressionAlteredGeneTier = TumourboardRecord.expressionAlteredGeneTier
+        self._expressionNonActionableGene = TumourboardRecord.expressionNonActionableGene
+        self._expressionNonActionableGeneTier = TumourboardRecord.expressionNonActionableGeneTier
+        self._expressionTypeOfAlteration = TumourboardRecord.expressionTypeOfAlteration
+        self._expressionTypeOfAlterationTier = TumourboardRecord.expressionTypeOfAlterationTier
+        self._anyActionableGermlineVariants = TumourboardRecord.anyActionableGermlineVariants
+        self._anyActionableGermlineVariantsTier = TumourboardRecord.anyActionableGermlineVariantsTier
+        self._germlineVariantsTypeOfAnalysisUsed = TumourboardRecord.germlineVariantsTypeOfAnalysisUsed
+        self._germlineVariantsTypeOfAnalysisUsedTier = TumourboardRecord.germlineVariantsTypeOfAnalysisUsedTier
+        self._germlineVariantsClassificationOfVariants = TumourboardRecord.germlineVariantsClassificationOfVariants
+        self._germlineVariantsClassificationOfVariantsTier = TumourboardRecord.germlineVariantsClassificationOfVariantsTier
+        self._germlineVariantsTypeOfInformationUtility = TumourboardRecord.germlineVariantsTypeOfInformationUtility
+        self._germlineVariantsTypeOfInformationUtilityTier = TumourboardRecord.germlineVariantsTypeOfInformationUtilityTier
+        self._anyActionableSomaticVariants = TumourboardRecord.anyActionableSomaticVariants
+        self._anyActionableSomaticVariantsTier = TumourboardRecord.anyActionableSomaticVariantsTier
+        self._somaticVariantsTypeOfAnalysisUsed = TumourboardRecord.somaticVariantsTypeOfAnalysisUsed
+        self._somaticVariantsTypeOfAnalysisUsedTier = TumourboardRecord.somaticVariantsTypeOfAnalysisUsedTier
+        self._somaticVariantsTypeOfInformationUtility = TumourboardRecord.somaticVariantsTypeOfInformationUtility
+        self._somaticVariantsTypeOfInformationUtilityTier = TumourboardRecord.somaticVariantsTypeOfInformationUtilityTier
+        self._somaticVariantsNonActionable = TumourboardRecord.somaticVariantsNonActionable
+        self._somaticVariantsNonActionableTier = TumourboardRecord.somaticVariantsNonActionableTier
 
         return self
 
@@ -3331,6 +3597,56 @@ class Tumourboard(datamodel.DatamodelObject):
         self._patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfilingTier = parsed.patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfilingTier
         self._summaryReport = parsed.summaryReport
         self._summaryReportTier = parsed.summaryReportTier
+        self._actionableExpressionOutlier = parsed.actionableExpressionOutlier
+        self._actionableExpressionOutlierTier = parsed.actionableExpressionOutlierTier
+        self._actionableGermlineVariant = parsed.actionableGermlineVariant
+        self._actionableGermlineVariantTier = parsed.actionableGermlineVariantTier
+        self._germlineVariantsDrug = parsed.germlineVariantsDrug
+        self._germlineVariantsDrugTier = parsed.germlineVariantsDrugTier
+        self._germlineVariantsDrugClass = parsed.germlineVariantsDrugClass
+        self._germlineVariantsDrugClassTier = parsed.germlineVariantsDrugClassTier
+        self._germlineVariantsDiscussed = parsed.germlineVariantsDiscussed
+        self._germlineVariantsDiscussedTier = parsed.germlineVariantsDiscussedTier
+        self._actionableSomaticVariants = parsed.actionableSomaticVariants
+        self._actionableSomaticVariantsTier = parsed.actionableSomaticVariantsTier
+        self._somaticVariantsDrug = parsed.somaticVariantsDrug
+        self._somaticVariantsDrugTier = parsed.somaticVariantsDrugTier
+        self._somaticVariantsDrugClass = parsed.somaticVariantsDrugClass
+        self._somaticVariantsDrugClassTier = parsed.somaticVariantsDrugClassTier
+        self._somaticVariantsDiscussed = parsed.somaticVariantsDiscussed
+        self._somaticVariantsDiscussedTier = parsed.somaticVariantsDiscussedTier
+        self._anyActionableExpressionOutlier = parsed.anyActionableExpressionOutlier
+        self._anyActionableExpressionOutlierTier = parsed.anyActionableExpressionOutlierTier
+        self._expressionDrug = parsed.expressionDrug
+        self._expressionDrugTier = parsed.expressionDrugTier
+        self._expressionDrugClass = parsed.expressionDrugClass
+        self._expressionDrugClassTier = parsed.expressionDrugClassTier
+        self._expressionTypeOfAnalysisUsed = parsed.expressionTypeOfAnalysisUsed
+        self._expressionTypeOfAnalysisUsedTier = parsed.expressionTypeOfAnalysisUsedTier
+        self._expressionTypeOfInformationUtility = parsed.expressionTypeOfInformationUtility
+        self._expressionTypeOfInformationUtilityTier = parsed.expressionTypeOfInformationUtilityTier
+        self._expressionAlteredGene = parsed.expressionAlteredGene
+        self._expressionAlteredGeneTier = parsed.expressionAlteredGeneTier
+        self._expressionNonActionableGene = parsed.expressionNonActionableGene
+        self._expressionNonActionableGeneTier = parsed.expressionNonActionableGeneTier
+        self._expressionTypeOfAlteration = parsed.expressionTypeOfAlteration
+        self._expressionTypeOfAlterationTier = parsed.expressionTypeOfAlterationTier
+        self._anyActionableGermlineVariants = parsed.anyActionableGermlineVariants
+        self._anyActionableGermlineVariantsTier = parsed.anyActionableGermlineVariantsTier
+        self._germlineVariantsTypeOfAnalysisUsed = parsed.germlineVariantsTypeOfAnalysisUsed
+        self._germlineVariantsTypeOfAnalysisUsedTier = parsed.germlineVariantsTypeOfAnalysisUsedTier
+        self._germlineVariantsClassificationOfVariants = parsed.germlineVariantsClassificationOfVariants
+        self._germlineVariantsClassificationOfVariantsTier = parsed.germlineVariantsClassificationOfVariantsTier
+        self._germlineVariantsTypeOfInformationUtility = parsed.germlineVariantsTypeOfInformationUtility
+        self._germlineVariantsTypeOfInformationUtilityTier = parsed.germlineVariantsTypeOfInformationUtilityTier
+        self._anyActionableSomaticVariants = parsed.anyActionableSomaticVariants
+        self._anyActionableSomaticVariantsTier = parsed.anyActionableSomaticVariantsTier
+        self._somaticVariantsTypeOfAnalysisUsed = parsed.somaticVariantsTypeOfAnalysisUsed
+        self._somaticVariantsTypeOfAnalysisUsedTier = parsed.somaticVariantsTypeOfAnalysisUsedTier
+        self._somaticVariantsTypeOfInformationUtility = parsed.somaticVariantsTypeOfInformationUtility
+        self._somaticVariantsTypeOfInformationUtilityTier = parsed.somaticVariantsTypeOfInformationUtilityTier
+        self._somaticVariantsNonActionable = parsed.somaticVariantsNonActionable
+        self._somaticVariantsNonActionableTier = parsed.somaticVariantsNonActionableTier
 
         return self
 
@@ -3530,6 +3846,156 @@ class Tumourboard(datamodel.DatamodelObject):
 
     def getSummaryReportTier(self):
         return self._summaryReportTier
+
+    def getActionableExpressionOutlier(self):
+        return self._actionableExpressionOutlier
+
+    def getActionableExpressionOutlierTier(self):
+        return self._actionableExpressionOutlierTier
+
+    def getActionableGermlineVariant(self):
+        return self._actionableGermlineVariant
+
+    def getActionableGermlineVariantTier(self):
+        return self._actionableGermlineVariantTier
+
+    def getGermlineVariantsDrug(self):
+        return self._germlineVariantsDrug
+
+    def getGermlineVariantsDrugTier(self):
+        return self._germlineVariantsDrugTier
+
+    def getGermlineVariantsDrugClass(self):
+        return self._germlineVariantsDrugClass
+
+    def getGermlineVariantsDrugClassTier(self):
+        return self._germlineVariantsDrugClassTier
+
+    def getGermlineVariantsDiscussed(self):
+        return self._germlineVariantsDiscussed
+
+    def getGermlineVariantsDiscussedTier(self):
+        return self._germlineVariantsDiscussedTier
+
+    def getActionableSomaticVariants(self):
+        return self._actionableSomaticVariants
+
+    def getActionableSomaticVariantsTier(self):
+        return self._actionableSomaticVariantsTier
+
+    def getSomaticVariantsDrug(self):
+        return self._somaticVariantsDrug
+
+    def getSomaticVariantsDrugTier(self):
+        return self._somaticVariantsDrugTier
+
+    def getSomaticVariantsDrugClass(self):
+        return self._somaticVariantsDrugClass
+
+    def getSomaticVariantsDrugClassTier(self):
+        return self._somaticVariantsDrugClassTier
+
+    def getSomaticVariantsDiscussed(self):
+        return self._somaticVariantsDiscussed
+
+    def getSomaticVariantsDiscussedTier(self):
+        return self._somaticVariantsDiscussedTier
+
+    def getAnyActionableExpressionOutlier(self):
+        return self._anyActionableExpressionOutlier
+
+    def getAnyActionableExpressionOutlierTier(self):
+        return self._anyActionableExpressionOutlierTier
+
+    def getExpressionDrug(self):
+        return self._expressionDrug
+
+    def getExpressionDrugTier(self):
+        return self._expressionDrugTier
+
+    def getExpressionDrugClass(self):
+        return self._expressionDrugClass
+
+    def getExpressionDrugClassTier(self):
+        return self._expressionDrugClassTier
+
+    def getExpressionTypeOfAnalysisUsed(self):
+        return self._expressionTypeOfAnalysisUsed
+
+    def getExpressionTypeOfAnalysisUsedTier(self):
+        return self._expressionTypeOfAnalysisUsedTier
+
+    def getExpressionTypeOfInformationUtility(self):
+        return self._expressionTypeOfInformationUtility
+
+    def getExpressionTypeOfInformationUtilityTier(self):
+        return self._expressionTypeOfInformationUtilityTier
+
+    def getExpressionAlteredGene(self):
+        return self._expressionAlteredGene
+
+    def getExpressionAlteredGeneTier(self):
+        return self._expressionAlteredGeneTier
+
+    def getExpressionNonActionableGene(self):
+        return self._expressionNonActionableGene
+
+    def getExpressionNonActionableGeneTier(self):
+        return self._expressionNonActionableGeneTier
+
+    def getExpressionTypeOfAlteration(self):
+        return self._expressionTypeOfAlteration
+
+    def getExpressionTypeOfAlterationTier(self):
+        return self._expressionTypeOfAlterationTier
+
+    def getAnyActionableGermlineVariants(self):
+        return self._anyActionableGermlineVariants
+
+    def getAnyActionableGermlineVariantsTier(self):
+        return self._anyActionableGermlineVariantsTier
+
+    def getGermlineVariantsTypeOfAnalysisUsed(self):
+        return self._germlineVariantsTypeOfAnalysisUsed
+
+    def getGermlineVariantsTypeOfAnalysisUsedTier(self):
+        return self._germlineVariantsTypeOfAnalysisUsedTier
+
+    def getGermlineVariantsClassificationOfVariants(self):
+        return self._germlineVariantsClassificationOfVariants
+
+    def getGermlineVariantsClassificationOfVariantsTier(self):
+        return self._germlineVariantsClassificationOfVariantsTier
+
+    def getGermlineVariantsTypeOfInformationUtility(self):
+        return self._germlineVariantsTypeOfInformationUtility
+
+    def getGermlineVariantsTypeOfInformationUtilityTier(self):
+        return self._germlineVariantsTypeOfInformationUtilityTier
+
+    def getAnyActionableSomaticVariants(self):
+        return self._anyActionableSomaticVariants
+
+    def getAnyActionableSomaticVariantsTier(self):
+        return self._anyActionableSomaticVariantsTier
+
+    def getSomaticVariantsTypeOfAnalysisUsed(self):
+        return self._somaticVariantsTypeOfAnalysisUsed
+
+    def getSomaticVariantsTypeOfAnalysisUsedTier(self):
+        return self._somaticVariantsTypeOfAnalysisUsedTier
+
+    def getSomaticVariantsTypeOfInformationUtility(self):
+        return self._somaticVariantsTypeOfInformationUtility
+
+    def getSomaticVariantsTypeOfInformationUtilityTier(self):
+        return self._somaticVariantsTypeOfInformationUtilityTier
+
+    def getSomaticVariantsNonActionable(self):
+        return self._somaticVariantsNonActionable
+
+    def getSomaticVariantsNonActionableTier(self):
+        return self._somaticVariantsNonActionableTier
 
 
 class Chemotherapy(datamodel.DatamodelObject):
