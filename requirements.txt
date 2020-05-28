@@ -13,7 +13,7 @@
 # the constraints file will point at the current master branch 
 # of the respective module.
 candig-common==1.0.0
-candig-schemas==1.0.1
+# candig-schemas==1.0.1
 
 Werkzeug==0.15.5
 MarkupSafe==1.1.1
