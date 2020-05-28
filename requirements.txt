@@ -13,7 +13,7 @@
 # the constraints file will point at the current master branch 
 # of the respective module.
 candig-common==1.0.0
-git+git://github.com/CanDIG/candig-schemas.git@profyle#egg=candig_schemas
+candig-schemas
 
 Werkzeug==0.15.5
 MarkupSafe==1.1.1

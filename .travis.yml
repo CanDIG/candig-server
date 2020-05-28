@@ -19,7 +19,7 @@ matrix:
       - candig_server --version
       - candig_repo --version
     before_script:
-      - pip install -r dev-requirements.txt
+      - pip install --upgrade -r dev-requirements.txt
       - python scripts/build_test_data.py
       - ingest --version
       - ingest tests/data/registry.db dataset1 tests/data/sample_clin_metadata.json
