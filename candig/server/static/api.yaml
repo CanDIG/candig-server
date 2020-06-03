@@ -2692,6 +2692,18 @@ components:
           type: string
         diseaseFreeSurvivalInMonths:
           type: string
+        siteOfRelapseOrProgression:
+          type: string
+        intervalProgressionOrRecurrence:
+          type: string
+        intervalRegressionOrDecreaseInDisease:
+          type: string
+        levelOfMalignancy:
+          type: string
+        treatmentInducedNeoplasmSite:
+          type: string
+        dateOfDiagnosisOfTreatmentInducedNeoplasm:
+          type: string
     candigPatient:
       type: object
       properties:
@@ -3724,6 +3736,56 @@ components:
         patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling:
           type: string
         summaryReport:
+          type: string
+        actionableExpressionOutlier:
+          type: string
+        actionableGermlineVariant:
+          type: string
+        germlineVariantsDrug:
+          type: string
+        germlineVariantsDrugClass:
+          type: string
+        germlineVariantsDiscussed:
+          type: string
+        actionableSomaticVariants:
+          type: string
+        somaticVariantsDrug:
+          type: string
+        somaticVariantsDrugClass:
+          type: string
+        somaticVariantsDiscussed:
+          type: string
+        anyActionableExpressionOutlier:
+          type: string
+        expressionDrug:
+          type: string
+        expressionDrugClass:
+          type: string
+        expressionTypeOfAnalysisUsed:
+          type: string
+        expressionTypeOfInformationUtility:
+          type: string
+        expressionAlteredGene:
+          type: string
+        expressionNonActionableGene:
+          type: string
+        expressionTypeOfAlteration:
+          type: string
+        anyActionableGermlineVariants:
+          type: string
+        germlineVariantsTypeOfAnalysisUsed:
+          type: string
+        germlineVariantsClassificationOfVariants:
+          type: string
+        germlineVariantsTypeOfInformationUtility:
+          type: string
+        anyActionableSomaticVariants:
+          type: string
+        somaticVariantsTypeOfAnalysisUsed:
+          type: string
+        somaticVariantsTypeOfInformationUtility:
+          type: string
+        somaticVariantsNonActionable:
           type: string
     candigAlignment:
       type: object
