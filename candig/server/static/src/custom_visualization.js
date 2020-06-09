@@ -89,12 +89,19 @@ const categories = {
         "levelOfEvidenceForExpressionTargetAgentMatch", "didTreatmentPlanChangeBasedOnProfilingResult",
         "howTreatmentHasAlteredBasedOnProfiling", "reasonTreatmentPlanDidNotChangeBasedOnProfiling",
         "detailsOfTreatmentPlanImpact", "patientOrFamilyInformedOfGermlineVariant",
-        "patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling", "summaryReport"
+        "patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling", "summaryReport", "actionableExpressionOutlier", 
+        "actionableGermlineVariant", "germlineVariantsDrug", "germlineVariantsDrugClass", "germlineVariantsDiscussed", "actionableSomaticVariants", 
+        "somaticVariantsDrug", "somaticVariantsDrugClass", "somaticVariantsDiscussed", "anyActionableExpressionOutlier", "expressionDrug", 
+        "expressionDrugClass", "expressionTypeOfAnalysisUsed", "expressionTypeOfInformationUtility", "expressionAlteredGene", "expressionNonActionableGene", 
+        "expressionTypeOfAlteration", "anyActionableGermlineVariants", "germlineVariantsTypeOfAnalysisUsed", "germlineVariantsClassificationOfVariants", 
+        "germlineVariantsTypeOfInformationUtility", "anyActionableSomaticVariants", "somaticVariantsTypeOfAnalysisUsed", 
+        "somaticVariantsTypeOfInformationUtility", "somaticVariantsNonActionable"
     ],
     "outcomes": ["dateOfAssessment", "diseaseResponseOrStatus", "otherResponseClassification",
         "minimalResidualDiseaseAssessment", "methodOfResponseEvaluation", "responseCriteriaUsed", "summaryStage",
         "sitesOfAnyProgressionOrRecurrence", "vitalStatus", "height", "weight", "heightUnits", "weightUnits", "performanceStatus", "overallSurvivalInMonths",
-        "diseaseFreeSurvivalInMonths"
+        "diseaseFreeSurvivalInMonths", "siteOfRelapseOrProgression", "intervalProgressionOrRecurrence", "intervalRegressionOrDecreaseInDisease", "levelOfMalignancy", 
+        "treatmentInducedNeoplasmSite", "dateOfDiagnosisOfTreatmentInducedNeoplasm"
     ],
     "complications": ["date", "lateComplicationOfTherapyDeveloped", "lateToxicityDetail", "suspectedTreatmentInducedNeoplasmDeveloped", "treatmentInducedNeoplasmDetails"],
     "consents": ["consentDate", "consentVersion", "patientConsentedTo", "reasonForRejection",
