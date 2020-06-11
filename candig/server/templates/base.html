@@ -16,8 +16,8 @@
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
       <!-- internal CSS -->
-      <link type="text/css" rel="stylesheet" href="{{prepend_path}}/static/loader.css">
-      <link type="text/css" rel="stylesheet" href="{{prepend_path}}/static/dashboard.css"> 
+      <link type="text/css" rel="stylesheet" href="{{prepend_path}}/static/core/css/loader.css">
+      <link type="text/css" rel="stylesheet" href="{{prepend_path}}/static/core/css/dashboard.css"> 
       <link href="{{prepend_path}}/static/assets/css/paper-dashboard.min.css" rel="stylesheet" />
 
     {% endblock %}
@@ -153,7 +153,7 @@
       let finalDatasetId = [];
       const prepend_path = '{{prepend_path}}';
     </script>
-    <script src="{{prepend_path}}/static/dist/global.js"></script>
+    <script src="{{prepend_path}}/static/core/js/dist/global.js"></script>
   {% endblock %}
   </body>
 </html>
