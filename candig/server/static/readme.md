@@ -17,7 +17,9 @@ npx babel src --watch --out-dir dist
 
 ```
 
+You may have noticed that you did not need to specify any operations here, this is because the appropriate operations required have been written into `babelrc` under `static/core/js`. If you are only compiling the JavaScript as a one-time thing, you may also remove the `--watch` flag.
+
 
 # Assets
 
-This directory contains the external assets from paper-dashboard. 
+This directory contains the external assets from paper-dashboard. Generally speaking, no changes need to be done for these external static files, as they only take care of some general styling, as well as the mobile-responsiveness of the dashboard, these files themselves do not implement any features of the dashboard.
