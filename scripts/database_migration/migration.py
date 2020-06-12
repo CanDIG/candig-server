@@ -18,17 +18,27 @@ def addColumns(migrator, newColumnsDict):
             columnType = newColumnsDict[tableName][columnName]["type"]
             isNull = newColumnsDict[tableName][columnName]["null"]
             if columnType not in dbTypes:
-                print("Data type {} is not a valid datatype.".format(columnType))
+                print(
+                    "Data type {} is not a valid datatype.".format(columnType)
+                )
                 continue
             try:
-                print("Adding column \"{}\" to table \"{}\".".format(columnName, tableName))
+                print(
+                    'Adding column "{}" to table "{}".'.format(
+                        columnName, tableName
+                    )
+                )
                 mgt.migrate(
                     migrator.add_column(
                         tableName, columnName, dbTypes[columnType](null=isNull)
                     )
                 )
             except (sqlite3OperationalError, peeweeOperationalError):
-                print("Error adding column \"{}\" to table \"{}\"".format(columnName, tableName))
+                print(
+                    'Error adding column "{}" to table "{}"'.format(
+                        columnName, tableName
+                    )
+                )
     print("Done.")
 
 
@@ -82,8 +92,13 @@ def main(args=None):
         args = sys.argv[1:]
 
     parser = argparse.ArgumentParser("Migrate database")
-    parser.add_argument("--database", default="registry.db", help="Path to the database file")
-    parser.add_argument("--add_columns", help="JSON file describing the columns that will be added to the tables")
+    parser.add_argument(
+        "--database", default="registry.db", help="Path to the database file"
+    )
+    parser.add_argument(
+        "--add_columns",
+        help="JSON file describing the columns that will be added to the tables",
+    )
 
     args, _ = parser.parse_known_args()
 
