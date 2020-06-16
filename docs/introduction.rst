@@ -4,10 +4,6 @@
 Introduction
 ************
 
-.. warning::
-
-    This documentation is a work-in-progress.
-
 
 The candig-server is a CanDIG project, aiming to provide distributed, secure data access
 to participating institutions across Canada. You can learn more about our work from
