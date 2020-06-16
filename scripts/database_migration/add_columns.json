@@ -1,0 +1,254 @@
+{
+  "Outcome": {
+    "siteOfRelapseOrProgression": {
+      "type": "Text",
+      "null": true
+    },
+    "siteOfRelapseOrProgressionTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "intervalProgressionOrRecurrence": {
+      "type": "Text",
+      "null": true
+    },
+    "intervalProgressionOrRecurrenceTier": {
+      "type": "Integer",
+      "null": "true"
+    },
+    "intervalRegressionOrDecreaseInDisease": {
+      "type": "Text",
+      "null": true
+    },
+    "intervalRegressionOrDecreaseInDiseaseTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "levelOfMalignancy": {
+      "type": "Text",
+      "null": true
+    },
+    "levelOfMalignancyTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "treatmentInducedNeoplasmSite": {
+      "type": "Text",
+      "null": true
+    },
+    "treatmentInducedNeoplasmSiteTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "dateOfDiagnosisOfTreatmentInducedNeoplasm": {
+      "type": "Text",
+      "null": true
+    },
+    "dateOfDiagnosisOfTreatmentInducedNeoplasmTier": {
+      "type": "Integer",
+      "null": true
+    }
+  },
+  "Tumourboard": {
+    "actionableExpressionOutlier": {
+      "type": "Text",
+      "null": true
+    },
+    "actionableExpressionOutlierTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "actionableGermlineVariant": {
+      "type": "Text",
+      "null": true
+    },
+    "actionableGermlineVariantTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "germlineVariantsDrug": {
+      "type": "Text",
+      "null": true
+    },
+    "germlineVariantsDrugTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "germlineVariantsDrugClass": {
+      "type": "Text",
+      "null": true
+    },
+    "germlineVariantsDrugClassTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "germlineVariantsDiscussed": {
+      "type": "Text",
+      "null": true
+    },
+    "germlineVariantsDiscussedTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "actionableSomaticVariants": {
+      "type": "Text",
+      "null": true
+    },
+    "actionableSomaticVariantsTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "somaticVariantsDrug": {
+      "type": "Text",
+      "null": true
+    },
+    "somaticVariantsDrugTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "somaticVariantsDrugClass": {
+      "type": "Text",
+      "null": true
+    },
+    "somaticVariantsDrugClassTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "somaticVariantsDiscussed": {
+      "type": "Text",
+      "null": true
+    },
+    "somaticVariantsDiscussedTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "anyActionableExpressionOutlier": {
+      "type": "Text",
+      "null": true
+    },
+    "anyActionableExpressionOutlierTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "expressionDrug": {
+      "type": "Text",
+      "null": true
+    },
+    "expressionDrugTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "expressionDrugClass": {
+      "type": "Text",
+      "null": true
+    },
+    "expressionDrugClassTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "expressionTypeOfAnalysisUsed": {
+      "type": "Text",
+      "null": true
+    },
+    "expressionTypeOfAnalysisUsedTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "expressionTypeOfInformationUtility": {
+      "type": "Text",
+      "null": true
+    },
+    "expressionTypeOfInformationUtilityTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "expressionAlteredGene": {
+      "type": "Text",
+      "null": true
+    },
+    "expressionAlteredGeneTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "expressionNonActionableGene": {
+      "type": "Text",
+      "null": true
+    },
+    "expressionNonActionableGeneTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "expressionTypeOfAlteration": {
+      "type": "Text",
+      "null": true
+    },
+    "expressionTypeOfAlterationTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "anyActionableGermlineVariants": {
+      "type": "Text",
+      "null": true
+    },
+    "anyActionableGermlineVariantsTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "germlineVariantsTypeOfAnalysisUsed": {
+      "type": "Text",
+      "null": true
+    },
+    "germlineVariantsTypeOfAnalysisUsedTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "germlineVariantsClassificationOfVariants": {
+      "type": "Text",
+      "null": true
+    },
+    "germlineVariantsClassificationOfVariantsTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "germlineVariantsTypeOfInformationUtility": {
+      "type": "Text",
+      "null": true
+    },
+    "germlineVariantsTypeOfInformationUtilityTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "anyActionableSomaticVariants": {
+      "type": "Text",
+      "null": true
+    },
+    "anyActionableSomaticVariantsTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "somaticVariantsTypeOfAnalysisUsed": {
+      "type": "Text",
+      "null": true
+    },
+    "somaticVariantsTypeOfAnalysisUsedTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "somaticVariantsTypeOfInformationUtility": {
+      "type": "Text",
+      "null": true
+    },
+    "somaticVariantsTypeOfInformationUtilityTier": {
+      "type": "Integer",
+      "null": true
+    },
+    "somaticVariantsNonActionable": {
+      "type": "Text",
+      "null": true
+    },
+    "somaticVariantsNonActionableTier": {
+      "type": "Integer",
+      "null": true
+    }
+  }
+}
