@@ -1,5 +1,7 @@
 ## Usage
 
+**Note: Make sure the `candig-server` virtual environment is activated before running the script!**
+
 In order to make changes on database, please pass below arguments:
   
 `--database` : Path to database file
