@@ -7,7 +7,6 @@ from playhouse import migrate as mgt
 from peewee import OperationalError as peeweeOperationalError
 
 from candig.server.repo import models
-from schema_validators import validate_add_columns
 
 dbTypes = {"Text": mgt.TextField, "Integer": mgt.IntegerField}
 
@@ -110,10 +109,7 @@ def main(args=None):
 
     if addColumnsJsonFile:
         addColumnsJsonFile = loadJsonFile(addColumnsJsonFile)
-        if not validate_add_columns(addColumnsJsonFile):
-            pass
-        else:
-            executeMigration(migrator, newColumnsDict=addColumnsJsonFile)
+        executeMigration(migrator, newColumnsDict=addColumnsJsonFile)
 
 
 if __name__ == "__main__":
