@@ -108,6 +108,8 @@ Mock data for testing
 
 We provide some mock data files, should you want to use them to quickly test your server.
 
+Please note that the mock data listed below only contain data for clinical and pipeline metadata.
+
 They are available from https://github.com/CanDIG/candig-ingest/tree/master/candig/ingest/mock_data
 Use the ``clinical_metadata_tier[1,2,3].json`` files.
 

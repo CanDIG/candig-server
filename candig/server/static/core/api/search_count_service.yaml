@@ -10,7 +10,7 @@ info:
     ### Warning: developers, This spec is not really machine-readable. Please use with caution. In particular, we are unable to provide accurate machine-readable definitions for the Response of `/count` endpoint. We are also unable to express the recursive relations of the `logic` component of the complex requests.
     ---
 
-  version: "1.2"
+  version: "1.3"
 servers:
 - url: /
 paths:
@@ -898,6 +898,18 @@ components:
           type: string
         diseaseFreeSurvivalInMonths:
           type: string
+        siteOfRelapseOrProgression:
+          type: string
+        intervalProgressionOrRecurrence:
+          type: string
+        intervalRegressionOrDecreaseInDisease:
+          type: string
+        levelOfMalignancy:
+          type: string
+        treatmentInducedNeoplasmSite:
+          type: string
+        dateOfDiagnosisOfTreatmentInducedNeoplasm:
+          type: string
     candigPatient:
       type: object
       properties:
@@ -1607,6 +1619,56 @@ components:
         patientHasBeenReferredToAHereditaryCancerProgramBasedOnThisMolecularProfiling:
           type: string
         summaryReport:
+          type: string
+        actionableExpressionOutlier:
+          type: string
+        actionableGermlineVariant:
+          type: string
+        germlineVariantsDrug:
+          type: string
+        germlineVariantsDrugClass:
+          type: string
+        germlineVariantsDiscussed:
+          type: string
+        actionableSomaticVariants:
+          type: string
+        somaticVariantsDrug:
+          type: string
+        somaticVariantsDrugClass:
+          type: string
+        somaticVariantsDiscussed:
+          type: string
+        anyActionableExpressionOutlier:
+          type: string
+        expressionDrug:
+          type: string
+        expressionDrugClass:
+          type: string
+        expressionTypeOfAnalysisUsed:
+          type: string
+        expressionTypeOfInformationUtility:
+          type: string
+        expressionAlteredGene:
+          type: string
+        expressionNonActionableGene:
+          type: string
+        expressionTypeOfAlteration:
+          type: string
+        anyActionableGermlineVariants:
+          type: string
+        germlineVariantsTypeOfAnalysisUsed:
+          type: string
+        germlineVariantsClassificationOfVariants:
+          type: string
+        germlineVariantsTypeOfInformationUtility:
+          type: string
+        anyActionableSomaticVariants:
+          type: string
+        somaticVariantsTypeOfAnalysisUsed:
+          type: string
+        somaticVariantsTypeOfInformationUtility:
+          type: string
+        somaticVariantsNonActionable:
           type: string
     candigCall:
       type: object
