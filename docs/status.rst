@@ -26,7 +26,7 @@ To update the schema of your existing database:
 - Activate the virtual environment of your candig-server instance.
 - Upgrade the candig-server to 1.3.0 by running `pip install candig-server==1.3.0 --upgrade`.
 - Change directory to where your database is, and make a backup copy of it.
-- Retrieve migration script: `wget https://github.com/CanDIG/candig-server/blob/develop/scripts/database_migration/migration.py`.
+- Retrieve migration script: `wget https://github.com/CanDIG/candig-server/blob/v1.3.0/scripts/database_migration/migration.py`.
 - Retrieve migration schema: `wget https://github.com/CanDIG/candig-server/blob/v1.3.0/scripts/database_migration/add_columns.json`.
 - Make sure your virtual environment is still active.
 - Run `python migration.py --database {path_to_your_database_file} --add_columns add_columns.json`.
