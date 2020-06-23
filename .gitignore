@@ -125,3 +125,7 @@ oidc-provider/simple_op/src/provider/server/static/jwks.json
 # Eclipse PyDev files
 .project
 .pydevproject
+
+# misc. project test data related
+clinical_metadata_tier*.json
+data
