@@ -1,6 +1,7 @@
 { pkgs ? import <nixpkgs> {} }:
 with pkgs;
 mkShell {
+  VENV = "env";
   buildInputs = [
     git
     python36Full
