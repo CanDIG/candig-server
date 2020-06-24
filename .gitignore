@@ -127,5 +127,5 @@ oidc-provider/simple_op/src/provider/server/static/jwks.json
 .pydevproject
 
 # misc. project test data related
-clinical_metadata_tier*.json
+clinical_metadata_tier*.json*
 data
