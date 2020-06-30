@@ -220,10 +220,12 @@ Importing sample FASTA:
 Import sample VCF:
 
 - To work with a certain `group`, download the `tar` file and load script.
-- Assuming we are dealing with `group1` from release v1.0.0, download
-    - https://github.com/CanDIG/test_data/releases/download/v1.0.0/group1.tar
-    - https://github.com/CanDIG/test_data/releases/download/v1.0.0/group1_load.sh
-    - https://github.com/CanDIG/test_data/releases/download/v1.0.0/group1_clinphen.json
+- Assumptions:
+    - we are using `group1` from release v1.0.0, download
+        - https://github.com/CanDIG/test_data/releases/download/v1.0.0/group1.tar
+        - https://github.com/CanDIG/test_data/releases/download/v1.0.0/group1_load.sh
+        - https://github.com/CanDIG/test_data/releases/download/v1.0.0/group1_clinphen.json
+    - the :code:`referenceSet` is :code:`hg19a` (this will depend on your data)
 - :code:`tar xvf group1.tar` to be run for unarchiving
 - In `group1_load.sh`
     - rename all instances of :code:`GRCh37-lite` to :code:`hg19a`
