@@ -185,7 +185,7 @@ class Backend(object):
             request, self.getDataRepository().getNumDatasets(),
             self.getDataRepository().getAuthzDatasetByIndex, access_map=access_map)
 
-    # SEARCH
+    # SEARCH and COUNT
     def queryGenerator(self, request, return_mimetype, access_map, count=False):
         """
         Generator object for advanced search queries
