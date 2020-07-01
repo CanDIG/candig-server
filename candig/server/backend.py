@@ -586,7 +586,7 @@ class Backend(object):
         """
         response_list = []
         if fv_counts:
-            if self._dpEpsilon:
+            if self._dpEpsilon and float(self._dpEpsilon) != 0.0:
                 ndp = DP.DP(fv_counts, eps=self._dpEpsilon)
                 ndp.get_noise()
             response_list.append(fv_counts)
