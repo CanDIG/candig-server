@@ -228,7 +228,7 @@ Import sample VCF:
     - the :code:`referenceSet` is :code:`hg19a` (this will depend on your data)
 - :code:`tar xvf group1.tar` to be run for unarchiving
 - In `group1_load.sh`
-    - rename all instances of :code:`GRCh37-lite` to :code:`hg19a`
+    - rename all instances of :code:`GRCh37-lite` to :code:`hg19a` (again, this will depend on your data)
     - give path to :code:`registry.db` on your file system
     - give path to all :code:`group1/.*tbi` files
 - Run :code:`chmod +x group1_load.sh` to make the script executable
