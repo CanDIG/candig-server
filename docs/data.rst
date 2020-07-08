@@ -210,3 +210,40 @@ you might need to modify the DB path, or the dataset name.
 We provide three `group` datasets since we often use it to test federation of three test
 servers.
 
+Importing sample FASTA:
+
+- Download http://hgdownload.cse.ucsc.edu/goldenpath/hg19/bigZips/hg19.fa.gz
+- :code:`gunzip hg19.fa.gz` to unzip
+- Import by running :code:`candig_repo add-referenceset candig-example-data/registry.db /path/to/hg19a.fa -d "hg19a reference genome" --name hg19a`
+
+
+Import sample VCF:
+
+- To work with a certain `group`, download the `tar` file and load script.
+- Assumptions:
+    - we are using `group1` from release v1.0.0, download
+        - https://github.com/CanDIG/test_data/releases/download/v1.0.0/group1.tar
+        - https://github.com/CanDIG/test_data/releases/download/v1.0.0/group1_load.sh
+        - https://github.com/CanDIG/test_data/releases/download/v1.0.0/group1_clinphen.json
+    - the :code:`referenceSet` is :code:`hg19a` (this will depend on your data)
+- :code:`tar xvf group1.tar` to be run for unarchiving
+- In `group1_load.sh`
+    - rename all instances of :code:`GRCh37-lite` to :code:`hg19a` (again, this will depend on your data)
+    - give path to :code:`registry.db` on your file system
+    - give path to all :code:`group1/.*tbi` files
+- Run :code:`chmod +x group1_load.sh` to make the script executable
+- Run :code:`ingest registry.db test300 group1_clinphen.json` to create a new :code:`test300` dataset using the metadata
+- Run `./group1_load.sh` to run the import
+
+
+
+
+
+
+
+
+
+
+
+
+
