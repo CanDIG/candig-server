@@ -198,7 +198,7 @@ class Backend(object):
             components = parsedRequest["components"]
             results = parsedRequest["results"]
         except KeyError as error:
-            raise exceptions.MissingFieldNameException(error.message)
+            raise exceptions.MissingFieldNameException(error)
 
         responses = self.componentsHandler(dataset_id, components, return_mimetype, access_map)
         patient_list = self.logicHandler(logic, responses, dataset_id, access_map)
