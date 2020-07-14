@@ -21,7 +21,7 @@ RUN cd /tmp/server/ && pip install .
 
 RUN mkdir /data
 WORKDIR /data
-RUN mkdir  mkdir candig-example-data \
+RUN mkdir candig-example-data \
   && touch access_list.tsv
 
 RUN curl -Lo /tmp/mock_data.json  https://github.com/CanDIG/candig-ingest/releases/download/${INGEST_V}/mock_data.json \
