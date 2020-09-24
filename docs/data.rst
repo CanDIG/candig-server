@@ -31,13 +31,13 @@ For clinical data, it is a json object, with `metadata` as the key. However, for
 data, its key is `pipeline_metadata`. Make sure you have the correct key specified.
 
 The value of the key is a list of objects. Each object should have the table name as the
-key, and the object as its value. Therefore, it is possible to specify multiple tables in
+key, and the object(s) as its value. Therefore, it is possible to specify multiple tables in
 one single object. However, each table can only be specified once, due to the uniqueness of
 the key in the object.
 
 If you need to specify, for example, two samples for one patient, you can do this one of two ways.
 You can specify the second sample as an independent object in the list, or you can specify both samples
-in a single list. Both ways are shown below. For all clinical data objects, you always need to specify
+in a single list and make this list be the value of the Sample table key. Both ways are shown below. For all clinical data objects, you always need to specify
 `patientId`.
 
 .. warning::
