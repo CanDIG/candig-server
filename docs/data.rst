@@ -35,9 +35,10 @@ key, and the object as its value. Therefore, it is possible to specify multiple 
 one single object. However, each table can only be specified once, due to the uniqueness of
 the key in the object.
 
-If you need to specify, for example, two samples for one patient. You should specify the
-second sample as an independent object in the list, as shown below. For all clinical data
-objects, you always need to specify `patientId`.
+If you need to specify, for example, two samples for one patient, you can do this one of two ways.
+You can specify the second sample as an independent object in the list, or you can specify both samples
+in a single list. Both ways are shown below. For all clinical data objects, you always need to specify
+`patientId`.
 
 .. warning::
 
@@ -68,6 +69,33 @@ objects, you always need to specify `patientId`.
                     "patientId": "Patient_12345",
                     "patientIdTier": 4
                 },
+            }
+        ]
+    }
+
+.. code-block:: json
+
+    {
+        "metadata": [
+            {
+                "Patient": {
+                    "patientId": "Patient_12345",
+                    "patientIdTier": 0
+                },
+                 "Sample": [
+                    {
+                        "sampleId": "Sample_1",
+                        "sampleIdTier": 0,
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 4
+                    },
+                    {
+                        "sampleId": "Sample_2",
+                        "sampleIdTier": 0,
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 4
+                    }
+                ]
             }
         ]
     }
