@@ -31,13 +31,13 @@ For clinical data, it is a json object, with `metadata` as the key. However, for
 data, its key is `pipeline_metadata`. Make sure you have the correct key specified.
 
 The value of the key is a list of objects. Each object should have the table name as the
-key, and the object as its value. Therefore, it is possible to specify multiple tables in
+key, and the object(s) as its value. Therefore, it is possible to specify multiple tables in
 one single object. However, each table can only be specified once, due to the uniqueness of
 the key in the object.
 
-If you need to specify, for example, two samples for one patient. You should specify the
-second sample as an independent object in the list, as shown below. For all clinical data
-objects, you always need to specify `patientId`.
+If you need to specify, for example, two samples for one patient, you can specify both samples
+in a single list and make this list be the value of the Sample table key, as shown below. For
+all clinical data objects, you always need to specify `patientId`.
 
 .. warning::
 
@@ -54,23 +54,57 @@ objects, you always need to specify `patientId`.
                     "patientId": "Patient_12345",
                     "patientIdTier": 0
                 },
-                 "Sample": {
-                    "sampleId": "Sample_1",
-                    "sampleIdTier": 0,
-                    "patientId": "Patient_12345",
-                    "patientIdTier": 4
-                }
-            }
-            {
-                "Sample": {
-                    "sampleId": "Sample_2",
-                    "sampleIdTier": 0,
-                    "patientId": "Patient_12345",
-                    "patientIdTier": 4
-                },
+                 "Sample": [
+                    {
+                        "sampleId": "Sample_1",
+                        "sampleIdTier": 0,
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 4
+                    },
+                    {
+                        "sampleId": "Sample_2",
+                        "sampleIdTier": 0,
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 4
+                    }
+                ]
             }
         ]
     }
+
+
+.. warning::
+    In previous versions, it was recommended that you specify the second sample
+    as an independent object in the list, as shown below. Do not use this way as
+    it is obsolete.
+
+    .. code-block:: json
+
+        {
+            "metadata": [
+                {
+                    "Patient": {
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 0
+                    },
+                     "Sample": {
+                        "sampleId": "Sample_1",
+                        "sampleIdTier": 0,
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 4
+                    }
+                },
+                {
+                    "Sample": {
+                        "sampleId": "Sample_2",
+                        "sampleIdTier": 0,
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 4
+                    }
+                }
+            ]
+        }
+
 
 Similar structure is used for pipeline metadata, however, for all pipeline metadata objects,
 you should always include ``sampleId``.
