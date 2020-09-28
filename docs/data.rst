@@ -35,43 +35,15 @@ key, and the object(s) as its value. Therefore, it is possible to specify multip
 one single object. However, each table can only be specified once, due to the uniqueness of
 the key in the object.
 
-If you need to specify, for example, two samples for one patient, you can do this one of two ways.
-You can specify the second sample as an independent object in the list, or you can specify both samples
-in a single list and make this list be the value of the Sample table key. Both ways are shown below. For all clinical data objects, you always need to specify
-`patientId`.
+If you need to specify, for example, two samples for one patient, you can specify both samples
+in a single list and make this list be the value of the Sample table key, as shown below. For
+all clinical data objects, you always need to specify `patientId`.
 
 .. warning::
 
     Please do not include Tier information yourself. Use the `load_tier` that comes with
     `candig-ingest` to load tiers. More details follow.
 
-
-.. code-block:: json
-
-    {
-        "metadata": [
-            {
-                "Patient": {
-                    "patientId": "Patient_12345",
-                    "patientIdTier": 0
-                },
-                 "Sample": {
-                    "sampleId": "Sample_1",
-                    "sampleIdTier": 0,
-                    "patientId": "Patient_12345",
-                    "patientIdTier": 4
-                }
-            }
-            {
-                "Sample": {
-                    "sampleId": "Sample_2",
-                    "sampleIdTier": 0,
-                    "patientId": "Patient_12345",
-                    "patientIdTier": 4
-                },
-            }
-        ]
-    }
 
 .. code-block:: json
 
@@ -99,6 +71,40 @@ in a single list and make this list be the value of the Sample table key. Both w
             }
         ]
     }
+
+
+.. warning::
+    In previous versions, it was recommended that you specify the second sample
+    as an independent object in the list, as shown below. Do not use this way as
+    it is obsolete.
+
+    .. code-block:: json
+
+        {
+            "metadata": [
+                {
+                    "Patient": {
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 0
+                    },
+                     "Sample": {
+                        "sampleId": "Sample_1",
+                        "sampleIdTier": 0,
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 4
+                    }
+                },
+                {
+                    "Sample": {
+                        "sampleId": "Sample_2",
+                        "sampleIdTier": 0,
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 4
+                    }
+                }
+            ]
+        }
+
 
 Similar structure is used for pipeline metadata, however, for all pipeline metadata objects,
 you should always include ``sampleId``.
