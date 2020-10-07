@@ -988,6 +988,11 @@ def gene_search():
     return render_candig_template('gene_search.html')
 
 
+@app.route('/dashboard/<path:path>')
+def dashboard_v2(path):
+    return flask.send_from_directory('candigv2_dashboard/build/', 'index.html')
+
+
 @app.route('/patients_overview')
 @requires_auth
 def patients_overview():
