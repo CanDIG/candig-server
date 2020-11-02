@@ -24,7 +24,7 @@ Mako==1.1.1
 Beaker==1.11.0
 funcsigs==1.0.2
 alabaster==0.7.12
-cryptography==2.8
+cryptography==3.2.1
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 # enum34==1.1.2
