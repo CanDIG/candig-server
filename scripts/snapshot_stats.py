@@ -1,15 +1,28 @@
-import sys
+import os
 import argparse
 from datetime import datetime
-from peewee import SqliteDatabase
-from playhouse.reflection import generate_models  # print_model, print_table_sql
-from pandas import DataFrame
 
-import os
 import jinja2
+from peewee import SqliteDatabase
+from playhouse.reflection import (
+    generate_models,
+)
+from pandas import DataFrame
 
 
 # TODO: Docstring
+
+pipe_tables = [
+    "extraction",
+    "sequencing",
+    "alignment",
+    "variantcalling",
+    "fusiondetection",
+    "expressionanalysis",
+]
+
+data_file_tables = ["variantset", "readgroupset", "rnaquantificationset"]
+
 
 clin_tables = [
     "patient",
@@ -30,11 +43,13 @@ clin_tables = [
     "tumourboard",
     "surgery",
     "radiotherapy",
-    "variantset",
-    "readgroupset",
 ]
 
 script_path = os.path.dirname(os.path.abspath(__file__))
+template_filename = "snapshot_templates/template.{}"
+rendered_filename = "snapshot_outputs/output.{}"
+template_file_path = os.path.join(script_path, template_filename)
+rendered_file_path = os.path.join(script_path, rendered_filename)
 
 
 def initiate_models(db_path):
@@ -56,16 +71,24 @@ def count_datasets(models):
     return dataset_model.select().count()
 
 
-def gen_markdown_table(models):
-    table_output = get_tables_count(models)
+def gen_html_table(data):
+    # TODO docstring
 
-    df = DataFrame(data=table_output)
+    df = DataFrame(data=data)
+    table_html = df.to_html()
+
+    return table_html
+
+
+def gen_markdown_table(data):
+    # TODO docstring
+    df = DataFrame(data=data)
     table_markdown = df.to_markdown()
 
     return table_markdown
 
 
-def get_tables_count(models):
+def get_clinical_table_count(models):
     # TODO Docstring
     dataset_model = models["dataset"]
     dataset_query = dataset_model.select()
@@ -84,6 +107,44 @@ def get_tables_count(models):
     return table_output
 
 
+def get_pipeline_table_count(models):
+    # TODO Docstring
+    dataset_model = models["dataset"]
+    dataset_query = dataset_model.select()
+
+    table_output = {}
+
+    for d in dataset_query:
+        ds_dict = table_output.setdefault(d.name, {})
+
+        for table in pipe_tables:
+            table_model = models[table]
+            ds_dict[table] = (
+                table_model.select().where(table_model.datasetId == d).count()
+            )
+
+    return table_output
+
+
+def get_genomic_table_count(models):
+    # TODO Docstring
+    dataset_model = models["dataset"]
+    dataset_query = dataset_model.select()
+
+    table_output = {}
+
+    for d in dataset_query:
+        ds_dict = table_output.setdefault(d.name, {})
+
+        for table in data_file_tables:
+            table_model = models[table]
+            ds_dict[table] = (
+                table_model.select().where(table_model.datasetId == d).count()
+            )
+
+    return table_output
+
+
 def get_dataset_patients_dict(models):
     # TODO Docstring
 
@@ -94,7 +155,9 @@ def get_dataset_patients_dict(models):
     for d in dataset_query:
         patient_dict[d.name] = [
             patient.name
-            for patient in patient_model.select().where(patient_model.datasetId == d)
+            for patient in patient_model.select().where(
+                patient_model.datasetId == d
+            )
         ]
 
     return patient_dict
@@ -125,14 +188,24 @@ def write_file(file_path, content):
 def main():
     # TODO docstring
 
-    parser = argparse.ArgumentParser("Create a CanDIG-Server DataBase Snapshot Report")
+    parser = argparse.ArgumentParser(
+        "Create a CanDIG-Server DataBase Snapshot Report"
+    )
     parser.add_argument(
         "database",
         metavar="database",
         type=str,
         help="Path do CanDIG-Server database file",
     )
-    # TODO: Add options like --markdown --json --html --txt?
+
+    parser.add_argument(
+        "--markdown",
+        help="Generate report in markdown format",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--html", help="Generate report in HTML format", action="store_true"
+    )
 
     args = parser.parse_args()
 
@@ -143,28 +216,61 @@ def main():
         return
 
     datasets_count = count_datasets(models)
-    table_markdown = gen_markdown_table(models)
+
     patient_dict = get_dataset_patients_dict(models)
     peer_list = get_peer_list(models)
 
-    template_filename = "template.md"
-    rendered_filename = "output.md"
-    template_file_path = os.path.join(script_path, template_filename)
-    rendered_file_path = os.path.join(script_path, rendered_filename)
-
     environment = get_jinja_parser()
 
-    output_text = generate_rendered_template(
-        jinja_environment=environment,
-        template_filename=template_filename,
-        number_of_datasets=datasets_count,
-        records=table_markdown,
-        patient_dict=patient_dict,
-        current_utc=datetime.utcnow(),
-        peer_list=peer_list,
-    )
+    if args.markdown:
+        pipeline_records = gen_markdown_table(get_pipeline_table_count(models))
+        clinical_records = gen_markdown_table(get_clinical_table_count(models))
+        genomic_records = gen_markdown_table(get_genomic_table_count(models))
 
-    write_file(rendered_file_path, output_text)
+        template_filename = "snapshot_templates/template.md"
+        rendered_filename = "snapshot_outputs/output.md"
+        template_file_path = os.path.join(script_path, template_filename)
+        rendered_file_path = os.path.join(script_path, rendered_filename)
+
+        output_text = generate_rendered_template(
+            jinja_environment=environment,
+            template_filename=template_filename,
+            number_of_datasets=datasets_count,
+            clinical_records=clinical_records,
+            pipeline_records=pipeline_records,
+            genomic_records=genomic_records,
+            patient_dict=patient_dict,
+            current_utc=datetime.utcnow(),
+            dataset_list=[x for x in patient_dict.keys()],
+            peer_list=peer_list,
+        )
+
+        write_file(rendered_file_path, output_text)
+
+    if args.html:
+        pipeline_records = gen_html_table(get_pipeline_table_count(models))
+        clinical_records = gen_html_table(get_clinical_table_count(models))
+        genomic_records = gen_html_table(get_genomic_table_count(models))
+
+        template_filename = "snapshot_templates/template.html"
+        rendered_filename = "snapshot_outputs/output.html"
+        template_file_path = os.path.join(script_path, template_filename)
+        rendered_file_path = os.path.join(script_path, rendered_filename)
+
+        output_text = generate_rendered_template(
+            jinja_environment=environment,
+            template_filename=template_filename,
+            number_of_datasets=datasets_count,
+            clinical_records=clinical_records,
+            pipeline_records=pipeline_records,
+            genomic_records=genomic_records,
+            patient_dict=patient_dict,
+            current_utc=datetime.utcnow(),
+            dataset_list=[x for x in patient_dict.keys()],
+            peer_list=peer_list,
+        )
+
+        write_file(rendered_file_path, output_text)
 
 
 if __name__ == "__main__":
