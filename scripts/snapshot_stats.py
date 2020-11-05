@@ -12,6 +12,91 @@ from pandas import DataFrame
 
 # TODO: Docstring
 
+markdown_template = """
+# CanDIG-Server DataBase Snapshot Report
+
+Report generated on {{current_utc}} UTC.
+
+## Datasets
+
+The database contains {{number_of_datasets}} datasets
+
+```
+{{dataset_list}}
+```
+
+## Records
+
+### Clinical
+{{clinical_records}}
+### Pipeline
+{{pipeline_records}}
+### Genomic
+{{genomic_records}}
+
+## List of patientsIds
+
+{% for key, value in patient_dict.items() %}
+### {{key}} dataset
+```
+{{value}}
+```
+{% endfor %}
+
+{% if peer_list %}
+
+## Peers
+
+{{ peer_list }}
+
+{% endif %}
+
+"""
+
+html_template = """
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CanDIG-Server DataBase Snapshot Report</title>
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CanDIG-Server DataBase Snapshot Report</h1>
+
+    <p>Report generated on {{current_utc}} UTC.</p>
+
+    <h2>Datasets</h2>
+
+    <p>The database contains {{number_of_datasets}} datasets.</p>
+
+    <code> {{dataset_list}} </code>
+
+    <h2>Records</h2>
+
+    <h3>Clinical</h3>
+    {{clinical_records}}
+    <h3>Pipeline</h3>
+    {{pipeline_records}}
+    <h3>Genomic</h3>
+    {{genomic_records}}
+
+    <h2>List of patientIds</h2>
+
+    {% for key, value in patient_dict.items() %}
+    <h3>{{key}} dataset</h3>
+    <code> {{value}} </code>
+    {% endfor %} {% if peer_list %}
+    <h2>Peers</h2>
+    {{ peer_list }} {% endif %}
+  </body>
+</html>
+
+"""
+
 pipe_tables = [
     "extraction",
     "sequencing",
@@ -223,14 +308,13 @@ def main():
         clinical_records = gen_markdown_table(get_clinical_table_count(models))
         genomic_records = gen_markdown_table(get_genomic_table_count(models))
 
-        template_filename = "snapshot_templates/template.md"
-        rendered_filename = "snapshot_outputs/output.md"
-        template_file_path = os.path.join(script_path, template_filename)
+        # template_filename = "snapshot_templates/template.md"
+        rendered_filename = "output.md"
+        # template_file_path = os.path.join(script_path, template_filename)
         rendered_file_path = os.path.join(script_path, rendered_filename)
 
-        output_text = generate_rendered_template(
-            jinja_environment=environment,
-            template_filename=template_filename,
+        tm = jinja2.Template(markdown_template)
+        output_text = tm.render(
             number_of_datasets=datasets_count,
             clinical_records=clinical_records,
             pipeline_records=pipeline_records,
@@ -240,6 +324,19 @@ def main():
             dataset_list=[x for x in patient_dict.keys()],
             peer_list=peer_list,
         )
+
+        # output_text = generate_rendered_template(
+        #     jinja_environment=environment,
+        #     template_filename=template_filename,
+        #     number_of_datasets=datasets_count,
+        #     clinical_records=clinical_records,
+        #     pipeline_records=pipeline_records,
+        #     genomic_records=genomic_records,
+        #     patient_dict=patient_dict,
+        #     current_utc=datetime.utcnow(),
+        #     dataset_list=[x for x in patient_dict.keys()],
+        #     peer_list=peer_list,
+        # )
 
         write_file(rendered_file_path, output_text)
 
@@ -248,14 +345,13 @@ def main():
         clinical_records = gen_html_table(get_clinical_table_count(models))
         genomic_records = gen_html_table(get_genomic_table_count(models))
 
-        template_filename = "snapshot_templates/template.html"
-        rendered_filename = "snapshot_outputs/output.html"
-        template_file_path = os.path.join(script_path, template_filename)
+        # template_filename = "snapshot_templates/template.html"
+        rendered_filename = "output.html"
+        # template_file_path = os.path.join(script_path, template_filename)
         rendered_file_path = os.path.join(script_path, rendered_filename)
 
-        output_text = generate_rendered_template(
-            jinja_environment=environment,
-            template_filename=template_filename,
+        tm = jinja2.Template(html_template)
+        output_text = tm.render(
             number_of_datasets=datasets_count,
             clinical_records=clinical_records,
             pipeline_records=pipeline_records,
@@ -265,6 +361,19 @@ def main():
             dataset_list=[x for x in patient_dict.keys()],
             peer_list=peer_list,
         )
+
+        # output_text = generate_rendered_template(
+        #     jinja_environment=environment,
+        #     template_filename=template_filename,
+        #     number_of_datasets=datasets_count,
+        #     clinical_records=clinical_records,
+        #     pipeline_records=pipeline_records,
+        #     genomic_records=genomic_records,
+        #     patient_dict=patient_dict,
+        #     current_utc=datetime.utcnow(),
+        #     dataset_list=[x for x in patient_dict.keys()],
+        #     peer_list=peer_list,
+        # )
 
         write_file(rendered_file_path, output_text)
 
