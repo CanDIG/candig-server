@@ -333,7 +333,9 @@ def main():
     clinical_records = get_clinical_table_count(models)
     genomic_records = get_genomic_table_count(models)
 
-    environment = get_jinja_parser()
+    # This might be used on the future to 
+    # save the output on a file
+    # environment = get_jinja_parser()
 
     if args.markdown:
         pipeline_records_md = gen_markdown_table(pipeline_records)
