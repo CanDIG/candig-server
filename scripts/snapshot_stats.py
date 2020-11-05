@@ -46,10 +46,6 @@ clin_tables = [
 ]
 
 script_path = os.path.dirname(os.path.abspath(__file__))
-template_filename = "snapshot_templates/template.{}"
-rendered_filename = "snapshot_outputs/output.{}"
-template_file_path = os.path.join(script_path, template_filename)
-rendered_file_path = os.path.join(script_path, rendered_filename)
 
 
 def initiate_models(db_path):
