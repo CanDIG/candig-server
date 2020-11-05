@@ -3,7 +3,7 @@ import argparse
 from datetime import datetime
 
 import jinja2
-from peewee import (SqliteDatabase, DatabaseError)
+from peewee import SqliteDatabase, DatabaseError
 from playhouse.reflection import (
     generate_models,
 )
@@ -153,7 +153,11 @@ def initiate_models(db_path):
     try:
         models = generate_models(db)
     except (TypeError, DatabaseError):
-        print("File \"{}\" does not seem to be a valid database file.".format(db_path))
+        print(
+            'File "{}" does not seem to be a valid database file.'.format(
+                db_path
+            )
+        )
         print("Aborting snapshot.")
         return
 
@@ -258,7 +262,7 @@ def get_dataset_patients_dict(models):
     return patient_dict
 
 
-def get_peer_list(models):    
+def get_peer_list(models):
     """ Returns a list of available peers """
     peer_model = models["peer"]
     return [peer.url for peer in peer_model.select()]
@@ -270,12 +274,12 @@ def get_jinja_parser():
 
 
 def generate_rendered_template(jinja_environment, template_filename, **kwargs):
-    """ Returns rendered template 
-        args:
-        jinja_environment: Jinja2 Parser from get_jinja_parser
-        template_filename: Path to template that will be used
-        kwargs: Keyword arguments containing the fields on `template_filename` and 
-            the values to be processed
+    """Returns rendered template
+    args:
+    jinja_environment: Jinja2 Parser from get_jinja_parser
+    template_filename: Path to template that will be used
+    kwargs: Keyword arguments containing the fields on `template_filename` and
+        the values to be processed
     """
     return jinja_environment.get_template(template_filename).render(kwargs)
 
@@ -309,9 +313,11 @@ def main():
     args = parser.parse_args()
 
     if not any([args.markdown, args.html]):
-        print("Please, specify the output format.\n"
-             "Execute \"python snapshot_stats.py --help\" for a list of available options.")
-        return 
+        print(
+            "Please, specify the output format.\n"
+            'Execute "python snapshot_stats.py --help" for a list of available options.'
+        )
+        return
 
     models = initiate_models(args.database)
 
