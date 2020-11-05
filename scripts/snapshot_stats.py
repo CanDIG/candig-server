@@ -11,18 +11,23 @@ from pandas import DataFrame
 
 
 """
-Create a CanDIG-Server DataBase Snapshot Report
+Create a CanDIG-Server DataBase Snapshot Report.
 
-usage: snapshot_stats.py [-h] [--markdown] [--html] database
+usage: candig_snapshot [-h] [--markdown] [--html]
+                       [--destination /output/directory/]
+                       database
 
 positional arguments:
-  database    Path do CanDIG-Server database file
+  database              Path do CanDIG-Server database file
 
-optional arguments:
-  -h, --help  show this help message and exit
-  (at least one is required)
-  --markdown  Generate report in markdown format
-  --html      Generate report in HTML format
+optional arguments (at ):
+  -h, --help            show this help message and exit
+  --destination /output/directory/
+                        Directory where the outputs will be saved
+  (At least of the below arguments must be used)
+  --markdown            Generate report in markdown format
+  --html                Generate report in HTML format
+  
 """
 
 markdown_template = """
@@ -143,8 +148,6 @@ clin_tables = [
     "radiotherapy",
 ]
 
-script_path = os.path.dirname(os.path.abspath(__file__))
-
 
 def initiate_models(db_path):
     """ Initiate model from the database file """
@@ -153,11 +156,7 @@ def initiate_models(db_path):
     try:
         models = generate_models(db)
     except (TypeError, DatabaseError):
-        print(
-            'File "{}" does not seem to be a valid database file.'.format(
-                db_path
-            )
-        )
+        print('File "{}" does not seem to be a valid database file.'.format(db_path))
         print("Aborting snapshot.")
         return
 
@@ -254,9 +253,7 @@ def get_dataset_patients_dict(models):
     for d in dataset_query:
         patient_dict[d.name] = [
             patient.name
-            for patient in patient_model.select().where(
-                patient_model.datasetId == d
-            )
+            for patient in patient_model.select().where(patient_model.datasetId == d)
         ]
 
     return patient_dict
@@ -310,6 +307,13 @@ def main():
         "--html", help="Generate report in HTML format", action="store_true"
     )
 
+    parser.add_argument(
+        "--destination",
+        help="Directory where the outputs will be saved",
+        metavar="/output/directory/",
+        default="",
+    )
+
     args = parser.parse_args()
 
     if not any([args.markdown, args.html]):
@@ -318,6 +322,16 @@ def main():
             'Execute "python snapshot_stats.py --help" for a list of available options.'
         )
         return
+
+    destination_path = ""
+
+    if args.destination:
+        if os.path.isdir(args.destination):
+            destination_path = args.destination
+        else:
+            print('"{}" is not a valid destination.'.format(args.destination))
+            print("Aborting snapshot.")
+            return
 
     models = initiate_models(args.database)
 
@@ -333,7 +347,7 @@ def main():
     clinical_records = get_clinical_table_count(models)
     genomic_records = get_genomic_table_count(models)
 
-    # This might be used on the future to 
+    # This might be used on the future to
     # save the output on a file
     # environment = get_jinja_parser()
 
@@ -345,7 +359,7 @@ def main():
         # template_filename = "snapshot_templates/template.md"
         rendered_filename = "output.md"
         # template_file_path = os.path.join(script_path, template_filename)
-        rendered_file_path = os.path.join(script_path, rendered_filename)
+        rendered_file_path = os.path.join(destination_path, rendered_filename)
 
         tm = jinja2.Template(markdown_template)
         output_text = tm.render(
@@ -382,7 +396,7 @@ def main():
         # template_filename = "snapshot_templates/template.html"
         rendered_filename = "output.html"
         # template_file_path = os.path.join(script_path, template_filename)
-        rendered_file_path = os.path.join(script_path, rendered_filename)
+        rendered_file_path = os.path.join(destination_path, rendered_filename)
 
         tm = jinja2.Template(html_template)
         output_text = tm.render(
