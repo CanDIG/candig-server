@@ -3,14 +3,26 @@ import argparse
 from datetime import datetime
 
 import jinja2
-from peewee import SqliteDatabase
+from peewee import (SqliteDatabase, DatabaseError)
 from playhouse.reflection import (
     generate_models,
 )
 from pandas import DataFrame
 
 
-# TODO: Docstring
+"""
+Create a CanDIG-Server DataBase Snapshot Report
+
+usage: snapshot_stats.py [-h] [--markdown] [--html] database
+
+positional arguments:
+  database    Path do CanDIG-Server database file
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --markdown  Generate report in markdown format
+  --html      Generate report in HTML format
+"""
 
 markdown_template = """
 # CanDIG-Server DataBase Snapshot Report
@@ -134,26 +146,27 @@ script_path = os.path.dirname(os.path.abspath(__file__))
 
 
 def initiate_models(db_path):
-    # TODO Docstring
+    """ Initiate model from the database file """
     db = SqliteDatabase(db_path)
 
     try:
         models = generate_models(db)
-    except TypeError:
-        # TODO: Message here
+    except (TypeError, DatabaseError):
+        print("File \"{}\" does not seem to be a valid database file.".format(db_path))
+        print("Aborting snapshot.")
         return
 
     return models
 
 
 def count_datasets(models):
-    # TODO Docstring
+    """ Return the number of datasets on the database """
     dataset_model = models["dataset"]
     return dataset_model.select().count()
 
 
 def gen_html_table(data):
-    # TODO docstring
+    """ Generate a HTML table from data"""
 
     df = DataFrame(data=data)
     table_html = df.to_html()
@@ -162,7 +175,7 @@ def gen_html_table(data):
 
 
 def gen_markdown_table(data):
-    # TODO docstring
+    """ Generate a Markdown table from data"""
     df = DataFrame(data=data)
     table_markdown = df.to_markdown()
 
@@ -170,7 +183,7 @@ def gen_markdown_table(data):
 
 
 def get_clinical_table_count(models):
-    # TODO Docstring
+    """ Count the number of records on the tableds defined in clin_tables"""
     dataset_model = models["dataset"]
     dataset_query = dataset_model.select()
 
@@ -189,7 +202,7 @@ def get_clinical_table_count(models):
 
 
 def get_pipeline_table_count(models):
-    # TODO Docstring
+    """ Count the number of records on the tableds defined in pipe_tables"""
     dataset_model = models["dataset"]
     dataset_query = dataset_model.select()
 
@@ -208,7 +221,7 @@ def get_pipeline_table_count(models):
 
 
 def get_genomic_table_count(models):
-    # TODO Docstring
+    """ Count the number of records on the tableds defined in data_file_tables"""
     dataset_model = models["dataset"]
     dataset_query = dataset_model.select()
 
@@ -227,7 +240,7 @@ def get_genomic_table_count(models):
 
 
 def get_dataset_patients_dict(models):
-    # TODO Docstring
+    """ Returns dict of patientsId grouped by datasets"""
 
     dataset_model = models["dataset"]
     dataset_query = dataset_model.select()
@@ -244,33 +257,37 @@ def get_dataset_patients_dict(models):
     return patient_dict
 
 
-def get_peer_list(models):
-    # TODO docstring
+def get_peer_list(models):    
+    """ Returns a list of available peers """
     peer_model = models["peer"]
     return [peer.url for peer in peer_model.select()]
 
 
 def get_jinja_parser():
-    # TODO docstring
+    """ Create the jinja2 parser """
     return jinja2.Environment(loader=jinja2.FileSystemLoader(script_path))
 
 
 def generate_rendered_template(jinja_environment, template_filename, **kwargs):
-    # TODO docstring
+    """ Returns rendered template 
+        args:
+        jinja_environment: Jinja2 Parser from get_jinja_parser
+        template_filename: Path to template that will be used
+        kwargs: Keyword arguments containing the fields on `template_filename` and 
+            the values to be processed
+    """
     return jinja_environment.get_template(template_filename).render(kwargs)
 
 
 def write_file(file_path, content):
-    # TODO docstring
+    """ Write `content` on file `file_path` """
     with open(file_path, "w") as result_file:
         result_file.write(content)
 
 
 def main():
-    # TODO docstring
-
     parser = argparse.ArgumentParser(
-        "Create a CanDIG-Server DataBase Snapshot Report"
+        description="Create a CanDIG-Server DataBase Snapshot Report"
     )
     parser.add_argument(
         "database",
@@ -293,7 +310,6 @@ def main():
     models = initiate_models(args.database)
 
     if models is None:
-        # TODO message
         return
 
     datasets_count = count_datasets(models)
