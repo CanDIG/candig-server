@@ -265,9 +265,9 @@ def get_peer_list(models):
     return [peer.url for peer in peer_model.select()]
 
 
-def get_jinja_parser():
+def get_jinja_parser(path):
     """ Create the jinja2 parser """
-    return jinja2.Environment(loader=jinja2.FileSystemLoader(script_path))
+    return jinja2.Environment(loader=jinja2.FileSystemLoader(path))
 
 
 def generate_rendered_template(jinja_environment, template_filename, **kwargs):
