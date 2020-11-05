@@ -20,6 +20,7 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+  (at least one is required)
   --markdown  Generate report in markdown format
   --html      Generate report in HTML format
 """
@@ -307,6 +308,11 @@ def main():
 
     args = parser.parse_args()
 
+    if not any([args.markdown, args.html]):
+        print("Please, specify the output format.\n"
+             "Execute \"python snapshot_stats.py --help\" for a list of available options.")
+        return 
+
     models = initiate_models(args.database)
 
     if models is None:
@@ -317,12 +323,16 @@ def main():
     patient_dict = get_dataset_patients_dict(models)
     peer_list = get_peer_list(models)
 
+    pipeline_records = get_pipeline_table_count(models)
+    clinical_records = get_clinical_table_count(models)
+    genomic_records = get_genomic_table_count(models)
+
     environment = get_jinja_parser()
 
     if args.markdown:
-        pipeline_records = gen_markdown_table(get_pipeline_table_count(models))
-        clinical_records = gen_markdown_table(get_clinical_table_count(models))
-        genomic_records = gen_markdown_table(get_genomic_table_count(models))
+        pipeline_records_md = gen_markdown_table(pipeline_records)
+        clinical_records_md = gen_markdown_table(clinical_records)
+        genomic_records_md = gen_markdown_table(genomic_records)
 
         # template_filename = "snapshot_templates/template.md"
         rendered_filename = "output.md"
@@ -332,9 +342,9 @@ def main():
         tm = jinja2.Template(markdown_template)
         output_text = tm.render(
             number_of_datasets=datasets_count,
-            clinical_records=clinical_records,
-            pipeline_records=pipeline_records,
-            genomic_records=genomic_records,
+            clinical_records=clinical_records_md,
+            pipeline_records=pipeline_records_md,
+            genomic_records=genomic_records_md,
             patient_dict=patient_dict,
             current_utc=datetime.utcnow(),
             dataset_list=[x for x in patient_dict.keys()],
@@ -357,9 +367,9 @@ def main():
         write_file(rendered_file_path, output_text)
 
     if args.html:
-        pipeline_records = gen_html_table(get_pipeline_table_count(models))
-        clinical_records = gen_html_table(get_clinical_table_count(models))
-        genomic_records = gen_html_table(get_genomic_table_count(models))
+        pipeline_records_html = gen_html_table(pipeline_records)
+        clinical_records_html = gen_html_table(clinical_records)
+        genomic_records_html = gen_html_table(genomic_records)
 
         # template_filename = "snapshot_templates/template.html"
         rendered_filename = "output.html"
@@ -369,9 +379,9 @@ def main():
         tm = jinja2.Template(html_template)
         output_text = tm.render(
             number_of_datasets=datasets_count,
-            clinical_records=clinical_records,
-            pipeline_records=pipeline_records,
-            genomic_records=genomic_records,
+            clinical_records=clinical_records_html,
+            pipeline_records=pipeline_records_html,
+            genomic_records=genomic_records_html,
             patient_dict=patient_dict,
             current_utc=datetime.utcnow(),
             dataset_list=[x for x in patient_dict.keys()],
