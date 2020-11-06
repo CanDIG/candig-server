@@ -54,7 +54,8 @@ setup(
             'ga4gh_repo=candig.server.cli.repomanager:repo_main',
             'candig_configtest=candig.server.cli.configtest:configtest_main',
             'candig_server=candig.server.cli.server:server_main',
-            'candig_repo=candig.server.cli.repomanager:repo_main'
+            'candig_repo=candig.server.cli.repomanager:repo_main',
+            'candig_snapshot=scripts.snapshot_stats:main'
         ]
     },
     long_description=long_description,
