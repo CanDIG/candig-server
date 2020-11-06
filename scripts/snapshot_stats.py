@@ -295,7 +295,7 @@ def main():
         "database",
         metavar="database",
         type=str,
-        help="Path do CanDIG-Server database file",
+        help="Path to CanDIG-Server database file",
     )
 
     parser.add_argument(
