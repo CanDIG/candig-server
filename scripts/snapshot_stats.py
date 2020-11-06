@@ -24,7 +24,7 @@ optional arguments (at ):
   -h, --help            show this help message and exit
   --destination /output/directory/
                         Directory where the outputs will be saved
-  (At least of the below arguments must be used)
+  (At least one of the below arguments must be used)
   --markdown            Generate report in markdown format
   --html                Generate report in HTML format
   
