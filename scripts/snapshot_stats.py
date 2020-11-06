@@ -13,7 +13,7 @@ from pandas import DataFrame
 """
 Create a CanDIG-Server DataBase Snapshot Report.
 
-usage: candig_snapshot [-h] [--markdown] [--html]
+usage: python snapshot_stats.py [-h] [--markdown] [--html]
                        [--destination /output/directory/]
                        database
 
