@@ -1244,7 +1244,7 @@ Deletes the individual with name ``HG00096`` in the dataset
 
 
 ++++++++++++++++++++++
-Start up candig-server
+Other commands
 ++++++++++++++++++++++
 
 -------------
@@ -1324,3 +1324,29 @@ Removes a peer server.
 .. code-block:: bash
 
     $ candig_repo remove-peer registry.db https://candig.test.ca/
+
+---------------
+candig_snapshot
+---------------
+
+Creates a report containing information about Clinical; Pipeline; Genomic; Dataset; and Id of Patients stored on the database.
+
+.. warning::
+    You must pass at least one of the following arguments to the script:
+    --html
+    --markdown
+
+
+.. argparse::
+    :module: scripts.snapshot_stats
+    :func: main
+    :prog: candig_snapshot
+    :nodefault:
+
+**Examples:**
+
+.. code-block:: bash
+
+    $ candig_snapshot candig-example-data/registry.db --html
+    $ candig_snapshot candig-example-data/registry.db --markdown
+    $ candig_snapshot candig-example-data/registry.db --markdown --html
