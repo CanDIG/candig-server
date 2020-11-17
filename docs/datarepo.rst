@@ -1339,7 +1339,7 @@ Creates a report containing information about Clinical; Pipeline; Genomic; Datas
 
 .. argparse::
     :module: scripts.snapshot_stats
-    :func: main
+    :func: create_argparser
     :prog: candig_snapshot
     :nodefault:
 

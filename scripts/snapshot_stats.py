@@ -286,8 +286,8 @@ def write_file(file_path, content):
     with open(file_path, "w") as result_file:
         result_file.write(content)
 
-
-def main():
+def create_argparser():
+    """ Creates argpars object """
     parser = argparse.ArgumentParser(
         description="Create a CanDIG-Server DataBase Snapshot Report"
     )
@@ -314,7 +314,11 @@ def main():
         default="",
     )
 
-    args = parser.parse_args()
+    return parser
+
+
+def main():
+    args = create_argparser().parse_args()
 
     if not any([args.markdown, args.html]):
         print(
@@ -424,6 +428,7 @@ def main():
         # )
 
         write_file(rendered_file_path, output_text)
+
 
 
 if __name__ == "__main__":
