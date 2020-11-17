@@ -1331,11 +1331,6 @@ candig_snapshot
 
 Creates a report containing information about Clinical; Pipeline; Genomic; Dataset; and Id of Patients stored on the database.
 
-.. warning::
-    You must pass at least one of the following arguments to the script:
-    ``--html``
-    ``--markdown``
-
 
 .. argparse::
    :filename: ../scripts/snapshot_stats.py
@@ -1345,6 +1340,11 @@ Creates a report containing information about Clinical; Pipeline; Genomic; Datas
 
 
 **Examples:**
+
+.. warning::
+    You must pass at least one of the following arguments to the script:
+    ``--html``
+    ``--markdown``
 
 .. code-block:: bash
 
