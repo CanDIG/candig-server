@@ -156,7 +156,11 @@ def initiate_models(db_path):
     try:
         models = generate_models(db)
     except (TypeError, DatabaseError):
-        print('File "{}" does not seem to be a valid database file.'.format(db_path))
+        print(
+            'File "{}" does not seem to be a valid database file.'.format(
+                db_path
+            )
+        )
         print("Aborting snapshot.")
         return
 
@@ -253,7 +257,9 @@ def get_dataset_patients_dict(models):
     for d in dataset_query:
         patient_dict[d.name] = [
             patient.name
-            for patient in patient_model.select().where(patient_model.datasetId == d)
+            for patient in patient_model.select().where(
+                patient_model.datasetId == d
+            )
         ]
 
     return patient_dict
@@ -287,7 +293,8 @@ def write_file(file_path, content):
         result_file.write(content)
 
 
-def main():
+def create_argparser():
+    """ Creates argpars object """
     parser = argparse.ArgumentParser(
         description="Create a CanDIG-Server DataBase Snapshot Report"
     )
@@ -314,7 +321,11 @@ def main():
         default="",
     )
 
-    args = parser.parse_args()
+    return parser
+
+
+def main():
+    args = create_argparser().parse_args()
 
     if not any([args.markdown, args.html]):
         print(
