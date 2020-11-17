@@ -1333,8 +1333,8 @@ Creates a report containing information about Clinical; Pipeline; Genomic; Datas
 
 .. warning::
     You must pass at least one of the following arguments to the script:
-    --html
-    --markdown
+    ``--html``
+    ``--markdown``
 
 
 .. argparse::

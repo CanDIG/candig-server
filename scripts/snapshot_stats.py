@@ -156,7 +156,11 @@ def initiate_models(db_path):
     try:
         models = generate_models(db)
     except (TypeError, DatabaseError):
-        print('File "{}" does not seem to be a valid database file.'.format(db_path))
+        print(
+            'File "{}" does not seem to be a valid database file.'.format(
+                db_path
+            )
+        )
         print("Aborting snapshot.")
         return
 
@@ -253,7 +257,9 @@ def get_dataset_patients_dict(models):
     for d in dataset_query:
         patient_dict[d.name] = [
             patient.name
-            for patient in patient_model.select().where(patient_model.datasetId == d)
+            for patient in patient_model.select().where(
+                patient_model.datasetId == d
+            )
         ]
 
     return patient_dict
@@ -285,6 +291,7 @@ def write_file(file_path, content):
     """ Write `content` on file `file_path` """
     with open(file_path, "w") as result_file:
         result_file.write(content)
+
 
 def create_argparser():
     """ Creates argpars object """
@@ -428,7 +435,6 @@ def main():
         # )
 
         write_file(rendered_file_path, output_text)
-
 
 
 if __name__ == "__main__":
