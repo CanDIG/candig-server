@@ -14,6 +14,14 @@ Upgrade Guidelines
 This section is mainly prepared for system administrators.
 
 *****
+1.4.0
+*****
+
+Release note available from https://github.com/CanDIG/candig-server/releases/tag/v1.4.0
+
+This release does not require any configuration changes.
+
+*****
 1.3.0
 *****
 
