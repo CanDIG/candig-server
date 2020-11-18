@@ -16,7 +16,7 @@ The registry contains links to files, as well as some metadata.
 For instructions on adding metadata in bulk, see ingest_.
 
 When you are done ingesting data, you may start up your server instance by running the
-``candig_server`` command, see `Start up candig-server`_ for more information.
+``candig_server`` command, see `Other commands`_ for more information.
 
 ++++++++++++++++++++++++++++
 Initialize/Remove Dataset
