@@ -11,7 +11,7 @@ from pandas import DataFrame
 
 
 """
-Create a CanDIG-Server DataBase Snapshot Report.
+Create a CanDIG-Server Database Snapshot Report.
 
 usage: python snapshot_stats.py [-h] [--markdown] [--html]
                        [--destination /output/directory/]
@@ -31,9 +31,10 @@ optional arguments (at ):
 """
 
 markdown_template = """
-# CanDIG-Server DataBase Snapshot Report
+# CanDIG-Server Database Snapshot Report
 
 Report generated on {{current_utc}} UTC.
+This report is generated for database located at {{database_location}}
 
 ## Datasets
 
@@ -75,17 +76,26 @@ html_template = """
 <!DOCTYPE html>
 <html>
   <head>
-    <title>CanDIG-Server DataBase Snapshot Report</title>
+    <title>CanDIG-Server Database Snapshot Report</title>
     <style>
       body {
         font-family: Arial, Helvetica, sans-serif;
       }
     </style>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> 
   </head>
-  <body>
-    <h1>CanDIG-Server DataBase Snapshot Report</h1>
+  <body class="container">
+    <h1>CanDIG-Server Database Snapshot Report</h1>
 
     <p>Report generated on {{current_utc}} UTC.</p>
+    <p>This report is generated for database located at <em>{{database_location}}</em></p>    
 
     <h2>Datasets</h2>
 
@@ -149,6 +159,10 @@ clin_tables = [
 ]
 
 
+def get_database_abs_path(file):
+    return os.path.abspath(file)
+
+
 def initiate_models(db_path):
     """ Initiate model from the database file """
     db = SqliteDatabase(db_path)
@@ -177,7 +191,7 @@ def gen_html_table(data):
     """ Generate a HTML table from data"""
 
     df = DataFrame(data=data)
-    table_html = df.to_html()
+    table_html = df.to_html().replace("class=\"dataframe\"", "class=\"table\"")
 
     return table_html
 
@@ -296,7 +310,7 @@ def write_file(file_path, content):
 def create_argparser():
     """ Creates argpars object """
     parser = argparse.ArgumentParser(
-        description="Create a CanDIG-Server DataBase Snapshot Report"
+        description="Create a CanDIG-Server Database Snapshot Report"
     )
     parser.add_argument(
         "database",
@@ -349,6 +363,8 @@ def main():
     if models is None:
         return
 
+    database_location = get_database_abs_path(args.database)
+
     datasets_count = count_datasets(models)
 
     patient_dict = get_dataset_patients_dict(models)
@@ -374,6 +390,7 @@ def main():
 
         tm = jinja2.Template(markdown_template)
         output_text = tm.render(
+            database_location=database_location,
             number_of_datasets=datasets_count,
             clinical_records=clinical_records_md,
             pipeline_records=pipeline_records_md,
@@ -411,6 +428,7 @@ def main():
 
         tm = jinja2.Template(html_template)
         output_text = tm.render(
+            database_location=database_location,
             number_of_datasets=datasets_count,
             clinical_records=clinical_records_html,
             pipeline_records=pipeline_records_html,
