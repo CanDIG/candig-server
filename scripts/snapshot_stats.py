@@ -158,6 +158,7 @@ clin_tables = [
     "radiotherapy",
 ]
 
+
 def get_database_abs_path(file):
     return os.path.abspath(file)
 
