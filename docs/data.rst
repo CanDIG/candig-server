@@ -148,22 +148,37 @@ the ingest will fail.
 Therefore, we recommend that you pre-populate the ``localId`` for clinical records.
 
 
-| Table          |           |                           |                            |           |
-|----------------|-----------|---------------------------|----------------------------|-----------|
-| Enrollment     | patientId | enrollmentApprovalDate    |                            |           |
-| Consent        | patientId | consentDate               |                            |           |
-| Treatment      | patientId | startDate                 |                            |           |
-| Outcome        | patientId | dateOfAssessment          |                            |           |
-| Complication   | patientId | date                      |                            |           |
-| Tumourboard    | patientId | dateOfMolecularTumorBoard |                            |           |
-| Chemotherapy   | patientId | treatmentPlanId           | systematicTherapyAgentName |           |
-| Radiotherapy   | patientId | courseNumber              | treatmentPlanId            | startDate |
-| Immunotherapy  | patientId | treatmentPlanId           | startDate                  | startDate |
-| Surgery        | patientId | treatmentPlanId           | startDate                  |           |
-| Celltransplant | patientId | treatmentPlanId           | startDate                  |           |
-| Slide          | patientId | slideId                   |                            |           |
-| Study          | patientId | startDate                 |                            |           |
-| Labtest        | patientId | startDate                 |                            |           |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Table            |             |                             |                              |             |
++==================+=============+=============================+==============================+=============+
+| Enrollment       | patientId   | enrollmentApprovalDate      |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Consent          | patientId   | consentDate                 |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Treatment        | patientId   | startDate                   |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Outcome          | patientId   | dateOfAssessment            |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Complication     | patientId   | date                        |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Tumourboard      | patientId   | dateOfMolecularTumorBoard   |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Chemotherapy     | patientId   | treatmentPlanId             | systematicTherapyAgentName   |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Radiotherapy     | patientId   | courseNumber                | treatmentPlanId              | startDate   |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Immunotherapy    | patientId   | treatmentPlanId             | startDate                    | startDate   |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Surgery          | patientId   | treatmentPlanId             | startDate                    |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Celltransplant   | patientId   | treatmentPlanId             | startDate                    |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Slide            | patientId   | slideId                     |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Study            | patientId   | startDate                   |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Labtest          | patientId   | startDate                   |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
 
 ++++++++++++++++++++++++
 How to load tiers
