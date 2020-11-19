@@ -35,14 +35,16 @@ key, and the object(s) as its value. Therefore, it is possible to specify multip
 one single object. However, each table can only be specified once, due to the uniqueness of
 the key in the object.
 
-If you need to specify, for example, two samples for one patient, you can specify both samples
-in a single list and make this list be the value of the Sample table key, as shown below. For
-all clinical data objects, you always need to specify `patientId`.
+As of candig-ingest==1.5.0, if you need to specify, for example, two samples for one patient, 
+you can specify both samples in a single list and make this list be the value of the Sample table key, 
+as shown below. For all clinical data objects, you always need to specify `patientId`.
 
 .. warning::
 
     Please do not include Tier information yourself. Use the `load_tier` that comes with
     `candig-ingest` to load tiers. More details follow.
+
+    The following examples only work with candig-ingest>=1.5.0
 
 
 .. code-block:: json
@@ -74,7 +76,7 @@ all clinical data objects, you always need to specify `patientId`.
 
 
 .. warning::
-    In previous versions, it was recommended that you specify the second sample
+    In candig-ingest<=1.4.0, it was recommended that you specify the second sample
     as an independent object in the list, as shown below. Do not use this way as
     it is obsolete.
 
@@ -108,6 +110,78 @@ all clinical data objects, you always need to specify `patientId`.
 
 Similar structure is used for pipeline metadata, however, for all pipeline metadata objects,
 you should always include ``sampleId``.
+
++++++++++++++++++++++++++++++++++++++++++
+Specify unique identifiers of the object
++++++++++++++++++++++++++++++++++++++++++
+
+For ``Patient`` and ``Sample`` record, their unique identifiers are ``PatientId`` and ``SampleId``, respectively.
+
+For all other clinical records, you will have the option to specify ``localId`` as their unique identifier.
+
+For example, if you were to ingest a ``Diagnosis`` object, you may write
+
+    .. code-block:: json
+
+        {
+            "metadata": [
+                {
+                    "Patient": {
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 0
+                    },
+                     "Diagnosis": {
+                        "localId": "diag_1",
+                        "sampleType": "metastatic",
+                        "sampleTypeTier": 2
+                    }
+                }
+            ]
+        }
+
+So, what happens if you do not specify a ``localId``? The ingest command will attempt to construct a unique
+identifier based on several pre-selected fields, they vary from table to table. They are listed in the following table.
+
+If you specify a ``localId`` already, then ``localId`` will take precedence, regardless if these pre-selected fields
+are populated.
+
+If you did not specify a ``localId``, and the ingest utility is not able to generate an identifier based on these fields,
+the ingest will fail.
+
+Therefore, we recommend that you pre-populate the ``localId`` for clinical records.
+
+
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Table            |             |                             |                              |             |
++==================+=============+=============================+==============================+=============+
+| Enrollment       | patientId   | enrollmentApprovalDate      |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Consent          | patientId   | consentDate                 |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Treatment        | patientId   | startDate                   |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Outcome          | patientId   | dateOfAssessment            |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Complication     | patientId   | date                        |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Tumourboard      | patientId   | dateOfMolecularTumorBoard   |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Chemotherapy     | patientId   | treatmentPlanId             | systematicTherapyAgentName   |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Radiotherapy     | patientId   | courseNumber                | treatmentPlanId              | startDate   |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Immunotherapy    | patientId   | treatmentPlanId             | startDate                    | startDate   |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Surgery          | patientId   | treatmentPlanId             | startDate                    |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Celltransplant   | patientId   | treatmentPlanId             | startDate                    |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Slide            | patientId   | slideId                     |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Study            | patientId   | startDate                   |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Labtest          | patientId   | startDate                   |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
 
 ++++++++++++++++++++++++
 How to load tiers
