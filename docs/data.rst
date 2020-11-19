@@ -140,12 +140,12 @@ For example, if you were to ingest a ``Diagnosis`` object, you may write
         }
 
 So, what happens if you do not specify a ``localId``? The ingest command will attempt to construct a unique
-identifier based on several pre-selected fields, they vary from table to table. They are listed in the following table:
+identifier based on several pre-selected fields, they vary from table to table. They are listed in the following table.
 
 If you did not specify a ``localId``, and the ingest utility is not able to generate an identifier based on these fields,
 the ingest will fail.
 
-Therefore, we recommend that you pre-populate the `localId`` for clinical records.
+Therefore, we recommend that you pre-populate the ``localId`` for clinical records.
 
 
 | Table          |           |                           |                            |           |
