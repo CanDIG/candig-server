@@ -31,18 +31,20 @@ For clinical data, it is a json object, with `metadata` as the key. However, for
 data, its key is `pipeline_metadata`. Make sure you have the correct key specified.
 
 The value of the key is a list of objects. Each object should have the table name as the
-key, and the object as its value. Therefore, it is possible to specify multiple tables in
+key, and the object(s) as its value. Therefore, it is possible to specify multiple tables in
 one single object. However, each table can only be specified once, due to the uniqueness of
 the key in the object.
 
-If you need to specify, for example, two samples for one patient. You should specify the
-second sample as an independent object in the list, as shown below. For all clinical data
-objects, you always need to specify `patientId`.
+As of candig-ingest==1.5.0, if you need to specify, for example, two samples for one patient, 
+you can specify both samples in a single list and make this list be the value of the Sample table key, 
+as shown below. For all clinical data objects, you always need to specify `patientId`.
 
 .. warning::
 
     Please do not include Tier information yourself. Use the `load_tier` that comes with
     `candig-ingest` to load tiers. More details follow.
+
+    The following examples only work with candig-ingest>=1.5.0
 
 
 .. code-block:: json
@@ -54,26 +56,132 @@ objects, you always need to specify `patientId`.
                     "patientId": "Patient_12345",
                     "patientIdTier": 0
                 },
-                 "Sample": {
-                    "sampleId": "Sample_1",
-                    "sampleIdTier": 0,
-                    "patientId": "Patient_12345",
-                    "patientIdTier": 4
-                }
-            }
-            {
-                "Sample": {
-                    "sampleId": "Sample_2",
-                    "sampleIdTier": 0,
-                    "patientId": "Patient_12345",
-                    "patientIdTier": 4
-                },
+                 "Sample": [
+                    {
+                        "sampleId": "Sample_1",
+                        "sampleIdTier": 0,
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 4
+                    },
+                    {
+                        "sampleId": "Sample_2",
+                        "sampleIdTier": 0,
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 4
+                    }
+                ]
             }
         ]
     }
 
+
+.. warning::
+    In candig-ingest<=1.4.0, it was recommended that you specify the second sample
+    as an independent object in the list, as shown below. Do not use this way as
+    it is obsolete.
+
+    .. code-block:: json
+
+        {
+            "metadata": [
+                {
+                    "Patient": {
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 0
+                    },
+                     "Sample": {
+                        "sampleId": "Sample_1",
+                        "sampleIdTier": 0,
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 4
+                    }
+                },
+                {
+                    "Sample": {
+                        "sampleId": "Sample_2",
+                        "sampleIdTier": 0,
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 4
+                    }
+                }
+            ]
+        }
+
+
 Similar structure is used for pipeline metadata, however, for all pipeline metadata objects,
 you should always include ``sampleId``.
+
++++++++++++++++++++++++++++++++++++++++++
+Specify unique identifiers of the object
++++++++++++++++++++++++++++++++++++++++++
+
+For ``Patient`` and ``Sample`` record, their unique identifiers are ``PatientId`` and ``SampleId``, respectively.
+
+For all other clinical records, you will have the option to specify ``localId`` as their unique identifier.
+
+For example, if you were to ingest a ``Diagnosis`` object, you may write
+
+    .. code-block:: json
+
+        {
+            "metadata": [
+                {
+                    "Patient": {
+                        "patientId": "Patient_12345",
+                        "patientIdTier": 0
+                    },
+                     "Diagnosis": {
+                        "localId": "diag_1",
+                        "sampleType": "metastatic",
+                        "sampleTypeTier": 2
+                    }
+                }
+            ]
+        }
+
+So, what happens if you do not specify a ``localId``? The ingest command will attempt to construct a unique
+identifier based on several pre-selected fields, they vary from table to table. They are listed in the following table.
+
+If you specify a ``localId`` already, then ``localId`` will take precedence, regardless if these pre-selected fields
+are populated.
+
+If you did not specify a ``localId``, and the ingest utility is not able to generate an identifier based on these fields,
+the ingest will fail.
+
+Therefore, we recommend that you pre-populate the ``localId`` for clinical records.
+
+
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Table            |             |                             |                              |             |
++==================+=============+=============================+==============================+=============+
+| Enrollment       | patientId   | enrollmentApprovalDate      |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Consent          | patientId   | consentDate                 |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Treatment        | patientId   | startDate                   |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Outcome          | patientId   | dateOfAssessment            |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Complication     | patientId   | date                        |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Tumourboard      | patientId   | dateOfMolecularTumorBoard   |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Chemotherapy     | patientId   | treatmentPlanId             | systematicTherapyAgentName   |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Radiotherapy     | patientId   | courseNumber                | treatmentPlanId              | startDate   |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Immunotherapy    | patientId   | treatmentPlanId             | startDate                    | startDate   |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Surgery          | patientId   | treatmentPlanId             | startDate                    |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Celltransplant   | patientId   | treatmentPlanId             | startDate                    |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Slide            | patientId   | slideId                     |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Study            | patientId   | startDate                   |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
+| Labtest          | patientId   | startDate                   |                              |             |
++------------------+-------------+-----------------------------+------------------------------+-------------+
 
 ++++++++++++++++++++++++
 How to load tiers
@@ -209,4 +317,41 @@ you might need to modify the DB path, or the dataset name.
 
 We provide three `group` datasets since we often use it to test federation of three test
 servers.
+
+Importing sample FASTA:
+
+- Download http://hgdownload.cse.ucsc.edu/goldenpath/hg19/bigZips/hg19.fa.gz
+- :code:`gunzip hg19.fa.gz` to unzip
+- Import by running :code:`candig_repo add-referenceset candig-example-data/registry.db /path/to/hg19a.fa -d "hg19a reference genome" --name hg19a`
+
+
+Import sample VCF:
+
+- To work with a certain `group`, download the `tar` file and load script.
+- Assumptions:
+    - we are using `group1` from release v1.0.0, download
+        - https://github.com/CanDIG/test_data/releases/download/v1.0.0/group1.tar
+        - https://github.com/CanDIG/test_data/releases/download/v1.0.0/group1_load.sh
+        - https://github.com/CanDIG/test_data/releases/download/v1.0.0/group1_clinphen.json
+    - the :code:`referenceSet` is :code:`hg19a` (this will depend on your data)
+- :code:`tar xvf group1.tar` to be run for unarchiving
+- In `group1_load.sh`
+    - rename all instances of :code:`GRCh37-lite` to :code:`hg19a` (again, this will depend on your data)
+    - give path to :code:`registry.db` on your file system
+    - give path to all :code:`group1/.*tbi` files
+- Run :code:`chmod +x group1_load.sh` to make the script executable
+- Run :code:`ingest registry.db test300 group1_clinphen.json` to create a new :code:`test300` dataset using the metadata
+- Run `./group1_load.sh` to run the import
+
+
+
+
+
+
+
+
+
+
+
+
 

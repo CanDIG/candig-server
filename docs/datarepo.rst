@@ -16,7 +16,7 @@ The registry contains links to files, as well as some metadata.
 For instructions on adding metadata in bulk, see ingest_.
 
 When you are done ingesting data, you may start up your server instance by running the
-``candig_server`` command, see `Start up candig-server`_ for more information.
+``candig_server`` command, see `Other commands`_ for more information.
 
 ++++++++++++++++++++++++++++
 Initialize/Remove Dataset
@@ -1244,7 +1244,7 @@ Deletes the individual with name ``HG00096`` in the dataset
 
 
 ++++++++++++++++++++++
-Start up candig-server
+Other commands
 ++++++++++++++++++++++
 
 -------------
@@ -1324,3 +1324,30 @@ Removes a peer server.
 .. code-block:: bash
 
     $ candig_repo remove-peer registry.db https://candig.test.ca/
+
+---------------
+candig_snapshot
+---------------
+
+Creates a report containing information about Clinical; Pipeline; Genomic; Dataset; and Id of Patients stored on the database.
+
+
+.. argparse::
+   :filename: ../scripts/snapshot_stats.py
+   :func: create_argparser
+   :prog: candig_snapshot
+   :nodefault:
+
+
+**Examples:**
+
+.. warning::
+    You must pass at least one of the following arguments to the script:
+    ``--html``
+    ``--markdown``
+
+.. code-block:: bash
+
+    $ candig_snapshot candig-example-data/registry.db --html
+    $ candig_snapshot candig-example-data/registry.db --markdown
+    $ candig_snapshot candig-example-data/registry.db --markdown --html

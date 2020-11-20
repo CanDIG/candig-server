@@ -185,7 +185,7 @@ class Backend(object):
             request, self.getDataRepository().getNumDatasets(),
             self.getDataRepository().getAuthzDatasetByIndex, access_map=access_map)
 
-    # SEARCH
+    # SEARCH and COUNT
     def queryGenerator(self, request, return_mimetype, access_map, count=False):
         """
         Generator object for advanced search queries
@@ -198,7 +198,7 @@ class Backend(object):
             components = parsedRequest["components"]
             results = parsedRequest["results"]
         except KeyError as error:
-            raise exceptions.MissingFieldNameException(error.message)
+            raise exceptions.MissingFieldNameException(str(error))
 
         responses = self.componentsHandler(dataset_id, components, return_mimetype, access_map)
         patient_list = self.logicHandler(logic, responses, dataset_id, access_map)
@@ -586,7 +586,7 @@ class Backend(object):
         """
         response_list = []
         if fv_counts:
-            if self._dpEpsilon:
+            if self._dpEpsilon and float(self._dpEpsilon) != 0.0:
                 ndp = DP.DP(fv_counts, eps=self._dpEpsilon)
                 ndp.get_noise()
             response_list.append(fv_counts)
