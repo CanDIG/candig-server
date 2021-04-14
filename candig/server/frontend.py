@@ -750,6 +750,25 @@ class FederationResponse(object):
         if self.endpoint == app.backend.runCountQuery and self.results:
             self.mergeCounts()
 
+        if self.endpoint == app.backend.runSearchBeaconVariants:
+            self.beaconifyVariants()
+
+    def beaconifyVariants(self):
+        """
+        return Beacon style response to a federated Variants request
+
+        If more than 4 variants are found, return True; otherwise False.
+        """
+        if self.results:
+            len_of_results = len(self.results['variants'])
+
+            if len_of_results > 4:
+                self.results['variants'] = {'beacon': True}
+            else:
+                self.results['variants'] = {'beacon': False}
+        else:
+            self.results['variants'] = {'beacon': False}
+
     def mergeCounts(self):
         """
         merge federated counts and set results for a FederationResponse
@@ -1118,6 +1137,12 @@ def searchVariantSets():
 def searchVariants():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchVariants)
+
+
+@DisplayedRoute('/variants/beacon/search', postMethod=True)
+def searchBeaconVariants():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchBeaconVariants)
 
 
 @DisplayedRoute('/genotypes/search', postMethod=True)

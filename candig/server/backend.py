@@ -2631,6 +2631,17 @@ class Backend(object):
             access_map,
             return_mimetype)
 
+    def runSearchBeaconVariants(self, request, return_mimetype, access_map):
+        """
+        Runs the specified SearchVariantRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchVariantsRequest,
+            protocol.SearchVariantsResponse,
+            self.variantsGenerator,
+            access_map,
+            return_mimetype)
+
     def runSearchGenotypes(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchVariantRequest.
