@@ -250,7 +250,7 @@ class TestOntologyParserValidInput(unittest.TestCase):
         shorthand = ontology_term.get_shorthand()
 
         self.assertEqual(term_id, duo_term)
-        self.assertEqual(shorthand, "NPU")
+        self.assertEqual(shorthand, "NPUNCU")
 
     def testOntologyTerm2(self):
         """
