@@ -1309,9 +1309,6 @@ class Backend(object):
         :param request: The user-submitted request.
         :return: None. Exceptions are raised if query is malformed.
         """
-        print('below is request and proto request')
-        print(request)
-        print(MessageToDict(request))
         variantSetIds = MessageToDict(request).get("variantSetIds", None)
         datasetId = MessageToDict(request).get("datasetId", None)
 
