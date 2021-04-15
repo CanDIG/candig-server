@@ -750,12 +750,32 @@ class FederationResponse(object):
         if self.endpoint == app.backend.runCountQuery and self.results:
             self.mergeCounts()
 
-        if self.endpoint == app.backend.runSearchBeaconVariants:
-            self.beaconifyVariants()
+        if self.endpoint == app.backend.runSearchBeaconRangeVariants:
+            self.beaconifyRangeVariants()
 
-    def beaconifyVariants(self):
+        if self.endpoint == app.backend.runSearchBeaconSnpVariants:
+            self.beaconifySnpVariants()
+
+    def beaconifySnpVariants(self):
         """
-        return Beacon style response to a federated Variants request
+        Return Beacon style response to a federated Variants request
+
+        If 1 or more variant is found at this exact start, return True; otherwise False.
+        """
+        if self.results:
+            len_of_results = len(self.results['variants'])
+
+            if len_of_results >= 1:
+                self.results['variants'] = {'exists': True}
+            else:
+                self.results['variants'] = {'exists': False}
+        else:
+            self.results['variants'] = {'exists': False}
+
+
+    def beaconifyRangeVariants(self):
+        """
+        Return Beacon style response to a federated Variants request
 
         If more than 4 variants are found, return True; otherwise False.
         """
@@ -763,11 +783,11 @@ class FederationResponse(object):
             len_of_results = len(self.results['variants'])
 
             if len_of_results > 4:
-                self.results['variants'] = {'beacon': True}
+                self.results['variants'] = {'exists': True}
             else:
-                self.results['variants'] = {'beacon': False}
+                self.results['variants'] = {'exists': False}
         else:
-            self.results['variants'] = {'beacon': False}
+            self.results['variants'] = {'exists': False}
 
     def mergeCounts(self):
         """
@@ -1139,10 +1159,16 @@ def searchVariants():
         flask.request, app.backend.runSearchVariants)
 
 
-@DisplayedRoute('/variants/beacon/search', postMethod=True)
-def searchBeaconVariants():
+@DisplayedRoute('/variants/beacon/range/search', postMethod=True)
+def searchBeaconRangeVariants():
     return handleFlaskPostRequest(
-        flask.request, app.backend.runSearchBeaconVariants)
+        flask.request, app.backend.runSearchBeaconRangeVariants)
+
+
+@DisplayedRoute('/variants/beacon/snp/search', postMethod=True)
+def searchBeaconSnpVariants():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchBeaconSnpVariants)
 
 
 @DisplayedRoute('/genotypes/search', postMethod=True)

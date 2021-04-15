@@ -1309,6 +1309,9 @@ class Backend(object):
         :param request: The user-submitted request.
         :return: None. Exceptions are raised if query is malformed.
         """
+        print('below is request and proto request')
+        print(request)
+        print(MessageToDict(request))
         variantSetIds = MessageToDict(request).get("variantSetIds", None)
         datasetId = MessageToDict(request).get("datasetId", None)
 
@@ -2631,9 +2634,9 @@ class Backend(object):
             access_map,
             return_mimetype)
 
-    def runSearchBeaconVariants(self, request, return_mimetype, access_map):
+    def runSearchBeaconRangeVariants(self, request, return_mimetype, access_map):
         """
-        Runs the specified SearchVariantRequest.
+        Runs the specified SearchVariantRangeRequest.
         """
         return self.runSearchRequest(
             request, protocol.SearchVariantsRequest,
@@ -2641,6 +2644,34 @@ class Backend(object):
             self.variantsGenerator,
             access_map,
             return_mimetype)
+
+    def runSearchBeaconSnpVariants(self, request, return_mimetype, access_map):
+        """
+        Runs the specified SearchVariantSnpRequest.
+        """
+        modified_request = self.beaconSnpRequestValidator(request)
+
+        return self.runSearchRequest(
+            modified_request, protocol.SearchVariantsRequest,
+            protocol.SearchVariantsResponse,
+            self.variantsGenerator,
+            access_map,
+            return_mimetype)
+
+    def beaconSnpRequestValidator(self, request):
+        """
+        Returns BadRequestException if end is not start + 1
+        """
+
+        jsonify_request = json.loads(request)
+
+        if 'end' in jsonify_request and jsonify_request['end'] != str(int(jsonify_request['start']) + 1):
+            raise exceptions.BadRequestException("For Beacon SNP request, you do not need to specify a value for field `end`, if you do, it can only be start + 1")
+        else:
+            jsonify_request['end'] = str(int(jsonify_request['start']) + 1)
+        
+        return json.dumps(jsonify_request)
+
 
     def runSearchGenotypes(self, request, return_mimetype, access_map):
         """
