@@ -772,7 +772,6 @@ class FederationResponse(object):
         else:
             self.results['variants'] = {'exists': False}
 
-
     def beaconifyRangeVariants(self):
         """
         Return Beacon style response to a federated Variants request

@@ -2669,7 +2669,6 @@ class Backend(object):
         
         return json.dumps(jsonify_request)
 
-
     def runSearchGenotypes(self, request, return_mimetype, access_map):
         """
         Runs the specified SearchVariantRequest.
