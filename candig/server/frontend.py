@@ -581,7 +581,7 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         # Update total when it's a POST request
         if request_type == 'POST':
             table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
-            if endpoint != app.backend.runCountQuery:
+            if endpoint not in [app.backend.runCountQuery, app.backend.runSearchBeaconRangeVariants, app.backend.runSearchBeaconSnpVariants]:
                 responseObject['results']['total'] = len(responseObject['results'][table])
         else:
             pass
