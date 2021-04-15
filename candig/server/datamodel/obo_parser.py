@@ -75,7 +75,7 @@ class OBOReader(object):
         """Return one GO Term record at a time from an obo file."""
         # Written by DV Klopfenstein
         # Wait to open file until needed. Automatically close file when done.
-        with io.open(self.obo_file,'r',encoding='utf8') as fstream:
+        with io.open(self.obo_file, 'r', encoding='utf8') as fstream:
             rec_curr = None # Stores current GO Term
             typedef_curr = None  # Stores current typedef
             lnum = None
