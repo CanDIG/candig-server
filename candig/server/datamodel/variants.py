@@ -601,9 +601,11 @@ class HtslibVariantSet(datamodel.PysamDatamodelMixin, AbstractVariantSet):
                         # TODO we need _much_ more sophisticated processing
                         # of VEP versions here. When do they become
                         # incompatible?
-                        if version == "v82":
+                        if "v82" in version:
                             annotationType = ANNOTATIONS_VEP_V82
-                        elif version == "v77":
+                        elif "v98" in version:
+                            annotationType = ANNOTATIONS_VEP_V82
+                        elif "v77" in version:
                             annotationType = ANNOTATIONS_VEP_V77
                         else:
                             # TODO raise a proper typed exception there with
