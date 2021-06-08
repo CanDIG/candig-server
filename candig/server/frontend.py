@@ -44,6 +44,7 @@ from collections import Counter, defaultdict
 
 from requests_futures.sessions import FuturesSession
 
+
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
 
@@ -779,7 +780,12 @@ class FederationResponse(object):
             variant['freq'] = "0"
 
         variant.pop('count')
-        return variant
+
+        # Reorder the keys of dict to desired order
+        desired_order_list = ['referenceName', 'start', 'end', 'referenceBases', 'freq']
+        reordered_variant = {k: variant[k] for k in desired_order_list}
+
+        return reordered_variant
 
     def beaconifyFreqVariants(self):
         """
