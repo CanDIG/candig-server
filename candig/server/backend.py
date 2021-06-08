@@ -1372,6 +1372,28 @@ class Backend(object):
 
         return self._protocolListGenerator(request, [element[0] for element in itertools.chain.from_iterable(iterators)])
 
+    def variantsFreqGenerator(self, requestStr, access_map):
+        """
+        Returns a generator over the (variant, nextPageToken) pairs defined
+        by the specified request.
+        """
+        requestClass = protocol.SearchVariantsRequest
+        request = protocol.fromJson(requestStr, requestClass)
+
+        self.variantsRequestValidator(request)
+        modified_request = self.variantsRequestModifier(request)
+        variantSets = self.variantsQueryBuilder(request, access_map)
+
+        iterators = [list(paging.VariantsIntervalIterator(modified_request, item)) for item in variantSets]
+
+        res = {"variants": []}
+        res_obj = {}
+        res_obj["variantSets"] = len(variantSets)
+        res_obj["variants"] = len([element[0] for element in itertools.chain.from_iterable(iterators)])
+        res["variants"].append(res_obj)
+
+        return json.dumps(res)
+
     def genotypeMatrixGenerator(self, request, access_map):
         """
         Returns a generator over the (genotypematrix, nextPageToken) pairs
@@ -2654,6 +2676,12 @@ class Backend(object):
             self.variantsGenerator,
             access_map,
             return_mimetype)
+
+    def runSearchBeaconFreqVariants(self, request, return_mimetype, access_map):
+        """
+        Runs the specified SearchBeaconFreqVariants.
+        """
+        return self.variantsFreqGenerator(request, access_map)
 
     def beaconSnpRequestValidator(self, request):
         """

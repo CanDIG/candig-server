@@ -581,7 +581,10 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         # Update total when it's a POST request
         if request_type == 'POST':
             table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
-            if endpoint not in [app.backend.runCountQuery, app.backend.runSearchBeaconRangeVariants, app.backend.runSearchBeaconSnpVariants]:
+            if endpoint not in [app.backend.runCountQuery, 
+            app.backend.runSearchBeaconRangeVariants, 
+            app.backend.runSearchBeaconSnpVariants,
+            app.backend.runSearchBeaconFreqVariants,]:
                 responseObject['results']['total'] = len(responseObject['results'][table])
         else:
             pass
@@ -755,6 +758,28 @@ class FederationResponse(object):
 
         if self.endpoint == app.backend.runSearchBeaconSnpVariants:
             self.beaconifySnpVariants()
+
+        if self.endpoint == app.backend.runSearchBeaconFreqVariants:
+            self.beaconifyFreqVariants()
+
+    def beaconifyFreqVariants(self):
+        """
+        Return the frequency of number of variants against the number of variantsets
+        """
+        if self.results:
+            res = {"variantSets": 0, "variants": 0}
+            for item in self.results['variants']:
+                res["variantSets"] =  res["variantSets"] + item["variantSets"]
+                res["variants"] = res["variants"] + item["variants"]
+
+        freq = res['variants'] / float(res['variantSets'])
+
+        if freq >= 0.01:
+            self.results['variants'] = {}
+            self.results['variants']['freq'] = "{:.3f}".format(res['variants'] / float(res['variantSets']))
+        else:
+            self.results['variants'] = {}
+            self.results['variants']['freq'] = "0"
 
     def beaconifySnpVariants(self):
         """
@@ -1168,6 +1193,12 @@ def searchBeaconRangeVariants():
 def searchBeaconSnpVariants():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchBeaconSnpVariants)
+
+
+@DisplayedRoute('/variants/beacon/freq/search', postMethod=True)
+def searchBeaconFreqVariants():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchBeaconFreqVariants)
 
 
 @DisplayedRoute('/genotypes/search', postMethod=True)
