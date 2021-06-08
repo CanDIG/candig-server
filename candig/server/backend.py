@@ -3,6 +3,7 @@ Module responsible for handling protocol requests and returning
 responses.
 """
 
+from enum import unique
 import candig.server.datamodel as datamodel
 import candig.server.exceptions as exceptions
 import candig.server.paging as paging
@@ -1386,10 +1387,22 @@ class Backend(object):
 
         iterators = [list(paging.VariantsIntervalIterator(modified_request, item)) for item in variantSets]
 
+        unique_variants = []
+
+        for e in itertools.chain.from_iterable(iterators):
+            temp_v = {
+                "referenceName": e[0].reference_name, 
+                "start": str(e[0].start), 
+                "end": str(e[0].end), 
+                "referenceBases": e[0].reference_bases
+            }
+
+            unique_variants.append(temp_v)
+
         res = {"variants": []}
         res_obj = {}
         res_obj["variantSets"] = len(variantSets)
-        res_obj["variants"] = len([element[0] for element in itertools.chain.from_iterable(iterators)])
+        res_obj["variants"] = unique_variants
         res["variants"].append(res_obj)
 
         return json.dumps(res)

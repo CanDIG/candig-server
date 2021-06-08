@@ -26,6 +26,7 @@ import requests
 import logging
 from logging import StreamHandler
 from werkzeug.contrib.cache import FileSystemCache
+from itertools import chain
 
 import candig.server
 import candig.server.backend as backend
@@ -39,7 +40,8 @@ import candig.schemas.protocol as protocol
 
 import base64
 import pandas as pd
-from collections import Counter
+from collections import Counter, defaultdict
+
 from requests_futures.sessions import FuturesSession
 
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
@@ -762,25 +764,39 @@ class FederationResponse(object):
         if self.endpoint == app.backend.runSearchBeaconFreqVariants:
             self.beaconifyFreqVariants()
 
+    def freqCalculator(self, variant, variantSetNum):
+        """
+        A helper that calculates the freq of an allele
+        Return value as is for freq >= 0.010, return 0.010 for 0 < freq < 0.010, and 0 otherwise.
+        """
+        freq = variant['count'] / variantSetNum
+
+        if freq >= 0.01:
+            variant['freq'] = "{:.3f}".format(freq)
+        elif 0 < freq < 0.01:
+            variant['freq'] = "0.010"
+        else:
+            variant['freq'] = "0"
+
+        variant.pop('count')
+        return variant
+
     def beaconifyFreqVariants(self):
         """
         Return the frequency of number of variants against the number of variantsets
         """
         if self.results:
-            res = {"variantSets": 0, "variants": 0}
+            res = {"variantSets": 0, "variants": []}
             for item in self.results['variants']:
                 res["variantSets"] =  res["variantSets"] + item["variantSets"]
-                res["variants"] = res["variants"] + item["variants"]
+                res["variants"].extend(item["variants"])
 
-        freq = res['variants'] / float(res['variantSets'])
-        self.results['variants'] = {}
-
-        if freq >= 0.01:
-            self.results['variants']['freq'] = "{:.3f}".format(res['variants'] / float(res['variantSets']))
-        elif 0 < freq < 0.01:
-            self.results['variants']['freq'] = "0.010"
-        else:
-            self.results['variants']['freq'] = "0"
+            count_dict = defaultdict(int)
+            for variant in res["variants"]:
+                count_dict[frozenset(variant.items())] += 1
+            processed_result = [dict(chain(k, (('count', count),))) for k, count in count_dict.items()]
+            freq_result = [self.freqCalculator(variant, res["variantSets"]) for variant in processed_result]
+            self.results['variants'] = freq_result
 
     def beaconifySnpVariants(self):
         """
@@ -807,7 +823,7 @@ class FederationResponse(object):
         if self.results:
             len_of_results = len(self.results['variants'])
 
-            if len_of_results > 4:
+            if len_of_results >= 1:
                 self.results['variants'] = {'exists': True}
             else:
                 self.results['variants'] = {'exists': False}
