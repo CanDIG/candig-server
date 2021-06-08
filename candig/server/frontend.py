@@ -773,12 +773,13 @@ class FederationResponse(object):
                 res["variants"] = res["variants"] + item["variants"]
 
         freq = res['variants'] / float(res['variantSets'])
+        self.results['variants'] = {}
 
         if freq >= 0.01:
-            self.results['variants'] = {}
             self.results['variants']['freq'] = "{:.3f}".format(res['variants'] / float(res['variantSets']))
+        elif 0 < freq < 0.01:
+            self.results['variants']['freq'] = "0.010"
         else:
-            self.results['variants'] = {}
             self.results['variants']['freq'] = "0"
 
     def beaconifySnpVariants(self):
