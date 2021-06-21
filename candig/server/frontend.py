@@ -1,7 +1,5 @@
 """
 The Flask frontend for the GA4GH API.
-
-TODO Document properly.
 """
 
 import os
