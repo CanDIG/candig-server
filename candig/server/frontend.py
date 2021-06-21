@@ -26,6 +26,7 @@ import requests
 import logging
 from logging import StreamHandler
 from werkzeug.contrib.cache import FileSystemCache
+from itertools import chain
 
 import candig.server
 import candig.server.backend as backend
@@ -39,7 +40,8 @@ import candig.schemas.protocol as protocol
 
 import base64
 import pandas as pd
-from collections import Counter
+from collections import Counter, defaultdict
+
 from requests_futures.sessions import FuturesSession
 
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
@@ -581,7 +583,10 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         # Update total when it's a POST request
         if request_type == 'POST':
             table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
-            if endpoint != app.backend.runCountQuery:
+            if endpoint not in [app.backend.runCountQuery, 
+            app.backend.runSearchBeaconRangeVariants, 
+            app.backend.runSearchBeaconSnpVariants,
+            app.backend.runSearchBeaconFreqVariants,]:
                 responseObject['results']['total'] = len(responseObject['results'][table])
         else:
             pass
@@ -749,6 +754,107 @@ class FederationResponse(object):
 
         if self.endpoint == app.backend.runCountQuery and self.results:
             self.mergeCounts()
+
+        if self.endpoint == app.backend.runSearchBeaconRangeVariants:
+            self.beaconifyRangeVariants()
+
+        if self.endpoint == app.backend.runSearchBeaconSnpVariants:
+            self.beaconifySnpVariants()
+
+        if self.endpoint == app.backend.runSearchBeaconFreqVariants:
+            self.beaconifyFreqVariants()
+
+    def freqCalculator(self, variant, variantSetNum):
+        """
+        A helper that calculates the freq of an allele
+        Return value as is for freq >= 0.010, return 0.010 for 0 < freq < 0.010, and 0 otherwise.
+        """
+        freq = variant['count'] / variantSetNum
+
+        if freq >= 0.01:
+            variant['freq'] = "{:.3f}".format(freq)
+        elif 0 < freq < 0.01:
+            variant['freq'] = "0.010"
+        else:
+            variant['freq'] = "0"
+
+        variant.pop('count')
+
+        # Reorder the keys of dict to desired order
+        desired_order_list = ['referenceName', 'start', 'end', 'referenceBases', 'freq']
+        reordered_variant = {k: variant[k] for k in desired_order_list}
+
+        return reordered_variant
+
+    def beaconifyFreqVariants(self):
+        """
+        Return the frequency of number of variants against the number of variantsets
+        """
+        if self.results:
+            res = {"variantSets": 0, "variants": []}
+            for item in self.results['variants']:
+                res["variantSets"] =  res["variantSets"] + item["variantSets"]
+                res["variants"].extend(item["variants"])
+
+            count_dict = defaultdict(int)
+            for variant in res["variants"]:
+                count_dict[frozenset(variant.items())] += 1
+            processed_result = [dict(chain(k, (('count', count),))) for k, count in count_dict.items()]
+            freq_result = [self.freqCalculator(variant, res["variantSets"]) for variant in processed_result]
+            self.results['variants'] = freq_result
+
+    def beaconifySnpVariants(self):
+        """
+        Return Beacon style response to a federated Variants request
+
+        If 1 or more variant is found at this exact start, return True; otherwise False.
+        """
+        if self.results:
+            len_of_results = len(self.results['variants'])
+
+            if len_of_results >= 1:
+                self.results['variants'] = {'exists': True}
+            else:
+                self.results['variants'] = {'exists': False}
+        else:
+            self.results['variants'] = {'exists': False}
+
+    def variantsFilter(self, variant):
+        """
+        A helper that filters out variants with fewer than 5 occurrences
+        """
+        variant['exists'] = True
+        variant.pop('count')
+        # Reorder the keys of dict to desired order
+        desired_order_list = ['referenceName', 'start', 'end', 'referenceBases', 'exists']
+        reordered_variant = {k: variant[k] for k in desired_order_list}
+        return reordered_variant
+
+    def beaconifyRangeVariants(self):
+        """
+        Return Beacon style response to a federated Variants request
+
+        If more than 5 variants are found, return True; otherwise False.
+        """
+        if self.results:
+            unique_variants = []
+
+            for e in self.results['variants']:
+                temp_v = {
+                    "referenceName": e["referenceName"],
+                    "start": e["start"],
+                    "end": e["end"],
+                    "referenceBases": e["referenceBases"],
+                }
+                
+                unique_variants.append(temp_v)
+
+            count_dict = defaultdict(int)
+            for variant in unique_variants:
+                count_dict[frozenset(variant.items())] += 1
+            processed_result = [dict(chain(k, (('count', count),))) for k, count in count_dict.items()]
+            filter_variant_result = [self.variantsFilter(v) for v in processed_result if v['count'] >= 1]
+            self.results['variants'] = filter_variant_result
 
     def mergeCounts(self):
         """
@@ -1118,6 +1224,30 @@ def searchVariantSets():
 def searchVariants():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchVariants)
+
+
+@DisplayedRoute('/variants/beacon/range/search', postMethod=True)
+def searchBeaconRangeVariants():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchBeaconRangeVariants)
+
+
+@DisplayedRoute('/variants/beacon/snp/search', postMethod=True)
+def searchBeaconSnpVariants():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchBeaconSnpVariants)
+
+
+@DisplayedRoute('/variants/beacon/freq/search', postMethod=True)
+def searchBeaconFreqVariants():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchBeaconFreqVariants)
+
+
+@DisplayedRoute('/variants/beacon/allele/freq/search', postMethod=True)
+def searchBeaconAlleleFreqVariants():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchBeaconAlleleFreqVariants)
 
 
 @DisplayedRoute('/genotypes/search', postMethod=True)
