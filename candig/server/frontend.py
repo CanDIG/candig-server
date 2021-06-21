@@ -26,6 +26,7 @@ import requests
 import logging
 from logging import StreamHandler
 from werkzeug.contrib.cache import FileSystemCache
+from itertools import chain
 
 import candig.server
 import candig.server.backend as backend
@@ -39,8 +40,10 @@ import candig.schemas.protocol as protocol
 
 import base64
 import pandas as pd
-from collections import Counter
+from collections import Counter, defaultdict
+
 from requests_futures.sessions import FuturesSession
+
 
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
@@ -581,7 +584,8 @@ def federation(endpoint, request, return_mimetype, request_type='POST'):
         # Update total when it's a POST request
         if request_type == 'POST':
             table = list(set(responseObject['results'].keys()) - {"nextPageToken", "total"})[0]
-            if endpoint != app.backend.runCountQuery:
+            if endpoint not in [app.backend.runCountQuery,
+            app.backend.runSearchBeaconRangeVariants]:
                 responseObject['results']['total'] = len(responseObject['results'][table])
         else:
             pass
@@ -749,6 +753,48 @@ class FederationResponse(object):
 
         if self.endpoint == app.backend.runCountQuery and self.results:
             self.mergeCounts()
+
+        if self.endpoint == app.backend.runSearchBeaconRangeVariants:
+            self.beaconifyRangeVariants()
+
+    def variantsFilter(self, variant):
+        """
+        A helper that filters out variants with below specified threshold
+        """
+        variant['exists'] = True
+        variant.pop('count')
+        # Reorder the keys of dict to desired order
+        desired_order_list = ['referenceName', 'start', 'end', 'referenceBases', 'exists']
+        reordered_variant = {k: variant[k] for k in desired_order_list}
+        return reordered_variant
+
+    def beaconifyRangeVariants(self):
+        """
+        Return Beacon style response to a federated Variants request
+
+        Return a list of variants above reporting threshold.
+        """
+        threshold = 1
+
+        if self.results:
+            unique_variants = []
+
+            for e in self.results['variants']:
+                temp_v = {
+                    "referenceName": e["referenceName"],
+                    "start": e["start"],
+                    "end": e["end"],
+                    "referenceBases": e["referenceBases"],
+                }
+
+                unique_variants.append(temp_v)
+
+            count_dict = defaultdict(int)
+            for variant in unique_variants:
+                count_dict[frozenset(variant.items())] += 1
+            processed_result = [dict(chain(k, (('count', count),))) for k, count in count_dict.items()]
+            filter_variant_result = [self.variantsFilter(v) for v in processed_result if v['count'] >= threshold]
+            self.results['variants'] = filter_variant_result
 
     def mergeCounts(self):
         """
@@ -1118,6 +1164,18 @@ def searchVariantSets():
 def searchVariants():
     return handleFlaskPostRequest(
         flask.request, app.backend.runSearchVariants)
+
+
+@DisplayedRoute('/variants/beacon/range/search', postMethod=True)
+def searchBeaconRangeVariants():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchBeaconRangeVariants)
+
+
+@DisplayedRoute('/variants/beacon/allele/freq/search', postMethod=True)
+def searchBeaconAlleleFreqVariants():
+    return handleFlaskPostRequest(
+        flask.request, app.backend.runSearchBeaconAlleleFreqVariants)
 
 
 @DisplayedRoute('/genotypes/search', postMethod=True)
