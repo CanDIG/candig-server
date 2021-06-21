@@ -44,7 +44,6 @@ from collections import Counter, defaultdict
 
 from requests_futures.sessions import FuturesSession
 
-
 SEARCH_ENDPOINT_METHODS = ['POST', 'OPTIONS']
 SECRET_KEY_LENGTH = 24
 
