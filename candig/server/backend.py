@@ -2690,7 +2690,7 @@ class Backend(object):
             access_map,
             return_mimetype)
 
-    def runSearchBeaconAlleleFreqVariants(self, request, access_map):
+    def runSearchBeaconAlleleFreqVariants(self, request, return_mimetype, access_map):
         """
         Runs the specified runSearchBeaconAlleleFreqVariants.
         """
