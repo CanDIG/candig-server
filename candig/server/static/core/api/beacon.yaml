@@ -1,0 +1,250 @@
+openapi: 3.0.1
+info:
+  title: CanDIG Beacon Services
+  description: |-
+
+    Below is a list of Variants Discovery APIs that CanDIG currently supports.
+    
+  version: "1.5"
+servers:
+- url: /
+paths:
+  /variants/beacon/range/search:
+    post:
+      tags:
+      - Variants Beacon Service
+      summary: Gets a list of Variants above reporting threshold.
+      description: |-
+        Gets a list of variants above reporting threshold.
+      operationId: SearchVariantsBeacon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/candigSearchVariantsBeaconRequest'
+        required: true
+      responses:
+        200:
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/candigSearchVariantsBeaconRangeResponse'
+      x-codegen-request-body-name: body
+  /variants/beacon/allele/freq/search:
+    post:
+      tags:
+      - Variants Beacon Service
+      summary: Gets a list of Variants and their Allele Frequency info, if available.
+      description: |-
+        Gets a list of Variants and their Allele Frequency info, if available.
+      operationId: SearchVariantsBeaconFreq
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/candigSearchVariantsBeaconRequest'
+        required: true
+      responses:
+        200:
+          description: A successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/candigSearchVariantsBeaconFreqResponse'
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    candigStatus:
+      type: object
+      properties:
+        Known peers:
+          type: integer
+          example: 1
+          description: The number of peers registered
+        Queried peers:
+          type: integer
+          example: 1
+          description: The number of peers that return 200 or 404
+        Successful communciations:
+          type: integer
+          description: The number of peers that return 200
+          example: 1
+        Valid response:
+          type: boolean
+          description: If number of queried peers equal to the successful communciation, this is true.
+          example: true
+    candigNextPageToken:
+      type: string
+      example: "1000"
+      description: |-
+        The continuation token, which is used to page through large
+        result sets. Provide this value in a subsequent request to return the next
+        page of results. This field will be empty if there aren't any additional
+        results.
+    candigTotal:
+      type: integer
+      description: Number of results in the list
+      example: 1000
+    candigSearchVariantsBeaconRequest:
+      type: object
+      properties:
+        datasetId:
+          type: string
+          description: The dataset to search.
+          example: "WyJtb2NrMSJd"
+        referenceName:
+          type: string
+          description: Required. Only return variants on this reference/chromosome.
+          example: "X"
+        start:
+          type: string
+          description: |-
+            Required. The beginning of the window (0-based, inclusive) for
+            which overlapping variants should be returned.
+            Genomic positions are non-negative integers less than reference length.
+            Requests spanning the join of circular genomes are represented as
+            two requests one on each side of the join (position 0).
+          format: int64
+          example: "14214"
+        end:
+          type: string
+          description: |-
+            Required. The end of the window (0-based, exclusive) for which overlapping
+            variants should be returned.
+          format: int64
+          example: "14226"
+    candigSearchVariantsBeaconRangeResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            variants:
+              type: array
+              description: |-
+                A list of variants.
+              items:
+                $ref: '#/components/schemas/candigBeaconRangeVariant'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: This is the response from POST /variants/search expressed as
+        JSON.
+    candigSearchVariantsBeaconFreqResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/candigStatus'
+        results:
+          type: object
+          properties:
+            variants:
+              type: array
+              description: |-
+                A list of variants.
+              items:
+                $ref: '#/components/schemas/candigBeaconFreqVariant'
+            nextPageToken:
+              $ref: '#/components/schemas/candigNextPageToken'
+            total:
+              $ref: '#/components/schemas/candigTotal'
+      description: Response of the /variants/beacon/allele/freq/search endpoint.
+    candigBeaconRangeVariant:
+      type: object
+      properties:
+        referenceName:
+          title: |-
+            The reference on which this variant occurs.
+            (e.g. chr20 or X)
+          type: string
+          example: "X"
+        start:
+          type: string
+          description: |-
+            The start position at which this variant occurs (0-based).
+            This corresponds to the first base of the string of reference bases.
+            Genomic positions are non-negative integers less than reference length.
+            Variants spanning the join of circular genomes are represented as
+            two variants one on each side of the join (position 0).
+          format: int64
+          example: "14222"
+        end:
+          type: string
+          description: |-
+            The end position (exclusive), resulting in [start, end) closed-open
+            interval.
+            This is typically calculated by start + referenceBases.length.
+          format: int64
+          example: "14223"
+        referenceBases:
+          type: string
+          description: |-
+            The reference bases for this variant. They start at the given start
+            position.
+          example: "T"
+        exists:
+          type: boolean
+      description: |-
+        A Variant represents a change in DNA sequence relative to some reference.
+        For example, a variant could represent a SNP or an insertion.
+        Variants belong to a VariantSet.
+        This is equivalent to a row in VCF.
+    candigBeaconFreqVariant:
+      type: object
+      properties:
+        referenceName:
+          title: |-
+            The reference on which this variant occurs.
+            (e.g. chr20 or X)
+          type: string
+          example: "X"
+        start:
+          type: string
+          example: "14221"
+          description: |-
+            The start position at which this variant occurs (0-based).
+            This corresponds to the first base of the string of reference bases.
+            Genomic positions are non-negative integers less than reference length.
+            Variants spanning the join of circular genomes are represented as
+            two variants one on each side of the join (position 0).
+          format: int64
+        end:
+          type: string
+          example: "14222"
+          description: |-
+            The end position (exclusive), resulting in [start, end) closed-open
+            interval.
+            This is typically calculated by start + referenceBases.length.
+          format: int64
+        referenceBases:
+          type: string
+          example: "C"
+          description: |-
+            The reference bases for this variant. They start at the given start
+            position.
+        alternateBases:
+          type: array
+          example: ["T", "TTC"]
+          description: |-
+            The bases that appear instead of the reference bases. Multiple alternate
+            alleles are possible.
+          items:
+            type: string
+          title: |-
+            The "variant_type" is used to denote e.g. structural variants.
+            Examples:
+              DUP  : duplication of sequence following "start"; not necessarily in situ
+              DEL  : deletion of sequence following "start"
+        AF:
+          type: object
+          description: An object that contains the allele frequency information of alternate bases
+          example: {"T": 0.02, "TTC": 0.31}
+      description: |-
+        A Variant represents a change in DNA sequence relative to some reference.
+        For example, a variant could represent a SNP or an insertion.
+        Variants belong to a VariantSet.
+        This is equivalent to a row in VCF.

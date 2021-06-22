@@ -1372,6 +1372,54 @@ class Backend(object):
 
         return self._protocolListGenerator(request, [element[0] for element in itertools.chain.from_iterable(iterators)])
 
+    def variantAlleleFreqFilter(self, variant):
+        """
+        Return a variant if it has AF defined.
+        Round the AF to 0.01 if smaller.
+        """
+        tmp_variant = {
+            "referenceName": variant.get("referenceName"),
+            "start": variant.get("start"),
+            "end": variant.get("end"),
+            "referenceBases": variant.get("referenceBases"),
+            "alternateBases": variant.get("alternateBases"),
+            "AF": variant.get("attributes", {}).get("attr", {}).get("AF", {}).get("values", None)
+        }
+
+        tmp_AF_obj = {}
+
+        if "AF" in tmp_variant:
+            for idx, val in enumerate(tmp_variant["AF"]):
+                if val["doubleValue"] < 0.01:
+                    val["doubleValue"] = 0.01
+
+                tmp_AF_obj[tmp_variant['alternateBases'][idx]] = val["doubleValue"]
+
+            tmp_variant["AF"] = tmp_AF_obj
+            return tmp_variant
+
+    def variantsAlleleFreqGenerator(self, requestStr, access_map):
+        """
+        Returns a generator over the (variant, nextPageToken) pairs defined
+        by the specified request.
+        """
+        requestClass = protocol.SearchVariantsRequest
+        request = protocol.fromJson(requestStr, requestClass)
+        self.variantsRequestValidator(request)
+        modified_request = self.variantsRequestModifier(request)
+        variantSets = self.variantsQueryBuilder(request, access_map)
+
+        iterators = [list(paging.VariantsIntervalIterator(modified_request, item)) for item in variantSets]
+
+        json_variants = []
+
+        for e in itertools.chain.from_iterable(iterators):
+            json_variant = MessageToDict(e[0])
+            json_variants.append(self.variantAlleleFreqFilter(json_variant))
+
+        res = {"variants": json_variants}
+        return json.dumps(res)
+
     def genotypeMatrixGenerator(self, request, access_map):
         """
         Returns a generator over the (genotypematrix, nextPageToken) pairs
@@ -1761,7 +1809,7 @@ class Backend(object):
         callSet = variantSet.getCallSet(id_)
         return self.runGetRequest(callSet, return_mimetype, tier=tier)
 
-    def runGetInfo(self, request, return_mimetype="application/json"):
+    def runGetInfo(self, request, access_map, return_mimetype="application/json"):
         """
         Returns information about the service including protocol version.
         """
@@ -2630,6 +2678,23 @@ class Backend(object):
             self.variantsGenerator,
             access_map,
             return_mimetype)
+
+    def runSearchBeaconRangeVariants(self, request, return_mimetype, access_map):
+        """
+        Runs the specified SearchVariantRangeRequest.
+        """
+        return self.runSearchRequest(
+            request, protocol.SearchVariantsRequest,
+            protocol.SearchVariantsResponse,
+            self.variantsGenerator,
+            access_map,
+            return_mimetype)
+
+    def runSearchBeaconAlleleFreqVariants(self, request, access_map):
+        """
+        Runs the specified runSearchBeaconAlleleFreqVariants.
+        """
+        return self.variantsAlleleFreqGenerator(request, access_map)
 
     def runSearchGenotypes(self, request, return_mimetype, access_map):
         """
