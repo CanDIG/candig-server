@@ -667,6 +667,8 @@ class FederationResponse(object):
 
                 if app.config.get("OPA_SERVER"):
                     # TODO: Call OPA server to get access map
+                    # A sample access_map looks like this: {"dataset1": 4, "dataset2": 4}
+                    # All datasets from OPA are given access level 4
                     pass
                 else:
                     access_map = app.access_map.getUserAccessMap(issuer, username)
