@@ -664,7 +664,13 @@ class FederationResponse(object):
                 parsed_payload = _parseTokenPayload(access_token)
                 issuer = parsed_payload.get('iss')
                 username = parsed_payload.get('preferred_username')
-                access_map = app.access_map.getUserAccessMap(issuer, username)
+
+                if app.config.get("OPA_SERVER"):
+                    # TODO: Call OPA server to get access map
+                    pass
+                else:
+                    access_map = app.access_map.getUserAccessMap(issuer, username)
+
             else:
                 raise exceptions.NotAuthenticatedException
         else:
