@@ -194,8 +194,11 @@ class TykConfig(KeycloakOidConfig):
     Configuration to use when forwarding requests through the API gateway.
     This also requires that keycloak config is being used and is set up properly.
 
+    If OPA_SERVER is set, it will be used as source of access_map instead of ACCESS_LIST.
+
     To start a dev flask server using this config add in launch option, -c TykConfig
     """
+    OPA_SERVER = None
     ACCESS_LIST = "access_list.txt"
 
     TYK_ENABLED = True

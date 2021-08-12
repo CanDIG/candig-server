@@ -499,7 +499,7 @@ def configure(configFile=None, baseConfig="ProductionConfig",
             app.oidcClient.store_registration_info(response)
 
     # Set user access map from file if using a gateway to authenticate
-    if app.config.get("TYK_ENABLED"):
+    if app.config.get("TYK_ENABLED") and not app.config.get("OPA_SERVER"):
         load_access_map()
 
 
