@@ -199,10 +199,8 @@ class TykConfig(KeycloakOidConfig):
     For example, OPA_SERVER = 'http://localhost:8000/v1/data/permissions/datasets'.
     OPA_SERVER_TOKEN needs to be set to the same secret token in OPA in order to be 
     authorized to visit the OPA dataset permission endpoint.
-    For example, OPA_SERVER_TOKEN = my-secret-beacon-token.
     
     To start a dev flask server using this config add in launch option, -c TykConfig
-    
     """
     OPA_SERVER = None
     OPA_SERVER_TOKEN = ''
