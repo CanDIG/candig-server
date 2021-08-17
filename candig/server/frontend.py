@@ -962,7 +962,7 @@ def handleException(exception):
 
 @app.before_request
 def checkAuthorization():
-    if app.config.get("TYK_ENABLED") and not app.config.get("OPA_SERVER")::
+    if app.config.get("TYK_ENABLED") and not app.config.get("OPA_SERVER"):
         if app.access_map.getListUpdated() != os.path.getmtime(app.access_map.getFilePath()):
             if app.logger:
                 app.logger.info(
