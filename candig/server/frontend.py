@@ -683,6 +683,7 @@ class FederationResponse(object):
                     }
                     response = requests.request("POST", app.config.get("OPA_SERVER"), headers=headers, data=payload)
                     res_datasets = response.json()["result"]
+                    #all datasets returned by OPA are assigned access level 4
                     for i in res_datasets:
                         access_map[i] = 4
                 else:
