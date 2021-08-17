@@ -685,7 +685,7 @@ class FederationResponse(object):
                         'Content-Type': 'application/json'
                     }
                     response = requests.request("POST", app.config.get("OPA_SERVER"), headers=headers, data=payload)
-                    res_datasets = response.json()["results"]
+                    res_datasets = response.json()["result"]
                     for i in res_datasets:
                         access_map[i] = 4
                 else:
@@ -962,7 +962,7 @@ def handleException(exception):
 
 @app.before_request
 def checkAuthorization():
-    if app.config.get("TYK_ENABLED"):
+    if app.config.get("TYK_ENABLED") and not app.config.get("OPA_SERVER")::
         if app.access_map.getListUpdated() != os.path.getmtime(app.access_map.getFilePath()):
             if app.logger:
                 app.logger.info(
