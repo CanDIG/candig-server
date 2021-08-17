@@ -499,7 +499,7 @@ def configure(configFile=None, baseConfig="ProductionConfig",
             app.oidcClient.store_registration_info(response)
 
     # Set user access map from file if using a gateway to authenticate
-    if app.config.get("TYK_ENABLED"):
+    if app.config.get("TYK_ENABLED") and not app.config.get("OPA_SERVER"):
         load_access_map()
 
 
@@ -664,7 +664,31 @@ class FederationResponse(object):
                 parsed_payload = _parseTokenPayload(access_token)
                 issuer = parsed_payload.get('iss')
                 username = parsed_payload.get('preferred_username')
-                access_map = app.access_map.getUserAccessMap(issuer, username)
+
+                if app.config.get("OPA_SERVER"):
+                    payload = json.dumps({
+                        "input": {
+                            "headers": {
+                                "X-Candig-Local-Oidc": access_token.split(' ')[1]
+                            },
+                            "method": "GET",
+                            "path": [
+                                "beacon"
+                            ]
+                        }
+                    })
+                    headers = {
+                        'Authorization': 'Bearer ' + app.config.get("OPA_SERVER_TOKEN"),
+                        'Content-Type': 'application/json'
+                    }
+                    response = requests.request("POST", app.config.get("OPA_SERVER"), headers=headers, data=payload)
+                    res_datasets = response.json()["result"]
+                    # all datasets returned by OPA are assigned access level 4
+                    for i in res_datasets:
+                        access_map[i] = 4
+                else:
+                    access_map = app.access_map.getUserAccessMap(issuer, username)
+
             else:
                 raise exceptions.NotAuthenticatedException
         else:
@@ -936,7 +960,7 @@ def handleException(exception):
 
 @app.before_request
 def checkAuthorization():
-    if app.config.get("TYK_ENABLED"):
+    if app.config.get("TYK_ENABLED") and not app.config.get("OPA_SERVER"):
         if app.access_map.getListUpdated() != os.path.getmtime(app.access_map.getFilePath()):
             if app.logger:
                 app.logger.info(

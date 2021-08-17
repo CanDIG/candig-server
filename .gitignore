@@ -40,7 +40,8 @@ tests/data/registry.db
 *.tar
 *.zip
 *.whl
- 
+*.bgz
+
 # Logs and databases #
 ######################
 *.log
@@ -129,3 +130,4 @@ oidc-provider/simple_op/src/provider/server/static/jwks.json
 # misc. project test data related
 clinical_metadata_tier*.json*
 data
+.python-version
