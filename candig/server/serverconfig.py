@@ -195,10 +195,12 @@ class TykConfig(KeycloakOidConfig):
     This also requires that keycloak config is being used and is set up properly.
 
     If OPA_SERVER is set, it will be used as source of access_map instead of ACCESS_LIST.
-
+    OPA_SERVER link needs to be the OPA's address plus the '/data/permissions/datasets'
+    For example, OPA_SERVER = 'http://localhost:8000/v1/data/permissions/datasets'.
     To start a dev flask server using this config add in launch option, -c TykConfig
     """
-    OPA_SERVER = 'http://localhost:8000/v1/data/permissions/datasets'
+    OPA_SERVER = None
+    OPA_SERVER_TOKEN = 'my-secret-beacon-token'
     ACCESS_LIST = "access_list.txt"
 
     TYK_ENABLED = True

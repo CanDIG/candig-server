@@ -666,22 +666,19 @@ class FederationResponse(object):
                 username = parsed_payload.get('preferred_username')
 
                 if app.config.get("OPA_SERVER"):
-                    # TODO: Call OPA server to get access map
-                    # A sample access_map looks like this: {"dataset1": 4, "dataset2": 4}
-                    # All datasets from OPA are given access level 4
                     payload = json.dumps({
                         "input": {
                             "headers": {
-                            "X-Candig-Local-Oidc": access_token.split(' ')[1]
+                                "X-Candig-Local-Oidc": access_token.split(' ')[1]
                             },
                             "method": "GET",
                             "path": [
-                            "beacon"
+                                "beacon"
                             ]
                         }
                     })
                     headers = {
-                        'Authorization': 'Bearer my-secret-beacon-token',
+                        'Authorization': 'Bearer ' + app.config.get("OPA_SERVER_TOKEN"),
                         'Content-Type': 'application/json'
                     }
                     response = requests.request("POST", app.config.get("OPA_SERVER"), headers=headers, data=payload)
