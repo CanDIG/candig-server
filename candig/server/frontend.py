@@ -672,7 +672,7 @@ class FederationResponse(object):
                     payload = json.dumps({
                         "input": {
                             "headers": {
-                            "X-Candig-Local-Oidc": "??????"
+                            "X-Candig-Local-Oidc": access_token.split(' ')[1]
                             },
                             "method": "GET",
                             "path": [
