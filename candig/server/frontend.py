@@ -669,7 +669,25 @@ class FederationResponse(object):
                     # TODO: Call OPA server to get access map
                     # A sample access_map looks like this: {"dataset1": 4, "dataset2": 4}
                     # All datasets from OPA are given access level 4
-                    pass
+                    payload = json.dumps({
+                        "input": {
+                            "headers": {
+                            "X-Candig-Local-Oidc": "??????"
+                            },
+                            "method": "GET",
+                            "path": [
+                            "beacon"
+                            ]
+                        }
+                    })
+                    headers = {
+                        'Authorization': 'Bearer my-secret-beacon-token',
+                        'Content-Type': 'application/json'
+                    }
+                    response = requests.request("POST", app.config.get("OPA_SERVER"), headers=headers, data=payload)
+                    res_datasets = response.json()["results"]
+                    for i in res_datasets:
+                        access_map[i] = 4
                 else:
                     access_map = app.access_map.getUserAccessMap(issuer, username)
 

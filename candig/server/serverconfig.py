@@ -198,7 +198,7 @@ class TykConfig(KeycloakOidConfig):
 
     To start a dev flask server using this config add in launch option, -c TykConfig
     """
-    OPA_SERVER = None
+    OPA_SERVER = 'http://localhost:8000/v1/data/permissions/datasets'
     ACCESS_LIST = "access_list.txt"
 
     TYK_ENABLED = True
