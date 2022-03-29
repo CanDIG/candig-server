@@ -613,6 +613,20 @@ and indexed using ``samtools faidx``. Each ReferenceSet contains a
 number of metadata values (.e.g. ``species``) which can be set
 using command line options.
 
+You may ingest raw FASTA (.fa) files.
+
+If you ingest compressed FASTA files, you should download both 
+`.gz.fai` and `.gz.gzi` files, along with the `.fz.gz` file. If `gz.fai` file is 
+not available, the server will attempt to generate it at ingestion.
+
+Example FASTA files are available from
+
+```
+http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz
+http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz.fai
+http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz.gzi
+```
+
 .. argparse::
    :module: candig.server.cli.repomanager
    :func: getRepoManagerParser
