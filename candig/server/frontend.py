@@ -313,7 +313,8 @@ def load_access_map():
 
 def render_candig_template(template_path, **kwargs):
     """
-    Wrapper for flask render template to customize dashboard using ID tokens
+    Wrapper for flask render template to customize dashboard using ID 
+    s
 
     :param template_path: template file to render
     :param kwargs: additional variables
@@ -668,9 +669,7 @@ class FederationResponse(object):
                 if app.config.get("OPA_SERVER"):
                     payload = json.dumps({
                         "input": {
-                            "headers": {
-                                "X-Candig-Local-Oidc": access_token.split(' ')[1]
-                            },
+                            "token": access_token.split(' ')[1],
                             "method": "GET",
                             "path": [
                                 "beacon"
