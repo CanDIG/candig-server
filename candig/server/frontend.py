@@ -670,10 +670,10 @@ class FederationResponse(object):
                     payload = json.dumps({
                         "input": {
                             "token": access_token.split(' ')[1],
-                            "method": "GET",
-                            "path": [
-                                "beacon"
-                            ]
+                            "body": {
+                                "method": "GET", # Opa only accepts GET right now
+                                "path": self.endpoint
+                            }
                         }
                     })
                     headers = {
