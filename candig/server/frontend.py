@@ -672,7 +672,7 @@ class FederationResponse(object):
                             "token": access_token.split(' ')[1],
                             "body": {
                                 "method": "GET", # Opa only accepts GET right now
-                                "path": self.endpoint
+                                "path": self.request_dict.path
                             }
                         }
                     })
