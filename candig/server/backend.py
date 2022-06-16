@@ -2898,7 +2898,7 @@ class Backend(object):
             for feature in featureset.getFeatures(geneSymbol=request.gene, featureTypes=["gene"]):
                 for variantset in processedVariantsets:
                     for variant in variantset.getVariants(
-                            referenceName=feature.reference_name.replace('chr', ''),
+                            referenceName=feature.reference_name,
                             startPosition=feature.start,
                             endPosition=feature.end,
                     ):
