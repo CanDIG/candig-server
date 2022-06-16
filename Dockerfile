@@ -23,10 +23,10 @@ RUN pip install -r requirements.txt
 RUN pip install /app/candig-server
 
 # Uncomment below lines if you want to ingest some mock data
-RUN mkdir candig-example-data && \
-	wget https://raw.githubusercontent.com/CanDIG/candig-ingest/master/candig/ingest/mock_data/clinical_metadata_tier1.json && \
-	wget https://raw.githubusercontent.com/CanDIG/candig-ingest/master/candig/ingest/mock_data/clinical_metadata_tier2.json && \
-	ingest candig-example-data/registry.db mock1 clinical_metadata_tier1.json && \
-	ingest candig-example-data/registry.db mock2 clinical_metadata_tier2.json
+# RUN mkdir candig-example-data && \
+# 	wget https://raw.githubusercontent.com/CanDIG/candig-ingest/master/candig/ingest/mock_data/clinical_metadata_tier1.json && \
+# 	wget https://raw.githubusercontent.com/CanDIG/candig-ingest/master/candig/ingest/mock_data/clinical_metadata_tier2.json && \
+# 	ingest candig-example-data/registry.db mock1 clinical_metadata_tier1.json && \
+# 	ingest candig-example-data/registry.db mock2 clinical_metadata_tier2.json
 
 ENTRYPOINT ["candig_server"]

@@ -311,34 +311,6 @@ def load_access_map():
     app.access_map.initializeUserAccess()
 
 
-def render_candig_template(template_path, **kwargs):
-    """
-    Wrapper for flask render template to customize dashboard using ID 
-    s
-
-    :param template_path: template file to render
-    :param kwargs: additional variables
-    :return: call to flask.render_template
-    """
-
-    session_id = ''
-    session_user = 'n/a'
-
-    if app.config.get('TYK_ENABLED'):
-        try:
-            session_id = flask.request.headers["Authorization"][7:]
-            session_user = _parseTokenPayload(session_id)["preferred_username"]
-        except KeyError:
-            raise exceptions.NotAuthenticatedException()
-
-    return flask.render_template(
-        template_path,
-        prepend_path=app.config.get('TYK_LISTEN_PATH', ''),
-        username=session_user,
-        **kwargs
-    )
-
-
 def reset():
     """
     Resets the flask app; used in testing
@@ -1042,40 +1014,10 @@ class DisplayedRoute(object):
         return wrapper
 
 
-@app.route('/')
-@requires_auth
-def index():
-    return render_candig_template('dashboard.html')
-
-
-@app.route('/gene_search')
-@requires_auth
-def gene_search():
-    return render_candig_template('gene_search.html')
-
-
-@app.route('/patients_overview')
-@requires_auth
-def patients_overview():
-    return render_candig_template('patients_overview.html')
-
-
-@app.route('/sample_analysis')
-@requires_auth
-def sample_analysis():
-    return render_candig_template('sample_analysis.html')
-
-
-@app.route('/custom_visualization')
-@requires_auth
-def custom_visualization():
-    return render_candig_template('custom_visualization.html')
-
-
 @app.route('/api_info')
 @requires_auth
 def swagger():
-    return render_candig_template('swagger.html')
+    return flask.render_template('swagger.html')
 
 
 @app.route('/serverinfo')
